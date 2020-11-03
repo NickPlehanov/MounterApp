@@ -1,0 +1,26 @@
+﻿<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodel="clr-namespace:MounterApp.ViewModel"
+             x:Class="MounterApp.MainPage">
+    <ContentPage.Resources>
+        <viewmodel:MainPageViewModel x:Key="viewModel"/>
+    </ContentPage.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackLayout BindingContext="{StaticResource viewModel}" Grid.Row="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Margin="5">
+            <Label Text="Введите номер телефона"/>
+            <Editor Keyboard="Telephone" x:Name="PhoneNumber" Text="{Binding PhoneNumber, Mode=TwoWay}"/>
+            <Button Text="ОК" Command="{Binding AuthCommand}" CommandParameter="{Binding Source=PhoneNumber, Path=Text}"/>
+            <Label Text="{Binding Message, Mode=TwoWay}"/>
+        </StackLayout>
+        
+        <!--<StackLayout Grid.Row="1" Margin="5" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+            <Label Text="{Binding Message, Mode=TwoWay}"/>
+        </StackLayout>-->
+    </Grid>
+
+</ContentPage>

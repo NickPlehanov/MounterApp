@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:viewmodel="clr-namespace:MounterApp.ViewModel" 
+             xmlns:dg="clr-namespace:Xamarin.Forms.DataGrid;assembly=Xamarin.Forms.DataGrid" xmlns:xforms="clr-namespace:Syncfusion.SfDataGrid.XForms;assembly=Syncfusion.SfDataGrid.XForms"
+             x:Class="MounterApp.Views.MainMenuPage">
+    <ContentPage.Resources>
+        <viewmodel:MainMenuPageViewModel x:Key="viewmodel"/>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <StackLayout BindingContext="{StaticResource viewmodel}">
+            <Expander HorizontalOptions="Center" Margin="5">
+                <Expander.Header>
+                    <Label Text="Монтажи" FontSize="Title" FontAttributes="Bold"/>
+                </Expander.Header>
+                <StackLayout>
+                    <!--<dg:DataGrid ItemsSource="{Binding Mounters}">
+                        --><!--<dg:DataGrid.Columns>
+                            <dg:DataGridColumn Width=""
+                        </dg:DataGrid.Columns>--><!--
+                    </dg:DataGrid>-->
+                    <xforms:SfDataGrid ItemsSource="{Binding MountWorks}" AutoGenerateColumns="False" GroupingMode="Multiple" AutoExpandGroups="True" 
+                                       PullToRefreshCommand="{Binding GetMountworksCommand}">
+                        <xforms:SfDataGrid.GroupColumnDescriptions>
+                            <xforms:GroupColumnDescription ColumnName="TypeWork"/>
+                        </xforms:SfDataGrid.GroupColumnDescriptions>
+                        <xforms:SfDataGrid.SortColumnDescriptions>
+                            <xforms:SortColumnDescription ColumnName="Date"/>
+                        </xforms:SfDataGrid.SortColumnDescriptions>
+                        <xforms:SfDataGrid.Columns>
+                            <xforms:GridTextColumn HeaderText="Дата" MappingName="Date"/>
+                            <xforms:GridTextColumn HeaderText="Адрес" MappingName="Address"/>
+                        </xforms:SfDataGrid.Columns>
+                    </xforms:SfDataGrid>
+                </StackLayout>
+            </Expander>
+            <Expander HorizontalOptions="Center" Margin="5">
+                <Expander.Header>
+                    <Label Text="Заявки техникам" FontSize="Title" FontAttributes="Bold"/>
+                </Expander.Header>
+                <StackLayout>
+                    <dg:DataGrid ItemsSource="{Binding ServiceOrder}"/>
+                </StackLayout>
+            </Expander>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
