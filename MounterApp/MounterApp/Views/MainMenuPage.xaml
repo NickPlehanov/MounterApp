@@ -4,21 +4,21 @@
              xmlns:viewmodel="clr-namespace:MounterApp.ViewModel" 
              xmlns:dg="clr-namespace:Xamarin.Forms.DataGrid;assembly=Xamarin.Forms.DataGrid" xmlns:xforms="clr-namespace:Syncfusion.SfDataGrid.XForms;assembly=Syncfusion.SfDataGrid.XForms"
              x:Class="MounterApp.Views.MainMenuPage">
-    <ContentPage.Resources>
+    <!--<ContentPage.Resources>
         <viewmodel:MainMenuPageViewModel x:Key="viewmodel"/>
-    </ContentPage.Resources>
+    </ContentPage.Resources>-->
     <ContentPage.Content>
-        <StackLayout BindingContext="{StaticResource viewmodel}">
+        <!--<StackLayout BindingContext="{StaticResource viewmodel}">
             <Expander HorizontalOptions="Center" Margin="5">
                 <Expander.Header>
                     <Label Text="Монтажи" FontSize="Title" FontAttributes="Bold"/>
                 </Expander.Header>
                 <StackLayout>
-                    <!--<dg:DataGrid ItemsSource="{Binding Mounters}">
+                    --><!--<dg:DataGrid ItemsSource="{Binding Mounters}">
                         --><!--<dg:DataGrid.Columns>
                             <dg:DataGridColumn Width=""
                         </dg:DataGrid.Columns>--><!--
-                    </dg:DataGrid>-->
+                    </dg:DataGrid>--><!--
                     <xforms:SfDataGrid ItemsSource="{Binding MountWorks}" AutoGenerateColumns="False" GroupingMode="Multiple" AutoExpandGroups="True" 
                                        PullToRefreshCommand="{Binding GetMountworksCommand}">
                         <xforms:SfDataGrid.GroupColumnDescriptions>
@@ -42,6 +42,23 @@
                     <dg:DataGrid ItemsSource="{Binding ServiceOrder}"/>
                 </StackLayout>
             </Expander>
+        </StackLayout>-->
+        <Grid VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="6*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+        <StackLayout Grid.Row="1" Grid.Column="0">
+            <Button Text="Монтажи" Command="{Binding GetMountworksCommand}" WidthRequest="200" HeightRequest="200" FontSize="Large" FontAttributes="Bold" TextColor="DarkGoldenrod" BorderRadius="20" BorderWidth="2" BorderColor="PaleGoldenrod" Margin="5,0" Visual="Material"/>
         </StackLayout>
+        <StackLayout Grid.Row="1" Grid.Column="1">
+                <Button Text="Заявки техникам" Command="{Binding GetServiceordersCommand}" WidthRequest="200" HeightRequest="200" FontSize="Large" FontAttributes="Bold" TextColor="DarkGoldenrod" BorderRadius="20" BorderWidth="2" BorderColor="PaleGoldenrod" Margin="5,0"/>
+        </StackLayout>
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

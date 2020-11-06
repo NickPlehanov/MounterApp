@@ -1,70 +1,101 @@
-﻿using Android.Content.Res;
+﻿//using Android.Content.Res;
+using Android.Hardware;
 using MounterApp.Helpers;
 using MounterApp.Model;
+using MounterApp.Properties;
 using MounterApp.Views;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
-	class MainPageViewModel : BaseViewModel {
-		private RelayCommand _AuthCommand;
-		public RelayCommand AuthCommand {
-			get => _AuthCommand ??= new RelayCommand(async obj => {
-				using HttpClient client = new HttpClient();
-				string baseAddress = "https://ec5fa038b958.ngrok.io";
-				string Phone = null;
-				if(PhoneNumber.Length == 11) {
-					Phone = PhoneNumber.Substring(1, PhoneNumber.Length - 1);
-				}
-				HttpResponseMessage response = await client.GetAsync(baseAddress + "/api/NewMounterExtensionBases/" + Phone);
-				var resp = response.Content.ReadAsStringAsync().Result;
-				List<NewMounterExtensionBase> mounters = JsonConvert.DeserializeObject<List<NewMounterExtensionBase>>(resp);
+    class MainPageViewModel : BaseViewModel {
+        private RelayCommand _AuthCommand;
+        public RelayCommand AuthCommand {
+            get => _AuthCommand ??= new RelayCommand(async obj => {
+                ProgressBarVisible = true;
+                ProgressValue = 0;
+                using HttpClient client = new HttpClient();
+                //string baseAddress = "https://ec5fa038b958.ngrok.io";
+                string Phone = null;
+                if(PhoneNumber.Length == 11) {
+                    Phone = PhoneNumber.Substring(1,PhoneNumber.Length - 1);
+                }
+                ProgressValue = 20;
+                HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewMounterExtensionBases/phone?phone=" + Phone);
+                var resp = response.Content.ReadAsStringAsync().Result;
+                List<NewMounterExtensionBase> mounters = JsonConvert.DeserializeObject<List<NewMounterExtensionBase>>(resp).Where(x=>x.NewIsWorking==true).ToList();
+                ProgressValue = 50;
+                response = await client.GetAsync(Resources.BaseAddress + "/api/NewServicemanExtensionBases/phone?phone=" + Phone);
+                resp = response.Content.ReadAsStringAsync().Result;
+                List<NewServicemanExtensionBase> servicemans = JsonConvert.DeserializeObject<List<NewServicemanExtensionBase>>(resp).Where(x => x.NewIswork == true).ToList();
+                ProgressValue = 80;
+                if(mounters != null || servicemans != null) {
+                    if(mounters.Count > 0 || servicemans.Count > 0) {
+                        if(mounters.Count > 1 || servicemans.Count > 1) {
+                            ProgressValue = 100;
+                            ProgressBarVisible = false;
+                            Message = "Неоднозначно определен сотрудник";
+                        }
+                        else {
+                            ProgressValue = 100;
+                            ProgressBarVisible = false;
+                            MainMenuPageViewModel vm = new MainMenuPageViewModel(mounters,servicemans);
+                            App.Current.MainPage = new MainMenuPage(vm);
+                        }
+                    }
+                    else {
+                        Message = "Проверьте правильность ввода номера телефона";
+                        ProgressValue = 100;
+                        ProgressBarVisible = false;
+                    }
+                }
+            });
+        }
 
-				response = await client.GetAsync(baseAddress + "/api/NewServicemanExtensionBases/" + Phone);
-				resp = response.Content.ReadAsStringAsync().Result;
-				List<NewServicemanExtensionBase> servicemans = JsonConvert.DeserializeObject<List<NewServicemanExtensionBase>>(resp);
-				if (mounters!=null || servicemans != null) {
-					if (mounters.Count>0 || servicemans.Count > 0) {
-						//await PushAsync(new NavigationPage(new MainMenuPage()));
-						var _MainMenuPage = new MainMenuPage();
-						if(mounters.Count > 0)
-							_MainMenuPage.BindingContext = mounters;
-						if(servicemans.Count > 0)
-							_MainMenuPage.BindingContext = servicemans;
-						App.Current.MainPage = new NavigationPage(new MainMenuPage());
-					}
-				}
-			});
-		}
-
-		private string _PhoneNumber;
-		public string PhoneNumber {
-			get => _PhoneNumber;
-			set {
-				//if(value.Length == 11) {
-				//	_PhoneNumber = value.Substring(1, value.Length - 1);
-				//}
-				_PhoneNumber = value;
-				//else
-				OnPropertyChanged(nameof(PhoneNumber));
-			}
-		}
-
-		private string _Message;
-		public string Message {
-			get => _Message;
-			set {
-				_Message = value;
-				OnPropertyChanged(nameof(Message));
-			}
-		}
-		//private string ProcessResponse(string response) {
-		//	string s = response.Replace(@"\", string.Empty);
-		//	return s.Trim().Substring(1, (s.Length) - 2);
-		//}
-	}
+        private string _PhoneNumber;
+        public string PhoneNumber {
+            get => _PhoneNumber;
+            set {
+                //if(value.Length == 11) {
+                //	_PhoneNumber = value.Substring(1, value.Length - 1);
+                //}
+                _PhoneNumber = value;
+                //else
+                OnPropertyChanged(nameof(PhoneNumber));
+            }
+        }
+        private bool _ProgressBarVisible;
+        public bool ProgressBarVisible {
+            get => _ProgressBarVisible;
+            set {
+                _ProgressBarVisible = value;
+                OnPropertyChanged(nameof(ProgressBarVisible));
+            }
+        }
+        private decimal _ProgressValue;
+        public decimal ProgressValue {
+            get => _ProgressValue;
+            set {
+                _ProgressValue = value;
+                OnPropertyChanged(nameof(ProgressValue));
+            }
+        }
+        private string _Message;
+        public string Message {
+            get => _Message;
+            set {
+                _Message = value;
+                OnPropertyChanged(nameof(Message));
+            }
+        }
+        //private string ProcessResponse(string response) {
+        //	string s = response.Replace(@"\", string.Empty);
+        //	return s.Trim().Substring(1, (s.Length) - 2);
+        //}
+    }
 }
