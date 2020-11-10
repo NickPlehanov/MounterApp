@@ -59,6 +59,9 @@
         <StackLayout Grid.Row="1" Grid.Column="1">
                 <Button Text="Заявки техникам" Command="{Binding GetServiceordersCommand}" WidthRequest="200" HeightRequest="200" FontSize="Large" FontAttributes="Bold" TextColor="DarkGoldenrod" BorderRadius="20" BorderWidth="2" BorderColor="PaleGoldenrod" Margin="5,0"/>
         </StackLayout>
+            <StackLayout Grid.Row="2" Grid.ColumnSpan="2" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                <Label Text="{Binding Message}"/>
+            </StackLayout>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

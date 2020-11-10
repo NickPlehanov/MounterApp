@@ -20,7 +20,6 @@ namespace MounterApp.ViewModel {
                 ProgressBarVisible = true;
                 ProgressValue = 0;
                 using HttpClient client = new HttpClient();
-                //string baseAddress = "https://ec5fa038b958.ngrok.io";
                 string Phone = null;
                 if(PhoneNumber.Length == 11) {
                     Phone = PhoneNumber.Substring(1,PhoneNumber.Length - 1);

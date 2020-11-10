@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:dg="clr-namespace:Xamarin.Forms.DataGrid;assembly=Xamarin.Forms.DataGrid"
+             x:Class="MounterApp.Views.MountsPage">
+    <ContentPage.Content>
+        <StackLayout>
+            <Button Text="Просто тупо кнопка" Command="{Binding ClickCommand}"/>
+            <Expander>
+                <Expander.Header>
+                    <Label Text="{Binding HeaderNotSended}"/>
+                </Expander.Header>
+                <StackLayout>
+                    <Label Text="{Binding MsgNotSended}" IsVisible="{Binding MsgNotSendedVisibility}"/>
+                    <dg:DataGrid ItemsSource="{Binding NotSendedMounts}">
+                        <dg:DataGrid.Columns>
+                            <dg:DataGridColumn Width="*" Title="Объект" PropertyName=""/>
+                        </dg:DataGrid.Columns>
+                    </dg:DataGrid>
+                </StackLayout>
+            </Expander>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
