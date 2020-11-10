@@ -29,11 +29,14 @@ namespace MounterApp.ViewModel {
         }
         public MountsViewModel(List<NewMounterExtensionBase> mounters) {
             Mounters = mounters;
+            HeaderNotSended = "Неотправленные монтажи (0)";
             var _ntMounts = App.Database.GetMounts(Mounters.FirstOrDefault().NewMounterId).ToList();
             if(_ntMounts != null)
-                if(_ntMounts.Any())
+                if(_ntMounts.Any()) {
                     foreach(var item in _ntMounts)
                         NotSendedMounts.Add(item);
+                    HeaderNotSended = "Неотправленные монтажи ("+_ntMounts.Count.ToString()+")";
+                }
         }
         private List<NewMounterExtensionBase> _Mounters;
         public List<NewMounterExtensionBase> Mounters {
@@ -51,6 +54,15 @@ namespace MounterApp.ViewModel {
                     bool t = false;
                 }
             });
+        }
+
+        private string _HeaderNotSended;
+        public string HeaderNotSended {
+            get => _HeaderNotSended;
+            set {
+                _HeaderNotSended = value;
+                OnPropertyChanged(nameof(HeaderNotSended));
+            }
         }
     }
 }

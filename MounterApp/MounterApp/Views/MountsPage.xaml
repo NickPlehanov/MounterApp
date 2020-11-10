@@ -3,12 +3,21 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
              xmlns:dg="clr-namespace:Xamarin.Forms.DataGrid;assembly=Xamarin.Forms.DataGrid"
              x:Class="MounterApp.Views.MountsPage">
-    <ContentPage.Content>
-        <StackLayout>
-            <Button Text="Просто тупо кнопка" Command="{Binding ClickCommand}"/>
-            <Expander>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="7*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="5*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <StackLayout Grid.Row="1" Grid.ColumnSpan="3">
+            <Expander Margin="5">
                 <Expander.Header>
-                    <Label Text="{Binding HeaderNotSended}"/>
+                    <Label  Text="{Binding HeaderNotSended}" FontAttributes="Bold" Visual="Material"/>
                 </Expander.Header>
                 <StackLayout>
                     <Label Text="{Binding MsgNotSended}" IsVisible="{Binding MsgNotSendedVisibility}"/>
@@ -20,5 +29,6 @@
                 </StackLayout>
             </Expander>
         </StackLayout>
-    </ContentPage.Content>
+        <Button Grid.Row="0" Grid.Column="2" Text="Новый монтаж" Command="{Binding NewMountCommand}"/>
+    </Grid>
 </ContentPage>
