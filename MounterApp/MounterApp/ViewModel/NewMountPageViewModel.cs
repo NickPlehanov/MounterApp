@@ -1,4 +1,5 @@
-﻿using MounterApp.Helpers;
+﻿using Android.Graphics.Drawables;
+using MounterApp.Helpers;
 using MounterApp.InternalModel;
 using MounterApp.Model;
 using MounterApp.Views;
@@ -7,10 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
-    public class NewMountPageViewModel :BaseViewModel {
+    public class NewMountPageViewModel : BaseViewModel {
 
         private List<NewMounterExtensionBase> _Mounters;
         public List<NewMounterExtensionBase> Mounters {
@@ -31,6 +33,7 @@ namespace MounterApp.ViewModel {
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Ответственные объекта" });
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Вывеска объекта" });
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Доп. фото" });
+            ImgSrc = "EmptyPhoto.png";
         }
         private ImageSource _ImgSrc;
         public ImageSource ImgSrc {
@@ -40,10 +43,28 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(ImgSrc));
             }
         }
-        
+
         private RelayCommand _AddNewPhotoCommand;
         public RelayCommand AddNewPhotoCommand {
             get => _AddNewPhotoCommand ??= new RelayCommand(async obj => {
+                if(PhotoName != null)
+                    Photos.Add(new PhotoCollection(Guid.NewGuid(),PhotoName.PhotoTypeId,PhotoComment,File.Path));
+                else
+                    await Application.Current.MainPage.DisplayAlert("Ошибка","Выберите тип фотографии","OK");
+            });
+        }
+        private Plugin.Media.Abstractions.MediaFile _File;
+        public Plugin.Media.Abstractions.MediaFile File {
+            get => _File;
+            set {
+                _File = value;
+                OnPropertyChanged(nameof(File));
+            }
+        }
+
+        private RelayCommand _TakePhotoCommand;
+        public RelayCommand TakePhotoCommand {
+            get => _TakePhotoCommand ??= new RelayCommand(async obj => {
                 //NewMountpage mountpage = new NewMountpage();
                 //string result = await Application.Current.MainPage.DisplayPromptAsync("Question 2","What's 5 + 5?",initialValue: "10",maxLength: 2,keyboard: Keyboard.Numeric);
                 await CrossMedia.Current.Initialize();
@@ -53,24 +74,29 @@ namespace MounterApp.ViewModel {
                     return;
                 }
 
-                var file = await CrossMedia.Current.TakePhotoAsync(new Plugin.Media.Abstractions.StoreCameraMediaOptions {
+                File = await CrossMedia.Current.TakePhotoAsync(new Plugin.Media.Abstractions.StoreCameraMediaOptions {
                     Directory = "Sample",
                     Name = "test.jpg"
                 });
 
-                if(file == null)
+                if(File == null)
                     return;
 
-                //await Application.Current.MainPage.DisplayAlert("File Location",file.Path,"OK");
-
-                ImgSrc=ImageSource.FromStream(() => {
-                    var stream = file.GetStream();
+                ImgSrc = ImageSource.FromStream(() => {
+                    var stream = File.GetStream();
                     return stream;
                 });
-                if (PhotoName!=null)
-                    Photos.Add(new PhotoCollection(Guid.NewGuid(),PhotoName.PhotoTypeId,PhotoComment,file.Path));
-                else
-                    await Application.Current.MainPage.DisplayAlert("Ошибка","Выберите тип фотографии","OK");
+            });
+        }
+
+        private RelayCommand _DeleteCommand;
+        public RelayCommand DeleteCommand {
+            get => _DeleteCommand ??= new RelayCommand(async obj => {
+                if(SelectedPhoto != null) {
+                    string result = await Application.Current.MainPage.DisplayPromptAsync("Удаление","Вы действительно хотите удалить выбранную строку? Напишите +, дял удаления в поле ниже.");
+                    if(result.Equals("+"))
+                        Photos.Remove(SelectedPhoto);
+                }
             });
         }
 
@@ -100,6 +126,7 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(ObjectNumber));
             }
         }
+
         private string _ObjectName;
         public string ObjectName {
             get => _ObjectName;
@@ -108,6 +135,7 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(ObjectName));
             }
         }
+
         private string _ObjectAddress;
         public string ObjectAddress {
             get => _ObjectAddress;
@@ -116,6 +144,7 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(ObjectAddress));
             }
         }
+
         private string _ObjectDriveways;
         public string ObjectDriveways {
             get => _ObjectDriveways;
@@ -124,6 +153,7 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(ObjectDriveways));
             }
         }
+
         private string _PhotoComment;
         public string PhotoComment {
             get => _PhotoComment;
@@ -132,12 +162,22 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(PhotoComment));
             }
         }
+
         private ObservableCollection<PhotoCollection> _Photos = new ObservableCollection<PhotoCollection>();
         public ObservableCollection<PhotoCollection> Photos {
             get => _Photos;
             set {
                 _Photos = value;
                 OnPropertyChanged(nameof(Photos));
+            }
+        }
+
+        private PhotoCollection _SelectedPhoto;
+        public PhotoCollection SelectedPhoto {
+            get => _SelectedPhoto;
+            set {
+                _SelectedPhoto = value;
+                OnPropertyChanged(nameof(SelectedPhoto));
             }
         }
     }
