@@ -29,6 +29,6 @@
                 </StackLayout>
             </Expander>
         </StackLayout>
-        <Button Grid.Row="0" Grid.Column="2" Text="Новый монтаж" Command="{Binding NewMountCommand}"/>
+        <Button Grid.Row="0" Grid.Column="2" Text="+" FontSize="Large" Command="{Binding NewMountCommand}"/>
     </Grid>
 </ContentPage>

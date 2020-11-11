@@ -1,6 +1,7 @@
 ﻿using MounterApp.Helpers;
 using MounterApp.InternalModel;
 using MounterApp.Model;
+using MounterApp.Views;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -47,11 +48,13 @@ namespace MounterApp.ViewModel {
             }
         }
 
-        private RelayCommand _ClickCommand;
-        public RelayCommand ClickCommand {
-            get => _ClickCommand ??= new RelayCommand(async obj => {
+        private RelayCommand _NewMountCommand;
+        public RelayCommand NewMountCommand {
+            get => _NewMountCommand ??= new RelayCommand(async obj => {
                 if(Mounters.Count > 0) {
-                    bool t = false;
+                    //NewMountPageViewModel vm = new NewMountPageViewModel();
+                    NewMountPageViewModel vm = new NewMountPageViewModel(Mounters);
+                    App.Current.MainPage = new NewMountpage(vm);
                 }
             });
         }
