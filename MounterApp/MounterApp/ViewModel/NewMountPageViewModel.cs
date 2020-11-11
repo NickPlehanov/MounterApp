@@ -61,17 +61,16 @@ namespace MounterApp.ViewModel {
                 if(file == null)
                     return;
 
-                await Application.Current.MainPage.DisplayAlert("File Location",file.Path,"OK");
+                //await Application.Current.MainPage.DisplayAlert("File Location",file.Path,"OK");
 
                 ImgSrc=ImageSource.FromStream(() => {
                     var stream = file.GetStream();
                     return stream;
                 });
-                //image.Source = ImageSource.FromStream(() =>
-                //{
-                //    var stream = file.GetStream();
-                //    return stream;
-                //});
+                if (PhotoName!=null)
+                    Photos.Add(new PhotoCollection(Guid.NewGuid(),PhotoName.PhotoTypeId,PhotoComment,file.Path));
+                else
+                    await Application.Current.MainPage.DisplayAlert("Ошибка","Выберите тип фотографии","OK");
             });
         }
 
@@ -123,6 +122,22 @@ namespace MounterApp.ViewModel {
             set {
                 _ObjectDriveways = value;
                 OnPropertyChanged(nameof(ObjectDriveways));
+            }
+        }
+        private string _PhotoComment;
+        public string PhotoComment {
+            get => _PhotoComment;
+            set {
+                _PhotoComment = value;
+                OnPropertyChanged(nameof(PhotoComment));
+            }
+        }
+        private ObservableCollection<PhotoCollection> _Photos = new ObservableCollection<PhotoCollection>();
+        public ObservableCollection<PhotoCollection> Photos {
+            get => _Photos;
+            set {
+                _Photos = value;
+                OnPropertyChanged(nameof(Photos));
             }
         }
     }

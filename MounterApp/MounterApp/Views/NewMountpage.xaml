@@ -14,9 +14,9 @@
                 <RowDefinition Height="0.5*"/>
             </Grid.RowDefinitions>-->
             <StackLayout>
-            <!--<Expander VerticalOptions="StartAndExpand" IsExpanded="True" >
+                <!--<Expander VerticalOptions="StartAndExpand" IsExpanded="True" >
                 <Expander.Header>-->
-                    <Label BackgroundColor="WhiteSmoke" Text="Информация об объекте" FontAttributes="Bold" HorizontalTextAlignment="Center" Margin="10" FontSize="24" />
+                <Label BackgroundColor="WhiteSmoke" Text="Информация об объекте" FontAttributes="Bold" HorizontalTextAlignment="Center" Margin="10" FontSize="24" />
                 <!--</Expander.Header>-->
                 <StackLayout Margin="5">
                     <Label Text="№ объекта" HorizontalOptions="Center" FontAttributes="Bold"/>
@@ -26,24 +26,27 @@
                     <Label Text="Адрес объекта" HorizontalOptions="Center" FontAttributes="Bold"/>
                     <Entry Keyboard="Text" Text="{Binding ObjectAddress}"/>
                     <Label Text="Подъездные пути" HorizontalOptions="Center" FontAttributes="Bold"/>
-                        <Entry Keyboard="Text" Text="{Binding ObjectDriveways}" />
-                    </StackLayout>
-            <!--</Expander>
+                    <Entry Keyboard="Text" Text="{Binding ObjectDriveways}" />
+                </StackLayout>
+                <!--</Expander>
             <Expander VerticalOptions="StartAndExpand" IsExpanded="True" Margin="10">
                 <Expander.Header>-->
                 <Label BackgroundColor="WhiteSmoke" Text="Фотографии объекта" FontSize="24" FontAttributes="Bold" HorizontalTextAlignment="Center" Margin="10"/>
                 <!--</Expander.Header>-->
-                <FlexLayout HorizontalOptions="CenterAndExpand" Margin="5" VerticalOptions="CenterAndExpand">
-                    <Button Text="Добавить фото" Command="{Binding AddNewPhotoCommand}"/>
-                    <Picker Title="Выберите тип фото" ItemsSource="{Binding PhotoNames}" ItemDisplayBinding="{Binding PhotoTypeName}" SelectedItem="{Binding PhotoNamePhotoName}"/>
-                </FlexLayout>
-                <Image Source="{Binding ImgSrc}" Aspect="AspectFit" HeightRequest="200" WidthRequest="200"/>
-                <datagrid:DataGrid ItemsSource="{Binding PhotoCollection}">
-                    <datagrid:DataGrid.Columns>
-                        <datagrid:DataGridColumn Width="*" Title="Название" PropertyName="PhotoName"/>
-                    </datagrid:DataGrid.Columns>
-                </datagrid:DataGrid>
-                <!--</Expander>-->
+                <ScrollView>
+                    <StackLayout HorizontalOptions="Center" Margin="5" VerticalOptions="Center">
+                        <Picker Title="Выберите тип фото" ItemsSource="{Binding PhotoNames}" ItemDisplayBinding="{Binding PhotoTypeName}" SelectedItem="{Binding PhotoName}"/>
+                        <Entry Text="{Binding PhotoComment}"/>
+                        <Button Text="Добавить фото" Command="{Binding AddNewPhotoCommand}"/>
+                    <!--<Image Source="{Binding ImgSrc}" Aspect="AspectFit" HeightRequest="200" WidthRequest="200"/>-->
+                    <datagrid:DataGrid ItemsSource="{Binding Photos}" >
+                        <datagrid:DataGrid.Columns>
+                                <datagrid:DataGridColumn Width="*" Title="Название" PropertyName="Path"/>
+                        </datagrid:DataGrid.Columns>
+                    </datagrid:DataGrid>
+                    </StackLayout>
+                    <!--</Expander>-->
+                </ScrollView>
             </StackLayout>
         </Grid>
     </ContentPage.Content>
