@@ -35,7 +35,7 @@
                     <Button Text="Добавить фото" Command="{Binding AddNewPhotoCommand}"/>             
                 </StackLayout>
                 <StackLayout Grid.Row="1" Grid.Column="1" Margin="5">
-                    <Image x:Name="img" Source="{Binding ImgSrc}" Aspect="AspectFit" HeightRequest="200" WidthRequest="200">
+                    <Image x:Name="img" Source="{Binding ImgSrc}" Aspect="AspectFit" >
                         <Image.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding TakePhotoCommand}"/>
                         </Image.GestureRecognizers>
@@ -52,6 +52,7 @@
                     </datagrid:DataGrid>
                 </StackLayout>
             </Grid>
+            <Button Text="Отправить данные" Command="{Binding SendToServer}" Margin="5"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

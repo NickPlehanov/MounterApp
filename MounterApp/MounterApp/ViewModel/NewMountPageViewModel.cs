@@ -2,11 +2,16 @@
 using MounterApp.Helpers;
 using MounterApp.InternalModel;
 using MounterApp.Model;
+using MounterApp.Properties;
 using MounterApp.Views;
+using Newtonsoft.Json;
 using Plugin.Media;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -44,11 +49,46 @@ namespace MounterApp.ViewModel {
             }
         }
 
+        private RelayCommand _SendToServer;
+        public RelayCommand SendToServer {
+            get => _SendToServer ??= new RelayCommand(async obj => {                
+                //StreamContent imagePart;
+                foreach(PhotoCollection ph in Photos) {
+                    using(HttpClient client = new HttpClient()) {
+                        MultipartFormDataContent form = new MultipartFormDataContent();
+                        form.Add(new StreamContent(ph.File.GetStream()),String.Format("file"),String.Format(ObjectNumber + "_" + PhotoNames.FirstOrDefault(x => x.PhotoTypeId == ph.Type).PhotoTypeName + ".jpeg"));
+                        HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress + "/api/Common"
+                                ,form);
+                        if(response.StatusCode.ToString() != "OK")
+                            await Application.Current.MainPage.DisplayAlert("Ошибка (Фото не было загружено)",response.Content.ReadAsStringAsync().Result,"OK");
+                    }
+                }
+            }
+                //,obj=>!string.IsNullOrEmpty(ObjectName) 
+                //    && !string.IsNullOrEmpty(ObjectNumber)
+                //    && !string.IsNullOrEmpty(ObjectAddress)
+                //    && !string.IsNullOrEmpty(ObjectDriveways)
+                //    && Photos.Count>=5
+                );
+        }
+
         private RelayCommand _AddNewPhotoCommand;
         public RelayCommand AddNewPhotoCommand {
             get => _AddNewPhotoCommand ??= new RelayCommand(async obj => {
-                if(PhotoName != null)
-                    Photos.Add(new PhotoCollection(Guid.NewGuid(),PhotoName.PhotoTypeId,PhotoComment,File.Path));
+                if(PhotoName != null) {
+                    Photos.Add(new PhotoCollection(Guid.NewGuid(),PhotoName.PhotoTypeId,PhotoComment,File.Path,File));
+                    ImgSrc = "EmptyPhoto.png";
+                    SelectedPhoto = null;
+
+                    //using HttpClient client = new HttpClient();
+                    //MultipartFormDataContent form = new MultipartFormDataContent();
+                    //StreamContent imagePart = new StreamContent(Photos[0].File.GetStream());
+                    //imagePart.Headers.Add("Content-Type","image/jpeg");
+                    //form.Add(imagePart,String.Format("file"),String.Format("t.jpeg"));
+                    //HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress + "/api/Common"
+                    //        ,form);
+                    //var resp = response.Content.ReadAsStringAsync().Result;
+                }
                 else
                     await Application.Current.MainPage.DisplayAlert("Ошибка","Выберите тип фотографии","OK");
             });
