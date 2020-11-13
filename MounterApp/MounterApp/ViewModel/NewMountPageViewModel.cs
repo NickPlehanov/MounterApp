@@ -6,6 +6,7 @@ using MounterApp.Properties;
 using MounterApp.Views;
 using Newtonsoft.Json;
 using Plugin.Media;
+using Plugin.Media.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -49,14 +50,23 @@ namespace MounterApp.ViewModel {
             }
         }
 
+        private ObservableCollection<ImageSource> _PhotoSource = new ObservableCollection<ImageSource>();
+        public ObservableCollection<ImageSource> PhotoSource {
+            get => _PhotoSource;
+            set {
+                _PhotoSource = value;
+                OnPropertyChanged(nameof(PhotoSource));
+            }
+        }
+
         private RelayCommand _SendToServer;
         public RelayCommand SendToServer {
             get => _SendToServer ??= new RelayCommand(async obj => {                
                 //StreamContent imagePart;
-                foreach(PhotoCollection ph in Photos) {
+                foreach(PhotoCollection ph in Photos.Where(x=>x.File!=null)) {
                     using(HttpClient client = new HttpClient()) {
                         MultipartFormDataContent form = new MultipartFormDataContent();
-                        form.Add(new StreamContent(ph.File.GetStream()),String.Format("file"),String.Format(ObjectNumber + "_" + PhotoNames.FirstOrDefault(x => x.PhotoTypeId == ph.Type).PhotoTypeName + ".jpeg"));
+                        form.Add(new StreamContent(ph.File.GetStream()),String.Format("file"),String.Format(ObjectNumber + "_" + ph._Types.PhotoTypeName + ".jpeg"));
                         HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress + "/api/Common"
                                 ,form);
                         if(response.StatusCode.ToString() != "OK")
@@ -76,7 +86,19 @@ namespace MounterApp.ViewModel {
         public RelayCommand AddNewPhotoCommand {
             get => _AddNewPhotoCommand ??= new RelayCommand(async obj => {
                 if(PhotoName != null) {
-                    Photos.Add(new PhotoCollection(Guid.NewGuid(),PhotoName.PhotoTypeId,PhotoComment,File.Path,File));
+                    Photos.Add(new PhotoCollection(
+                        Guid.NewGuid(),
+                        //PhotoName.PhotoTypeId,
+                        PhotoComment,
+                        File.Path,
+                        File,
+                        ImageSource.FromStream(() => {
+                            var stream = File.GetStream();
+                            return stream;
+                        }),
+                        PhotoName
+                        ));
+                    PhotoSource.Add(ImgSrc);
                     ImgSrc = "EmptyPhoto.png";
                     SelectedPhoto = null;
 
@@ -93,8 +115,8 @@ namespace MounterApp.ViewModel {
                     await Application.Current.MainPage.DisplayAlert("Ошибка","Выберите тип фотографии","OK");
             });
         }
-        private Plugin.Media.Abstractions.MediaFile _File;
-        public Plugin.Media.Abstractions.MediaFile File {
+        private MediaFile _File;
+        public MediaFile File {
             get => _File;
             set {
                 _File = value;
@@ -126,6 +148,10 @@ namespace MounterApp.ViewModel {
                     var stream = File.GetStream();
                     return stream;
                 });
+                //if (PhotoSource.Count>0)
+                //    PhotoSource.Insert(PhotoSource.Count - 1,ImgSrc);
+                //else
+                //    PhotoSource.Add(ImgSrc);
             });
         }
 
@@ -134,9 +160,10 @@ namespace MounterApp.ViewModel {
             get => _DeleteCommand ??= new RelayCommand(async obj => {
                 if(SelectedPhoto != null) {
                     string result = await Application.Current.MainPage.DisplayPromptAsync("Удаление","Вы действительно хотите удалить выбранную строку? Напишите +, дял удаления в поле ниже.");
-                    if(result.Equals("+"))
+                    if(result.Equals("+")) 
                         Photos.Remove(SelectedPhoto);
                 }
+                SelectedPhoto = null;
             });
         }
 
