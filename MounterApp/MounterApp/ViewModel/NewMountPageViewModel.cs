@@ -41,6 +41,30 @@ namespace MounterApp.ViewModel {
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Доп. фото" });
             ImgSrc = "EmptyPhoto.png";
         }
+        public NewMountPageViewModel(Mounts mount) {
+            Mount = mount;
+            ObjectNumber = Mount.ObjectNumber;
+            ObjectAddress = Mount.AddressName;
+            ObjectName = Mount.ObjectName;
+            ObjectDriveways = Mount.Driveways;
+            //Photos.Add(new PhotoCollection(Guid.NewGuid(),null,null,Mount.ObjectCard,null,PhotoName));
+            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Карточка объекта" });
+            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Схема объекта" });
+            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Расшлейфовка объекта" });
+            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Ответственные объекта" });
+            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Вывеска объекта" });
+            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Доп. фото" });
+            ImgSrc = "EmptyPhoto.png";
+        }
+
+        private Mounts _Mount;
+        public Mounts Mount {
+            get => _Mount;
+            set {
+                _Mount = value;
+                OnPropertyChanged(nameof(Mount));
+            }
+        }
         private ImageSource _ImgSrc;
         public ImageSource ImgSrc {
             get => _ImgSrc;
@@ -61,25 +85,35 @@ namespace MounterApp.ViewModel {
 
         private RelayCommand _SendToServer;
         public RelayCommand SendToServer {
-            get => _SendToServer ??= new RelayCommand(async obj => {                
-                //StreamContent imagePart;
-                foreach(PhotoCollection ph in Photos.Where(x=>x.File!=null)) {
-                    using(HttpClient client = new HttpClient()) {
-                        MultipartFormDataContent form = new MultipartFormDataContent();
-                        form.Add(new StreamContent(ph.File.GetStream()),String.Format("file"),String.Format(ObjectNumber + "_" + ph._Types.PhotoTypeName + ".jpeg"));
-                        HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress + "/api/Common"
-                                ,form);
-                        if(response.StatusCode.ToString() != "OK")
-                            await Application.Current.MainPage.DisplayAlert("Ошибка (Фото не было загружено)",response.Content.ReadAsStringAsync().Result,"OK");
-                    }
-                }
-            }
-                //,obj=>!string.IsNullOrEmpty(ObjectName) 
-                //    && !string.IsNullOrEmpty(ObjectNumber)
-                //    && !string.IsNullOrEmpty(ObjectAddress)
-                //    && !string.IsNullOrEmpty(ObjectDriveways)
-                //    && Photos.Count>=5
-                );
+            get => _SendToServer ??= new RelayCommand(async obj => {
+                if(string.IsNullOrEmpty(ObjectNumberValidationError) && string.IsNullOrWhiteSpace(ObjectNumberValidationError))
+                    if(string.IsNullOrEmpty(ObjectNameValidationError) && string.IsNullOrWhiteSpace(ObjectNameValidationError))
+                        if(string.IsNullOrEmpty(ObjectAddressValidationError) && string.IsNullOrWhiteSpace(ObjectAddressValidationError)) {
+                                App.Database.SaveMount(new Mounts() {
+                                    ObjectNumber = ObjectNumber,
+                                    ObjectName = ObjectName,
+                                    AddressName = ObjectAddress,
+                                    //TODO:получать максимальный из базы и писать +1
+                                    ID = 1,
+                                    MounterID = Mounters.FirstOrDefault().NewMounterId,
+                                    Driveways = ObjectDriveways,
+                                    State=0
+                                    //ObjectCard = System.IO.File.ReadAllBytes(Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Карточка объекта").File)
+                                    //ObjectCard = Photos.FirstOrDefault(x => x._Types.PhotoTypeName).File.GetStream().CopyTo(new MemoryStream().ToArray()),
+                                    //MemoryStream = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Карточка объекта").File.GetStream(),
+                                });
+                            foreach(PhotoCollection ph in Photos.Where(x => x.File != null)) {
+                                using(HttpClient client = new HttpClient()) {
+                                    MultipartFormDataContent form = new MultipartFormDataContent();
+                                    form.Add(new StreamContent(ph.File.GetStream()),String.Format("file"),String.Format(ObjectNumber + "_" + ph._Types.PhotoTypeName + ".jpeg"));
+                                    HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress + "/api/Common"
+                                            ,form);
+                                    if(response.StatusCode.ToString() != "OK")
+                                        await Application.Current.MainPage.DisplayAlert("Ошибка (Фото не было загружено)",response.Content.ReadAsStringAsync().Result,"OK");
+                                }
+                            }
+                        }
+            });
         }
 
         private RelayCommand _AddNewPhotoCommand;
@@ -160,7 +194,7 @@ namespace MounterApp.ViewModel {
             get => _DeleteCommand ??= new RelayCommand(async obj => {
                 if(SelectedPhoto != null) {
                     string result = await Application.Current.MainPage.DisplayPromptAsync("Удаление","Вы действительно хотите удалить выбранную строку? Напишите +, дял удаления в поле ниже.");
-                    if(result.Equals("+")) 
+                    if(result.Equals("+"))
                         Photos.Remove(SelectedPhoto);
                 }
                 SelectedPhoto = null;
@@ -187,27 +221,76 @@ namespace MounterApp.ViewModel {
 
         private string _ObjectNumber;
         public string ObjectNumber {
-            get => _ObjectNumber;
+            //get => _ObjectNumber;
+            get {
+                if(string.IsNullOrEmpty(_ObjectNumber) || string.IsNullOrWhiteSpace(_ObjectNumber)) {
+                    ObjectNumberValidationError = "Номер объекта не может быть пустым";
+                    VisibleObjectNumberValidationError = true;
+                }
+                return _ObjectNumber;
+            }
             set {
                 _ObjectNumber = value;
+                if(string.IsNullOrEmpty(_ObjectNumber) || string.IsNullOrWhiteSpace(_ObjectNumber)) {
+                    ObjectNumberValidationError = "Номер объекта не может быть пустым";
+                    VisibleObjectNumberValidationError = true;
+                }
+                else if(!int.TryParse(_ObjectNumber,out _)) {
+                    ObjectNumberValidationError = "Номер объекта должен быть числовым значением";
+                    VisibleObjectNumberValidationError = true;
+                }
+                else {
+                    ObjectNumberValidationError = "";
+                    VisibleObjectNumberValidationError = false;
+                }
                 OnPropertyChanged(nameof(ObjectNumber));
             }
         }
 
         private string _ObjectName;
         public string ObjectName {
-            get => _ObjectName;
+            //get => _ObjectName;
+            get {
+                if(string.IsNullOrEmpty(_ObjectName) || string.IsNullOrWhiteSpace(_ObjectName)) {
+                    ObjectNameValidationError = "Название объекта не может быть пустым";
+                    VisibleObjectNameValidationError = true;
+                }
+                return _ObjectName;
+            }
             set {
                 _ObjectName = value;
+                if(string.IsNullOrEmpty(_ObjectName) || string.IsNullOrWhiteSpace(_ObjectName)) {
+                    ObjectNameValidationError = "Название объекта не может быть пустым";
+                    VisibleObjectNameValidationError = true;
+                }
+                else {
+                    ObjectNameValidationError = "";
+                    VisibleObjectNameValidationError = false;
+                }
                 OnPropertyChanged(nameof(ObjectName));
             }
         }
 
         private string _ObjectAddress;
         public string ObjectAddress {
-            get => _ObjectAddress;
+            //get => _ObjectAddress;
+            get {
+                if(string.IsNullOrEmpty(_ObjectAddress) || string.IsNullOrWhiteSpace(_ObjectAddress)) {
+                    ObjectAddressValidationError = "Адрес объекта не может быть пустым";
+                    VisibleObjectAddressValidationError = true;
+                }
+                return _ObjectAddress;
+            }
             set {
                 _ObjectAddress = value;
+                if(string.IsNullOrEmpty(_ObjectAddress) || string.IsNullOrWhiteSpace(_ObjectAddress)) {
+                    ObjectAddressValidationError = "Адрес объекта не может быть пустым";
+                    VisibleObjectAddressValidationError = true;
+                }
+                else {
+                    ObjectAddressValidationError = "";
+                    VisibleObjectAddressValidationError = false;
+                }
                 OnPropertyChanged(nameof(ObjectAddress));
             }
         }
@@ -229,6 +312,74 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(PhotoComment));
             }
         }
+
+        private string _ObjectNumberValidationError;
+        public string ObjectNumberValidationError {
+            get => _ObjectNumberValidationError;
+            set {
+                _ObjectNumberValidationError = value;
+                OnPropertyChanged(nameof(ObjectNumberValidationError));
+            }
+        }
+
+        private bool _VisibleObjectNumberValidationError;
+        public bool VisibleObjectNumberValidationError {
+            get => _VisibleObjectNumberValidationError;
+            set {
+                _VisibleObjectNumberValidationError = value;
+                OnPropertyChanged(nameof(VisibleObjectNumberValidationError));
+            }
+        }
+
+        private string _ObjectNameValidationError;
+        public string ObjectNameValidationError {
+            get => _ObjectNameValidationError;
+            set {
+                _ObjectNameValidationError = value;
+                OnPropertyChanged(nameof(ObjectNameValidationError));
+            }
+        }
+
+        private bool _VisibleObjectNameValidationError;
+        public bool VisibleObjectNameValidationError {
+            get => _VisibleObjectNameValidationError;
+            set {
+                _VisibleObjectNameValidationError = value;
+                OnPropertyChanged(nameof(VisibleObjectNameValidationError));
+            }
+        }
+
+        private string _ObjectAddressValidationError;
+        public string ObjectAddressValidationError {
+            get => _ObjectAddressValidationError;
+            set {
+                _ObjectAddressValidationError = value;
+                OnPropertyChanged(nameof(ObjectAddressValidationError));
+            }
+        }
+
+        private bool _VisibleObjectAddressValidationError;
+        public bool VisibleObjectAddressValidationError {
+            get => _VisibleObjectAddressValidationError;
+            set {
+                _VisibleObjectAddressValidationError = value;
+                OnPropertyChanged(nameof(VisibleObjectAddressValidationError));
+            }
+        }
+
+        //private bool _SendButtonEnabled;
+        //public bool SendButtonEnabled {
+        //    get => _SendButtonEnabled;
+        //    set {
+        //        _SendButtonEnabled = value;
+        //        SendButtonEnabled = false;
+        //        if(!string.IsNullOrEmpty(ObjectNumberValidationError) && !string.IsNullOrWhiteSpace(ObjectNumberValidationError))
+        //            if(!string.IsNullOrEmpty(ObjectNameValidationError) && !string.IsNullOrWhiteSpace(ObjectNameValidationError))
+        //                if(!string.IsNullOrEmpty(ObjectAddressValidationError) && !string.IsNullOrWhiteSpace(ObjectAddressValidationError))
+        //                    SendButtonEnabled = true;
+        //        OnPropertyChanged(nameof(SendButtonEnabled));
+        //    }
+        //}
 
         private ObservableCollection<PhotoCollection> _Photos = new ObservableCollection<PhotoCollection>();
         public ObservableCollection<PhotoCollection> Photos {

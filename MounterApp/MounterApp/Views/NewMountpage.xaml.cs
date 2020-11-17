@@ -21,9 +21,9 @@ namespace MounterApp.Views {
             ViewModel = vm;
             this.BindingContext = ViewModel;
         }
-        public NewMountpage(List<NewMounterExtensionBase> _mounters) {
-            InitializeComponent();
-            this.BindingContext = new MountsPage(_mounters);
-        }
+        //public NewMountpage(List<NewMounterExtensionBase> _mounters) {
+        //    InitializeComponent();
+        //    this.BindingContext = new MountsPage(_mounters);
+        //}
     }
 }

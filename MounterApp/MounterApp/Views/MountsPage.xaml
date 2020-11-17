@@ -19,14 +19,33 @@
                 <Expander.Header>
                     <Label  Text="{Binding HeaderNotSended}" FontAttributes="Bold" Visual="Material"/>
                 </Expander.Header>
-                <StackLayout>
-                    <Label Text="{Binding MsgNotSended}" IsVisible="{Binding MsgNotSendedVisibility}"/>
-                    <dg:DataGrid ItemsSource="{Binding NotSendedMounts}">
+                <!--<StackLayout>-->
+                    <!--<Label Text="{Binding MsgNotSended}" IsVisible="{Binding MsgNotSendedVisibility}"/>-->
+                    <!--<dg:DataGrid ItemsSource="{Binding NotSendedMounts}">
                         <dg:DataGrid.Columns>
                             <dg:DataGridColumn Width="*" Title="Объект" PropertyName=""/>
                         </dg:DataGrid.Columns>
-                    </dg:DataGrid>
-                </StackLayout>
+                    </dg:DataGrid>-->
+                    <CollectionView Grid.ColumnSpan="2" Grid.Row="1" Margin="5" 
+                                ItemsSource="{Binding NotSendedMounts}" SelectionMode="Single" 
+                                    SelectedItem="{Binding NotSendedMount}"
+                                    SelectionChangedCommand="{Binding SelectMountCommand, Mode=TwoWay}">
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Vertical" Span="4"/>
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <StackLayout>
+                                    <!--<Image Source="{Binding Path=ImgSrc}" Margin="5"/>
+                                    <Label Text="{Binding Path=_Types.PhotoTypeName}" VerticalTextAlignment="Center"/>-->
+                                <Label Text="{Binding Path=ObjectNumber}" HeightRequest="100" WidthRequest="100" BackgroundColor="Azure" Margin="5" 
+                                       HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                <!--<Button Text="{Binding Path=ObjectNumber}"/>-->
+                                </StackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                <!--</StackLayout>-->
             </Expander>
         </StackLayout>
         <Button Grid.Row="0" Grid.Column="2" Text="+" FontSize="Large" Command="{Binding NewMountCommand}"/>

@@ -17,7 +17,7 @@
             <!--<Editor Keyboard="Telephone" x:Name="PhoneNumber" Text="{Binding PhoneNumber, Mode=TwoWay}"/>-->
             <!--<Button Text="ОК" Command="{Binding AuthCommand}" CommandParameter="{Binding Source=PhoneNumber, Path=Text}" BorderColor="Bisque" BorderWidth="2" WidthRequest="20" VerticalOptions="CenterAndExpand" FontAttributes="Bold"/>-->
             <Label Text="{Binding Message, Mode=TwoWay}" FontAttributes="Italic" TextColor="Red"/>
-            <ProgressBar IsVisible="{Binding ProgressBarVisible}" Progress="{Binding ProgressValue}" ProgressColor="Red"/>
+            <ProgressBar Progress="{Binding ProgressValue}" ProgressColor="Red" Scale="5"/>
         </StackLayout>
         
         <!--<StackLayout Grid.Row="1" Margin="5" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">

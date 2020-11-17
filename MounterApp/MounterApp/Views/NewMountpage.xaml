@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:datagrid="clr-namespace:Xamarin.Forms.DataGrid;assembly=Xamarin.Forms.DataGrid"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:datagrid="clr-namespace:Xamarin.Forms.DataGrid;assembly=Xamarin.Forms.DataGrid" xmlns:helpers="clr-namespace:MounterApp.Helpers"
              x:Class="MounterApp.Views.NewMountpage">
     <ContentPage.Content>
         <StackLayout>
@@ -10,11 +10,14 @@
                 </Expander.Header>
                 <StackLayout Margin="5">
                     <Label Text="№ объекта" HorizontalOptions="Center" FontAttributes="Bold"/>
-                    <Entry Keyboard="Numeric" Text="{Binding ObjectNumber}"/>
+                    <Entry Keyboard="Numeric" Text="{Binding ObjectNumber, Mode=TwoWay}"/>
+                    <!--<Label Text="{Binding ObjectNumberValidationError}" HorizontalTextAlignment="Center" TextColor="Red" FontAttributes="Italic" IsVisible="{Binding VisibleObjectNumberValidationError}"/>-->
                     <Label Text="Название объекта" HorizontalOptions="Center" FontAttributes="Bold"/>
-                    <Entry Keyboard="Text" Text="{Binding ObjectName}"/>
+                    <Entry Keyboard="Text" Text="{Binding ObjectName, Mode=TwoWay}"/>
+                    <!--<Label Text="{Binding ObjectNameValidationError}" HorizontalTextAlignment="Center" TextColor="Red" FontAttributes="Italic" IsVisible="{Binding VisibleObjectNameValidationError}"/>-->
                     <Label Text="Адрес объекта" HorizontalOptions="Center" FontAttributes="Bold"/>
                     <Entry Keyboard="Text" Text="{Binding ObjectAddress}"/>
+                    <!--<Label Text="{Binding ObjectAddressValidationError}" HorizontalTextAlignment="Center" TextColor="Red" FontAttributes="Italic" IsVisible="{Binding VisibleObjectAddressValidationError}"/>-->
                     <Label Text="Подъездные пути" HorizontalOptions="Center" FontAttributes="Bold"/>
                     <Entry Keyboard="Text" Text="{Binding ObjectDriveways}" />
                 </StackLayout>
