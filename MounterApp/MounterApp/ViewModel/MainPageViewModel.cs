@@ -13,7 +13,7 @@ using System.Text;
 using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
-    class MainPageViewModel : BaseViewModel {
+    public class MainPageViewModel : BaseViewModel {
         private RelayCommand _AuthCommand;
         public RelayCommand AuthCommand {
             get => _AuthCommand ??= new RelayCommand(async obj => {
@@ -96,5 +96,13 @@ namespace MounterApp.ViewModel {
         //	string s = response.Replace(@"\", string.Empty);
         //	return s.Trim().Substring(1, (s.Length) - 2);
         //}
+        private RelayCommand _BackPressCommand;
+        public RelayCommand BackPressCommand {
+            get => _BackPressCommand ??= new RelayCommand(async obj => {
+                // vm = new MountsViewModel(Mounters);
+                //App.Current.MainPage = new MountsPage(vm);
+                System.Environment.Exit(0);
+            });
+        }
     }
 }

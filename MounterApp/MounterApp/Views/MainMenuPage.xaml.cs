@@ -7,7 +7,7 @@ using Xamarin.Forms.Xaml;
 namespace MounterApp.Views {
     [XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class MainMenuPage : ContentPage {
-        public MainMenuPageViewModel ViewModel { get; private set; }
+        public MainMenuPageViewModel VM { get; private set; }
         public MainMenuPage() {
             InitializeComponent();
         }
@@ -17,8 +17,18 @@ namespace MounterApp.Views {
         }
         public MainMenuPage(MainMenuPageViewModel vm) {
             InitializeComponent();
-            ViewModel = vm;
-            this.BindingContext = ViewModel;
+            VM = vm;
+            this.BindingContext = VM;
         }
-	}
+        protected override bool OnBackButtonPressed() {
+            //var vm = (ViewModel)BindingContext;
+            if(VM.BackPressCommand.CanExecute(null))  // You can add parameters if any
+              {
+                VM.BackPressCommand.Execute(null); // You can add parameters if any
+                return true;
+            }
+            else
+                return false;
+        }
+    }
 }

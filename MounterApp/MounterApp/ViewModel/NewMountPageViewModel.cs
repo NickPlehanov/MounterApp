@@ -149,6 +149,13 @@ namespace MounterApp.ViewModel {
                     await Application.Current.MainPage.DisplayAlert("Ошибка","Выберите тип фотографии","OK");
             });
         }
+        private RelayCommand _BackPressCommand;
+        public RelayCommand BackPressCommand {
+            get => _BackPressCommand ??= new RelayCommand(async obj => {
+                MountsViewModel vm = new MountsViewModel(Mounters);
+                App.Current.MainPage = new MountsPage(vm);
+            });
+        }
         private MediaFile _File;
         public MediaFile File {
             get => _File;

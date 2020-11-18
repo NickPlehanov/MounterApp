@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:sys="clr-namespace:System;assembly=netstandard"
+             x:Class="MounterApp.Views.ServiceOrdersPage">
+    <ContentPage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="5*"/>
+            </Grid.RowDefinitions>
+            <FlexLayout Grid.Row="0"  Margin="5">
+                <Button Text="Обновить" Command="{Binding GetServiceOrders}" HorizontalOptions="Start"/>
+                <DatePicker Date="{Binding Date}" HorizontalOptions="End">
+                    <DatePicker.Format>d</DatePicker.Format>
+                    <DatePicker.MinimumDate>
+                        <sys:DateTime x:FactoryMethod="Parse">
+                            <x:Arguments>
+                                <x:String>Jan 1 2010</x:String>
+                            </x:Arguments>
+                        </sys:DateTime>
+                    </DatePicker.MinimumDate>
+                    <DatePicker.MaximumDate>
+                        <sys:DateTime x:FactoryMethod="Parse">
+                            <x:Arguments>
+                                <x:String>Dec 31 2050</x:String>
+                            </x:Arguments>
+                        </sys:DateTime>
+                    </DatePicker.MaximumDate>
+                </DatePicker>
+            </FlexLayout>
+        <CollectionView Margin="5" Grid.Row="1" ItemsSource="{Binding ServiceOrders}" SelectionMode="Single" 
+                                SelectionChangedCommand="{Binding SelectServiceOrderCommand, Mode=TwoWay}"
+                                SelectedItem="{Binding ServiceOrder}">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <StackLayout>
+                            <Label BackgroundColor="AntiqueWhite" Text="{Binding Path=NewNumber}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" WidthRequest="100" HeightRequest="100"/>
+                    </StackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

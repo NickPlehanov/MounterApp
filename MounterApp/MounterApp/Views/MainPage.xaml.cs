@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MounterApp.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -10,6 +11,12 @@ namespace MounterApp {
 	public partial class MainPage : ContentPage {
 		public MainPage() {
 			InitializeComponent();
+		}
+		public MainPageViewModel VM { get; private set; }
+        public MainPage(MainPageViewModel vm) {
+			InitializeComponent();
+			VM = vm;
+			this.BindingContext = VM;
 		}
 	}
 }

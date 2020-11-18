@@ -84,5 +84,12 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(HeaderNotSended));
             }
         }
+        private RelayCommand _BackPressCommand;
+        public RelayCommand BackPressCommand {
+            get => _BackPressCommand ??= new RelayCommand(async obj => {
+                MainMenuPageViewModel vm = new MainMenuPageViewModel(Mounters);
+                App.Current.MainPage = new MainMenuPage(vm);
+            });
+        }
     }
 }
