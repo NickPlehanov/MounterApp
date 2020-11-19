@@ -45,6 +45,12 @@ namespace MounterApp.ViewModel {
                 App.Current.MainPage = new MountsPage(vm);
             });
         }
+        private RelayCommand _ClearDatabaseCommand;
+        public RelayCommand ClearDatabaseCommand {
+            get => _ClearDatabaseCommand ??= new RelayCommand(async obj => {
+                Message="Очищено объектов: "+App.Database.ClearDatabase().ToString();
+            });
+        }
 
         private RelayCommand _GetServiceordersCommand;
         public RelayCommand GetServiceordersCommand {

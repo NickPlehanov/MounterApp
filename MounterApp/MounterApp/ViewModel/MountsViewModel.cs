@@ -39,12 +39,12 @@ namespace MounterApp.ViewModel {
         public MountsViewModel(List<NewMounterExtensionBase> mounters) {
             Mounters = mounters;
             HeaderNotSended = "Неотправленные монтажи (0)";
-            var _ntMounts = App.Database.GetMounts(Mounters.FirstOrDefault().NewMounterId).Where(x=>x.State==0).ToList();
+            var _ntMounts = App.Database.GetMounts(Mounters.FirstOrDefault().NewMounterId).Where(x => x.State == 0).ToList();
             if(_ntMounts != null)
                 if(_ntMounts.Any()) {
                     foreach(var item in _ntMounts)
                         NotSendedMounts.Add(item);
-                    HeaderNotSended = "Неотправленные монтажи ("+_ntMounts.Count.ToString()+")";
+                    HeaderNotSended = "Неотправленные монтажи (" + _ntMounts.Count.ToString() + ")";
                 }
         }
         private List<NewMounterExtensionBase> _Mounters;
@@ -70,7 +70,7 @@ namespace MounterApp.ViewModel {
         public RelayCommand SelectMountCommand {
             get => _SelectMountCommand ??= new RelayCommand(async obj => {
                 if(NotSendedMount != null) {
-                    NewMountPageViewModel vm = new NewMountPageViewModel(NotSendedMount);
+                    NewMountPageViewModel vm = new NewMountPageViewModel(NotSendedMount,Mounters);
                     App.Current.MainPage = new NewMountpage(vm);
                 }
             });

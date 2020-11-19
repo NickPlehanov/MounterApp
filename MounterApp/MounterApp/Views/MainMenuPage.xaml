@@ -61,6 +61,7 @@
         </StackLayout>
             <StackLayout Grid.Row="2" Grid.ColumnSpan="2" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
                 <Label Text="{Binding Message}"/>
+                <Button Text="Очистить базу данных" Command="{Binding ClearDatabaseCommand}"/>
             </StackLayout>
         </Grid>
     </ContentPage.Content>

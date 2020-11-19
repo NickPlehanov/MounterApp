@@ -15,6 +15,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
@@ -41,20 +42,36 @@ namespace MounterApp.ViewModel {
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Доп. фото" });
             ImgSrc = "EmptyPhoto.png";
         }
-        public NewMountPageViewModel(Mounts mount) {
-            Mount = mount;
-            ObjectNumber = Mount.ObjectNumber;
-            ObjectAddress = Mount.AddressName;
-            ObjectName = Mount.ObjectName;
-            ObjectDriveways = Mount.Driveways;
-            //Photos.Add(new PhotoCollection(Guid.NewGuid(),null,null,Mount.ObjectCard,null,PhotoName));
+        public NewMountPageViewModel(Mounts mount,List<NewMounterExtensionBase> mounters) {
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Карточка объекта" });
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Схема объекта" });
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Расшлейфовка объекта" });
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Ответственные объекта" });
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Вывеска объекта" });
-            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Доп. фото" });
+            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Доп. фото" });
             ImgSrc = "EmptyPhoto.png";
+
+            Mounters = mounters;
+            Mount = mount;
+            ObjectNumber = Mount.ObjectNumber;
+            ObjectAddress = Mount.AddressName;
+            ObjectName = Mount.ObjectName;
+            ObjectDriveways = Mount.Driveways;
+            Photos.Add(
+                new PhotoCollection(Guid.NewGuid(),Mount.ObjectCard,null,
+                ImageSource.FromStream(() => { return new MemoryStream(Convert.FromBase64String(Mount.ObjectCard)); }),PhotoNames.FirstOrDefault(x => x.PhotoTypeName == "Карточка объекта")));
+            Photos.Add(
+                new PhotoCollection(Guid.NewGuid(),Mount.ObjectScheme,null,
+                ImageSource.FromStream(() => { return new MemoryStream(Convert.FromBase64String(Mount.ObjectScheme)); }),PhotoNames.FirstOrDefault(x => x.PhotoTypeName == "Схема объекта")));
+            Photos.Add(
+                new PhotoCollection(Guid.NewGuid(),Mount.ObjectWiring,null,
+                ImageSource.FromStream(() => { return new MemoryStream(Convert.FromBase64String(Mount.ObjectWiring)); }),PhotoNames.FirstOrDefault(x => x.PhotoTypeName == "Расшлейфовка объекта")));
+            Photos.Add(
+                new PhotoCollection(Guid.NewGuid(),Mount.ObjectListResponsible,null,
+                ImageSource.FromStream(() => { return new MemoryStream(Convert.FromBase64String(Mount.ObjectListResponsible)); }),PhotoNames.FirstOrDefault(x => x.PhotoTypeName == "Ответственные объекта")));
+            Photos.Add(
+                new PhotoCollection(Guid.NewGuid(),Mount.ObjectSignboard,null,
+                ImageSource.FromStream(() => { return new MemoryStream(Convert.FromBase64String(Mount.ObjectSignboard)); }),PhotoNames.FirstOrDefault(x => x.PhotoTypeName == "Вывеска объекта")));
         }
 
         private Mounts _Mount;
@@ -73,7 +90,6 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(ImgSrc));
             }
         }
-
         private ObservableCollection<ImageSource> _PhotoSource = new ObservableCollection<ImageSource>();
         public ObservableCollection<ImageSource> PhotoSource {
             get => _PhotoSource;
@@ -82,37 +98,87 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(PhotoSource));
             }
         }
-
+        private double _ProgressValue;
+        public double ProgressValue {
+            get => _ProgressValue;
+            set {
+                _ProgressValue = value;
+                OnPropertyChanged(nameof(ProgressValue));
+            }
+        }
         private RelayCommand _SendToServer;
         public RelayCommand SendToServer {
             get => _SendToServer ??= new RelayCommand(async obj => {
                 if(string.IsNullOrEmpty(ObjectNumberValidationError) && string.IsNullOrWhiteSpace(ObjectNumberValidationError))
                     if(string.IsNullOrEmpty(ObjectNameValidationError) && string.IsNullOrWhiteSpace(ObjectNameValidationError))
                         if(string.IsNullOrEmpty(ObjectAddressValidationError) && string.IsNullOrWhiteSpace(ObjectAddressValidationError)) {
-                                App.Database.SaveMount(new Mounts() {
-                                    ObjectNumber = ObjectNumber,
-                                    ObjectName = ObjectName,
-                                    AddressName = ObjectAddress,
-                                    //TODO:получать максимальный из базы и писать +1
-                                    ID = 1,
-                                    MounterID = Mounters.FirstOrDefault().NewMounterId,
-                                    Driveways = ObjectDriveways,
-                                    State=0
-                                    //ObjectCard = System.IO.File.ReadAllBytes(Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Карточка объекта").File)
-                                    //ObjectCard = Photos.FirstOrDefault(x => x._Types.PhotoTypeName).File.GetStream().CopyTo(new MemoryStream().ToArray()),
-                                    //MemoryStream = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Карточка объекта").File.GetStream(),
-                                });
-                            foreach(PhotoCollection ph in Photos.Where(x => x.File != null)) {
+                            bool error = false;
+                            ProgressValue = 0.1;
+                            //int _id = App.Database.GetCurrentID();
+                            Mounts mount = new Mounts() {
+                                ObjectNumber = ObjectNumber,
+                                ObjectName = ObjectName,
+                                AddressName = ObjectAddress,
+                                //TODO:получать максимальный из базы и писать +1
+                                //ID = App.Database.GetCurrentID(),
+                                MounterID = Mounters.FirstOrDefault().NewMounterId,
+                                Driveways = ObjectDriveways,
+                                State = 0,
+                                ObjectCard = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Карточка объекта").Data,
+                                ObjectScheme = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Схема объекта").Data,
+                                ObjectWiring = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Расшлейфовка объекта").Data,
+                                ObjectListResponsible = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Ответственные объекта").Data,
+                                ObjectSignboard = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Вывеска объекта").Data
+                            };
+                            ProgressValue = 0.2;
+                            App.Database.UpdateMount(mount);
+                            //App.Database.SaveMount(mount);
+                            foreach(PhotoCollection ph in Photos.Where(x => x.Data != null)) {
                                 using(HttpClient client = new HttpClient()) {
                                     MultipartFormDataContent form = new MultipartFormDataContent();
-                                    form.Add(new StreamContent(ph.File.GetStream()),String.Format("file"),String.Format(ObjectNumber + "_" + ph._Types.PhotoTypeName + ".jpeg"));
+                                    form.Add(new StreamContent(new MemoryStream(Convert.FromBase64String(ph.Data)))
+                                        ,String.Format("file"),String.Format(ObjectNumber + "_" + ph._Types.PhotoTypeName + ".jpeg"));
+                                    //form.Add(new StreamContent(ph.File.GetStream()),String.Format("file"),String.Format(ObjectNumber + "_" + ph._Types.PhotoTypeName + ".jpeg"));
                                     HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress + "/api/Common"
                                             ,form);
-                                    if(response.StatusCode.ToString() != "OK")
+                                    ProgressValue += 0.1;
+                                    if(response.StatusCode.ToString() != "OK") {
                                         await Application.Current.MainPage.DisplayAlert("Ошибка (Фото не было загружено)",response.Content.ReadAsStringAsync().Result,"OK");
+                                        error = true;
+                                    }                                        
                                 }
                             }
+                            if(!error) {
+                                //mount.State = 1;
+                                //App.Database.UpdateMount(mount);
+                                ProgressValue = 0.9;
+                                if (Mount!=null)
+                                    App.Database.DeleteMount(Mount.ID);
+                                //TODO: очищать форму?
+                            }
                         }
+            });
+        }
+        private RelayCommand _SaveToDB;
+        public RelayCommand SaveToDB {
+            get => _SaveToDB ??= new RelayCommand(async obj => {
+                Mounts mount = new Mounts() {
+                    ObjectNumber = ObjectNumber,
+                    ObjectName = ObjectName,
+                    AddressName = ObjectAddress,
+                    //TODO:получать максимальный из базы и писать +1
+                    ID = App.Database.GetCurrentID(),
+                    MounterID = Mounters.FirstOrDefault().NewMounterId,
+                    Driveways = ObjectDriveways,
+                    State = 0,
+                    ObjectCard = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Карточка объекта").Data,
+                    ObjectScheme = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Схема объекта").Data,
+                    ObjectWiring = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Расшлейфовка объекта").Data,
+                    ObjectListResponsible = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Ответственные объекта").Data,
+                    ObjectSignboard = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Вывеска объекта").Data
+                };
+                //App.Database.UpdateMount(mount);
+                App.Database.SaveMount(mount);
             });
         }
 
@@ -120,30 +186,27 @@ namespace MounterApp.ViewModel {
         public RelayCommand AddNewPhotoCommand {
             get => _AddNewPhotoCommand ??= new RelayCommand(async obj => {
                 if(PhotoName != null) {
-                    Photos.Add(new PhotoCollection(
-                        Guid.NewGuid(),
-                        //PhotoName.PhotoTypeId,
-                        PhotoComment,
-                        File.Path,
-                        File,
-                        ImageSource.FromStream(() => {
-                            var stream = File.GetStream();
-                            return stream;
-                        }),
-                        PhotoName
-                        ));
-                    PhotoSource.Add(ImgSrc);
-                    ImgSrc = "EmptyPhoto.png";
-                    SelectedPhoto = null;
-
-                    //using HttpClient client = new HttpClient();
-                    //MultipartFormDataContent form = new MultipartFormDataContent();
-                    //StreamContent imagePart = new StreamContent(Photos[0].File.GetStream());
-                    //imagePart.Headers.Add("Content-Type","image/jpeg");
-                    //form.Add(imagePart,String.Format("file"),String.Format("t.jpeg"));
-                    //HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress + "/api/Common"
-                    //        ,form);
-                    //var resp = response.Content.ReadAsStringAsync().Result;
+                    if(File != null) {
+                        string tmp = Convert.ToBase64String(System.IO.File.ReadAllBytes(File.Path));
+                        if(!Photos.Any(y => y.Data == tmp)) {
+                            Photos.Add(new PhotoCollection(
+                                Guid.NewGuid(),
+                                Convert.ToBase64String(System.IO.File.ReadAllBytes(File.Path)),
+                                PhotoComment,
+                                    ImageSource.FromStream(() => {
+                                        var stream = File.GetStream();
+                                        return stream;
+                                    }),
+                                    PhotoName
+                                ));
+                            PhotoSource.Add(ImgSrc);
+                            ImgSrc = "EmptyPhoto.png";
+                            SelectedPhoto = null;
+                            PhotoNames.Remove(PhotoName);
+                        }
+                        else
+                            await Application.Current.MainPage.DisplayAlert("Ошибка","Такая фотография уже была загружена","OK");
+                    }
                 }
                 else
                     await Application.Current.MainPage.DisplayAlert("Ошибка","Выберите тип фотографии","OK");
@@ -189,10 +252,6 @@ namespace MounterApp.ViewModel {
                     var stream = File.GetStream();
                     return stream;
                 });
-                //if (PhotoSource.Count>0)
-                //    PhotoSource.Insert(PhotoSource.Count - 1,ImgSrc);
-                //else
-                //    PhotoSource.Add(ImgSrc);
             });
         }
 
@@ -200,9 +259,11 @@ namespace MounterApp.ViewModel {
         public RelayCommand DeleteCommand {
             get => _DeleteCommand ??= new RelayCommand(async obj => {
                 if(SelectedPhoto != null) {
-                    string result = await Application.Current.MainPage.DisplayPromptAsync("Удаление","Вы действительно хотите удалить выбранную строку? Напишите +, дял удаления в поле ниже.");
-                    if(result.Equals("+"))
+                    string result = await Application.Current.MainPage.DisplayPromptAsync("Удаление","Вы действительно хотите удалить выбранную строку? Напишите +, для удаления в поле ниже.");
+                    if(result.Equals("+")) {
                         Photos.Remove(SelectedPhoto);
+                        PhotoNames.Add(SelectedPhoto._Types);
+                    }
                 }
                 SelectedPhoto = null;
             });

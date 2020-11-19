@@ -4,6 +4,7 @@
              x:Class="MounterApp.Views.NewMountpage">
     <ContentPage.Content>
         <StackLayout>
+            <ProgressBar Scale="5" ProgressColor="Red" Progress="{Binding ProgressValue}"/>
             <Expander>
                 <Expander.Header>
                 <Label Text="Информация об объекте" FontAttributes="Bold" HorizontalTextAlignment="Center" Margin="10" FontSize="24" />
@@ -48,23 +49,24 @@
                         </Image.GestureRecognizers>
                     </Image>
                 </StackLayout>
-                <CollectionView Grid.ColumnSpan="2" Grid.Row="1" Margin="5" 
+                    <CollectionView Grid.ColumnSpan="2" Grid.Row="1" Margin="5" 
                                 ItemsSource="{Binding Photos}" SelectionMode="Single" 
                                 SelectionChangedCommand="{Binding DeleteCommand, Mode=TwoWay}"
                                 SelectedItem="{Binding SelectedPhoto}">
-                    <CollectionView.ItemsLayout>
-                        <GridItemsLayout Orientation="Vertical" Span="4"/>
-                    </CollectionView.ItemsLayout>
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <StackLayout>
-                                <Image Source="{Binding Path=ImgSrc}" Margin="5"/>
-                                <Label Text="{Binding Path=_Types.PhotoTypeName}" VerticalTextAlignment="Center"/>
-                            </StackLayout>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Vertical" Span="4"/>
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <StackLayout>
+                                    <Image Source="{Binding Path=ImgSrc}" Margin="5"/>
+                                    <Label Text="{Binding Path=_Types.PhotoTypeName}" VerticalTextAlignment="Center"/>
+                                </StackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
             </Grid>
+            <Button Text="Сохранить данные" Command="{Binding SaveToDB}" Margin="5"/>
             <Button Text="Отправить данные" Command="{Binding SendToServer}" Margin="5"/>
         </StackLayout>
     </ContentPage.Content>

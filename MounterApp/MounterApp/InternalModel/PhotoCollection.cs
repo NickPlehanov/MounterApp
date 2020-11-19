@@ -14,9 +14,21 @@ namespace MounterApp.InternalModel {
             ImgSrc = imgSrc;
             _Types = types;
         }
+        public PhotoCollection(Guid _id, string _data, string _comment) {
+            ID = _id;
+            Data = _data;
+            Comment = _comment;
+        }
+        public PhotoCollection(Guid _id,string _data,string _comment,ImageSource _imgsrc,PhotoTypes types) {
+            ID = _id;
+            Data = _data;
+            Comment = _comment;
+            ImgSrc = _imgsrc;
+            _Types = types;
+        }
 
         public Guid ID { get; set; }
-        //public Guid Type { get; set; }
+        public string Data { get; set; }
         public string Comment { get; set; }
         public string Path { get; set; }
         public MediaFile File { get; set; }

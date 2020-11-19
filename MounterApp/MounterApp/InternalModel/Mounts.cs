@@ -38,31 +38,35 @@ namespace MounterApp.InternalModel {
         /// <summary>
         /// Фото карточки объекта
         /// </summary>
-        public byte[] ObjectCard { get; set; }
+        public string ObjectCard { get; set; }
         /// <summary>
         /// Фото схемы объекта
         /// </summary>
-        public byte[] ObjectScheme { get; set; }
+        public string ObjectScheme { get; set; }
         /// <summary>
         /// Фото расшлейфовки объекта
         /// </summary>
-        public byte[] ObjectWiring { get; set; }
+        public string ObjectWiring { get; set; }
         /// <summary>
-        /// Фото списка ответственных
+        /// Фото вывески
         /// </summary>
-        public byte[] ObjectSignboard { get; set; }
+        public string ObjectSignboard { get; set; }
+        /// <summary>
+        /// Фото списка ответственныъ
+        /// </summary>
+        public string ObjectListResponsible { get; set; }
         /// <summary>
         /// Доп. фото 1
         /// </summary>
-        public byte[] ObjectExtra1 { get; set; }
+        public string ObjectExtra1 { get; set; }
         /// <summary>
         /// Доп. фото 2
         /// </summary>
-        public byte[] ObjectExtra2 { get; set; }
+        public string ObjectExtra2 { get; set; }
         /// <summary>
         /// Доп. фото 3
         /// </summary>
-        public byte[] ObjectExtra3 { get; set; }
+        public string ObjectExtra3 { get; set; }
         /// <summary>
         /// Отображает статус записи в базе данных. 0-не отправлен; 1-отправлен;-1-удален пользователем;
         /// </summary>
