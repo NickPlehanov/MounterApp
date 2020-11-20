@@ -2,8 +2,85 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:datagrid="clr-namespace:Xamarin.Forms.DataGrid;assembly=Xamarin.Forms.DataGrid" xmlns:helpers="clr-namespace:MounterApp.Helpers"
              x:Class="MounterApp.Views.NewMountpage">
-    <ContentPage.Content>
-        <StackLayout>
+    <!--<ContentPage.Content>-->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackLayout IsVisible="{Binding IndicatorVisible}" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
+            <ActivityIndicator IsRunning="True" />
+            <Label FontAttributes="Bold" Text="Loading..." TextColor="White" />
+        </StackLayout>
+        <StackLayout Grid.Row="0">
+            <ProgressBar Scale="5" ProgressColor="Red" Progress="{Binding ProgressValue}"/>
+            <Expander Grid.Row="0">
+                <Expander.Header>
+                    <Label Text="Информация об объекте" FontAttributes="Bold" HorizontalTextAlignment="Center" Margin="10" FontSize="24" />
+                </Expander.Header>
+                <StackLayout Margin="5">
+                    <Label Text="№ объекта" HorizontalOptions="Center" FontAttributes="Bold"/>
+                    <Entry Keyboard="Numeric" Text="{Binding ObjectNumber, Mode=TwoWay}"/>
+                    <Label Text="Название объекта" HorizontalOptions="Center" FontAttributes="Bold"/>
+                    <Entry Keyboard="Text" Text="{Binding ObjectName, Mode=TwoWay}"/>
+                    <Label Text="Адрес объекта" HorizontalOptions="Center" FontAttributes="Bold"/>
+                    <Entry Keyboard="Text" Text="{Binding ObjectAddress}"/>
+                    <Label Text="Подъездные пути" HorizontalOptions="Center" FontAttributes="Bold"/>
+                    <Entry Keyboard="Text" Text="{Binding ObjectDriveways}" />
+                </StackLayout>
+            </Expander>
+        </StackLayout>
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackLayout Grid.Row="0" Grid.Column="0" Margin="5">
+                <Picker Title="Выберите тип фото" ItemsSource="{Binding PhotoNames}" ItemDisplayBinding="{Binding PhotoTypeName}" SelectedItem="{Binding PhotoName}"/>
+                <Entry Text="{Binding PhotoComment}"/>
+                <Button Text="Добавить фото" Command="{Binding AddNewPhotoCommand}"/>
+            </StackLayout>
+            <StackLayout Grid.Row="0" Grid.Column="1" Margin="5">
+                <Image x:Name="img" Source="{Binding ImgSrc}" Aspect="AspectFit" >
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding TakePhotoCommand}"/>
+                    </Image.GestureRecognizers>
+                </Image>
+            </StackLayout>
+            <!--<StackLayout Grid.ColumnSpan="2" Grid.Row="1">-->
+            <CollectionView Grid.ColumnSpan="2" Grid.Row="1" Margin="5"
+                                ItemsSource="{Binding Photos}" SelectionMode="Single" 
+                                SelectionChangedCommand="{Binding DeleteCommand, Mode=TwoWay}"
+                                SelectedItem="{Binding SelectedPhoto}">
+                <CollectionView.ItemsLayout>
+                    <!--<LinearItemsLayout Orientation="Vertical" ItemSpacing="2"/>-->
+                    <GridItemsLayout Orientation="Vertical" Span="4"/>
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <StackLayout Grid.Row="0" Grid.Column="1">
+                            <Image Source="{Binding Path=ImgSrc}" Margin="5"/>
+                            <Label Text="{Binding Path=_Types.PhotoTypeName}" VerticalTextAlignment="Center"/>
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <!--</StackLayout>-->
+            <StackLayout Grid.Row="2"  Grid.ColumnSpan="2">
+                <Button Text="Сохранить данные" Command="{Binding SaveToDB}"/>
+                <Button Text="Отправить данные" Command="{Binding SendToServer}" Margin="5"/>
+            </StackLayout>
+        </Grid>
+    </Grid>
+
+
+    <!--<StackLayout>
             <ProgressBar Scale="5" ProgressColor="Red" Progress="{Binding ProgressValue}"/>
             <Expander>
                 <Expander.Header>
@@ -12,13 +89,19 @@
                 <StackLayout Margin="5">
                     <Label Text="№ объекта" HorizontalOptions="Center" FontAttributes="Bold"/>
                     <Entry Keyboard="Numeric" Text="{Binding ObjectNumber, Mode=TwoWay}"/>
-                    <!--<Label Text="{Binding ObjectNumberValidationError}" HorizontalTextAlignment="Center" TextColor="Red" FontAttributes="Italic" IsVisible="{Binding VisibleObjectNumberValidationError}"/>-->
+                    -->
+    <!--<Label Text="{Binding ObjectNumberValidationError}" HorizontalTextAlignment="Center" TextColor="Red" FontAttributes="Italic" IsVisible="{Binding VisibleObjectNumberValidationError}"/>-->
+    <!--
                     <Label Text="Название объекта" HorizontalOptions="Center" FontAttributes="Bold"/>
                     <Entry Keyboard="Text" Text="{Binding ObjectName, Mode=TwoWay}"/>
-                    <!--<Label Text="{Binding ObjectNameValidationError}" HorizontalTextAlignment="Center" TextColor="Red" FontAttributes="Italic" IsVisible="{Binding VisibleObjectNameValidationError}"/>-->
+                    -->
+    <!--<Label Text="{Binding ObjectNameValidationError}" HorizontalTextAlignment="Center" TextColor="Red" FontAttributes="Italic" IsVisible="{Binding VisibleObjectNameValidationError}"/>-->
+    <!--
                     <Label Text="Адрес объекта" HorizontalOptions="Center" FontAttributes="Bold"/>
                     <Entry Keyboard="Text" Text="{Binding ObjectAddress}"/>
-                    <!--<Label Text="{Binding ObjectAddressValidationError}" HorizontalTextAlignment="Center" TextColor="Red" FontAttributes="Italic" IsVisible="{Binding VisibleObjectAddressValidationError}"/>-->
+                    -->
+    <!--<Label Text="{Binding ObjectAddressValidationError}" HorizontalTextAlignment="Center" TextColor="Red" FontAttributes="Italic" IsVisible="{Binding VisibleObjectAddressValidationError}"/>-->
+    <!--
                     <Label Text="Подъездные пути" HorizontalOptions="Center" FontAttributes="Bold"/>
                     <Entry Keyboard="Text" Text="{Binding ObjectDriveways}" />
                 </StackLayout>
@@ -30,7 +113,9 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="2*"/>
-                    <!--<RowDefinition Height="2*"/>-->
+                    -->
+    <!--<RowDefinition Height="2*"/>-->
+    <!--
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2*"/>
@@ -68,6 +153,9 @@
             </Grid>
             <Button Text="Сохранить данные" Command="{Binding SaveToDB}" Margin="5"/>
             <Button Text="Отправить данные" Command="{Binding SendToServer}" Margin="5"/>
-        </StackLayout>
-    </ContentPage.Content>
+        </StackLayout>-->
+    <!--</ContentPage.Content>-->
+
+
+
 </ContentPage>

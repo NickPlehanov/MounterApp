@@ -7,6 +7,7 @@ using MounterApp.Views;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -14,48 +15,50 @@ using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class MainPageViewModel : BaseViewModel {
+        public MainPageViewModel() {
+            IndicatorVisible = false;
+            OpacityForm = 1;
+        }
         private RelayCommand _AuthCommand;
         public RelayCommand AuthCommand {
             get => _AuthCommand ??= new RelayCommand(async obj => {
-                //ProgressBarVisible = true;
-                ProgressValue = 0;
+                IndicatorVisible = true;
+                OpacityForm = 0.1;
                 using HttpClient client = new HttpClient();
                 string Phone = null;
                 if(PhoneNumber.Length == 11) {
                     Phone = PhoneNumber.Substring(1,PhoneNumber.Length - 1);
                 }
-                ProgressValue = 0.2;
                 HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewMounterExtensionBases/phone?phone=" + Phone);
                 var resp = response.Content.ReadAsStringAsync().Result;
-                List<NewMounterExtensionBase> mounters = JsonConvert.DeserializeObject<List<NewMounterExtensionBase>>(resp).Where(x=>x.NewIsWorking==true).ToList();
-                ProgressValue = 0.4;
+                List<NewMounterExtensionBase> mounters = JsonConvert.DeserializeObject<List<NewMounterExtensionBase>>(resp).Where(x => x.NewIsWorking == true).ToList();
                 response = await client.GetAsync(Resources.BaseAddress + "/api/NewServicemanExtensionBases/phone?phone=" + Phone);
                 resp = response.Content.ReadAsStringAsync().Result;
                 List<NewServicemanExtensionBase> servicemans = JsonConvert.DeserializeObject<List<NewServicemanExtensionBase>>(resp).Where(x => x.NewIswork == true).ToList();
-                ProgressValue = 0.8;
                 if(mounters != null || servicemans != null) {
                     if(mounters.Count > 0 || servicemans.Count > 0) {
-                        if(mounters.Count > 1 || servicemans.Count > 1) {
-                            ProgressValue = 1;
-                            //ProgressBarVisible = false;
+                        if(mounters.Count > 1 || servicemans.Count > 1) 
                             Message = "Неоднозначно определен сотрудник";
-                        }
                         else {
-                            ProgressValue = 1;
-                            //ProgressBarVisible = false;
+                            IndicatorVisible = false;
                             MainMenuPageViewModel vm = new MainMenuPageViewModel(mounters,servicemans);
                             App.Current.MainPage = new MainMenuPage(vm);
                         }
                     }
                     else {
                         Message = "Проверьте правильность ввода номера телефона";
-                        ProgressValue = 1;
-                        //ProgressBarVisible = false;
                     }
                 }
             });
         }
-
+        private bool _IndicatorVisible;
+        public bool IndicatorVisible {
+            get => _IndicatorVisible;
+            set {
+                _IndicatorVisible = value;
+                OnPropertyChanged(nameof(IndicatorVisible));
+            }
+        }
         private string _PhoneNumber;
         public string PhoneNumber {
             get => _PhoneNumber;
@@ -76,12 +79,12 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(ProgressBarVisible));
             }
         }
-        private double _ProgressValue;
-        public double ProgressValue {
-            get => _ProgressValue;
+        private double _OpacityForm;
+        public double OpacityForm {
+            get => _OpacityForm;
             set {
-                _ProgressValue = value;
-                OnPropertyChanged(nameof(ProgressValue));
+                _OpacityForm = value;
+                OnPropertyChanged(nameof(OpacityForm));
             }
         }
         private string _Message;

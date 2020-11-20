@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MounterApp.Model {
 	public partial class NewServiceorderExtensionBase {
@@ -62,6 +63,14 @@ namespace MounterApp.Model {
         public DateTime? NewMovedKc { get; set; }
         public bool? NewAutoset { get; set; }
         public string NewHistoryButton { get; set; }
+        private string _FullName;
+        [NotMapped]
+        public string FullName {
+            get => NewNumber + Environment.NewLine + NewObjName + Environment.NewLine + NewAddress;
+            set {
+                _FullName = value;
+            }
+        }
 
         public virtual NewAndromedaBase NewAndromedaServiceorderNavigation { get; set; }
         public virtual NewServicemanBase NewNewServicemanNavigation { get; set; }

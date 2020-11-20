@@ -17,6 +17,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using Xamarin.Forms;
+using System.ComponentModel;
 
 namespace MounterApp.ViewModel {
     public class NewMountPageViewModel : BaseViewModel {
@@ -106,9 +107,20 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(ProgressValue));
             }
         }
+        private bool _IndicatorVisible;
+        public bool IndicatorVisible {
+            get => _IndicatorVisible;
+            set {
+                _IndicatorVisible = value;
+                OnPropertyChanged(nameof(IndicatorVisible));
+            }
+        }
         private RelayCommand _SendToServer;
         public RelayCommand SendToServer {
             get => _SendToServer ??= new RelayCommand(async obj => {
+            BackgroundWorker bw = new BackgroundWorker();
+            bw.DoWork += async (s,e) => {
+                IndicatorVisible = true;
                 if(string.IsNullOrEmpty(ObjectNumberValidationError) && string.IsNullOrWhiteSpace(ObjectNumberValidationError))
                     if(string.IsNullOrEmpty(ObjectNameValidationError) && string.IsNullOrWhiteSpace(ObjectNameValidationError))
                         if(string.IsNullOrEmpty(ObjectAddressValidationError) && string.IsNullOrWhiteSpace(ObjectAddressValidationError)) {
@@ -145,18 +157,24 @@ namespace MounterApp.ViewModel {
                                     if(response.StatusCode.ToString() != "OK") {
                                         await Application.Current.MainPage.DisplayAlert("Ошибка (Фото не было загружено)",response.Content.ReadAsStringAsync().Result,"OK");
                                         error = true;
-                                    }                                        
+                                    }
                                 }
                             }
                             if(!error) {
                                 //mount.State = 1;
                                 //App.Database.UpdateMount(mount);
                                 ProgressValue = 0.9;
-                                if (Mount!=null)
+                                if(Mount != null)
                                     App.Database.DeleteMount(Mount.ID);
                                 //TODO: очищать форму?
                             }
                         }
+            };
+                bw.RunWorkerCompleted += (s,e) => {
+                    ProgressValue = 1;
+                    IndicatorVisible = false;
+                };
+                bw.RunWorkerAsync();
             });
         }
         private RelayCommand _SaveToDB;

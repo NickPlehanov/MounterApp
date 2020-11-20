@@ -9,15 +9,19 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="5*"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <StackLayout BindingContext="{StaticResource viewModel}" Grid.Row="1" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Margin="5">
+        <StackLayout Opacity="{Binding OpacityForm}" BindingContext="{StaticResource viewModel}" Grid.Row="1" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Margin="5">
             <Label Text="Введите номер телефона"/>
             <SearchBar x:Name="PhoneNumber" Keyboard="Telephone" Text="{Binding PhoneNumber, Mode=TwoWay}" SearchCommand="{Binding AuthCommand}" SearchCommandParameter="{Binding Source=PhoneNumber,Path=Text}"/>
             <!--<Editor Keyboard="Telephone" x:Name="PhoneNumber" Text="{Binding PhoneNumber, Mode=TwoWay}"/>-->
             <!--<Button Text="ОК" Command="{Binding AuthCommand}" CommandParameter="{Binding Source=PhoneNumber, Path=Text}" BorderColor="Bisque" BorderWidth="2" WidthRequest="20" VerticalOptions="CenterAndExpand" FontAttributes="Bold"/>-->
             <Label Text="{Binding Message, Mode=TwoWay}" FontAttributes="Italic" TextColor="Red"/>
-            <ProgressBar Progress="{Binding ProgressValue}" ProgressColor="Red" Scale="5"/>
+            <!--<ProgressBar Progress="{Binding ProgressValue}" ProgressColor="Red" Scale="5"/>-->
+        </StackLayout>
+        <StackLayout  BindingContext="{StaticResource viewModel}" IsVisible="{Binding IndicatorVisible}" Grid.Row="2" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
+            <ActivityIndicator IsRunning="True" Color="Red" HeightRequest="50" WidthRequest="50"  />
+            <Label FontAttributes="Bold" Text="Подождите, идет загрузка..." TextColor="White" />
         </StackLayout>
         
         <!--<StackLayout Grid.Row="1" Margin="5" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">

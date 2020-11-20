@@ -37,7 +37,7 @@
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <StackLayout>
-                            <Label BackgroundColor="AntiqueWhite" Text="{Binding Path=NewNumber}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" WidthRequest="100" HeightRequest="100"/>
+                            <Label BackgroundColor="AntiqueWhite" Text="{Binding Path=FullName}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" WidthRequest="100" HeightRequest="100"/>
                     </StackLayout>
                 </DataTemplate>
             </CollectionView.ItemTemplate>

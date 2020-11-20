@@ -50,8 +50,9 @@ namespace MounterApp.ViewModel {
                     using HttpClient client = new HttpClient();
                     HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByUser?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
                     var resp = response.Content.ReadAsStringAsync().Result;
-                    List<NewServiceorderExtensionBase> _servieorders = JsonConvert.DeserializeObject<List<NewServiceorderExtensionBase>>(resp).Where(x=>x.NewNewServiceman == null).ToList();
-                    foreach(NewServiceorderExtensionBase item in _servieorders) {
+                    List<NewServiceorderExtensionBase> _serviceorders = JsonConvert.DeserializeObject<List<NewServiceorderExtensionBase>>(resp).Where(x=>x.NewNewServiceman == null).ToList();
+                    ServiceOrders.Clear();
+                    foreach(NewServiceorderExtensionBase item in _serviceorders) {
                         ServiceOrders.Add(item);
                     }
                 }
