@@ -16,97 +16,74 @@
         <StackLayout Grid.Row="0" Grid.ColumnSpan="2" Margin="5">
             <Expander IsExpanded="True">
                 <Expander.Header>
-                    <Label Text="Информация об охр. объекте" FontSize="Large" HorizontalTextAlignment="Center" FontAttributes="Bold"/>
+                    <Label Text="Информация об охр. объекте" FontSize="Large" HorizontalTextAlignment="Center" FontAttributes="Bold" Margin="5"/>
                 </Expander.Header>
-                <StackLayout>
-                    <Label Text="№ объекта" HorizontalOptions="Center" FontAttributes="Bold"/>
-                    <Entry Text="{Binding ObjectNumber}"/>
-                    <Label Text="Название объекта" HorizontalOptions="Center" FontAttributes="Bold"/>
-                    <Entry Text="{Binding ObjectName}"/>
-                    <Label Text="Адрес объекта" HorizontalOptions="Center" FontAttributes="Bold"/>
-                    <Entry Text="{Binding ObjectAddress}"/>
-                    <StackLayout Orientation="Horizontal" HorizontalOptions="Center" >
-                        <FlexLayout>
-                            <CheckBox IsEnabled="False" IsChecked="{Binding ServiceSecurity}">
-                                <VisualStateManager.VisualStateGroups>
-                                    <VisualStateGroup>
-                                        <VisualState x:Name="Normal">
-                                            <VisualState.Setters>
-                                                <Setter Property="Color" Value="Red" />
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                        <VisualState x:Name="IsChecked">
-                                            <VisualState.Setters>
-                                                <Setter Property="Color" Value="Green" />
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                    </VisualStateGroup>
-                                </VisualStateManager.VisualStateGroups>
-                            </CheckBox>
-                            <Label Text="ТО ОС" VerticalTextAlignment="Center" FontAttributes="Bold"/>
-                        </FlexLayout>
-                        <FlexLayout>
-                            <CheckBox IsEnabled="False" IsChecked="{Binding ServiceFire}">
-                                <VisualStateManager.VisualStateGroups>
-                                    <VisualStateGroup>
-                                        <VisualState x:Name="Normal">
-                                            <VisualState.Setters>
-                                                <Setter Property="Color" Value="Red" />
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                        <VisualState x:Name="IsChecked">
-                                            <VisualState.Setters>
-                                                <Setter Property="Color" Value="Green" />
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                    </VisualStateGroup>
-                                </VisualStateManager.VisualStateGroups>
-                            </CheckBox>
-                            <Label Text="ТО ПС" VerticalTextAlignment="Center" FontAttributes="Bold"/>
-                        </FlexLayout>
-                        <FlexLayout>
-                            <CheckBox IsEnabled="False" IsChecked="{Binding ServiceVideo}">
-                                <VisualStateManager.VisualStateGroups>
-                                    <VisualStateGroup>
-                                        <VisualState x:Name="Normal">
-                                            <VisualState.Setters>
-                                                <Setter Property="Color" Value="Red" />
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                        <VisualState x:Name="IsChecked">
-                                            <VisualState.Setters>
-                                                <Setter Property="Color" Value="Green" />
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                    </VisualStateGroup>
-                                </VisualStateManager.VisualStateGroups>
-                            </CheckBox>
-                            <Label Text="ТО ВИДЕО" VerticalTextAlignment="Center" FontAttributes="Bold"/>
-                        </FlexLayout>
-                        <FlexLayout>
-                            <CheckBox IsEnabled="False" IsChecked="{Binding ServiceAccess}">
-                                <VisualStateManager.VisualStateGroups>
-                                    <VisualStateGroup>
-                                        <VisualState x:Name="Normal">
-                                            <VisualState.Setters>
-                                                <Setter Property="Color" Value="Red" />
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                        <VisualState x:Name="IsChecked">
-                                            <VisualState.Setters>
-                                                <Setter Property="Color" Value="Green" />
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                    </VisualStateGroup>
-                                </VisualStateManager.VisualStateGroups>
-                            </CheckBox>
-                            <Label Text="ТО СКУД" VerticalTextAlignment="Center" FontAttributes="Bold"/>
-                        </FlexLayout>
-                    </StackLayout>
-                </StackLayout>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Row="0" Grid.Column="0" Text="№ объекта" FontAttributes="Bold"/>
+                    <Label Grid.Row="0" Grid.Column="1" Text="{Binding ServiceOrderID.NewNumber}"/>
+
+                    <Label Grid.Row="1" Grid.Column="0" Text="Название объект" FontAttributes="Bold"/>
+                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding ServiceOrderID.NewObjName}"/>
+
+                    <Label Grid.Row="2" Grid.Column="0" Text="Адрес объекта" FontAttributes="Bold"/>
+                    <Label Grid.Row="2" Grid.Column="1" Text="{Binding ServiceOrderID.NewAddress}"/>                    
+
+                    <Label Grid.Row="3" Grid.Column="0" Text="Контактные данные" FontAttributes="Bold"/>
+                    <Label Grid.Row="3" Grid.Column="1" Text="{Binding Contact}"/>
+                    
+                    <Label Grid.Row="4" Grid.Column="0" Text="Подъездные пути" FontAttributes="Bold"/>
+                    <Label Grid.Row="4" Grid.Column="1" Text="{Binding Siding}"/>
+                    
+                    <Label Grid.Row="5" Grid.Column="0" Text="ТО ОС" FontAttributes="Bold" VerticalOptions="Center"/>
+                    <CheckBox Grid.Row="5" Grid.Column="1" IsEnabled="False" IsChecked="{Binding rrOS}"/>
+
+                    <Label Grid.Row="6" Grid.Column="0" Text="ТО ПС" FontAttributes="Bold" VerticalOptions="Center"/>
+                    <CheckBox Grid.Row="6" Grid.Column="1" IsEnabled="False" IsChecked="{Binding rrPS}"/>
+
+                    <Label Grid.Row="7" Grid.Column="0" Text="ТО Видео" FontAttributes="Bold" VerticalOptions="Center"/>
+                    <CheckBox Grid.Row="7" Grid.Column="1" IsEnabled="False" IsChecked="{Binding rrVideo}"/>
+
+                    <Label Grid.Row="8" Grid.Column="0" Text="ТО СКУД" FontAttributes="Bold" VerticalOptions="Center"/>
+                    <CheckBox Grid.Row="8" Grid.Column="1" IsEnabled="False" IsChecked="{Binding rrAccess}"/>
+
+                    <Label Grid.Row="9" Grid.Column="0" Text="Дата заявки" FontAttributes="Bold"/>
+                    <Label Grid.Row="9" Grid.Column="1" Text="{Binding ServiceOrderID.NewDate}"/>
+
+                    <Label Grid.Row="10" Grid.Column="0" Text="Время заявки" FontAttributes="Bold"/>
+                    <Label Grid.Row="10" Grid.Column="1" Text="{Binding ServiceOrderID.NewTime}"/>
+
+                    <Label Grid.Row="11" Grid.Column="0" Text="Категория заявки" FontAttributes="Bold"/>
+                    <Label Grid.Row="11" Grid.Column="1" Text="{Binding ServiceOrderCategory}"/>
+                    
+                    <Label Grid.Row="12" Grid.Column="0" Text="Причина посещения" FontAttributes="Bold"/>
+                    <Label Grid.Row="12" Grid.Column="1" Text="{Binding ServiceOrderCategory}"/>
+                    
+                    <Label Grid.Row="13" Grid.Column="0" Text="Примечание" FontAttributes="Bold"/>
+                    <Label Grid.Row="13" Grid.Column="1" Text="{Binding ServiceOrderCategory}"/>
+                </Grid>               
             </Expander>
         </StackLayout>
-        <StackLayout Grid.Row="1" Grid.ColumnSpan="2" Margin="5">
+        <!--<StackLayout Grid.Row="1" Grid.ColumnSpan="2" Margin="5">
             <Expander>
                 <Expander.Header>
                     <Label Text="Информация о заявке" FontSize="Large" HorizontalTextAlignment="Center" FontAttributes="Bold"/>
@@ -115,9 +92,9 @@
                 <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Margin="5,0">
                     <FlexLayout>
                         <Label Text="Дата" VerticalTextAlignment="Center"  FontAttributes="Bold"/>
-                        <DatePicker Date="{Binding Date}"/>
+                            <DatePicker Date="{Binding ServiceOrderID.NewDate}"/>
                         <Label Text="Время" VerticalTextAlignment="Center" FontAttributes="Bold"/>
-                        <TimePicker Time="{Binding Time}"/>
+                            <TimePicker Time="{Binding ServiceOrderID.NewTime}"/>
                     </FlexLayout>
                 </StackLayout>
                 <StackLayout>
@@ -130,7 +107,7 @@
                     </StackLayout>
                 </StackLayout>
             </Expander>
-        </StackLayout>
+        </StackLayout>-->
         <StackLayout Grid.Row="2" Grid.ColumnSpan="2" Margin="5">
             <Expander>
                 <Expander.Header>

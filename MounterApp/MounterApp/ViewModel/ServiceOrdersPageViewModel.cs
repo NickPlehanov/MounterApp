@@ -62,7 +62,7 @@ namespace MounterApp.ViewModel {
         public RelayCommand SelectServiceOrderCommand {
             get => _SelectServiceOrderCommand ??= new RelayCommand(async obj => {
                 if(ServiceOrder!=null) {
-                    ServiceOrderViewModel vm = new ServiceOrderViewModel(ServiceOrder);
+                    ServiceOrderViewModel vm = new ServiceOrderViewModel(ServiceOrder,Servicemans);
                     App.Current.MainPage = new ServiceOrder(vm);
                 }
             });
