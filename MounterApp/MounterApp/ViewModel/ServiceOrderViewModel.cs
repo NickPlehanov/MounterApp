@@ -3,11 +3,13 @@ using MounterApp.Model;
 using MounterApp.Properties;
 using MounterApp.Views;
 using Newtonsoft.Json;
+using Rg.Plugins.Popup.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using Xamarin.Essentials;
 
 namespace MounterApp.ViewModel {
     public class ServiceOrderViewModel : BaseViewModel {
@@ -135,26 +137,22 @@ namespace MounterApp.ViewModel {
         private RelayCommand _OutcomeCommand;
         public RelayCommand OutcomeCommand {
             get => _OutcomeCommand ??= new RelayCommand(async obj => {
-                using HttpClient client = new HttpClient();
-                HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/id?id=" + ServiceOrderID.NewServiceorderId);
-                var resp = response.Content.ReadAsStringAsync().Result;
-                NewServiceorderExtensionBase soeb = null;
-                try {
-                    soeb = JsonConvert.DeserializeObject<NewServiceorderExtensionBase>(resp);
-                }
-                catch {
-                    soeb = null;
-                }
-                if(soeb != null) {
-                    soeb.NewOutgone = DateTime.Now.AddHours(-5);
-                    soeb.NewNewServiceman = Servicemans.FirstOrDefault().NewServicemanId;
-                    soeb.NewResult = 1;
-                    using(HttpClient clientPut = new HttpClient()) {
-                        var httpContent = new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json");
-                        //form.Add(new StreamContent(ph.File.GetStream()),String.Format("file"),String.Format(ObjectNumber + "_" + ph._Types.PhotoTypeName + ".jpeg"));
-                        HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases",httpContent);
-                    }
-                }
+                
+            });
+        }
+
+        private RelayCommand _CallClientCommand;
+        public RelayCommand CallClientCommand {
+            get => _CallClientCommand ??= new RelayCommand(async obj => {
+                Uri uri = new Uri("tel:" + obj);
+                await Launcher.OpenAsync(uri);
+            });
+        }
+        private RelayCommand _CloseOrderCommand;
+        public RelayCommand CloseOrderCommand {
+            get => _CloseOrderCommand ??= new RelayCommand(async obj => {
+                CloseOrderPopupPageViewModel vm = new CloseOrderPopupPageViewModel(ServiceOrderID,Servicemans);
+                await App.Current.MainPage.Navigation.PushPopupAsync(new CloseOrderPopupPage(vm));
             });
         }
     }

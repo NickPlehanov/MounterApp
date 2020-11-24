@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<popup:PopupPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:popup="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup" 
+             x:Class="MounterApp.Views.CloseOrderPopupPage">
+    <popup:PopupPage.Content>
+        <StackLayout Padding="10" BackgroundColor="White" HorizontalOptions="Center" VerticalOptions="Center">
+            <Button Command="{Binding ServiceOrderCompletedCommand}" Text="Выполнено"/>
+            <Button Command="{Binding ServiceOrderCompletedCommand}" Text="Перенос"/>
+        </StackLayout>
+    </popup:PopupPage.Content>
+</popup:PopupPage>

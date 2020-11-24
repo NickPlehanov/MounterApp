@@ -6,7 +6,13 @@ namespace MounterApp.Model {
         public Guid NewServiceorderId { get; set; }
         public string NewName { get; set; }
         //TODO: +5 часов
-        public DateTime? NewDate { get; set; }
+        private DateTime? _NewDate;
+        public DateTime? NewDate { 
+            get => _NewDate.Value.AddHours(5);
+            set {
+                _NewDate = value;
+            }
+        }
         public Guid? NewServicemanServiceorder { get; set; }
         public DateTime? NewIncome { get; set; }
         public DateTime? NewOutgone { get; set; }

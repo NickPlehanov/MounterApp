@@ -43,7 +43,7 @@
                 </StackLayout>
             </Expander>
         </StackLayout>-->
-        <Grid VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand">
+        <Grid VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand" Visual="Material">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="6*"/>
