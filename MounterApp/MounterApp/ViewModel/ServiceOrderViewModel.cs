@@ -1,4 +1,5 @@
 ﻿using MounterApp.Helpers;
+using MounterApp.InternalModel;
 using MounterApp.Model;
 using MounterApp.Properties;
 using MounterApp.Views;
@@ -18,8 +19,19 @@ namespace MounterApp.ViewModel {
         }
         public ServiceOrderViewModel(NewServiceorderExtensionBase _so,List<NewServicemanExtensionBase> _servicemans) {
             ServiceOrderID = _so;
+            ServiceOrderID.NewDate = ServiceOrderID.NewDate.Value.AddHours(5);
             Servicemans = _servicemans;
+            OpacityForm = 1;
             GetInfoByGuardObject.Execute(null);
+            GetCategory.Execute(null);
+        }
+        private double _OpacityForm;
+        public double OpacityForm {
+            get => _OpacityForm;
+            set {
+                _OpacityForm = value;
+                OnPropertyChanged(nameof(OpacityForm));
+            }
         }
         private List<NewServicemanExtensionBase> _Servicemans;
         public List<NewServicemanExtensionBase> Servicemans {
@@ -85,7 +97,29 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(rrAccess));
             }
         }
-
+        private string _Category;
+        public string Category {
+            get => _Category;
+            set {
+                _Category = value;
+                OnPropertyChanged(nameof(Category));
+            }
+        }
+        private RelayCommand _GetCategory;
+        public RelayCommand GetCategory {
+            get => _GetCategory ??= new RelayCommand(async obj => {
+                using HttpClient client = new HttpClient();
+                HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/metadata?ColumnName=new_category&ObjectName=New_serviceorder");
+                var resp = response.Content.ReadAsStringAsync().Result;
+                List<MetadataModel> mm = new List<MetadataModel>();
+                try {
+                    mm = JsonConvert.DeserializeObject<List<MetadataModel>>(resp);
+                }
+                catch { }
+                if(mm != null)
+                    Category = mm.FirstOrDefault(x => x.Value == ServiceOrderID.NewCategory).Label;
+            });
+        }
         private RelayCommand _BackPressCommand;
         public RelayCommand BackPressCommand {
             get => _BackPressCommand ??= new RelayCommand(async obj => {
@@ -137,7 +171,7 @@ namespace MounterApp.ViewModel {
         private RelayCommand _OutcomeCommand;
         public RelayCommand OutcomeCommand {
             get => _OutcomeCommand ??= new RelayCommand(async obj => {
-                
+
             });
         }
 
@@ -151,6 +185,7 @@ namespace MounterApp.ViewModel {
         private RelayCommand _CloseOrderCommand;
         public RelayCommand CloseOrderCommand {
             get => _CloseOrderCommand ??= new RelayCommand(async obj => {
+                //OpacityForm = 0.1;
                 CloseOrderPopupPageViewModel vm = new CloseOrderPopupPageViewModel(ServiceOrderID,Servicemans);
                 await App.Current.MainPage.Navigation.PushPopupAsync(new CloseOrderPopupPage(vm));
             });

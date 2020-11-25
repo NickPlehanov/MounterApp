@@ -1,4 +1,5 @@
 ﻿using MounterApp.ViewModel;
+using Rg.Plugins.Popup.Extensions;
 using Rg.Plugins.Popup.Pages;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,10 @@ namespace MounterApp.Views {
             InitializeComponent();
             VM = vm;
             this.BindingContext = VM;
+        }
+
+        private void PopupPage_BackgroundClicked(object sender,EventArgs e) {
+            App.Current.MainPage.Navigation.PopPopupAsync();
         }
         //protected override void OnDisappearing() {
         //    base.OnDisappearing();

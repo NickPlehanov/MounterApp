@@ -1,12 +1,42 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <popup:PopupPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:popup="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup" 
-             x:Class="MounterApp.Views.CloseOrderPopupPage">
+             xmlns:popup="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup" xmlns:sys="clr-namespace:System;assembly=netstandard"
+                 x:Class="MounterApp.Views.CloseOrderPopupPage"
+                 CloseWhenBackgroundIsClicked="True"
+                 BackgroundClicked="PopupPage_BackgroundClicked">
     <popup:PopupPage.Content>
-        <StackLayout Padding="10" BackgroundColor="White" HorizontalOptions="Center" VerticalOptions="Center">
-            <Button Command="{Binding ServiceOrderCompletedCommand}" Text="Выполнено"/>
-            <Button Command="{Binding ServiceOrderCompletedCommand}" Text="Перенос"/>
+        <StackLayout Padding="5" BackgroundColor="GhostWhite" Margin="5" VerticalOptions="Center">
+            <StackLayout >
+                <Picker SelectedItem="{Binding SelectedResult}" ItemsSource="{Binding Results}" ItemDisplayBinding="{Binding Label}" Title="Выберите результат"/>
+            </StackLayout>
+            <StackLayout IsVisible="{Binding ReasonVisibility}">
+                <Picker Title="Укажите причину" ItemsSource="{Binding Reasons}" ItemDisplayBinding="{Binding Label}" SelectedItem="{Binding SelectedReason}"/>
+                <Label Text="Комментарий"/>
+                <Entry Text="{Binding ReasonComment}"/>
+                <FlexLayout IsVisible="{Binding TransferLayoutVisibility}">
+                    <Label Text="Укажите дату и время переноса"/>
+                    <DatePicker Date="{Binding TransferDate}">
+                        <DatePicker.Format>d</DatePicker.Format>
+                        <DatePicker.MinimumDate>
+                            <sys:DateTime x:FactoryMethod="Parse">
+                                <x:Arguments>
+                                    <x:String>Jan 1 2010</x:String>
+                                </x:Arguments>
+                            </sys:DateTime>
+                        </DatePicker.MinimumDate>
+                        <DatePicker.MaximumDate>
+                            <sys:DateTime x:FactoryMethod="Parse">
+                                <x:Arguments>
+                                    <x:String>Dec 31 2050</x:String>
+                                </x:Arguments>
+                            </sys:DateTime>
+                        </DatePicker.MaximumDate>
+                    </DatePicker>
+                    <TimePicker Time="{Binding TransferTime, Mode=TwoWay}" Format="t"/>
+                </FlexLayout>
+            </StackLayout>
+            <Button Text="OK" Command="{Binding CloseServiceOrderCommand}"/>
         </StackLayout>
     </popup:PopupPage.Content>
 </popup:PopupPage>
