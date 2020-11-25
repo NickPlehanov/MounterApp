@@ -26,13 +26,5 @@ namespace MounterApp.Views {
         private void PopupPage_BackgroundClicked(object sender,EventArgs e) {
             App.Current.MainPage.Navigation.PopPopupAsync();
         }
-        //protected override void OnDisappearing() {
-        //    base.OnDisappearing();
-
-        //    //if(_removeFlag) {
-        //        Navigation.RemovePage(this);
-        //    //}
-
-        //}
     }
 }

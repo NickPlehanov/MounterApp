@@ -2,6 +2,7 @@
 using MounterApp.InternalModel;
 using MounterApp.Model;
 using MounterApp.Properties;
+using MounterApp.Views;
 using Newtonsoft.Json;
 using Rg.Plugins.Popup.Extensions;
 using System;
@@ -249,7 +250,7 @@ namespace MounterApp.ViewModel {
                         soeb.NewResultId = SelectedReason.Value;
                         soeb.NewTransferReason = ReasonComment;
                         if(SelectedResult.Value == 2) {
-                            soeb.NewMoved = new DateTime(TransferDate.Year,TransferDate.Month,TransferDate.Day,TransferTime.Hours,TransferTime.Minutes,TransferTime.Seconds);
+                            soeb.NewMoved = new DateTime(TransferDate.Year,TransferDate.Month,TransferDate.Day,TransferTime.Hours,TransferTime.Minutes,TransferTime.Seconds).AddHours(-5);
                         }
                         using(HttpClient clientPut = new HttpClient()) {
                             var httpContent = new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json");
@@ -258,6 +259,8 @@ namespace MounterApp.ViewModel {
                         }
                     }
                     await App.Current.MainPage.Navigation.PopPopupAsync(true);
+                    ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans);
+                    App.Current.MainPage = new ServiceOrdersPage(vm);
                 }
                 else
                     await Application.Current.MainPage.DisplayAlert("Ошибка","Не выбрана причина отмены(переноса) или не указан комментарий к причине","OK");

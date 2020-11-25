@@ -8,7 +8,7 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="5*"/>
             </Grid.RowDefinitions>
-            <FlexLayout Grid.Row="0"  Margin="5">
+            <FlexLayout Grid.Row="0"  Margin="5" Opacity="{Binding OpacityForm}">
                 <Button Text="Обновить" Command="{Binding GetServiceOrders}" HorizontalOptions="Start"/>
                 <DatePicker Date="{Binding Date}" HorizontalOptions="End">
                     <DatePicker.Format>d</DatePicker.Format>
@@ -42,6 +42,10 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-        </Grid>
+            <StackLayout IsVisible="{Binding IndicatorVisible}" Grid.Row="2" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
+                <ActivityIndicator IsRunning="True" Color="Red" HeightRequest="50" WidthRequest="50"  />
+                <Label FontAttributes="Bold" Text="Подождите, идет загрузка..." TextColor="White" />
+            </StackLayout>
+        </Grid>        
     </ContentPage.Content>
 </ContentPage>
