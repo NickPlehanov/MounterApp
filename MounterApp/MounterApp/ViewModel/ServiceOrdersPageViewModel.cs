@@ -52,7 +52,7 @@ namespace MounterApp.ViewModel {
             Servicemans = _servicemans;
             OpacityForm = 1;
             IndicatorVisible = false;
-            GetServiceOrders.Execute(Servicemans);
+            //GetServiceOrders.Execute(Servicemans);
         }
         private RelayCommand _BackPressCommand;
         public RelayCommand BackPressCommand {

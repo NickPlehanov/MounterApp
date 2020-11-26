@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using Rg.Plugins.Popup.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -14,6 +15,7 @@ using Xamarin.Essentials;
 
 namespace MounterApp.ViewModel {
     public class ServiceOrderViewModel : BaseViewModel {
+        public ServiceOrderViewModel() {}
         public ServiceOrderViewModel(NewServiceorderExtensionBase _so) {
             ServiceOrderID = _so;
         }
@@ -24,6 +26,30 @@ namespace MounterApp.ViewModel {
             OpacityForm = 1;
             GetInfoByGuardObject.Execute(null);
             GetCategory.Execute(null);
+        }
+        private bool _ObjectInfoVisible;
+        public bool ObjectInfoVisible {
+            get => _ObjectInfoVisible;
+            set {
+                _ObjectInfoVisible = value;
+                OnPropertyChanged(nameof(ObjectInfoVisible));
+            }
+        }
+        private ObservableCollection<Wires> _Wires = new ObservableCollection<Wires>();
+        public ObservableCollection<Wires> Wires {
+            get => _Wires;
+            set {
+                _Wires = value;
+                OnPropertyChanged(nameof(Wires));
+            }
+        }
+        private ObservableCollection<ExtFields> _ExtFields = new ObservableCollection<ExtFields>();
+        public ObservableCollection<ExtFields> ExtFields {
+            get => _ExtFields;
+            set {
+                _ExtFields = value;
+                OnPropertyChanged(nameof(ExtFields));
+            }
         }
         private double _OpacityForm;
         public double OpacityForm {
@@ -188,6 +214,37 @@ namespace MounterApp.ViewModel {
                 //OpacityForm = 0.1;
                 CloseOrderPopupPageViewModel vm = new CloseOrderPopupPageViewModel(ServiceOrderID,Servicemans);
                 await App.Current.MainPage.Navigation.PushPopupAsync(new CloseOrderPopupPage(vm));
+            });
+        }
+        private RelayCommand _GetObjectInfoCommand;
+        public RelayCommand GetObjectInfoCommand {
+            get => _GetObjectInfoCommand ??= new RelayCommand(async obj => {
+                using HttpClient client = new HttpClient();
+                HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/wires?objNumber=" + ServiceOrderID.NewNumber);
+                var resp = response.Content.ReadAsStringAsync().Result;
+                List<Wires> _wrs = new List<Wires>();
+                try {
+                    _wrs = JsonConvert.DeserializeObject<List<Wires>>(resp);
+                }
+                catch { }
+                if(_wrs.Count()>0) {
+                    foreach(var item in _wrs) {
+                        Wires.Add(item);
+                    }
+                }
+
+                response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/ext?objNumber=" + ServiceOrderID.NewNumber);
+                resp = response.Content.ReadAsStringAsync().Result;
+                List<ExtFields> _ext = new List<ExtFields>();
+                try {
+                    _ext = JsonConvert.DeserializeObject<List<ExtFields>>(resp);
+                }
+                catch { }
+                if(_wrs.Count() > 0) {
+                    foreach(var item in _ext) {
+                        ExtFields.Add(item);
+                    }
+                }
             });
         }
     }

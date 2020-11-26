@@ -10,7 +10,7 @@
             </Grid.RowDefinitions>
             <FlexLayout Grid.Row="0"  Margin="5" Opacity="{Binding OpacityForm}">
                 <Button Text="Обновить" Command="{Binding GetServiceOrders}" HorizontalOptions="Start"/>
-                <DatePicker Date="{Binding Date}" HorizontalOptions="End">
+                <DatePicker Date="{Binding Date, Mode=TwoWay}" HorizontalOptions="End">
                     <DatePicker.Format>d</DatePicker.Format>
                     <DatePicker.MinimumDate>
                         <sys:DateTime x:FactoryMethod="Parse">
