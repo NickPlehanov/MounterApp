@@ -24,6 +24,10 @@ namespace MounterApp.ViewModel {
             ServiceOrderID.NewDate = ServiceOrderID.NewDate.Value.AddHours(5);
             Servicemans = _servicemans;
             OpacityForm = 1;
+            WiresVisible = false;
+            ExtFieldsVisible = false;
+            //EventsDatesFilterVisible = false;
+            EventsVisible = false;
             GetInfoByGuardObject.Execute(null);
             GetCategory.Execute(null);
         }
@@ -35,12 +39,12 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(ObjectInfoVisible));
             }
         }
-        private ObservableCollection<Wires> _Wires = new ObservableCollection<Wires>();
-        public ObservableCollection<Wires> Wires {
-            get => _Wires;
+        private ObservableCollection<Wires> _WiresCollection = new ObservableCollection<Wires>();
+        public ObservableCollection<Wires> WiresCollection {
+            get => _WiresCollection;
             set {
-                _Wires = value;
-                OnPropertyChanged(nameof(Wires));
+                _WiresCollection = value;
+                OnPropertyChanged(nameof(WiresCollection));
             }
         }
         private ObservableCollection<ExtFields> _ExtFields = new ObservableCollection<ExtFields>();
@@ -49,6 +53,14 @@ namespace MounterApp.ViewModel {
             set {
                 _ExtFields = value;
                 OnPropertyChanged(nameof(ExtFields));
+            }
+        }
+        private ObservableCollection<GetEventsReceivedFromObject_Result> _Events = new ObservableCollection<GetEventsReceivedFromObject_Result>();
+        public ObservableCollection<GetEventsReceivedFromObject_Result> Events {
+            get => _Events;
+            set {
+                _Events = value;
+                OnPropertyChanged(nameof(Events));
             }
         }
         private double _OpacityForm;
@@ -131,6 +143,68 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(Category));
             }
         }
+        private bool _IndicatorVisible;
+        public bool IndicatorVisible {
+            get => _IndicatorVisible;
+            set {
+                _IndicatorVisible = value;
+                OnPropertyChanged(nameof(IndicatorVisible));
+            }
+        }
+        private double _Opacity;
+        public double Opacity {
+            get => _Opacity;
+            set {
+                _Opacity = value;
+                OnPropertyChanged(nameof(Opacity));
+            }
+        }
+        private bool _WiresVisible;
+        public bool WiresVisible {
+            get => _WiresVisible;
+            set {
+                _WiresVisible = value;
+                OnPropertyChanged(nameof(WiresVisible));
+            }
+        }
+        private bool _ExtFieldsVisible;
+        public bool ExtFieldsVisible {
+            get => _ExtFieldsVisible;
+            set {
+                _ExtFieldsVisible = value;
+                OnPropertyChanged(nameof(ExtFieldsVisible));
+            }
+        }
+        private DateTime _DateStart;
+        public DateTime DateStart {
+            get => _DateStart;
+            set {
+                if(value == DateTime.Parse("01.01.1900 00:00:00"))
+                    _DateStart = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy")).AddDays(-1);
+                else
+                    _DateStart = value;
+                OnPropertyChanged(nameof(DateStart));
+            }
+        }
+        private DateTime _DateEnd;
+        public DateTime DateEnd {
+            get => _DateEnd;
+            set {
+                if(value == DateTime.Parse("01.01.1900 00:00:00"))
+                    _DateEnd = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
+                else
+                    _DateEnd = value;
+                OnPropertyChanged(nameof(DateEnd));
+            }
+        }
+        private bool _EventsVisible;
+        public bool EventsVisible {
+            get => _EventsVisible;
+            set {
+                _EventsVisible = value;
+                OnPropertyChanged(nameof(EventsVisible));
+            }
+        }
         private RelayCommand _GetCategory;
         public RelayCommand GetCategory {
             get => _GetCategory ??= new RelayCommand(async obj => {
@@ -156,6 +230,8 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetInfoByGuardObject;
         public RelayCommand GetInfoByGuardObject {
             get => _GetInfoByGuardObject ??= new RelayCommand(async obj => {
+                Opacity = 0.1;
+                IndicatorVisible = true;
                 using HttpClient client = new HttpClient();
                 HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewGuardObjectExtensionBases/GetInfoByNumber?number=" + ServiceOrderID.NewNumber);
                 var resp = response.Content.ReadAsStringAsync().Result;
@@ -172,12 +248,15 @@ namespace MounterApp.ViewModel {
                     rrVideo = goeb.FirstOrDefault().NewRrVideo.HasValue ? (bool)goeb.FirstOrDefault().NewRrVideo : false;
                     rrAccess = goeb.FirstOrDefault().NewRrSkud.HasValue ? (bool)goeb.FirstOrDefault().NewRrSkud : false;
                 }
-                //}
+                Opacity = 1;
+                IndicatorVisible = false;
             });
         }
         private RelayCommand _IncomeCommand;
         public RelayCommand IncomeCommand {
             get => _IncomeCommand ??= new RelayCommand(async obj => {
+                Opacity = 0.1;
+                IndicatorVisible = true;
                 using HttpClient client = new HttpClient();
                 HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/id?id=" + ServiceOrderID.NewServiceorderId);
                 var resp = response.Content.ReadAsStringAsync().Result;
@@ -192,6 +271,8 @@ namespace MounterApp.ViewModel {
                     var httpContent = new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json");
                     HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases",httpContent);
                 }
+                Opacity = 1;
+                IndicatorVisible = false;
             });
         }
         private RelayCommand _OutcomeCommand;
@@ -200,7 +281,6 @@ namespace MounterApp.ViewModel {
 
             });
         }
-
         private RelayCommand _CallClientCommand;
         public RelayCommand CallClientCommand {
             get => _CallClientCommand ??= new RelayCommand(async obj => {
@@ -219,32 +299,73 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetObjectInfoCommand;
         public RelayCommand GetObjectInfoCommand {
             get => _GetObjectInfoCommand ??= new RelayCommand(async obj => {
-                using HttpClient client = new HttpClient();
-                HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/wires?objNumber=" + ServiceOrderID.NewNumber);
-                var resp = response.Content.ReadAsStringAsync().Result;
-                List<Wires> _wrs = new List<Wires>();
-                try {
-                    _wrs = JsonConvert.DeserializeObject<List<Wires>>(resp);
-                }
-                catch { }
-                if(_wrs.Count()>0) {
-                    foreach(var item in _wrs) {
-                        Wires.Add(item);
-                    }
-                }
 
-                response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/ext?objNumber=" + ServiceOrderID.NewNumber);
-                resp = response.Content.ReadAsStringAsync().Result;
-                List<ExtFields> _ext = new List<ExtFields>();
-                try {
-                    _ext = JsonConvert.DeserializeObject<List<ExtFields>>(resp);
-                }
-                catch { }
-                if(_wrs.Count() > 0) {
-                    foreach(var item in _ext) {
-                        ExtFields.Add(item);
-                    }
-                }
+                //Opacity = 0.1;
+                //IndicatorVisible = true;
+                //WiresCollection.Clear();
+                //ExtFields.Clear();
+                //using HttpClient client = new HttpClient();
+                //HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/wires?objNumber=" + ServiceOrderID.NewNumber);
+                //var resp = response.Content.ReadAsStringAsync().Result;
+                //List<Wires> _wrs = new List<Wires>();
+                //try {
+                //    _wrs = JsonConvert.DeserializeObject<List<Wires>>(resp);
+                //}
+                //catch { }
+                //if(_wrs.Count()>0) {
+                //    foreach(var item in _wrs) {
+                //        WiresCollection.Add(item);
+                //    }
+                //}
+
+                //response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/ext?objNumber=" + ServiceOrderID.NewNumber);
+                //resp = response.Content.ReadAsStringAsync().Result;
+                //List<ExtFields> _ext = new List<ExtFields>();
+                //try {
+                //    _ext = JsonConvert.DeserializeObject<List<ExtFields>>(resp);
+                //}
+                //catch { }
+                //if(_wrs.Count() > 0) {
+                //    foreach(var item in _ext) {
+                //        ExtFields.Add(item);
+                //    }
+                //}
+                //Opacity = 1;
+                //IndicatorVisible = false;
+                //WiresVisible = true;
+                //ExtFieldsVisible = true;
+                ObjectInfoViewModel vm = new ObjectInfoViewModel(ServiceOrderID,Servicemans);
+                await App.Current.MainPage.Navigation.PushPopupAsync(new ObjectInfoPopup(vm));
+            });
+        }
+        private RelayCommand _GetEventsCommand;
+        public RelayCommand GetEventsCommand {
+            get => _GetEventsCommand ??= new RelayCommand(async obj => {
+                //Opacity = 0.1;
+                //IndicatorVisible = true;
+                //EventsVisible = true;
+                //Events.Clear();
+                //using HttpClient client = new HttpClient();
+                //HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/events?objNumber="+ServiceOrderID.NewNumber +
+                //    "&startDate=" + DateStart+
+                //    "&endDate="+DateEnd+
+                //    "&testFiltered=0&doubleFiltered=0"
+                //    );
+                //var resp = response.Content.ReadAsStringAsync().Result;
+                //List<GetEventsReceivedFromObject_Result> _evnts = new List<GetEventsReceivedFromObject_Result>();
+                //try {
+                //    _evnts = JsonConvert.DeserializeObject<List<GetEventsReceivedFromObject_Result>>(resp);
+                //}                
+                //catch (Exception ex) {}
+                //if(_evnts.Count > 0) {
+                //    foreach(var item in _evnts) 
+                //        Events.Add(item);
+                //    EventsVisible = true;
+                //}
+                //Opacity = 1;
+                //IndicatorVisible = false;
+                EventsPopupViewModel vm = new EventsPopupViewModel(ServiceOrderID,Servicemans);
+                await App.Current.MainPage.Navigation.PushPopupAsync(new EventsPopupPage(vm));
             });
         }
     }

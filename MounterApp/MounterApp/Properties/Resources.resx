@@ -118,6 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="BaseAddress" xml:space="preserve">
-    <value>https://3eb7814dedf2.ngrok.io</value>
+    <value>https://33e9c913c4f3.ngrok.io</value>
   </data>
 </root>
