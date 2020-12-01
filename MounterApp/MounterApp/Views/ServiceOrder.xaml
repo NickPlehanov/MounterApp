@@ -109,34 +109,10 @@
                             <StackLayout Grid.Row="0">
                                 <Button Text="Информация по объекту" Command="{Binding GetObjectInfoCommand}"/>
                                 <Button Text="Заявки по объекту" Command="{Binding ServiceOrderByObjectCommand}"/>
-                                <Button Text="Схема объекта" Command="{Binding ObjectSchemeCommand}"/>
+                                <!--<Button Text="Схема объекта" Command="{Binding ObjectSchemeCommand}"/>-->
                                 <Button Text="События по объекту" Command="{Binding GetEventsCommand, Mode=TwoWay}"/>
                             </StackLayout>
-                            <!--<Expander Grid.Row="1" Margin="5" IsVisible="{Binding WiresVisible, Mode=TwoWay}">
-                                <Expander.Header>
-                                    <Label Text="Шлейфы"  Margin="5"/>
-                                </Expander.Header>
-                                <dg:DataGrid  ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrderViewModel}}, Path=WiresCollection, Mode=TwoWay}">
-                                    <dg:DataGrid.Columns>
-                                        <dg:DataGridColumn Width="*" Title="Номер" PropertyName="ID"/>
-                                        <dg:DataGridColumn Width="*" Title="Описание" PropertyName="Desc"/>
-                                    </dg:DataGrid.Columns>
-                                </dg:DataGrid>
-                            </Expander>
-                            <Expander Margin="5" Grid.Row="2"  IsVisible="{Binding ExtFieldsVisible, Mode=TwoWay}">
-                                <Expander.Header>
-                                    <Label Text="Доп. информация"  Margin="5"/>
-                                </Expander.Header>
-                                <dg:DataGrid  ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrderViewModel}}, Path=ExtFields, Mode=TwoWay}">
-                                    <dg:DataGrid.Columns>
-                                        <dg:DataGridColumn Width="*" Title="Номер" PropertyName="FieldName"/>
-                                        <dg:DataGridColumn Width="*" Title="Значение" PropertyName="FieldValue"/>
-                                    </dg:DataGrid.Columns>
-                                </dg:DataGrid>
-                            </Expander>-->
-                            <!--</StackLayout>-->
                         </Grid>
-                        <!--</StackLayout>-->
                     </Expander>
                 </StackLayout>
                 <StackLayout Grid.Row="3" Grid.Column="0" Margin="5">

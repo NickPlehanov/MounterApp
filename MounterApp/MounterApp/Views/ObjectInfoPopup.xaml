@@ -12,7 +12,7 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <ScrollView Grid.Row="0"  Orientation="Both">
-                        <dg:DataGrid SortedColumnIndex="0" BorderColor="#620000"  ItemsSource="{Binding WiresCollection, Mode=TwoWay, UpdateSourceEventName=PropertyChanged}">
+                        <dg:DataGrid SortedColumnIndex="0" ItemsSource="{Binding WiresCollection, Mode=TwoWay, UpdateSourceEventName=PropertyChanged}">
                         <dg:DataGrid.Columns>
                             <dg:DataGridColumn Width="*" Title="Номер" PropertyName="ID"/>
                             <dg:DataGridColumn Width="*" Title="Описание" PropertyName="Desc"/>
@@ -20,7 +20,7 @@
                         </dg:DataGrid>
                     </ScrollView>
                     <ScrollView Grid.Row="1"  Orientation="Both">
-                        <dg:DataGrid SortedColumnIndex="0" BorderColor="#620000" ItemsSource="{Binding ExtFields, Mode=TwoWay, UpdateSourceEventName=PropertyChanged}">
+                        <dg:DataGrid SortedColumnIndex="0" ItemsSource="{Binding ExtFields, Mode=TwoWay, UpdateSourceEventName=PropertyChanged}">
                         <dg:DataGrid.Columns>
                             <dg:DataGridColumn Width="*" Title="Номер" PropertyName="FieldName"/>
                             <dg:DataGridColumn Width="*" Title="Значение" PropertyName="FieldValue"/>

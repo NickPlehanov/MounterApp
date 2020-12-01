@@ -12,6 +12,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using Xamarin.Essentials;
+using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class ServiceOrderViewModel : BaseViewModel {
@@ -205,6 +206,22 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(EventsVisible));
             }
         }
+        private string _Latitude;
+        public string Latitude {
+            get => _Latitude;
+            set {
+                _Latitude = value;
+                OnPropertyChanged(nameof(Latitude));
+            }
+        }
+        private string _Longitude;
+        public string Longitude {
+            get => _Longitude;
+            set {
+                _Longitude = value;
+                OnPropertyChanged(nameof(Longitude));
+            }
+        }
         private RelayCommand _GetCategory;
         public RelayCommand GetCategory {
             get => _GetCategory ??= new RelayCommand(async obj => {
@@ -233,20 +250,49 @@ namespace MounterApp.ViewModel {
                 Opacity = 0.1;
                 IndicatorVisible = true;
                 using HttpClient client = new HttpClient();
-                HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewGuardObjectExtensionBases/GetInfoByNumber?number=" + ServiceOrderID.NewNumber);
-                var resp = response.Content.ReadAsStringAsync().Result;
-                List<NewGuardObjectExtensionBase> goeb = new List<NewGuardObjectExtensionBase>();
-                try {
-                    goeb = JsonConvert.DeserializeObject<List<NewGuardObjectExtensionBase>>(resp);
+                if(ServiceOrderID.NewNumber.HasValue) {
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewGuardObjectExtensionBases/GetInfoByNumber?number=" + ServiceOrderID.NewNumber);
+                    var resp = response.Content.ReadAsStringAsync().Result;
+                    List<NewGuardObjectExtensionBase> goeb = new List<NewGuardObjectExtensionBase>();
+                    try {
+                        goeb = JsonConvert.DeserializeObject<List<NewGuardObjectExtensionBase>>(resp);
+                    }
+                    catch { }
+                    if(goeb.Count > 0) {
+                        Contact = goeb.FirstOrDefault().NewFirstcontact;
+                        Siding = goeb.FirstOrDefault().NewSiding;
+                        rrOS = goeb.FirstOrDefault().NewRrOs.HasValue ? (bool)goeb.FirstOrDefault().NewRrOs : false;
+                        rrPS = goeb.FirstOrDefault().NewRrPs.HasValue ? (bool)goeb.FirstOrDefault().NewRrPs : false;
+                        rrVideo = goeb.FirstOrDefault().NewRrVideo.HasValue ? (bool)goeb.FirstOrDefault().NewRrVideo : false;
+                        rrAccess = goeb.FirstOrDefault().NewRrSkud.HasValue ? (bool)goeb.FirstOrDefault().NewRrSkud : false;
+                    }
                 }
-                catch { }
-                if(goeb.Count > 0) {
-                    Contact = goeb.FirstOrDefault().NewFirstcontact;
-                    Siding = goeb.FirstOrDefault().NewSiding;
-                    rrOS = goeb.FirstOrDefault().NewRrOs.HasValue ? (bool)goeb.FirstOrDefault().NewRrOs : false;
-                    rrPS = goeb.FirstOrDefault().NewRrPs.HasValue ? (bool)goeb.FirstOrDefault().NewRrPs : false;
-                    rrVideo = goeb.FirstOrDefault().NewRrVideo.HasValue ? (bool)goeb.FirstOrDefault().NewRrVideo : false;
-                    rrAccess = goeb.FirstOrDefault().NewRrSkud.HasValue ? (bool)goeb.FirstOrDefault().NewRrSkud : false;
+                else {
+                    using HttpClient clientA28 = new HttpClient();
+                    HttpResponseMessage responseA28 = await clientA28.GetAsync(Resources.BaseAddress + "/api/NewAndromedaExtensionBases/id?id=" + ServiceOrderID.NewAndromedaServiceorder);
+                    var respA28 = responseA28.Content.ReadAsStringAsync().Result;
+                    NewAndromedaExtensionBase andromeda = new NewAndromedaExtensionBase();
+                    try {
+                        andromeda = JsonConvert.DeserializeObject<NewAndromedaExtensionBase>(respA28);
+                    }
+                    catch { }
+                    if(andromeda != null) {
+                        HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewGuardObjectExtensionBases/GetInfoByNumber?number=" + andromeda.NewNumber);
+                        var resp = response.Content.ReadAsStringAsync().Result;
+                        List<NewGuardObjectExtensionBase> goeb = new List<NewGuardObjectExtensionBase>();
+                        try {
+                            goeb = JsonConvert.DeserializeObject<List<NewGuardObjectExtensionBase>>(resp);
+                        }
+                        catch { }
+                        if(goeb.Count > 0) {
+                            Contact = goeb.FirstOrDefault().NewFirstcontact;
+                            Siding = goeb.FirstOrDefault().NewSiding;
+                            rrOS = goeb.FirstOrDefault().NewRrOs.HasValue ? (bool)goeb.FirstOrDefault().NewRrOs : false;
+                            rrPS = goeb.FirstOrDefault().NewRrPs.HasValue ? (bool)goeb.FirstOrDefault().NewRrPs : false;
+                            rrVideo = goeb.FirstOrDefault().NewRrVideo.HasValue ? (bool)goeb.FirstOrDefault().NewRrVideo : false;
+                            rrAccess = goeb.FirstOrDefault().NewRrSkud.HasValue ? (bool)goeb.FirstOrDefault().NewRrSkud : false;
+                        }
+                    }
                 }
                 Opacity = 1;
                 IndicatorVisible = false;
@@ -257,6 +303,11 @@ namespace MounterApp.ViewModel {
             get => _IncomeCommand ??= new RelayCommand(async obj => {
                 Opacity = 0.1;
                 IndicatorVisible = true;
+                Location location = await Geolocation.GetLastKnownLocationAsync();
+                if(location != null) {
+                    Latitude = location.Latitude.ToString();
+                    Longitude = location.Longitude.ToString();
+                }
                 using HttpClient client = new HttpClient();
                 HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/id?id=" + ServiceOrderID.NewServiceorderId);
                 var resp = response.Content.ReadAsStringAsync().Result;
@@ -270,6 +321,17 @@ namespace MounterApp.ViewModel {
                     using HttpClient clientPut = new HttpClient();
                     var httpContent = new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json");
                     HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases",httpContent);
+                }
+                //запишем координаты
+                using(HttpClient clientPost = new HttpClient()) {
+                    var data = JsonConvert.SerializeObject(new ServiceOrderCoordinates() {
+                        SocId=Guid.NewGuid(),
+                        SocServiceOrderId=ServiceOrderID.NewServiceorderId,
+                        SocIncomeLatitude= Latitude,
+                        SocIncomeLongitude=Longitude
+                    });
+                    StringContent content = new StringContent(data,Encoding.UTF8,"application/json");
+                    HttpResponseMessage responsePost = await clientPost.PostAsync(Resources.BaseAddress+ "/api/ServiceOrderCoordinates",content);
                 }
                 Opacity = 1;
                 IndicatorVisible = false;
@@ -291,7 +353,6 @@ namespace MounterApp.ViewModel {
         private RelayCommand _CloseOrderCommand;
         public RelayCommand CloseOrderCommand {
             get => _CloseOrderCommand ??= new RelayCommand(async obj => {
-                //OpacityForm = 0.1;
                 CloseOrderPopupPageViewModel vm = new CloseOrderPopupPageViewModel(ServiceOrderID,Servicemans);
                 await App.Current.MainPage.Navigation.PushPopupAsync(new CloseOrderPopupPage(vm));
             });
@@ -299,41 +360,6 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetObjectInfoCommand;
         public RelayCommand GetObjectInfoCommand {
             get => _GetObjectInfoCommand ??= new RelayCommand(async obj => {
-
-                //Opacity = 0.1;
-                //IndicatorVisible = true;
-                //WiresCollection.Clear();
-                //ExtFields.Clear();
-                //using HttpClient client = new HttpClient();
-                //HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/wires?objNumber=" + ServiceOrderID.NewNumber);
-                //var resp = response.Content.ReadAsStringAsync().Result;
-                //List<Wires> _wrs = new List<Wires>();
-                //try {
-                //    _wrs = JsonConvert.DeserializeObject<List<Wires>>(resp);
-                //}
-                //catch { }
-                //if(_wrs.Count()>0) {
-                //    foreach(var item in _wrs) {
-                //        WiresCollection.Add(item);
-                //    }
-                //}
-
-                //response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/ext?objNumber=" + ServiceOrderID.NewNumber);
-                //resp = response.Content.ReadAsStringAsync().Result;
-                //List<ExtFields> _ext = new List<ExtFields>();
-                //try {
-                //    _ext = JsonConvert.DeserializeObject<List<ExtFields>>(resp);
-                //}
-                //catch { }
-                //if(_wrs.Count() > 0) {
-                //    foreach(var item in _ext) {
-                //        ExtFields.Add(item);
-                //    }
-                //}
-                //Opacity = 1;
-                //IndicatorVisible = false;
-                //WiresVisible = true;
-                //ExtFieldsVisible = true;
                 ObjectInfoViewModel vm = new ObjectInfoViewModel(ServiceOrderID,Servicemans);
                 await App.Current.MainPage.Navigation.PushPopupAsync(new ObjectInfoPopup(vm));
             });
@@ -341,31 +367,15 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetEventsCommand;
         public RelayCommand GetEventsCommand {
             get => _GetEventsCommand ??= new RelayCommand(async obj => {
-                //Opacity = 0.1;
-                //IndicatorVisible = true;
-                //EventsVisible = true;
-                //Events.Clear();
-                //using HttpClient client = new HttpClient();
-                //HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/events?objNumber="+ServiceOrderID.NewNumber +
-                //    "&startDate=" + DateStart+
-                //    "&endDate="+DateEnd+
-                //    "&testFiltered=0&doubleFiltered=0"
-                //    );
-                //var resp = response.Content.ReadAsStringAsync().Result;
-                //List<GetEventsReceivedFromObject_Result> _evnts = new List<GetEventsReceivedFromObject_Result>();
-                //try {
-                //    _evnts = JsonConvert.DeserializeObject<List<GetEventsReceivedFromObject_Result>>(resp);
-                //}                
-                //catch (Exception ex) {}
-                //if(_evnts.Count > 0) {
-                //    foreach(var item in _evnts) 
-                //        Events.Add(item);
-                //    EventsVisible = true;
-                //}
-                //Opacity = 1;
-                //IndicatorVisible = false;
                 EventsPopupViewModel vm = new EventsPopupViewModel(ServiceOrderID,Servicemans);
                 await App.Current.MainPage.Navigation.PushPopupAsync(new EventsPopupPage(vm));
+            });
+        }
+        private RelayCommand _ServiceOrderByObjectCommand;
+        public RelayCommand ServiceOrderByObjectCommand {
+            get => _ServiceOrderByObjectCommand ??= new RelayCommand(async obj => {
+                PastOrdersPopupViewModel vm = new PastOrdersPopupViewModel(ServiceOrderID,Servicemans);
+                await App.Current.MainPage.Navigation.PushPopupAsync(new PastOrdersPopupPage(vm));
             });
         }
     }

@@ -12,7 +12,7 @@ using System.Net.Http;
 namespace MounterApp.ViewModel {
     public class ServiceOrdersPageViewModel : BaseViewModel {
 
-        private List<NewServicemanExtensionBase> _Servicemans;
+        private List<NewServicemanExtensionBase> _Servicemans = new List<NewServicemanExtensionBase>();
         public List<NewServicemanExtensionBase> Servicemans {
             get => _Servicemans;
             set {
@@ -24,7 +24,7 @@ namespace MounterApp.ViewModel {
         public DateTime Date {
             get => _Date;
             set {
-                if(value == DateTime.Parse("01.01.2010 00:00:00"))
+                if(value == DateTime.Parse("01.01.0001 00:00:00"))
                     _Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
                 else
                     _Date = value;
@@ -52,7 +52,7 @@ namespace MounterApp.ViewModel {
             Servicemans = _servicemans;
             OpacityForm = 1;
             IndicatorVisible = false;
-            //GetServiceOrders.Execute(Servicemans);
+            GetServiceOrders.Execute(Servicemans);
         }
         private RelayCommand _BackPressCommand;
         public RelayCommand BackPressCommand {
@@ -68,13 +68,23 @@ namespace MounterApp.ViewModel {
                 IndicatorVisible = true;
                 if(Servicemans.Count > 0) {
                     ///api/NewServiceorderExtensionBases/ServiceOrderByUser?usr_ID=FEF46B07-8D7A-E311-920A-00155D01051D&date=18.11.2020
+                    if(Date == DateTime.Parse("01.01.0001 00:00:00"))
+                        Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
                     using HttpClient client = new HttpClient();
                     HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByUser?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
                     var resp = response.Content.ReadAsStringAsync().Result;
-                    List<NewServiceorderExtensionBase> _serviceorders = JsonConvert.DeserializeObject<List<NewServiceorderExtensionBase>>(resp).Where(x => x.NewNewServiceman == null).ToList();
-                    ServiceOrders.Clear();
-                    foreach(NewServiceorderExtensionBase item in _serviceorders) {
-                        ServiceOrders.Add(item);
+                    List<NewServiceorderExtensionBase> _serviceorders = new List<NewServiceorderExtensionBase>();
+                    try {
+                        _serviceorders = JsonConvert.DeserializeObject<List<NewServiceorderExtensionBase>>(resp).Where(x => x.NewNewServiceman == null).ToList();
+                    }
+                    catch(Exception ex) {
+                        _serviceorders = null;
+                    }
+                    if(_serviceorders != null) {
+                        ServiceOrders.Clear();
+                        foreach(NewServiceorderExtensionBase item in _serviceorders) {
+                            ServiceOrders.Add(item);
+                        }
                     }
                 }
                 IndicatorVisible = false;

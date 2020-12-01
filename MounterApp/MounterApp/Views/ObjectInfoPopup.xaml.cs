@@ -2,12 +2,6 @@
 using Rg.Plugins.Popup.Extensions;
 using Rg.Plugins.Popup.Pages;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace MounterApp.Views {
@@ -20,7 +14,7 @@ namespace MounterApp.Views {
         public ObjectInfoPopup(ObjectInfoViewModel vm) {
             InitializeComponent();
             VM = vm;
-            this.BindingContext = VM;
+            BindingContext = VM;
         }
         private void PopupPage_BackgroundClicked(object sender,EventArgs e) {
             App.Current.MainPage.Navigation.PopPopupAsync();

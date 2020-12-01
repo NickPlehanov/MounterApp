@@ -10,8 +10,8 @@
             </Grid.RowDefinitions>
             <FlexLayout Grid.Row="0"  Margin="5" Opacity="{Binding OpacityForm}">
                 <Button Text="Обновить" Command="{Binding GetServiceOrders}" HorizontalOptions="Start"/>
-                <DatePicker Date="{Binding Date, Mode=TwoWay}" HorizontalOptions="End">
-                    <DatePicker.Format>d</DatePicker.Format>
+                <DatePicker Date="{Binding Date, Mode=TwoWay}" HorizontalOptions="End"/>
+                <!--<DatePicker.Format>d</DatePicker.Format>
                     <DatePicker.MinimumDate>
                         <sys:DateTime x:FactoryMethod="Parse">
                             <x:Arguments>
@@ -26,7 +26,7 @@
                             </x:Arguments>
                         </sys:DateTime>
                     </DatePicker.MaximumDate>
-                </DatePicker>
+                </DatePicker>-->
             </FlexLayout>
         <CollectionView Margin="5" Grid.Row="1" ItemsSource="{Binding ServiceOrders}" SelectionMode="Single" 
                                 SelectionChangedCommand="{Binding SelectServiceOrderCommand, Mode=TwoWay}"

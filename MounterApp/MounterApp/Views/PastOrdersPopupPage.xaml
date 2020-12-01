@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<popup:PopupPage  xmlns:popup="http://rotorgames.com" xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:dg="clr-namespace:Xamarin.Forms.DataGrid;assembly=Xamarin.Forms.DataGrid"
+                  x:Class="MounterApp.Views.PastOrdersPopupPage">
+    <popup:PopupPage.Content>
+        <ScrollView>
+            <StackLayout Padding="5" BackgroundColor="GhostWhite" Margin="5" VerticalOptions="Center">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <dg:DataGrid Grid.Row="0" BorderColor="WhiteSmoke" ItemsSource="{Binding PastServiceOrders, Mode=TwoWay,UpdateSourceEventName=PropertyChanged}">
+                        <dg:DataGrid.Columns>
+                            <dg:DataGridColumn Width="*" Title="Дата" PropertyName="NewDate"/>
+                            <dg:DataGridColumn Width="3*" Title="Причина" PropertyName="NewName"/>
+                        </dg:DataGrid.Columns>
+                    </dg:DataGrid>
+                    <Button Grid.Row="1" Text="Закрыть" Command="{Binding CloseCommand}"/>
+                </Grid>
+            </StackLayout>
+        </ScrollView>
+    </popup:PopupPage.Content>
+</popup:PopupPage>
