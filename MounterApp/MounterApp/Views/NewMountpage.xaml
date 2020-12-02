@@ -8,12 +8,12 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <StackLayout IsVisible="{Binding IndicatorVisible}" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
+        <!--<StackLayout IsVisible="{Binding IndicatorVisible}" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
             <ActivityIndicator IsRunning="True" />
             <Label FontAttributes="Bold" Text="Loading..." TextColor="White" />
-        </StackLayout>
-        <StackLayout Grid.Row="0">
-            <ProgressBar Scale="5" ProgressColor="Red" Progress="{Binding ProgressValue}"/>
+        </StackLayout>-->
+        <StackLayout  Opacity="{Binding Opacity}" Grid.Row="0">
+            <!--<ProgressBar Scale="5" ProgressColor="Red" Progress="{Binding ProgressValue}"/>-->
             <Expander Grid.Row="0">
                 <Expander.Header>
                     <Label Text="Информация об объекте" FontAttributes="Bold" HorizontalTextAlignment="Center" Margin="10" FontSize="24" />
@@ -30,7 +30,7 @@
                 </StackLayout>
             </Expander>
         </StackLayout>
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" Opacity="{Binding Opacity}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
@@ -74,9 +74,13 @@
             <!--</StackLayout>-->
             <StackLayout Grid.Row="2"  Grid.ColumnSpan="2">
                 <Button Text="Сохранить данные" Command="{Binding SaveToDB}"/>
-                <Button Text="Отправить данные" Command="{Binding SendToServer}" Margin="5"/>
+                <Button Text="Отправить данные" Command="{Binding SendToServer}"/>
             </StackLayout>
         </Grid>
+        <StackLayout Opacity="1" Grid.Row="1" IsVisible="{Binding IndicatorVisible}" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
+            <ActivityIndicator IsRunning="True" Color="Red" HeightRequest="50" WidthRequest="50"  />
+            <Label FontAttributes="Bold" Text="{Binding IndicatorText}"  TextColor="White" />
+        </StackLayout>
     </Grid>
 
 

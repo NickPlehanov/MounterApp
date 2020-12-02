@@ -1,53 +1,58 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:vm="clr-namespace:MounterApp.ViewModel"
              xmlns:dg="clr-namespace:Xamarin.Forms.DataGrid;assembly=Xamarin.Forms.DataGrid"
              x:Class="MounterApp.Views.MountsPage">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="2*"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="7*"/>
-            <RowDefinition Height="*"/>
+            <!--<RowDefinition Height="Auto"/>-->
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
+        <!--<Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="5*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <StackLayout Grid.Row="1" Grid.ColumnSpan="3">
-            <Expander Margin="5">
-                <Expander.Header>
-                    <Label  Text="{Binding HeaderNotSended}" FontAttributes="Bold" Visual="Material"/>
-                </Expander.Header>
-                <!--<StackLayout>-->
-                    <!--<Label Text="{Binding MsgNotSended}" IsVisible="{Binding MsgNotSendedVisibility}"/>-->
-                    <!--<dg:DataGrid ItemsSource="{Binding NotSendedMounts}">
-                        <dg:DataGrid.Columns>
-                            <dg:DataGridColumn Width="*" Title="Объект" PropertyName=""/>
-                        </dg:DataGrid.Columns>
-                    </dg:DataGrid>-->
+            --><!--<ColumnDefinition Width="*"/>--><!--
+        </Grid.ColumnDefinitions>-->
+        <StackLayout Grid.Row="0" Grid.ColumnSpan="3">
+            <!--<Expander Margin="5">
+                <Expander.Header>-->
+                    <Label HorizontalOptions="Center" Text="{Binding HeaderNotSended}" FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Large"/>
+                <!--</Expander.Header>-->
                     <CollectionView Grid.ColumnSpan="2" Grid.Row="1" Margin="5" 
                                 ItemsSource="{Binding NotSendedMounts}" SelectionMode="Single" 
                                     SelectedItem="{Binding NotSendedMount}"
                                     SelectionChangedCommand="{Binding SelectMountCommand, Mode=TwoWay}">
                         <CollectionView.ItemsLayout>
-                            <GridItemsLayout Orientation="Vertical" Span="4"/>
+                            <GridItemsLayout Orientation="Vertical"/>
                         </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <StackLayout>
-                                    <!--<Image Source="{Binding Path=ImgSrc}" Margin="5"/>
-                                    <Label Text="{Binding Path=_Types.PhotoTypeName}" VerticalTextAlignment="Center"/>-->
-                                <Label Text="{Binding Path=ObjectNumber}" HeightRequest="100" WidthRequest="100" BackgroundColor="Azure" Margin="5" 
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <!--<ColumnDefinition Width="0.15*"/>-->
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Text="{Binding Path=ObjectNumber}" HeightRequest="50" BackgroundColor="Azure" Margin="0,5" 
                                        HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
-                                <!--<Button Text="{Binding Path=ObjectNumber}"/>-->
-                                </StackLayout>
+                            <!--<Button Grid.Column="1" Text="-" FontSize="Large" TextColor="Red" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MountsViewModel}}, Path=TestCommand}" 
+                                    CommandParameter="{Binding Path=NotSendedMount}"/>-->
+                        </Grid>
+                                <!--<StackLayout>-->
+                            <!--<StackLayout.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MountsViewModel}}, Path=SelectMountCommand}" 
+                                    CommandParameter="{Binding Path=NotSendedMount}"/>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MountsViewModel}}, Path=TestCommand}" NumberOfTapsRequired="2"/>
+                            </StackLayout.GestureRecognizers>-->
+                            
+                        <!--</StackLayout>-->
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
                 <!--</StackLayout>-->
-            </Expander>
+            <!--</Expander>-->
         </StackLayout>
-        <Button Grid.Row="0" Grid.Column="2" Text="+" FontSize="Large" Command="{Binding NewMountCommand}"/>
+        <Button VerticalOptions="EndAndExpand" Margin="5" Grid.Row="1" Grid.ColumnSpan="3" Text="Новый монтаж" FontSize="Large" Command="{Binding NewMountCommand}"/>
     </Grid>
 </ContentPage>

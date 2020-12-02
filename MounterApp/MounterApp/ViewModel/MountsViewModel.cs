@@ -76,6 +76,13 @@ namespace MounterApp.ViewModel {
             });
         }
 
+        private RelayCommand _TestCommand;
+        public RelayCommand TestCommand {
+            get => _TestCommand ??= new RelayCommand(async obj => {
+                if(NotSendedMount != null) { }
+                bool f = false;
+            });
+        }
         private string _HeaderNotSended;
         public string HeaderNotSended {
             get => _HeaderNotSended;
