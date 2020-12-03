@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using Xamarin.Forms;
 using System.ComponentModel;
+using Rg.Plugins.Popup.Extensions;
 
 namespace MounterApp.ViewModel {
     public class NewMountPageViewModel : BaseViewModel {
@@ -33,6 +34,13 @@ namespace MounterApp.ViewModel {
         public NewMountPageViewModel() {
 
         }
+        public NewMountPageViewModel(Mounts mount,List<NewMounterExtensionBase> mounters,bool? isPickPhoto) {
+            Mounters = mounters;
+            Mount = mount;
+            IsPickPhoto = isPickPhoto;
+            Opacity = 1;
+            IndicatorVisible = false;
+        }
         public NewMountPageViewModel(List<NewMounterExtensionBase> mounters) {
             Mounters = mounters;
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Карточка объекта" });
@@ -44,6 +52,7 @@ namespace MounterApp.ViewModel {
             ImgSrc = "EmptyPhoto.png";
             Opacity = 1;
             IndicatorVisible = false;
+            IsPickPhoto = null;
         }
         public NewMountPageViewModel(Mounts mount,List<NewMounterExtensionBase> mounters) {
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Карточка объекта" });
@@ -51,8 +60,9 @@ namespace MounterApp.ViewModel {
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Расшлейфовка объекта" });
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Ответственные объекта" });
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Вывеска объекта" });
-            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Доп. фото" });
+            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Доп. фото" });
             ImgSrc = "EmptyPhoto.png";
+            IsPickPhoto = null;
 
             Mounters = mounters;
             Mount = mount;
@@ -60,25 +70,38 @@ namespace MounterApp.ViewModel {
             ObjectAddress = Mount.AddressName;
             ObjectName = Mount.ObjectName;
             ObjectDriveways = Mount.Driveways;
+            if (!string.IsNullOrEmpty(Mount.ObjectCard))
             Photos.Add(
                 new PhotoCollection(Guid.NewGuid(),Mount.ObjectCard,null,
                 ImageSource.FromStream(() => { return new MemoryStream(Convert.FromBase64String(Mount.ObjectCard)); }),PhotoNames.FirstOrDefault(x => x.PhotoTypeName == "Карточка объекта")));
-            Photos.Add(
+            if(!string.IsNullOrEmpty(Mount.ObjectScheme))
+                Photos.Add(
                 new PhotoCollection(Guid.NewGuid(),Mount.ObjectScheme,null,
                 ImageSource.FromStream(() => { return new MemoryStream(Convert.FromBase64String(Mount.ObjectScheme)); }),PhotoNames.FirstOrDefault(x => x.PhotoTypeName == "Схема объекта")));
-            Photos.Add(
+            if(!string.IsNullOrEmpty(Mount.ObjectWiring))
+                Photos.Add(
                 new PhotoCollection(Guid.NewGuid(),Mount.ObjectWiring,null,
                 ImageSource.FromStream(() => { return new MemoryStream(Convert.FromBase64String(Mount.ObjectWiring)); }),PhotoNames.FirstOrDefault(x => x.PhotoTypeName == "Расшлейфовка объекта")));
-            Photos.Add(
+            if(!string.IsNullOrEmpty(Mount.ObjectListResponsible))
+                Photos.Add(
                 new PhotoCollection(Guid.NewGuid(),Mount.ObjectListResponsible,null,
                 ImageSource.FromStream(() => { return new MemoryStream(Convert.FromBase64String(Mount.ObjectListResponsible)); }),PhotoNames.FirstOrDefault(x => x.PhotoTypeName == "Ответственные объекта")));
-            Photos.Add(
+            if(!string.IsNullOrEmpty(Mount.ObjectSignboard))
+                Photos.Add(
                 new PhotoCollection(Guid.NewGuid(),Mount.ObjectSignboard,null,
                 ImageSource.FromStream(() => { return new MemoryStream(Convert.FromBase64String(Mount.ObjectSignboard)); }),PhotoNames.FirstOrDefault(x => x.PhotoTypeName == "Вывеска объекта")));
             Opacity = 1;
             IndicatorVisible = false;
         }
 
+        private bool? _IsPickPhoto;
+        public bool? IsPickPhoto {
+            get => _IsPickPhoto;
+            set {
+                _IsPickPhoto = value;
+                OnPropertyChanged(nameof(IsPickPhoto));
+            }
+        }
         private Mounts _Mount;
         public Mounts Mount {
             get => _Mount;
@@ -176,7 +199,7 @@ namespace MounterApp.ViewModel {
                                         //form.Add(new StreamContent(ph.File.GetStream()),String.Format("file"),String.Format(ObjectNumber + "_" + ph._Types.PhotoTypeName + ".jpeg"));
                                         HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress + "/api/Common"
                                                 ,form);
-                                        IndicatorText = "Подождите, идет загрузка..."+Environment.NewLine+"Загружено "+cnt.ToString()+" фото из "+Photos.Count.ToString();
+                                        IndicatorText = "Подождите, идет загрузка..." + Environment.NewLine + "Загружено " + cnt.ToString() + " фото из " + Photos.Count.ToString();
                                         cnt++;
                                         if(response.StatusCode.ToString() != "OK") {
                                             await Application.Current.MainPage.DisplayAlert("Ошибка (Фото не было загружено)",response.Content.ReadAsStringAsync().Result,"OK");
@@ -219,21 +242,25 @@ namespace MounterApp.ViewModel {
                 Opacity = 0.1;
                 IndicatorVisible = true;
                 if(Photos.Count >= 5) {
-                    Mounts mount = new Mounts() {
-                        ObjectNumber = ObjectNumber,
-                        ObjectName = ObjectName,
-                        AddressName = ObjectAddress,
-                        ID = App.Database.GetCurrentID(),
-                        MounterID = Mounters.FirstOrDefault().NewMounterId,
-                        Driveways = ObjectDriveways,
-                        State = 0,
-                        ObjectCard = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Карточка объекта").Data,
-                        ObjectScheme = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Схема объекта").Data,
-                        ObjectWiring = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Расшлейфовка объекта").Data,
-                        ObjectListResponsible = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Ответственные объекта").Data,
-                        ObjectSignboard = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Вывеска объекта").Data
-                    };
-                    App.Database.SaveMount(mount);
+                    if(Mount == null) {
+                        Mounts mount = new Mounts() {
+                            ObjectNumber = ObjectNumber,
+                            ObjectName = ObjectName,
+                            AddressName = ObjectAddress,
+                            ID = App.Database.GetCurrentID(),
+                            MounterID = Mounters.FirstOrDefault().NewMounterId,
+                            Driveways = ObjectDriveways,
+                            State = 0,
+                            ObjectCard = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Карточка объекта").Data,
+                            ObjectScheme = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Схема объекта").Data,
+                            ObjectWiring = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Расшлейфовка объекта").Data,
+                            ObjectListResponsible = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Ответственные объекта").Data,
+                            ObjectSignboard = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Вывеска объекта").Data
+                        };
+                        App.Database.SaveMount(mount);
+                    }
+                    else 
+                        App.Database.SaveMount(Mount);
                 }
                 else
                     await Application.Current.MainPage.DisplayAlert("Ошибка","Не все обязательные фото были сделаны","OK");
@@ -291,27 +318,66 @@ namespace MounterApp.ViewModel {
         private RelayCommand _TakePhotoCommand;
         public RelayCommand TakePhotoCommand {
             get => _TakePhotoCommand ??= new RelayCommand(async obj => {
-                //NewMountpage mountpage = new NewMountpage();
-                //string result = await Application.Current.MainPage.DisplayPromptAsync("Question 2","What's 5 + 5?",initialValue: "10",maxLength: 2,keyboard: Keyboard.Numeric);
-                await CrossMedia.Current.Initialize();
+                //if(IsPickPhoto.HasValue) {
+                //    await CrossMedia.Current.Initialize();
+                //    if(!CrossMedia.Current.IsCameraAvailable || !CrossMedia.Current.IsTakePhotoSupported) {
+                //        await Application.Current.MainPage.DisplayAlert("No Camera",":( No camera available.","OK");
+                //        return;
+                //    }
+                //    if(IsPickPhoto.Value == true) {
+                //        File = await CrossMedia.Current.PickPhotoAsync(new Plugin.Media.Abstractions.PickMediaOptions {
+                //            //Directory = "Sample",
+                //            //Name = "test.jpg",
+                //            PhotoSize = PhotoSize.Small,
+                //            CompressionQuality = 50
+                //        });
+                //    }
+                //    else {
+                //        File = await CrossMedia.Current.TakePhotoAsync(new Plugin.Media.Abstractions.StoreCameraMediaOptions {
+                //            Directory = "Sample",
+                //            Name = "test.jpg",
+                //            PhotoSize = PhotoSize.Small,
+                //            CompressionQuality = 50
+                //        });
+                //    }
+                //    if(File == null)
+                //        return;
 
-                if(!CrossMedia.Current.IsCameraAvailable || !CrossMedia.Current.IsTakePhotoSupported) {
-                    await Application.Current.MainPage.DisplayAlert("No Camera",":( No camera available.","OK");
-                    return;
-                }
+                //    ImgSrc = ImageSource.FromStream(() => {
+                //        var stream = File.GetStream();
+                //        return stream;
+                //    });
+                //}
+                //else {
+                    if(Mount == null)
+                        Mount = new Mounts();
+                    SelectActionsPopupPageViewModel vm = new SelectActionsPopupPageViewModel(Mount,Mounters);
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new SelectActionsPopupPage(vm));
+                //}
 
-                File = await CrossMedia.Current.TakePhotoAsync(new Plugin.Media.Abstractions.StoreCameraMediaOptions {
-                    Directory = "Sample",
-                    Name = "test.jpg"
-                });
 
-                if(File == null)
-                    return;
 
-                ImgSrc = ImageSource.FromStream(() => {
-                    var stream = File.GetStream();
-                    return stream;
-                });
+
+                //File = await CrossMedia.Current.TakePhotoAsync(new Plugin.Media.Abstractions.StoreCameraMediaOptions {
+                //    Directory = "Sample",
+                //    Name = "test.jpg",
+                //    PhotoSize=PhotoSize.Small,
+                //    CompressionQuality=50
+                //});
+                //File = await CrossMedia.Current.PickPhotoAsync(new Plugin.Media.Abstractions.PickMediaOptions {
+                //    //Directory = "Sample",
+                //    //Name = "test.jpg",
+                //    PhotoSize = PhotoSize.Small,
+                //    CompressionQuality = 50
+                //});
+
+                //if(File == null)
+                //    return;
+
+                //ImgSrc = ImageSource.FromStream(() => {
+                //    var stream = File.GetStream();
+                //    return stream;
+                //});
             });
         }
 

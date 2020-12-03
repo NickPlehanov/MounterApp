@@ -61,7 +61,7 @@ namespace MounterApp.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на https://6238eae4a300.ngrok.io.
+        ///   Ищет локализованную строку, похожую на https://ffaa18a5a286.ngrok.io.
         /// </summary>
         internal static string BaseAddress {
             get {
