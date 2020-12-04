@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:datagrid="clr-namespace:Xamarin.Forms.DataGrid;assembly=Xamarin.Forms.DataGrid" xmlns:helpers="clr-namespace:MounterApp.Helpers"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:datagrid="clr-namespace:Xamarin.Forms.DataGrid;assembly=Xamarin.Forms.DataGrid" 
+             xmlns:helpers="clr-namespace:MounterApp.Helpers"
              x:Class="MounterApp.Views.NewMountpage">
     <!--<ContentPage.Content>-->
     <!--<ScrollView>-->
@@ -10,6 +12,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <!--<StackLayout IsVisible="{Binding IndicatorVisible}" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
             <ActivityIndicator IsRunning="True" />
@@ -17,23 +20,24 @@
         </StackLayout>-->
         <!--<StackLayout  Opacity="{Binding Opacity}" Grid.Row="0">-->
             <!--<ProgressBar Scale="5" ProgressColor="Red" Progress="{Binding ProgressValue}"/>-->
-                <Expander Grid.Row="0" IsExpanded="True">
-                <Expander.Header>
-                    <Label Text="Информация об объекте" FontAttributes="Bold" HorizontalTextAlignment="Center" Margin="10" FontSize="24" />
-                </Expander.Header>
-                <StackLayout Margin="5">
-                    <Label Text="№ объекта" HorizontalOptions="Center" FontAttributes="Bold"/>
-                    <Entry Keyboard="Numeric" Text="{Binding ObjectNumber, Mode=TwoWay}"/>
-                    <Label Text="Название объекта" HorizontalOptions="Center" FontAttributes="Bold"/>
-                    <Entry Keyboard="Text" Text="{Binding ObjectName, Mode=TwoWay}"/>
-                    <Label Text="Адрес объекта" HorizontalOptions="Center" FontAttributes="Bold"/>
-                    <Entry Keyboard="Text" Text="{Binding ObjectAddress}"/>
-                    <Label Text="Подъездные пути" HorizontalOptions="Center" FontAttributes="Bold"/>
-                    <Entry Keyboard="Text" Text="{Binding ObjectDriveways}" />
-                </StackLayout>
-            </Expander>
-                <Button Grid.Row="1" Margin="5" Text="Фото объекта" Command="{Binding TakePhotoCommand}"/>
-                <CollectionView Grid.Row="2" Margin="5"
+        <Expander Opacity="{Binding Opacity}" Grid.Row="0" IsExpanded="True">
+            <Expander.Header>
+                <Label Text="Информация об объекте" FontAttributes="Bold" HorizontalTextAlignment="Center" Margin="10" FontSize="24" />
+            </Expander.Header>
+            <StackLayout Margin="5">
+                <Label Text="№ объекта" HorizontalOptions="Center" FontAttributes="Bold"/>
+                <Entry Keyboard="Numeric" Text="{Binding ObjectNumber, Mode=TwoWay}"/>
+                <Label Text="Название объекта" HorizontalOptions="Center" FontAttributes="Bold"/>
+                <Entry Keyboard="Text" Text="{Binding ObjectName, Mode=TwoWay}"/>
+                <Label Text="Адрес объекта" HorizontalOptions="Center" FontAttributes="Bold"/>
+                <Entry Keyboard="Text" Text="{Binding ObjectAddress}"/>
+                <Label Text="Подъездные пути" HorizontalOptions="Center" FontAttributes="Bold"/>
+                <Entry Keyboard="Text" Text="{Binding ObjectDriveways}" />
+            </StackLayout>
+        </Expander>
+        <Button ImageSource="{Binding PhotoImage}" Opacity="{Binding Opacity}" Grid.Row="1" Margin="5" Text="Фото объекта" Command="{Binding TakePhotoCommand}">
+    </Button>
+        <CollectionView Opacity="{Binding Opacity}" Grid.Row="2" Margin="5"
                                 ItemsSource="{Binding Photos}" SelectionMode="Single" 
                                 SelectionChangedCommand="{Binding DeleteCommand, Mode=TwoWay}"
                                 SelectedItem="{Binding SelectedPhoto}">
@@ -43,7 +47,7 @@
                     </CollectionView.ItemsLayout>
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <RelativeLayout>
+                    <RelativeLayout Opacity="{Binding Opacity}">
                                 <Image Source="{Binding Path=ImgSrc}" Margin="5"/>
                                 <Label Text="{Binding Path=_Types.PhotoTypeName}" VerticalTextAlignment="Center"/>
                                 <!--<Label Text="{Binding Path=Photos.types}" VerticalTextAlignment="Center"/>-->
@@ -101,15 +105,15 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>-->
             <!--</StackLayout>-->
-            <StackLayout Grid.Row="3">
-                <Button Text="Сохранить данные" Command="{Binding SaveToDB}"/>
-                <Button Text="Отправить данные" Command="{Binding SendToServer}"/>
-            </StackLayout>
-        </Grid>
-        <!--<StackLayout Opacity="1" Grid.Row="1" IsVisible="{Binding IndicatorVisible}" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
+        <StackLayout Opacity="{Binding Opacity}" Grid.Row="3">
+            <Button ImageSource="{Binding SaveImage}" Text="Сохранить данные" Command="{Binding SaveToDB, Mode=TwoWay}"/>
+            <Button ImageSource="{Binding SendImage}" Text="Отправить данные" Command="{Binding SendToServer, Mode=TwoWay}"/>
+        </StackLayout>
+        <StackLayout Opacity="1" Grid.Row="3" IsVisible="{Binding IndicatorVisible}" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
             <ActivityIndicator IsRunning="True" Color="Red" HeightRequest="50" WidthRequest="50"  />
             <Label FontAttributes="Bold" Text="{Binding IndicatorText}"  TextColor="White" />
-        </StackLayout>-->
+        </StackLayout>
+    </Grid>
     <!--</Grid>-->
 
     <!--</ScrollView>-->

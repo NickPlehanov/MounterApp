@@ -1,4 +1,5 @@
-﻿using MounterApp.Helpers;
+﻿using Android.Widget;
+using MounterApp.Helpers;
 using MounterApp.InternalModel;
 using MounterApp.Model;
 using MounterApp.Views;
@@ -25,6 +26,37 @@ namespace MounterApp.ViewModel {
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Вывеска объекта" });
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Доп. фото" });
             //ImgSrc = "EmptyPhoto.png";
+            VisibleAcceptedLayout = false;
+            CameraImage = "camera.png";
+            CollectionImage = "collections.png";
+            CloseImage = "close.png";
+        }
+
+        private ImageSource _CameraImage;
+        public ImageSource CameraImage {
+            get => _CameraImage;
+            set {
+                _CameraImage = value;
+                OnPropertyChanged(nameof(CameraImage));
+            }
+        }
+
+        private ImageSource _CollectionImage;
+        public ImageSource CollectionImage {
+            get => _CollectionImage;
+            set {
+                _CollectionImage = value;
+                OnPropertyChanged(nameof(CollectionImage));
+            }
+        }
+
+        private ImageSource _CloseImage;
+        public ImageSource CloseImage {
+            get => _CloseImage;
+            set {
+                _CloseImage = value;
+                OnPropertyChanged(nameof(CloseImage));
+            }
         }
         private ObservableCollection<PhotoTypes> _PhotoNames = new ObservableCollection<PhotoTypes>();
         public ObservableCollection<PhotoTypes> PhotoNames {
@@ -101,9 +133,11 @@ namespace MounterApp.ViewModel {
                                     Mount.ObjectSignboard = Convert.ToBase64String(System.IO.File.ReadAllBytes(File.Path));
                                     break;
                             }
-                            ImgSrc = "EmptyPhoto.png";
+                            //ImgSrc = "EmptyPhoto.png";
+                            ImgSrc =null;
                             SelectedPhoto = null;
                             PhotoNames.Remove(PhotoName);
+                            Toast.MakeText(Android.App.Application.Context,"Фото добавлено",ToastLength.Long).Show();
                         }
                         else
                             await Application.Current.MainPage.DisplayAlert("Ошибка","Такая фотография уже была загружена","OK");
@@ -134,10 +168,29 @@ namespace MounterApp.ViewModel {
             get => _ImgSrc;
             set {
                 _ImgSrc = value;
+                if(_ImgSrc == null)
+                    VisibleAcceptedLayout = false;
+                else
+                    VisibleAcceptedLayout = true;
                 OnPropertyChanged(nameof(ImgSrc));
             }
         }
 
+        private bool _VisibleAcceptedLayout;
+        public bool VisibleAcceptedLayout {
+            get => _VisibleAcceptedLayout;
+            set {
+                _VisibleAcceptedLayout = value;
+                OnPropertyChanged(nameof(VisibleAcceptedLayout));
+            }
+        }
+
+        private RelayCommand _AcceptCommand;
+        public RelayCommand AcceptCommand {
+            get => _AcceptCommand ??= new RelayCommand(async obj => {
+
+            });
+        }
         private bool? _IsPickPhoto;
         public bool? IsPickPhoto {
             get => _IsPickPhoto;
@@ -224,7 +277,7 @@ namespace MounterApp.ViewModel {
                         var stream = File.GetStream();
                         return stream;
                     });
-                    AddNewPhotoCommand.Execute(null);
+                    //AddNewPhotoCommand.Execute(null);
                 }
                 else {
                     //SelectActionsPopupPageViewModel vm = new SelectActionsPopupPageViewModel(Mount,Mounters);

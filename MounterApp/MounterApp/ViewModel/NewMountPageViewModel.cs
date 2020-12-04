@@ -19,6 +19,7 @@ using System.Drawing;
 using Xamarin.Forms;
 using System.ComponentModel;
 using Rg.Plugins.Popup.Extensions;
+using Android.Widget;
 
 namespace MounterApp.ViewModel {
     public class NewMountPageViewModel : BaseViewModel {
@@ -50,6 +51,9 @@ namespace MounterApp.ViewModel {
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Вывеска объекта" });
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Доп. фото" });
             ImgSrc = "EmptyPhoto.png";
+            PhotoImage = "media.png";
+            SaveImage = "save.png";
+            SendImage = "send.png";
             Opacity = 1;
             IndicatorVisible = false;
             IsPickPhoto = null;
@@ -62,6 +66,9 @@ namespace MounterApp.ViewModel {
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Вывеска объекта" });
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Доп. фото" });
             ImgSrc = "EmptyPhoto.png";
+            PhotoImage = "media.png";
+            SaveImage = "save.png";
+            SendImage = "send.png";
             IsPickPhoto = null;
 
             Mounters = mounters;
@@ -70,10 +77,10 @@ namespace MounterApp.ViewModel {
             ObjectAddress = Mount.AddressName;
             ObjectName = Mount.ObjectName;
             ObjectDriveways = Mount.Driveways;
-            if (!string.IsNullOrEmpty(Mount.ObjectCard))
-            Photos.Add(
-                new PhotoCollection(Guid.NewGuid(),Mount.ObjectCard,null,
-                ImageSource.FromStream(() => { return new MemoryStream(Convert.FromBase64String(Mount.ObjectCard)); }),PhotoNames.FirstOrDefault(x => x.PhotoTypeName == "Карточка объекта")));
+            if(!string.IsNullOrEmpty(Mount.ObjectCard))
+                Photos.Add(
+                    new PhotoCollection(Guid.NewGuid(),Mount.ObjectCard,null,
+                    ImageSource.FromStream(() => { return new MemoryStream(Convert.FromBase64String(Mount.ObjectCard)); }),PhotoNames.FirstOrDefault(x => x.PhotoTypeName == "Карточка объекта")));
             if(!string.IsNullOrEmpty(Mount.ObjectScheme))
                 Photos.Add(
                 new PhotoCollection(Guid.NewGuid(),Mount.ObjectScheme,null,
@@ -124,6 +131,33 @@ namespace MounterApp.ViewModel {
             set {
                 _PhotoSource = value;
                 OnPropertyChanged(nameof(PhotoSource));
+            }
+        }
+
+        private ImageSource _PhotoImage;
+        public ImageSource PhotoImage {
+            get => _PhotoImage;
+            set {
+                _PhotoImage = value;
+                OnPropertyChanged(nameof(PhotoImage));
+            }
+        }
+
+        private ImageSource _SaveImage;
+        public ImageSource SaveImage {
+            get => _SaveImage;
+            set {
+                _SaveImage = value;
+                OnPropertyChanged(nameof(SaveImage));
+            }
+        }
+
+        private ImageSource _SendImage;
+        public ImageSource SendImage {
+            get => _SendImage;
+            set {
+                _SendImage = value;
+                OnPropertyChanged(nameof(SendImage));
             }
         }
         private double _ProgressValue;
@@ -226,6 +260,7 @@ namespace MounterApp.ViewModel {
                     await Application.Current.MainPage.DisplayAlert("Ошибка","Номер объекта не может быть пустым","OK");
                 Opacity = 1;
                 IndicatorVisible = false;
+                Toast.MakeText(Android.App.Application.Context,"Данные сохранены",ToastLength.Long).Show();
                 BackPressCommand.Execute(null);
 
                 //};
@@ -234,7 +269,7 @@ namespace MounterApp.ViewModel {
                 //        IndicatorVisible = false;
                 //    };
                 //    bw.RunWorkerAsync();
-            });
+            },obj => Photos.Count >= 5);
         }
         private RelayCommand _SaveToDB;
         public RelayCommand SaveToDB {
@@ -259,14 +294,16 @@ namespace MounterApp.ViewModel {
                         };
                         App.Database.SaveMount(mount);
                     }
-                    else 
+                    else
                         App.Database.SaveMount(Mount);
                 }
                 else
                     await Application.Current.MainPage.DisplayAlert("Ошибка","Не все обязательные фото были сделаны","OK");
                 Opacity = 1;
                 IndicatorVisible = false;
-            });
+                Toast.MakeText(Android.App.Application.Context,"Данные сохранены",ToastLength.Long).Show();
+                BackPressCommand.Execute(null);
+            },obj => Photos.Count >= 5);
         }
 
         private RelayCommand _AddNewPhotoCommand;
@@ -349,10 +386,14 @@ namespace MounterApp.ViewModel {
                 //    });
                 //}
                 //else {
-                    if(Mount == null)
-                        Mount = new Mounts();
-                    SelectActionsPopupPageViewModel vm = new SelectActionsPopupPageViewModel(Mount,Mounters);
-                    await App.Current.MainPage.Navigation.PushPopupAsync(new SelectActionsPopupPage(vm));
+                if(Mount == null)
+                    Mount = new Mounts();
+                Mount.ObjectNumber = ObjectNumber;
+                Mount.ObjectName = ObjectName;
+                Mount.AddressName = ObjectAddress;
+                Mount.Driveways = ObjectDriveways;
+                SelectActionsPopupPageViewModel vm = new SelectActionsPopupPageViewModel(Mount,Mounters);
+                await App.Current.MainPage.Navigation.PushPopupAsync(new SelectActionsPopupPage(vm));
                 //}
 
 
@@ -386,10 +427,11 @@ namespace MounterApp.ViewModel {
             get => _DeleteCommand ??= new RelayCommand(async obj => {
                 if(SelectedPhoto != null) {
                     string result = await Application.Current.MainPage.DisplayPromptAsync("Удаление","Вы действительно хотите удалить выбранную строку? Напишите +, для удаления в поле ниже.");
-                    if(result.Equals("+")) {
-                        Photos.Remove(SelectedPhoto);
-                        PhotoNames.Add(SelectedPhoto._Types);
-                    }
+                    if(!string.IsNullOrEmpty(result))
+                        if(result.Equals("+")) {
+                            Photos.Remove(SelectedPhoto);
+                            PhotoNames.Add(SelectedPhoto._Types);
+                        }
                 }
                 SelectedPhoto = null;
             });

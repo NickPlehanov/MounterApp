@@ -16,6 +16,7 @@ namespace MounterApp.Droid {
 			ToolbarResource = Resource.Layout.Toolbar;
 
 			base.OnCreate(savedInstanceState);
+			Plugin.Iconize.Iconize.Init(Resource.Id.toolbar,Resource.Id.sliding_tabs);
 
 			Rg.Plugins.Popup.Popup.Init(this,savedInstanceState);
 

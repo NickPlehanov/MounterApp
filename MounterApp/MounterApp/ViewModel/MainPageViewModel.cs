@@ -18,6 +18,7 @@ namespace MounterApp.ViewModel {
         public MainPageViewModel() {
             IndicatorVisible = false;
             OpacityForm = 1;
+            PhoneNumber = Application.Current.Properties["Phone"] as string;
         }
         private RelayCommand _AuthCommand;
         public RelayCommand AuthCommand {
@@ -29,26 +30,36 @@ namespace MounterApp.ViewModel {
                 if(PhoneNumber.Length == 11) {
                     Phone = PhoneNumber.Substring(1,PhoneNumber.Length - 1);
                 }
-                HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewMounterExtensionBases/phone?phone=" + Phone);
-                var resp = response.Content.ReadAsStringAsync().Result;
-                List<NewMounterExtensionBase> mounters = JsonConvert.DeserializeObject<List<NewMounterExtensionBase>>(resp).Where(x => x.NewIsWorking == true).ToList();
-                response = await client.GetAsync(Resources.BaseAddress + "/api/NewServicemanExtensionBases/phone?phone=" + Phone);
-                resp = response.Content.ReadAsStringAsync().Result;
-                List<NewServicemanExtensionBase> servicemans = JsonConvert.DeserializeObject<List<NewServicemanExtensionBase>>(resp).Where(x => x.NewIswork == true).ToList();
-                if(mounters != null || servicemans != null) {
-                    if(mounters.Count > 0 || servicemans.Count > 0) {
-                        if(mounters.Count > 1 || servicemans.Count > 1) 
-                            Message = "Неоднозначно определен сотрудник";
+                try {
+                    //Phone = Application.Current.Properties["Phone"].ToString();
+                    Application.Current.Properties["Phone"] = PhoneNumber;
+                    await Application.Current.SavePropertiesAsync();
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewMounterExtensionBases/phone?phone=" + Phone);
+                    var resp = response.Content.ReadAsStringAsync().Result;
+                    List<NewMounterExtensionBase> mounters = JsonConvert.DeserializeObject<List<NewMounterExtensionBase>>(resp).Where(x => x.NewIsWorking == true).ToList();
+                    response = await client.GetAsync(Resources.BaseAddress + "/api/NewServicemanExtensionBases/phone?phone=" + Phone);
+                    resp = response.Content.ReadAsStringAsync().Result;
+                    List<NewServicemanExtensionBase> servicemans = JsonConvert.DeserializeObject<List<NewServicemanExtensionBase>>(resp).Where(x => x.NewIswork == true).ToList();
+                    if(mounters != null || servicemans != null) {
+                        if(mounters.Count > 0 || servicemans.Count > 0) {
+                            if(mounters.Count > 1 || servicemans.Count > 1)
+                                Message = "Неоднозначно определен сотрудник";
+                            else {
+                                IndicatorVisible = false;
+                                MainMenuPageViewModel vm = new MainMenuPageViewModel(mounters,servicemans);
+                                App.Current.MainPage = new MainMenuPage(vm);
+                            }
+                        }
                         else {
-                            IndicatorVisible = false;
-                            MainMenuPageViewModel vm = new MainMenuPageViewModel(mounters,servicemans);
-                            App.Current.MainPage = new MainMenuPage(vm);
+                            Message = "Проверьте правильность ввода номера телефона";
                         }
                     }
-                    else {
-                        Message = "Проверьте правильность ввода номера телефона";
-                    }
                 }
+                catch (Exception ex) {
+                    Message = "Нет подключения к интернету или сетевой адрес недоступен";
+                }
+                IndicatorVisible = false;
+                OpacityForm = 1;
             });
         }
         private bool _IndicatorVisible;

@@ -83,5 +83,12 @@ namespace MounterApp.ViewModel {
                 //System.Environment.Exit(0);
             });
         }
+
+        private RelayCommand _OpenSettingsCommand;
+        public RelayCommand OpenSettingsCommand {
+            get => _OpenSettingsCommand ??= new RelayCommand(async obj => {
+
+            });
+        }
     }
 }
