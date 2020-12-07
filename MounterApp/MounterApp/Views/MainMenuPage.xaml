@@ -62,7 +62,7 @@
             <StackLayout Grid.Row="2" Grid.ColumnSpan="2" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
                 <Label Text="{Binding Message}"/>
                 <!--<Button Text="Очистить базу данных" Command="{Binding ClearDatabaseCommand}"/>-->
-                <Button Text="Настройки приложения" Command="{Binding OpenSettingsCommand}"/>
+                <Button ImageSource="{Binding SettingsImage}" Text="Настройки приложения" Command="{Binding OpenSettingsCommand}" Margin="5"/>
             </StackLayout>
         </Grid>
     </ContentPage.Content>

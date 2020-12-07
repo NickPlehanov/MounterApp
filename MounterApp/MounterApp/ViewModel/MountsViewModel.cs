@@ -1,10 +1,14 @@
 ﻿using MounterApp.Helpers;
 using MounterApp.InternalModel;
 using MounterApp.Model;
+using MounterApp.Properties;
 using MounterApp.Views;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.Http;
 
 namespace MounterApp.ViewModel {
     public class MountsViewModel : BaseViewModel {
@@ -36,7 +40,7 @@ namespace MounterApp.ViewModel {
         public MountsViewModel() {
 
         }
-        public MountsViewModel(List<NewMounterExtensionBase> mounters) {
+        public MountsViewModel(List<NewMounterExtensionBase> mounters) {            
             Mounters = mounters;
             HeaderNotSended = "Неотправленные монтажи (0)";
             var _ntMounts = App.Database.GetMounts(Mounters.FirstOrDefault().NewMounterId).Where(x => x.State == 0).ToList();
@@ -46,6 +50,49 @@ namespace MounterApp.ViewModel {
                         NotSendedMounts.Add(item);
                     HeaderNotSended = "Неотправленные монтажи (" + _ntMounts.Count.ToString() + ")";
                 }
+            GetGoogleMounts.Execute(null);
+            Opacity = 1;
+            IndicatorVisible = false;
+        }
+
+        private double _Opacity;
+        public double Opacity {
+            get => _Opacity;
+            set {
+                _Opacity = value;
+                OnPropertyChanged(nameof(Opacity));
+            }
+        }
+
+        private bool _IndicatorVisible;
+        public bool IndicatorVisible {
+            get => _IndicatorVisible;
+            set {
+                _IndicatorVisible = value;
+                OnPropertyChanged(nameof(IndicatorVisible));
+            }
+        }
+
+        private RelayCommand _GetGoogleMounts;
+        public RelayCommand GetGoogleMounts {
+            get => _GetGoogleMounts ??= new RelayCommand(async obj => {
+                Opacity = 0.1;
+                IndicatorVisible = true;
+                using HttpClient client = new HttpClient();
+                try {
+                    //Phone = Application.Current.Properties["Phone"].ToString();
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common?phone=8"+Mounters.FirstOrDefault().NewPhone+"&date="+DateTime.Now.Date+"");
+                    var resp = response.Content.ReadAsStringAsync().Result;
+                    List<GoogleMountModel> googleMounts = JsonConvert.DeserializeObject<List<GoogleMountModel>>(resp).ToList();
+                    GoogleMounts.Clear();
+                    foreach(GoogleMountModel item in googleMounts) {
+                        GoogleMounts.Add(item);
+                    }
+                }
+                catch { }
+                Opacity = 1;
+                IndicatorVisible = true;
+            });
         }
         private List<NewMounterExtensionBase> _Mounters;
         public List<NewMounterExtensionBase> Mounters {
@@ -97,6 +144,27 @@ namespace MounterApp.ViewModel {
                 MainMenuPageViewModel vm = new MainMenuPageViewModel(Mounters);
                 App.Current.MainPage = new MainMenuPage(vm);
             });
+        }
+
+        private ObservableCollection<GoogleMountModel> _GoogleMounts = new ObservableCollection<GoogleMountModel>();
+        public ObservableCollection<GoogleMountModel> GoogleMounts {
+            get => _GoogleMounts;
+            set {
+                _GoogleMounts = value;
+                OnPropertyChanged(nameof(GoogleMounts));
+            }
+        }
+
+        private GoogleMountModel _GoogleMount;
+        public GoogleMountModel GoogleMount {
+            get => _GoogleMount;
+            set {
+                _GoogleMount = value;
+                NotSendedMount = new Mounts();
+                NotSendedMount.MounterID = Mounters.FirstOrDefault().NewMounterId;
+                NotSendedMount.GoogleComment = _GoogleMount.FullInfo;
+                OnPropertyChanged(nameof(GoogleMount));
+            }
         }
     }
 }

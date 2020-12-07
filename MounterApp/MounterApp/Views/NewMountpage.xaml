@@ -25,6 +25,7 @@
                 <Label Text="Информация об объекте" FontAttributes="Bold" HorizontalTextAlignment="Center" Margin="10" FontSize="24" />
             </Expander.Header>
             <StackLayout Margin="5">
+                <Label Text="{Binding GoogleComment, Mode=TwoWay}" IsVisible="{Binding VisibleGoogleComment}" FontAttributes="Italic"/>
                 <Label Text="№ объекта" HorizontalOptions="Center" FontAttributes="Bold"/>
                 <Entry Keyboard="Numeric" Text="{Binding ObjectNumber, Mode=TwoWay}"/>
                 <Label Text="Название объекта" HorizontalOptions="Center" FontAttributes="Bold"/>

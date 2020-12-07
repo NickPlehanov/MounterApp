@@ -4,6 +4,7 @@ using MounterApp.Model;
 using MounterApp.Views;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class MainMenuPageViewModel : BaseViewModel {
@@ -18,15 +19,18 @@ namespace MounterApp.ViewModel {
         public MainMenuPageViewModel(List<NewMounterExtensionBase> mounters,List<NewServicemanExtensionBase> servicemans) {
             Mounters = mounters;
             Serviceman = servicemans;
+            SettingsImage= "settings.png";
         }
         public MainMenuPageViewModel(List<NewMounterExtensionBase> mounters) {
             Mounters = mounters;
+            SettingsImage = "settings.png";
         }
         public MainMenuPageViewModel(List<NewServicemanExtensionBase> servicemans) {
             Serviceman = servicemans;
+            SettingsImage = "settings.png";
         }
         public MainMenuPageViewModel() {
-
+            SettingsImage = "settings.png";
         }
 
         private string _Message;
@@ -87,8 +91,18 @@ namespace MounterApp.ViewModel {
         private RelayCommand _OpenSettingsCommand;
         public RelayCommand OpenSettingsCommand {
             get => _OpenSettingsCommand ??= new RelayCommand(async obj => {
-
+                SettingsPageViewModel vm = new SettingsPageViewModel(Mounters,Serviceman);
+                App.Current.MainPage = new SettingsPage(vm);
             });
+        }
+
+        private ImageSource _SettingsImage;
+        public ImageSource SettingsImage {
+            get => _SettingsImage;
+            set {
+                _SettingsImage = value;
+                OnPropertyChanged(nameof(SettingsImage));
+            }
         }
     }
 }

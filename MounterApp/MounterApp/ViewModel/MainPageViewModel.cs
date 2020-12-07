@@ -18,7 +18,26 @@ namespace MounterApp.ViewModel {
         public MainPageViewModel() {
             IndicatorVisible = false;
             OpacityForm = 1;
-            PhoneNumber = Application.Current.Properties["Phone"] as string;
+            if(Application.Current.Properties.ContainsKey("Phone"))
+                PhoneNumber = Application.Current.Properties["Phone"] as string;
+            if(Application.Current.Properties.ContainsKey("AutoEnter")) {
+                if(bool.TryParse(Application.Current.Properties["AutoEnter"].ToString(),out bool tmp))
+                    if(tmp)
+                        AuthCommand.Execute(null);
+            }
+            else {
+                //TODO: Задать значения по умолчанию
+                Application.Current.Properties["AutoEnter"] = true;
+                Application.Current.SavePropertiesAsync();
+            }
+            if(!Application.Current.Properties.ContainsKey("Quality")) {
+                Application.Current.Properties["Quality"] = 50;
+                Application.Current.SavePropertiesAsync();
+            }
+            if(!Application.Current.Properties.ContainsKey("Compression")) {
+                Application.Current.Properties["Compression"] = 50;
+                Application.Current.SavePropertiesAsync();
+            }
         }
         private RelayCommand _AuthCommand;
         public RelayCommand AuthCommand {
@@ -55,7 +74,7 @@ namespace MounterApp.ViewModel {
                         }
                     }
                 }
-                catch (Exception ex) {
+                catch(Exception ex) {
                     Message = "Нет подключения к интернету или сетевой адрес недоступен";
                 }
                 IndicatorVisible = false;

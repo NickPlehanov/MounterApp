@@ -41,6 +41,10 @@ namespace MounterApp.ViewModel {
             IsPickPhoto = isPickPhoto;
             Opacity = 1;
             IndicatorVisible = false;
+            if(!string.IsNullOrEmpty(mount.GoogleComment)) {
+                GoogleComment = mount.GoogleComment;
+                VisibleGoogleComment = true;
+            }
         }
         public NewMountPageViewModel(List<NewMounterExtensionBase> mounters) {
             Mounters = mounters;
@@ -57,7 +61,7 @@ namespace MounterApp.ViewModel {
             Opacity = 1;
             IndicatorVisible = false;
             IsPickPhoto = null;
-        }
+        }        
         public NewMountPageViewModel(Mounts mount,List<NewMounterExtensionBase> mounters) {
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Карточка объекта" });
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Схема объекта" });
@@ -70,6 +74,10 @@ namespace MounterApp.ViewModel {
             SaveImage = "save.png";
             SendImage = "send.png";
             IsPickPhoto = null;
+            if(!string.IsNullOrEmpty(mount.GoogleComment)) {
+                GoogleComment = mount.GoogleComment;
+                VisibleGoogleComment = true;
+            }
 
             Mounters = mounters;
             Mount = mount;
@@ -100,7 +108,31 @@ namespace MounterApp.ViewModel {
             Opacity = 1;
             IndicatorVisible = false;
         }
+        private GoogleMountModel _GoogleMount;
+        public GoogleMountModel GoogleMount {
+            get => _GoogleMount;
+            set {
+                _GoogleMount = value;
+                OnPropertyChanged(nameof(GoogleMount));
+            }
+        }
+        private bool _VisibleGoogleComment;
+        public bool VisibleGoogleComment {
+            get => _VisibleGoogleComment;
+            set {
+                _VisibleGoogleComment = value;
+                OnPropertyChanged(nameof(VisibleGoogleComment));
+            }
+        }
 
+        private string _GoogleComment;
+        public string GoogleComment {
+            get => _GoogleComment;
+            set {
+                _GoogleComment = value;
+                OnPropertyChanged(nameof(GoogleComment));
+            }
+        }
         private bool? _IsPickPhoto;
         public bool? IsPickPhoto {
             get => _IsPickPhoto;

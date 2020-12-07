@@ -7,10 +7,26 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="2*"/>
                 </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <CheckBox Grid.Column="0" Grid.Row="0" IsChecked="{Binding AutoEnter}" HorizontalOptions="CenterAndExpand"/>
+                <Label Grid.Column="1" Grid.Row="0" Text="Автоматический вход" VerticalOptions="CenterAndExpand"/>
+
+                <Entry Grid.Column="0" Grid.Row="1" Keyboard="Numeric" Text="{Binding Quality}"/>
+                <Label Grid.Column="1" Grid.Row="1" Text="Качество фото" VerticalOptions="CenterAndExpand"/>
+
+                <Entry Grid.Column="0" Grid.Row="2" Keyboard="Numeric" Text="{Binding Compression}"/>
+                <Label Grid.Column="1" Grid.Row="2" Text="Степень сжатия фото" VerticalOptions="CenterAndExpand"/>
+
+                <Button ImageSource="{Binding SaveImage}" Margin="5" Grid.ColumnSpan="2" Grid.Row="3" Text="Сохранить" Command="{Binding SaveCommand}"/>
             </Grid>
-                <CheckBox Grid.Columns="0"  IsChecked="{Binding AutoEnter}"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

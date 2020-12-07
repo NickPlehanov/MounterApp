@@ -71,5 +71,7 @@ namespace MounterApp.InternalModel {
         /// Отображает статус записи в базе данных. 0-не отправлен; 1-отправлен;-1-удален пользователем;
         /// </summary>
         public int State { get; set; }
+        //Отображает инфу о монтаже, если такой был в гугл таблице
+        public string GoogleComment { get; set; }
     }
 }
