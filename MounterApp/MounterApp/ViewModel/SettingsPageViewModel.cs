@@ -1,9 +1,11 @@
 ﻿using Android.Widget;
+using Microsoft.AppCenter.Analytics;
 using MounterApp.Helpers;
 using MounterApp.Model;
 using MounterApp.Views;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Xamarin.Forms;
 
@@ -24,6 +26,8 @@ namespace MounterApp.ViewModel {
             if(Application.Current.Properties.ContainsKey("Compression"))
                 Compression = int.Parse(Application.Current.Properties["Compression"].ToString());
             SaveImage = "save.png";
+            SaveImage = "clear.png";
+            Analytics.TrackEvent("Инициализация окна настроек приложения");
         }
 
         private List<NewMounterExtensionBase> _Mounters;
@@ -45,6 +49,26 @@ namespace MounterApp.ViewModel {
         }
 
 
+        private ImageSource _ClearImage;
+        public ImageSource ClearImage {
+            get => _ClearImage;
+            set {
+                _ClearImage = value;
+                OnPropertyChanged(nameof(ClearImage));
+            }
+        }
+
+
+        private RelayCommand _ClearDatabaseCommand;
+        public RelayCommand ClearDatabaseCommand {
+            get => _ClearDatabaseCommand ??= new RelayCommand(async obj => {
+                bool result = await Application.Current.MainPage.DisplayAlert("Удаление","Вы действительно хотите очистить базу данных?","Да","Нет");
+                if(result) {
+                    Toast.MakeText(Android.App.Application.Context,"Очищено объектов: " + App.Database.ClearDatabase().ToString(),ToastLength.Long).Show();
+                    Analytics.TrackEvent("Очистка локальной базы данных объектов");
+                }
+            });
+        }
         private int _Quality;
         public int Quality {
             get => _Quality;
@@ -88,6 +112,15 @@ namespace MounterApp.ViewModel {
                 Application.Current.Properties["Compression"] = Compression;
                 await Application.Current.SavePropertiesAsync();
                 Toast.MakeText(Android.App.Application.Context,"Настройки успешно сохранены",ToastLength.Long).Show();
+                Dictionary<string,string> parameters = new Dictionary<string,string> {
+                     { "MounterPhone",Mounters!=null ? Mounters.Count()>0 ? Mounters.First().NewPhone:"":"" },
+                     { "ServicemanPhone",Servicemans!=null ? Servicemans.Count()>0 ? Servicemans.First().NewPhone:"":"" },
+                     { "AutoEnter",AutoEnter.ToString() },
+                     { "Quality",Quality.ToString() },
+                     { "Compression",Compression.ToString() },
+                     { "Events","Сохранение локальных настроек приложения" }
+                };
+                Analytics.TrackEvent("Сохранение локальных настроек приложения",parameters);
                 BackPressCommand.Execute(null);
             });
         }

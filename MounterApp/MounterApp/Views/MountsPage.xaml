@@ -2,17 +2,24 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MounterApp.Views.MountsPage">
-    <StackLayout>
-        <Grid Opacity="{Binding Opacity}">
-            <Grid.RowDefinitions>
+    <!--<StackLayout>-->
+        <StackLayout Opacity="{Binding Opacity}">
+            <!--<Grid.RowDefinitions>
+                --><!--<RowDefinition Height="2*"/>
                 <RowDefinition Height="2*"/>
-                <RowDefinition Height="2*"/>
+                <RowDefinition Height="*"/>--><!--
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <StackLayout Grid.Row="0" Grid.ColumnSpan="3">
-                <Label HorizontalOptions="Center" Text="Запланированные монтажи" FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Large"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>-->
+        <Expander Grid.Row="0" IsExpanded="{Binding GoogleMountsExpander}">
+            <Expander.Header>
+                <Button CharacterSpacing="2" CornerRadius="20" Command="{Binding GoogleMountsExpanderCommand}" HorizontalOptions="Center" Text="Запланированные" ImageSource="{Binding ArrowCircleGoogle}"  FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Large"/>
+            </Expander.Header>
+            <StackLayout >
+                <!--<Label HorizontalOptions="Center" Text="Запланированные монтажи" FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Large"/>-->
                 <!--</Expander.Header>-->
-                <CollectionView Grid.ColumnSpan="2" Grid.Row="1" Margin="5" 
+                <CollectionView Margin="5" 
                                 ItemsSource="{Binding GoogleMounts}" SelectionMode="Single" 
                                     SelectedItem="{Binding GoogleMount}"
                                     SelectionChangedCommand="{Binding SelectMountCommand, Mode=TwoWay}">
@@ -25,18 +32,22 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <Label Grid.Column="0" Text="{Binding Path=FullInfo}" HeightRequest="50" BackgroundColor="Azure" Margin="0,5" 
+                                <Label Text="{Binding Path=FullInfo}" HeightRequest="50" BackgroundColor="Azure" Margin="0,5" 
                                        HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
                             </Grid>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
             </StackLayout>
-
-            <StackLayout Grid.Row="1" Grid.ColumnSpan="3">
-                <Label HorizontalOptions="Center" Text="{Binding HeaderNotSended}" FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Large"/>
+        </Expander>
+        <Expander Grid.Row="1" IsExpanded="{Binding NotSendedMountsExpander}">
+            <Expander.Header>
+                <Button Command="{Binding NotSendedMountsExpanderCommand}" ImageSource="{Binding ArrowCircleNotSended}"  CharacterSpacing="2" CornerRadius="20" HorizontalOptions="Center" Text="{Binding HeaderNotSended}" FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Large"/>
+            </Expander.Header>
+        <StackLayout >
+                <!--<Label HorizontalOptions="Center" Text="{Binding HeaderNotSended}" FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Large"/>-->
                 <!--</Expander.Header>-->
-                <CollectionView Grid.ColumnSpan="2" Grid.Row="1" Margin="5" 
+                <CollectionView Margin="5" 
                                 ItemsSource="{Binding NotSendedMounts}" SelectionMode="Single" 
                                     SelectedItem="{Binding NotSendedMount}"
                                     SelectionChangedCommand="{Binding SelectMountCommand, Mode=TwoWay}">
@@ -44,7 +55,7 @@
                         <GridItemsLayout Orientation="Vertical"/>
                     </CollectionView.ItemsLayout>
                     <CollectionView.ItemTemplate>
-                        <DataTemplate>
+                        <!--<DataTemplate>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -52,15 +63,29 @@
                                 <Label Grid.Column="0" Text="{Binding Path=ObjectNumber}" HeightRequest="50" BackgroundColor="Azure" Margin="0,5" 
                                        HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
                             </Grid>
+                        </DataTemplate>-->
+
+                        <DataTemplate>
+                            <!--<Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>-->
+                            <StackLayout>
+                                <Label Text="{Binding Path=ObjectNumber}" HeightRequest="50" BackgroundColor="Azure" Margin="0,5" 
+                                       HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                            </StackLayout>
+                            <!--</Grid>-->
+
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
             </StackLayout>
-            <Button VerticalOptions="EndAndExpand" Margin="5" Grid.Row="1" Grid.ColumnSpan="3" Text="Новый монтаж" FontSize="Large" Command="{Binding NewMountCommand}"/>
-        </Grid>
-        <StackLayout IsVisible="{Binding IndicatorVisible}" Grid.Row="2" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
+        </Expander>
+        <Button  CornerRadius="20" BackgroundColor="#F35429" VerticalOptions="EndAndExpand" Margin="5" Grid.Row="1" Text="Новый монтаж" FontSize="Large" Command="{Binding NewMountCommand}"/>
+        </StackLayout>
+        <!--<StackLayout IsVisible="{Binding IndicatorVisible}" Grid.Row="2" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
             <ActivityIndicator IsRunning="True" Color="Red" HeightRequest="50" WidthRequest="50"  />
             <Label FontAttributes="Bold" Text="Подождите, идет загрузка..." TextColor="White" />
-        </StackLayout>
-    </StackLayout>
+        </StackLayout>-->
+    <!--</StackLayout>-->
 </ContentPage>

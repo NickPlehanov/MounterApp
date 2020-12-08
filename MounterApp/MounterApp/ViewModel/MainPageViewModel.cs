@@ -1,5 +1,7 @@
 ﻿//using Android.Content.Res;
 using Android.Hardware;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using MounterApp.Helpers;
 using MounterApp.Model;
 using MounterApp.Properties;
@@ -26,7 +28,6 @@ namespace MounterApp.ViewModel {
                         AuthCommand.Execute(null);
             }
             else {
-                //TODO: Задать значения по умолчанию
                 Application.Current.Properties["AutoEnter"] = true;
                 Application.Current.SavePropertiesAsync();
             }
@@ -44,25 +45,62 @@ namespace MounterApp.ViewModel {
             get => _AuthCommand ??= new RelayCommand(async obj => {
                 IndicatorVisible = true;
                 OpacityForm = 0.1;
+                Analytics.TrackEvent("App start");
                 using HttpClient client = new HttpClient();
                 string Phone = null;
+                //TODO: проверять на 79 или 89
                 if(PhoneNumber.Length == 11) {
                     Phone = PhoneNumber.Substring(1,PhoneNumber.Length - 1);
+                }
+                else {
+                    Message = "Введен не корректный номер телефона";
+                    Analytics.TrackEvent("Ошибка ввода номера телефона");
                 }
                 try {
                     //Phone = Application.Current.Properties["Phone"].ToString();
                     Application.Current.Properties["Phone"] = PhoneNumber;
                     await Application.Current.SavePropertiesAsync();
+                    Analytics.TrackEvent("Сохранение номера телефона в локальную базу данных");
+                    Analytics.TrackEvent("Запрос монтажников по номеру телефона");
                     HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewMounterExtensionBases/phone?phone=" + Phone);
                     var resp = response.Content.ReadAsStringAsync().Result;
-                    List<NewMounterExtensionBase> mounters = JsonConvert.DeserializeObject<List<NewMounterExtensionBase>>(resp).Where(x => x.NewIsWorking == true).ToList();
+                    List<NewMounterExtensionBase> mounters = new List<NewMounterExtensionBase>();
+                    try {
+                        Analytics.TrackEvent("Попытка сериализации результата запроса монтажников");
+                        mounters = JsonConvert.DeserializeObject<List<NewMounterExtensionBase>>(resp).Where(x => x.NewIsWorking == true).ToList();
+                    }
+                    catch(Exception MountersParseExecption) {
+                        Dictionary<string,string> parameters = new Dictionary<string,string> {
+                            { "Phone",PhoneNumber },
+                            { "Error","Не удалось провести сериализацию объекта монтажники" }
+                        };
+                        Crashes.TrackError(MountersParseExecption,parameters);
+                    }
+                    Analytics.TrackEvent("Запрос техников по номеру телефона");
                     response = await client.GetAsync(Resources.BaseAddress + "/api/NewServicemanExtensionBases/phone?phone=" + Phone);
                     resp = response.Content.ReadAsStringAsync().Result;
-                    List<NewServicemanExtensionBase> servicemans = JsonConvert.DeserializeObject<List<NewServicemanExtensionBase>>(resp).Where(x => x.NewIswork == true).ToList();
+                    List<NewServicemanExtensionBase> servicemans = new List<NewServicemanExtensionBase>();
+                    try {
+                        Analytics.TrackEvent("Попытка сериализации результата запроса техников");
+                        servicemans = JsonConvert.DeserializeObject<List<NewServicemanExtensionBase>>(resp).Where(x => x.NewIswork == true).ToList();
+                    }
+                    catch(Exception ServicemansParseException) {
+                        Dictionary<string,string> parameters = new Dictionary<string,string> {
+                            { "Phone",PhoneNumber },
+                            { "Error","Не удалось провести сериализацию объекта техники" }
+                        };
+                        Crashes.TrackError(ServicemansParseException,parameters);
+                    }
                     if(mounters != null || servicemans != null) {
                         if(mounters.Count > 0 || servicemans.Count > 0) {
-                            if(mounters.Count > 1 || servicemans.Count > 1)
+                            if(mounters.Count > 1 || servicemans.Count > 1) {
                                 Message = "Неоднозначно определен сотрудник";
+                                Dictionary<string,string> parameters = new Dictionary<string,string> {
+                                    { "Phone",PhoneNumber },
+                                    { "Error","Неоднозначно определен сотрудник" }
+                                };
+                                Crashes.TrackError(new Exception("Неоднозначно определен сотрудник"),parameters);
+                            }
                             else {
                                 IndicatorVisible = false;
                                 MainMenuPageViewModel vm = new MainMenuPageViewModel(mounters,servicemans);
@@ -70,12 +108,31 @@ namespace MounterApp.ViewModel {
                             }
                         }
                         else {
-                            Message = "Проверьте правильность ввода номера телефона";
+                            Message = "Сотрудника с таким номером телефона не найдено"+Environment.NewLine+"Проверьте правильность ввода номера телефона";
+                            Dictionary<string,string> parameters = new Dictionary<string,string> {
+                                { "Phone",PhoneNumber },
+                                { "Error","Не найден сотрудник по номеру телефона" }
+                            };
+                            Crashes.TrackError(new Exception("Не найден сотрудник по номеру телефона"),parameters);
                         }
+                    }
+                    else {
+                        Message = "Сотрудника с таким номером телефона не найдено";
+                        Dictionary<string,string> parameters = new Dictionary<string,string> {
+                            { "Phone",PhoneNumber },
+                            { "Error","Не найден сотрудник по номеру телефона" }
+                        };
+                        Crashes.TrackError(new Exception("Не найден сотрудник по номеру телефона"),parameters);
                     }
                 }
                 catch(Exception ex) {
                     Message = "Нет подключения к интернету или сетевой адрес недоступен";
+                    Dictionary<string,string> parameters = new Dictionary<string,string> {
+                        { "Phone",PhoneNumber },
+                        { "UserMessage",Message },
+                        { "Error","Не удалось соединится с сервером или десерелизовать результаты запроса" }
+                    };
+                    Crashes.TrackError(ex,parameters);
                 }
                 IndicatorVisible = false;
                 OpacityForm = 1;

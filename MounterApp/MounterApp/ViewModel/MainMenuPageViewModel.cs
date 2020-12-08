@@ -1,9 +1,11 @@
-﻿using MounterApp.Helpers;
+﻿using Microsoft.AppCenter.Analytics;
+using MounterApp.Helpers;
 using MounterApp.InternalModel;
 using MounterApp.Model;
 using MounterApp.Views;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
@@ -20,17 +22,21 @@ namespace MounterApp.ViewModel {
             Mounters = mounters;
             Serviceman = servicemans;
             SettingsImage= "settings.png";
+            Analytics.TrackEvent("Инициализация окна главного меню приложения");
         }
         public MainMenuPageViewModel(List<NewMounterExtensionBase> mounters) {
             Mounters = mounters;
             SettingsImage = "settings.png";
+            Analytics.TrackEvent("Инициализация окна главного меню приложения");
         }
         public MainMenuPageViewModel(List<NewServicemanExtensionBase> servicemans) {
             Serviceman = servicemans;
             SettingsImage = "settings.png";
+            Analytics.TrackEvent("Инициализация окна главного меню приложения");
         }
         public MainMenuPageViewModel() {
             SettingsImage = "settings.png";
+            Analytics.TrackEvent("Инициализация окна главного меню приложения");
         }
 
         private string _Message;
@@ -45,20 +51,28 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetMountworksCommand;
         public RelayCommand GetMountworksCommand {
             get => _GetMountworksCommand ??= new RelayCommand(async obj => {
+                Dictionary<string,string> parameters = new Dictionary<string,string> {
+                    {"MountersPhone",Mounters.First().NewPhone }
+                };
+                Analytics.TrackEvent("Переход к монтажам",parameters);
                 MountsViewModel vm = new MountsViewModel(Mounters);
                 App.Current.MainPage = new MountsPage(vm);
             });
         }
-        private RelayCommand _ClearDatabaseCommand;
-        public RelayCommand ClearDatabaseCommand {
-            get => _ClearDatabaseCommand ??= new RelayCommand(async obj => {
-                Message="Очищено объектов: "+App.Database.ClearDatabase().ToString();
-            });
-        }
+        //private RelayCommand _ClearDatabaseCommand;
+        //public RelayCommand ClearDatabaseCommand {
+        //    get => _ClearDatabaseCommand ??= new RelayCommand(async obj => {
+        //        Message="Очищено объектов: "+App.Database.ClearDatabase().ToString();
+        //    });
+        //}
 
         private RelayCommand _GetServiceordersCommand;
         public RelayCommand GetServiceordersCommand {
             get => _GetServiceordersCommand ??= new RelayCommand(async obj => {
+                Dictionary<string,string> parameters = new Dictionary<string,string> {
+                    {"ServicemansPhone",Serviceman.First().NewPhone }
+                };
+                Analytics.TrackEvent("Переход к заявкам технику",parameters);
                 ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Serviceman);
                 App.Current.MainPage = new ServiceOrdersPage(vm);
             });
@@ -91,6 +105,7 @@ namespace MounterApp.ViewModel {
         private RelayCommand _OpenSettingsCommand;
         public RelayCommand OpenSettingsCommand {
             get => _OpenSettingsCommand ??= new RelayCommand(async obj => {
+                Analytics.TrackEvent("Переход к настройкам");
                 SettingsPageViewModel vm = new SettingsPageViewModel(Mounters,Serviceman);
                 App.Current.MainPage = new SettingsPage(vm);
             });
