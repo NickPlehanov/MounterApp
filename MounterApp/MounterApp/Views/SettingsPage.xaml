@@ -15,6 +15,7 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
                 <CheckBox Grid.Column="0" Grid.Row="0" IsChecked="{Binding AutoEnter}" HorizontalOptions="CenterAndExpand"/>
@@ -29,6 +30,9 @@
                 <Button ImageSource="{Binding ClearImage}" Margin="5" Grid.ColumnSpan="2" Grid.Row="3" Text="Очистить локальную базу монтажей" Command="{Binding ClearDatabaseCommand}"/>
 
                 <Button ImageSource="{Binding SaveImage}" Margin="5" Grid.ColumnSpan="2" Grid.Row="4" Text="Сохранить" Command="{Binding SaveCommand}"/>
+
+
+                <Label Text="{Binding Version, Mode=TwoWay}" Grid.Row="5" Grid.ColumnSpan="2"/>
             </Grid>
         </StackLayout>
     </ContentPage.Content>

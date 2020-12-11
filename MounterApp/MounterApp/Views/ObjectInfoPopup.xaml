@@ -12,19 +12,31 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <ScrollView Grid.Row="0"  Orientation="Both">
-                        <dg:DataGrid SortedColumnIndex="0" ItemsSource="{Binding WiresCollection, Mode=TwoWay, UpdateSourceEventName=PropertyChanged}">
+                        <dg:DataGrid BorderColor="#620000" SortedColumnIndex="0" ItemsSource="{Binding WiresCollection, Mode=TwoWay, UpdateSourceEventName=PropertyChanged}">
                         <dg:DataGrid.Columns>
                             <dg:DataGridColumn Width="*" Title="Номер" PropertyName="ID"/>
                             <dg:DataGridColumn Width="*" Title="Описание" PropertyName="Desc"/>
                         </dg:DataGrid.Columns>
+                            <dg:DataGrid.RowsBackgroundColorPalette>
+                                <dg:PaletteCollection>
+                                    <Color>#F2F2F2</Color>
+                                    <Color>#FFFFFF</Color>
+                                </dg:PaletteCollection>
+                            </dg:DataGrid.RowsBackgroundColorPalette>
                         </dg:DataGrid>
                     </ScrollView>
                     <ScrollView Grid.Row="1"  Orientation="Both">
-                        <dg:DataGrid SortedColumnIndex="0" ItemsSource="{Binding ExtFields, Mode=TwoWay, UpdateSourceEventName=PropertyChanged}">
+                        <dg:DataGrid BorderColor="#620000" SortedColumnIndex="0" ItemsSource="{Binding ExtFields, Mode=TwoWay, UpdateSourceEventName=PropertyChanged}">
                         <dg:DataGrid.Columns>
                             <dg:DataGridColumn Width="*" Title="Номер" PropertyName="FieldName"/>
                             <dg:DataGridColumn Width="*" Title="Значение" PropertyName="FieldValue"/>
                         </dg:DataGrid.Columns>
+                            <dg:DataGrid.RowsBackgroundColorPalette>
+                                <dg:PaletteCollection>
+                                    <Color>#F2F2F2</Color>
+                                    <Color>#FFFFFF</Color>
+                                </dg:PaletteCollection>
+                            </dg:DataGrid.RowsBackgroundColorPalette>
                     </dg:DataGrid>
                     </ScrollView>
                     <Button Grid.Row="2" Text="Закрыть" Command="{Binding CloseCommand}"/>

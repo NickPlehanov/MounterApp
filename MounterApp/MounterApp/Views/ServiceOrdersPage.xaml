@@ -44,7 +44,7 @@
         </CollectionView>
             <StackLayout IsVisible="{Binding IndicatorVisible}" Grid.Row="2" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
                 <ActivityIndicator IsRunning="True" Color="Red" HeightRequest="50" WidthRequest="50"  />
-                <Label FontAttributes="Bold" Text="Подождите, идет загрузка..." TextColor="White" />
+                <Label FontAttributes="Bold" Text="Подождите, идет загрузка..."/>
             </StackLayout>
         </Grid>        
     </ContentPage.Content>

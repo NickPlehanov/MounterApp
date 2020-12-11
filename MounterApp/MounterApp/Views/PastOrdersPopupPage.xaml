@@ -15,6 +15,12 @@
                             <dg:DataGridColumn Width="*" Title="Дата" PropertyName="NewDate"/>
                             <dg:DataGridColumn Width="3*" Title="Причина" PropertyName="NewName"/>
                         </dg:DataGrid.Columns>
+                        <dg:DataGrid.RowsBackgroundColorPalette>
+                            <dg:PaletteCollection>
+                                <Color>#F2F2F2</Color>
+                                <Color>#FFFFFF</Color>
+                            </dg:PaletteCollection>
+                        </dg:DataGrid.RowsBackgroundColorPalette>
                     </dg:DataGrid>
                     <Button Grid.Row="1" Text="Закрыть" Command="{Binding CloseCommand}"/>
                 </Grid>

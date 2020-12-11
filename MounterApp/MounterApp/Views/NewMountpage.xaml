@@ -4,27 +4,19 @@
              xmlns:datagrid="clr-namespace:Xamarin.Forms.DataGrid;assembly=Xamarin.Forms.DataGrid" 
              xmlns:helpers="clr-namespace:MounterApp.Helpers"
              x:Class="MounterApp.Views.NewMountpage">
-    <!--<ContentPage.Content>-->
-    <!--<ScrollView>-->
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <!--<StackLayout IsVisible="{Binding IndicatorVisible}" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
-            <ActivityIndicator IsRunning="True" />
-            <Label FontAttributes="Bold" Text="Loading..." TextColor="White" />
-        </StackLayout>-->
-        <!--<StackLayout  Opacity="{Binding Opacity}" Grid.Row="0">-->
-            <!--<ProgressBar Scale="5" ProgressColor="Red" Progress="{Binding ProgressValue}"/>-->
         <Expander Opacity="{Binding Opacity}" Grid.Row="0" IsExpanded="True">
             <Expander.Header>
                 <Label Text="Информация об объекте" FontAttributes="Bold" HorizontalTextAlignment="Center" Margin="10" FontSize="24" />
             </Expander.Header>
-            <StackLayout Margin="5">
+            <StackLayout>
                 <Label Text="{Binding GoogleComment, Mode=TwoWay}" IsVisible="{Binding VisibleGoogleComment}" FontAttributes="Italic"/>
                 <Label Text="№ объекта" HorizontalOptions="Center" FontAttributes="Bold"/>
                 <Entry Keyboard="Numeric" Text="{Binding ObjectNumber, Mode=TwoWay}"/>
@@ -36,88 +28,33 @@
                 <Entry Keyboard="Text" Text="{Binding ObjectDriveways}" />
             </StackLayout>
         </Expander>
-        <Button ImageSource="{Binding PhotoImage}" Opacity="{Binding Opacity}" Grid.Row="1" Margin="5" Text="Фото объекта" Command="{Binding TakePhotoCommand}">
-    </Button>
+        <Button Padding="10" Margin="10" CornerRadius="20" ImageSource="{Binding PhotoImage}" Opacity="{Binding Opacity}" Grid.Row="1" Text="Фото объекта" Command="{Binding TakePhotoCommand}">
+        </Button>
         <CollectionView Opacity="{Binding Opacity}" Grid.Row="2" Margin="5"
                                 ItemsSource="{Binding Photos}" SelectionMode="Single" 
                                 SelectionChangedCommand="{Binding DeleteCommand, Mode=TwoWay}"
                                 SelectedItem="{Binding SelectedPhoto}">
-                    <CollectionView.ItemsLayout>
-                        <!--<LinearItemsLayout Orientation="Horizontal"/>-->
-                        <GridItemsLayout Orientation="Vertical" Span="4"/>
-                    </CollectionView.ItemsLayout>
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical" Span="4"/>
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
                     <RelativeLayout Opacity="{Binding Opacity}">
-                                <Image Source="{Binding Path=ImgSrc}" Margin="5"/>
-                                <Label Text="{Binding Path=_Types.PhotoTypeName}" VerticalTextAlignment="Center"/>
-                                <!--<Label Text="{Binding Path=Photos.types}" VerticalTextAlignment="Center"/>-->
-                            </RelativeLayout>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            <!--</StackLayout>-->
-
-
-            <!--<Grid Grid.Row="1" Opacity="{Binding Opacity}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>-->
-
-            <!--<StackLayout Grid.Row="0" Grid.Column="0" Margin="5">
-                <Picker Title="Выберите тип фото" ItemsSource="{Binding PhotoNames}" ItemDisplayBinding="{Binding PhotoTypeName}" SelectedItem="{Binding PhotoName}"/>
-                <Entry Text="{Binding PhotoComment}"/>
-                <Button Text="Добавить фото" Command="{Binding AddNewPhotoCommand}"/>
-            </StackLayout>
-            <StackLayout Grid.Row="0" Grid.Column="1" Margin="5">
-                <Image x:Name="img" Source="{Binding ImgSrc}" Aspect="AspectFit" >
-                    <Image.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding TakePhotoCommand}"/>
-                    </Image.GestureRecognizers>
-                </Image>
-            </StackLayout>
-            <StackLayout Grid.Row="0" Grid.ColumnSpan="2">
-                
-            </StackLayout>-->
-            <!--<Button Grid.Row="0" Grid.ColumnSpan="2" Margin="5" Text="Фото объекта" Command="{Binding TakePhotoCommand}"/>-->
-            <!--<StackLayout Grid.ColumnSpan="2" Grid.Row="1">-->
-            <!--<CollectionView Grid.ColumnSpan="2" Grid.Row="1" Margin="5"
-                                ItemsSource="{Binding Photos}" SelectionMode="Single" 
-                                SelectionChangedCommand="{Binding DeleteCommand, Mode=TwoWay}"
-                                SelectedItem="{Binding SelectedPhoto}">
-                <CollectionView.ItemsLayout>
-                    --><!--<LinearItemsLayout Orientation="Horizontal"/>--><!--
-                    <GridItemsLayout Orientation="Vertical" Span="4"/>
-                </CollectionView.ItemsLayout>
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <RelativeLayout>
-                            <Image Source="{Binding Path=ImgSrc}" Aspect="AspectFill"/>
-                            <Label Text="{Binding Path=_Types.PhotoTypeName}" VerticalTextAlignment="Center"/>
-                                --><!--<Label Text="{Binding Path=Photos.types}" VerticalTextAlignment="Center"/>--><!--
-                        </RelativeLayout>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>-->
-            <!--</StackLayout>-->
+                        <Image Source="{Binding Path=ImgSrc}" Margin="5"/>
+                        <Label Text="{Binding Path=_Types.PhotoTypeName}" VerticalTextAlignment="Center"/>
+                    </RelativeLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
         <StackLayout Opacity="{Binding Opacity}" Grid.Row="3">
-            <Button ImageSource="{Binding SaveImage}" Text="Сохранить данные" Command="{Binding SaveToDB, Mode=TwoWay}"/>
-            <Button ImageSource="{Binding SendImage}" Text="Отправить данные" Command="{Binding SendToServer, Mode=TwoWay}"/>
+            <Button Padding="10" Margin="10,0" CornerRadius="20" ImageSource="{Binding SaveImage}" Text="Сохранить данные" Command="{Binding SaveToDB, Mode=TwoWay}"/>
+            <Button Padding="10" Margin="10" CornerRadius="20" ImageSource="{Binding SendImage}" Text="Отправить данные" Command="{Binding SendToServer, Mode=TwoWay}"/>
         </StackLayout>
         <StackLayout Opacity="1" Grid.Row="3" IsVisible="{Binding IndicatorVisible}" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
             <ActivityIndicator IsRunning="True" Color="Red" HeightRequest="50" WidthRequest="50"  />
-            <Label FontAttributes="Bold" Text="{Binding IndicatorText}"  TextColor="White" />
+            <Label FontAttributes="Bold" Text="{Binding IndicatorText}"/>
         </StackLayout>
     </Grid>
-    <!--</Grid>-->
-
-    <!--</ScrollView>-->
 
 
     <!--<StackLayout>

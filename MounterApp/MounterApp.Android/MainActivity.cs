@@ -8,7 +8,7 @@ using Android.Widget;
 using Android.OS;
 
 namespace MounterApp.Droid {
-	[Activity(Label = "MounterApp",Icon = "@mipmap/icon",Theme = "@style/MainTheme",MainLauncher = true,ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize)]
+	[Activity(Label = "MounterApp",Icon = "@drawable/icon",Theme = "@style/MainTheme",MainLauncher = true,ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize)]
 	public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity {
 		protected override void OnCreate(Bundle savedInstanceState) {
 			global::Xamarin.Forms.Forms.SetFlags(new string[] { "Expander_Experimental" });

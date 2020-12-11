@@ -19,11 +19,13 @@ namespace MounterApp.ViewModel {
         public ServiceOrderViewModel() {}
         public ServiceOrderViewModel(NewServiceorderExtensionBase _so) {
             ServiceOrderID = _so;
+            App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
         }
-        public ServiceOrderViewModel(NewServiceorderExtensionBase _so,List<NewServicemanExtensionBase> _servicemans) {
+        public ServiceOrderViewModel(NewServiceorderExtensionBase _so,List<NewServicemanExtensionBase> _servicemans, List<NewMounterExtensionBase> _mounters) {
             ServiceOrderID = _so;
             ServiceOrderID.NewDate = ServiceOrderID.NewDate.Value.AddHours(5);
             Servicemans = _servicemans;
+            Mounters = _mounters;
             OpacityForm = 1;
             WiresVisible = false;
             ExtFieldsVisible = false;
@@ -31,6 +33,16 @@ namespace MounterApp.ViewModel {
             EventsVisible = false;
             GetInfoByGuardObject.Execute(null);
             GetCategory.Execute(null);
+            App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
+        }
+
+        private List<NewMounterExtensionBase> _Mounters;
+        public List<NewMounterExtensionBase> Mounters {
+            get => _Mounters;
+            set {
+                _Mounters = value;
+                OnPropertyChanged(nameof(Mounters));
+            }
         }
         private bool _ObjectInfoVisible;
         public bool ObjectInfoVisible {
@@ -225,7 +237,7 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetCategory;
         public RelayCommand GetCategory {
             get => _GetCategory ??= new RelayCommand(async obj => {
-                using HttpClient client = new HttpClient();
+                using HttpClient client = new HttpClient(GetHttpClientHandler());
                 HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/metadata?ColumnName=new_category&ObjectName=New_serviceorder");
                 var resp = response.Content.ReadAsStringAsync().Result;
                 List<MetadataModel> mm = new List<MetadataModel>();
@@ -240,7 +252,7 @@ namespace MounterApp.ViewModel {
         private RelayCommand _BackPressCommand;
         public RelayCommand BackPressCommand {
             get => _BackPressCommand ??= new RelayCommand(async obj => {
-                ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans);
+                ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans,Mounters);
                 App.Current.MainPage = new ServiceOrdersPage(vm);
             });
         }
@@ -249,7 +261,7 @@ namespace MounterApp.ViewModel {
             get => _GetInfoByGuardObject ??= new RelayCommand(async obj => {
                 Opacity = 0.1;
                 IndicatorVisible = true;
-                using HttpClient client = new HttpClient();
+                using HttpClient client = new HttpClient(GetHttpClientHandler());
                 if(ServiceOrderID.NewNumber.HasValue) {
                     HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewGuardObjectExtensionBases/GetInfoByNumber?number=" + ServiceOrderID.NewNumber);
                     var resp = response.Content.ReadAsStringAsync().Result;
@@ -268,7 +280,7 @@ namespace MounterApp.ViewModel {
                     }
                 }
                 else {
-                    using HttpClient clientA28 = new HttpClient();
+                    using HttpClient clientA28 = new HttpClient(GetHttpClientHandler());
                     HttpResponseMessage responseA28 = await clientA28.GetAsync(Resources.BaseAddress + "/api/NewAndromedaExtensionBases/id?id=" + ServiceOrderID.NewAndromedaServiceorder);
                     var respA28 = responseA28.Content.ReadAsStringAsync().Result;
                     NewAndromedaExtensionBase andromeda = new NewAndromedaExtensionBase();
@@ -308,7 +320,7 @@ namespace MounterApp.ViewModel {
                     Latitude = location.Latitude.ToString();
                     Longitude = location.Longitude.ToString();
                 }
-                using HttpClient client = new HttpClient();
+                using HttpClient client = new HttpClient(GetHttpClientHandler());
                 HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/id?id=" + ServiceOrderID.NewServiceorderId);
                 var resp = response.Content.ReadAsStringAsync().Result;
                 NewServiceorderExtensionBase soeb = null;
@@ -318,12 +330,12 @@ namespace MounterApp.ViewModel {
                 catch { }
                 if(soeb != null) {
                     soeb.NewIncome = DateTime.Now.AddHours(-5);
-                    using HttpClient clientPut = new HttpClient();
+                    using HttpClient clientPut = new HttpClient(GetHttpClientHandler());
                     var httpContent = new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json");
                     HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases",httpContent);
                 }
                 //запишем координаты
-                using(HttpClient clientPost = new HttpClient()) {
+                using(HttpClient clientPost = new HttpClient(GetHttpClientHandler())) {
                     var data = JsonConvert.SerializeObject(new ServiceOrderCoordinates() {
                         SocId=Guid.NewGuid(),
                         SocServiceOrderId=ServiceOrderID.NewServiceorderId,
@@ -353,28 +365,28 @@ namespace MounterApp.ViewModel {
         private RelayCommand _CloseOrderCommand;
         public RelayCommand CloseOrderCommand {
             get => _CloseOrderCommand ??= new RelayCommand(async obj => {
-                CloseOrderPopupPageViewModel vm = new CloseOrderPopupPageViewModel(ServiceOrderID,Servicemans);
+                CloseOrderPopupPageViewModel vm = new CloseOrderPopupPageViewModel(ServiceOrderID,Servicemans,Mounters);
                 await App.Current.MainPage.Navigation.PushPopupAsync(new CloseOrderPopupPage(vm));
             });
         }
         private RelayCommand _GetObjectInfoCommand;
         public RelayCommand GetObjectInfoCommand {
             get => _GetObjectInfoCommand ??= new RelayCommand(async obj => {
-                ObjectInfoViewModel vm = new ObjectInfoViewModel(ServiceOrderID,Servicemans);
+                ObjectInfoViewModel vm = new ObjectInfoViewModel(ServiceOrderID,Servicemans,Mounters);
                 await App.Current.MainPage.Navigation.PushPopupAsync(new ObjectInfoPopup(vm));
             });
         }
         private RelayCommand _GetEventsCommand;
         public RelayCommand GetEventsCommand {
             get => _GetEventsCommand ??= new RelayCommand(async obj => {
-                EventsPopupViewModel vm = new EventsPopupViewModel(ServiceOrderID,Servicemans);
+                EventsPopupViewModel vm = new EventsPopupViewModel(ServiceOrderID,Servicemans,Mounters);
                 await App.Current.MainPage.Navigation.PushPopupAsync(new EventsPopupPage(vm));
             });
         }
         private RelayCommand _ServiceOrderByObjectCommand;
         public RelayCommand ServiceOrderByObjectCommand {
             get => _ServiceOrderByObjectCommand ??= new RelayCommand(async obj => {
-                PastOrdersPopupViewModel vm = new PastOrdersPopupViewModel(ServiceOrderID,Servicemans);
+                PastOrdersPopupViewModel vm = new PastOrdersPopupViewModel(ServiceOrderID,Servicemans,Mounters);
                 await App.Current.MainPage.Navigation.PushPopupAsync(new PastOrdersPopupPage(vm));
             });
         }

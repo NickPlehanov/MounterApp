@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MounterApp.Android", "Mount
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MounterApp.iOS", "MounterApp\MounterApp.iOS\MounterApp.iOS.csproj", "{DA11AAA8-18A3-4350-8852-98FC22D74FF5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MounterApp", "MounterApp\MounterApp\MounterApp.csproj", "{B67C5161-CA9E-4C5A-9415-C88F3E1A5819}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MounterApp", "MounterApp\MounterApp\MounterApp.csproj", "{B67C5161-CA9E-4C5A-9415-C88F3E1A5819}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

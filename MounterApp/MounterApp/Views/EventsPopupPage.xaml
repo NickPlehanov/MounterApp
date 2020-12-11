@@ -1,5 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<popup:PopupPage  xmlns:popup="http://rotorgames.com" xmlns="http://xamarin.com/schemas/2014/forms"
+﻿<popup:PopupPage  xmlns:popup="http://rotorgames.com" xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
                   xmlns:dg="clr-namespace:Xamarin.Forms.DataGrid;assembly=Xamarin.Forms.DataGrid"
                   x:Class="MounterApp.Views.EventsPopupPage" >
@@ -31,7 +30,13 @@
                             <dg:DataGridColumn Width="0.7*" Title="Раздел" PropertyName="PartNumber"/>
                             <dg:DataGridColumn Width="2*" Title="Описание" PropertyName="EventDesc"/>
                         </dg:DataGrid.Columns>
-                    </dg:DataGrid>
+                            <dg:DataGrid.RowsBackgroundColorPalette>
+                                <dg:PaletteCollection>
+                                    <Color>#F2F2F2</Color>
+                                    <Color>#FFFFFF</Color>
+                                </dg:PaletteCollection>
+                            </dg:DataGrid.RowsBackgroundColorPalette>
+                        </dg:DataGrid>
                 </ScrollView>
                 <Button Grid.Row="3" Grid.ColumnSpan="2" Text="Закрыть" Command="{Binding ExitCommand}"/>
             </Grid>

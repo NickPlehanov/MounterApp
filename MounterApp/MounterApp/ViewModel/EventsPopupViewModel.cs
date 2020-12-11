@@ -12,9 +12,10 @@ using System.Text;
 
 namespace MounterApp.ViewModel {
     public class EventsPopupViewModel : BaseViewModel {
-        public EventsPopupViewModel(NewServiceorderExtensionBase _so,List<NewServicemanExtensionBase> _servicemans) {
+        public EventsPopupViewModel(NewServiceorderExtensionBase _so,List<NewServicemanExtensionBase> _servicemans, List<NewMounterExtensionBase> _mounters) {
             ServiceOrder = _so;
             Servicemans = _servicemans;
+            Mounters = _mounters;
         }
         private NewServiceorderExtensionBase _ServiceOrder;
         public NewServiceorderExtensionBase ServiceOrder {
@@ -67,7 +68,7 @@ namespace MounterApp.ViewModel {
         public RelayCommand GetEventsCommands {
             get => _GetEventsCommands ??= new RelayCommand(async obj => {
                 Events.Clear();
-                using HttpClient client = new HttpClient();
+                using HttpClient client = new HttpClient(GetHttpClientHandler());
                 HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/events?objNumber=" + ServiceOrder.NewNumber +
                     "&startDate=" + StartDate +
                     "&endDate=" + EndDate +
@@ -86,11 +87,20 @@ namespace MounterApp.ViewModel {
                 }
             },obj => StartDate <= EndDate);
         }
+
+        private List<NewMounterExtensionBase> _Mounters;
+        public List<NewMounterExtensionBase> Mounters {
+            get => _Mounters;
+            set {
+                _Mounters = value;
+                OnPropertyChanged(nameof(Mounters));
+            }
+        }
         private RelayCommand _ExitCommand;
         public RelayCommand ExitCommand {
             get => _ExitCommand ??= new RelayCommand(async obj => {
                 await App.Current.MainPage.Navigation.PopPopupAsync(true);
-                ServiceOrderViewModel vm = new ServiceOrderViewModel(ServiceOrder,Servicemans);
+                ServiceOrderViewModel vm = new ServiceOrderViewModel(ServiceOrder,Servicemans,Mounters);
                 App.Current.MainPage = new ServiceOrder(vm);
             });
         }

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
+using Xamarin.Essentials;
 
 namespace MounterApp.ViewModel {
     public class ServiceOrdersPageViewModel : BaseViewModel {
@@ -18,6 +19,15 @@ namespace MounterApp.ViewModel {
             set {
                 _Servicemans = value;
                 OnPropertyChanged(nameof(Servicemans));
+            }
+        }
+
+        private List<NewMounterExtensionBase> _Mounters;
+        public List<NewMounterExtensionBase> Mounters {
+            get => _Mounters;
+            set {
+                _Mounters = value;
+                OnPropertyChanged(nameof(Mounters));
             }
         }
         private DateTime _Date;
@@ -48,16 +58,18 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(OpacityForm));
             }
         }
-        public ServiceOrdersPageViewModel(List<NewServicemanExtensionBase> _servicemans) {
+        public ServiceOrdersPageViewModel(List<NewServicemanExtensionBase> _servicemans, List<NewMounterExtensionBase> _mounters) {
             Servicemans = _servicemans;
+            Mounters = _mounters;
             OpacityForm = 1;
             IndicatorVisible = false;
             GetServiceOrders.Execute(Servicemans);
+            App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
         }
         private RelayCommand _BackPressCommand;
         public RelayCommand BackPressCommand {
             get => _BackPressCommand ??= new RelayCommand(async obj => {
-                MainMenuPageViewModel vm = new MainMenuPageViewModel(Servicemans);
+                MainMenuPageViewModel vm = new MainMenuPageViewModel(Mounters,Servicemans);
                 App.Current.MainPage = new MainMenuPage(vm);
             });
         }
@@ -70,7 +82,7 @@ namespace MounterApp.ViewModel {
                     ///api/NewServiceorderExtensionBases/ServiceOrderByUser?usr_ID=FEF46B07-8D7A-E311-920A-00155D01051D&date=18.11.2020
                     if(Date == DateTime.Parse("01.01.0001 00:00:00"))
                         Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
-                    using HttpClient client = new HttpClient();
+                    using HttpClient client = new HttpClient(GetHttpClientHandler());
                     HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByUser?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
                     var resp = response.Content.ReadAsStringAsync().Result;
                     List<NewServiceorderExtensionBase> _serviceorders = new List<NewServiceorderExtensionBase>();
@@ -95,7 +107,7 @@ namespace MounterApp.ViewModel {
         public RelayCommand SelectServiceOrderCommand {
             get => _SelectServiceOrderCommand ??= new RelayCommand(async obj => {
                 if(ServiceOrder != null) {
-                    ServiceOrderViewModel vm = new ServiceOrderViewModel(ServiceOrder,Servicemans);
+                    ServiceOrderViewModel vm = new ServiceOrderViewModel(ServiceOrder,Servicemans,Mounters);
                     App.Current.MainPage = new ServiceOrder(vm);
                 }
             });

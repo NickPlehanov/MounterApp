@@ -14,8 +14,9 @@ namespace MounterApp.Helpers {
         //public Task<List<Mounts>> GetMountsAsync() {
         //    return _database.Table<Mounts>().ToListAsync();
         //}
-        public List<Mounts> GetMounts(Guid _mounter) {
-            return _database.Table<Mounts>().Where(x => x.MounterID == _mounter).ToList();
+        public List<Mounts> GetMounts() {
+            //return _database.Table<Mounts>().Where(x => x.MounterID == _mounter).ToList();
+            return _database.Table<Mounts>().ToList();
         }
         public List<Mounts> GetMounts(int _id) {
             return _database.Table<Mounts>().Where(x => x.ID == _id).ToList();
@@ -25,6 +26,17 @@ namespace MounterApp.Helpers {
         }
         public int UpdateMount(Mounts mount) {
             return _database.Update(mount);
+        }
+        public int SaveUpdateMount(Mounts mount) {
+            List<Mounts> mnt = _database.Table<Mounts>().Where(x => x.ID == mount.ID).ToList();
+            if(mnt != null) {
+                if(mnt.Count > 0)
+                    return _database.Update(mount);
+                else
+                    return _database.Insert(mount);
+            }
+            else
+                return _database.Insert(mount);
         }
         public int DeleteMount(int pk) {
             return _database.Delete<Mounts>(pk);

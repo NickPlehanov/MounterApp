@@ -5,14 +5,6 @@ namespace MounterApp.Model {
 	public partial class NewServiceorderExtensionBase {
         public Guid NewServiceorderId { get; set; }
         public string NewName { get; set; }
-        //TODO: +5 часов
-        //private DateTime? _NewDate;
-        //public DateTime? NewDate { 
-        //    get => _NewDate.Value.AddHours(5);
-        //    set {
-        //        _NewDate = value;
-        //    }
-        //}
         public DateTime? NewDate { get; set; }
         public Guid? NewServicemanServiceorder { get; set; }
         public DateTime? NewIncome { get; set; }

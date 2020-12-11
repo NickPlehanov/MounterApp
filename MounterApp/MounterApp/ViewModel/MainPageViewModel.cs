@@ -13,10 +13,15 @@ using System.ComponentModel;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
+using Xamarin.Essentials;
 using Xamarin.Forms;
+using static Xamarin.Essentials.Permissions;
 
 namespace MounterApp.ViewModel {
     public class MainPageViewModel : BaseViewModel {
+
+        //HttpClientHandler clientHandler = new HttpClientHandler();
         public MainPageViewModel() {
             IndicatorVisible = false;
             OpacityForm = 1;
@@ -39,25 +44,50 @@ namespace MounterApp.ViewModel {
                 Application.Current.Properties["Compression"] = 50;
                 Application.Current.SavePropertiesAsync();
             }
+            CheckAndRequestPermissions.Execute(null);
+
+            //clientHandler.ServerCertificateCustomValidationCallback = (sender,cert,chain,sslPolicyErrors) => { return true; };
+        }
+
+        private RelayCommand _CheckAndRequestPermissions;
+        public RelayCommand CheckAndRequestPermissions {
+            get => _CheckAndRequestPermissions ??= new RelayCommand(async obj => {
+                await CheckAndRequestPermissionAsync(new StorageRead());
+                await CheckAndRequestPermissionAsync(new LocationWhenInUse());
+                await CheckAndRequestPermissionAsync(new NetworkState());
+                await CheckAndRequestPermissionAsync(new Permissions.Camera());
+                await CheckAndRequestPermissionAsync(new StorageWrite());
+            });
+        }
+        public async Task<PermissionStatus> CheckAndRequestPermissionAsync<T>(T permission)
+            where T : BasePermission {
+            var status = await permission.CheckStatusAsync();
+            if(status != PermissionStatus.Granted) {
+                status = await permission.RequestAsync();
+            }
+
+            return status;
         }
         private RelayCommand _AuthCommand;
         public RelayCommand AuthCommand {
             get => _AuthCommand ??= new RelayCommand(async obj => {
                 IndicatorVisible = true;
                 OpacityForm = 0.1;
+                //App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
                 Analytics.TrackEvent("App start");
-                using HttpClient client = new HttpClient();
+                using HttpClient client = new HttpClient(GetHttpClientHandler());
                 string Phone = null;
-                //TODO: проверять на 79 или 89
-                if(PhoneNumber.Length == 11) {
+                if(PhoneNumber.Substring(0,2) == "+7")
+                    PhoneNumber=PhoneNumber.Replace("+7","8");
+                if(PhoneNumber.Length == 11) 
                     Phone = PhoneNumber.Substring(1,PhoneNumber.Length - 1);
-                }
+                if(PhoneNumber.Length == 10) 
+                    Phone = PhoneNumber;
                 else {
                     Message = "Введен не корректный номер телефона";
                     Analytics.TrackEvent("Ошибка ввода номера телефона");
                 }
                 try {
-                    //Phone = Application.Current.Properties["Phone"].ToString();
                     Application.Current.Properties["Phone"] = PhoneNumber;
                     await Application.Current.SavePropertiesAsync();
                     Analytics.TrackEvent("Сохранение номера телефона в локальную базу данных");
@@ -108,7 +138,7 @@ namespace MounterApp.ViewModel {
                             }
                         }
                         else {
-                            Message = "Сотрудника с таким номером телефона не найдено"+Environment.NewLine+"Проверьте правильность ввода номера телефона";
+                            Message = "Сотрудника с таким номером телефона не найдено" + Environment.NewLine + "Проверьте правильность ввода номера телефона";
                             Dictionary<string,string> parameters = new Dictionary<string,string> {
                                 { "Phone",PhoneNumber },
                                 { "Error","Не найден сотрудник по номеру телефона" }
@@ -150,11 +180,7 @@ namespace MounterApp.ViewModel {
         public string PhoneNumber {
             get => _PhoneNumber;
             set {
-                //if(value.Length == 11) {
-                //	_PhoneNumber = value.Substring(1, value.Length - 1);
-                //}
                 _PhoneNumber = value;
-                //else
                 OnPropertyChanged(nameof(PhoneNumber));
             }
         }
@@ -182,15 +208,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(Message));
             }
         }
-        //private string ProcessResponse(string response) {
-        //	string s = response.Replace(@"\", string.Empty);
-        //	return s.Trim().Substring(1, (s.Length) - 2);
-        //}
         private RelayCommand _BackPressCommand;
         public RelayCommand BackPressCommand {
             get => _BackPressCommand ??= new RelayCommand(async obj => {
-                // vm = new MountsViewModel(Mounters);
-                //App.Current.MainPage = new MountsPage(vm);
                 System.Environment.Exit(0);
             });
         }

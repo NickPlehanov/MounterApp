@@ -1,4 +1,6 @@
 ﻿using Android.Widget;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using MounterApp.Helpers;
 using MounterApp.InternalModel;
 using MounterApp.Model;
@@ -30,6 +32,8 @@ namespace MounterApp.ViewModel {
             CameraImage = "camera.png";
             CollectionImage = "collections.png";
             CloseImage = "close.png";
+            IsChanged = false;
+            Analytics.TrackEvent("Инициализация страницы выбора способа получения фото");
         }
 
         private ImageSource _CameraImage;
@@ -137,7 +141,7 @@ namespace MounterApp.ViewModel {
                             ImgSrc =null;
                             SelectedPhoto = null;
                             PhotoNames.Remove(PhotoName);
-                            Toast.MakeText(Android.App.Application.Context,"Фото добавлено",ToastLength.Long).Show();
+                            Toast.MakeText(Android.App.Application.Context,"Фото добавлено",ToastLength.Short).Show();
                         }
                         else
                             await Application.Current.MainPage.DisplayAlert("Ошибка","Такая фотография уже была загружена","OK");
@@ -200,6 +204,15 @@ namespace MounterApp.ViewModel {
             }
         }
 
+        private bool _IsChanged;
+        public bool IsChanged {
+            get => _IsChanged;
+            set {
+                _IsChanged = value;
+                OnPropertyChanged(nameof(IsChanged));
+            }
+        }
+
         private Mounts _Mount;
         public Mounts Mount {
             get => _Mount;
@@ -222,7 +235,7 @@ namespace MounterApp.ViewModel {
         public RelayCommand BackPressedCommand {
             get => _BackPressedCommand ??= new RelayCommand(async obj => {
                 await App.Current.MainPage.Navigation.PopPopupAsync(true);
-                NewMountPageViewModel vm = new NewMountPageViewModel(Mount,Mounters);
+                NewMountPageViewModel vm = new NewMountPageViewModel(Mount,Mounters,IsChanged);
                 App.Current.MainPage = new NewMountpage(vm);
             });
         }
@@ -232,6 +245,7 @@ namespace MounterApp.ViewModel {
             get => _PickPhotoCommand ??= new RelayCommand(async obj => {
                 IsPickPhoto = true;
                 GetPhotoCommand.Execute(null);
+                Analytics.TrackEvent("Выбор фото из галереи");
                 //await App.Current.MainPage.Navigation.PopPopupAsync(true);
                 //NewMountPageViewModel vm = new NewMountPageViewModel(Mount,Mounters,IsPickPhoto);
                 //App.Current.MainPage = new NewMountpage(vm);
@@ -243,6 +257,7 @@ namespace MounterApp.ViewModel {
             get => _TakePhotoCommand ??= new RelayCommand(async obj => {
                 IsPickPhoto = false;
                 GetPhotoCommand.Execute(null);
+                Analytics.TrackEvent("Фото камерой");
             });
         }
         private RelayCommand _GetPhotoCommand;
@@ -251,6 +266,10 @@ namespace MounterApp.ViewModel {
                 if(IsPickPhoto.HasValue) {
                     await CrossMedia.Current.Initialize();
                     if(!CrossMedia.Current.IsCameraAvailable || !CrossMedia.Current.IsTakePhotoSupported) {
+                        Crashes.TrackError(new Exception("Камера недоступна"),
+                        new Dictionary<string,string> {
+                            {"Error","Камера недоступна" }
+                        });
                         await Application.Current.MainPage.DisplayAlert("No Camera",":( No camera available.","OK");
                         return;
                     }
@@ -277,6 +296,7 @@ namespace MounterApp.ViewModel {
                         var stream = File.GetStream();
                         return stream;
                     });
+                    IsChanged = true;
                     //AddNewPhotoCommand.Execute(null);
                 }
                 else {

@@ -16,10 +16,20 @@ using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class CloseOrderPopupPageViewModel : BaseViewModel {
-        public CloseOrderPopupPageViewModel(NewServiceorderExtensionBase soeb,List<NewServicemanExtensionBase> _servicemans) {
+        public CloseOrderPopupPageViewModel(NewServiceorderExtensionBase soeb,List<NewServicemanExtensionBase> _servicemans,List<NewMounterExtensionBase> _mounters) {
             so = soeb;
             Servicemans = _servicemans;
+            Mounters = _mounters;
             GetResults.Execute(null);
+        }
+
+        private List<NewMounterExtensionBase> _Mounters;
+        public List<NewMounterExtensionBase> Mounters {
+            get => _Mounters;
+            set {
+                _Mounters = value;
+                OnPropertyChanged(nameof(Mounters));
+            }
         }
         private NewServiceorderExtensionBase _so;
         public NewServiceorderExtensionBase so {
@@ -100,7 +110,7 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetReasons;
         public RelayCommand GetReasons {
             get => _GetReasons ??= new RelayCommand(async obj => {
-                using HttpClient client = new HttpClient();
+                using HttpClient client = new HttpClient(GetHttpClientHandler());
                 HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/metadata?ColumnName=New_resultid&ObjectName=New_serviceorder");
                 var resp = response.Content.ReadAsStringAsync().Result;
                 List<MetadataModel> mm = new List<MetadataModel>();
@@ -119,7 +129,7 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetResults;
         public RelayCommand GetResults {
             get => _GetResults ??= new RelayCommand(async obj => {
-                using HttpClient client = new HttpClient();
+                using HttpClient client = new HttpClient(GetHttpClientHandler());
                 HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/metadata?ColumnName=New_result&ObjectName=New_serviceorder");
                 var resp = response.Content.ReadAsStringAsync().Result;
                 List<MetadataModel> mm = new List<MetadataModel>();
@@ -251,7 +261,7 @@ namespace MounterApp.ViewModel {
             get => _CloseServiceOrderCommand ??= new RelayCommand(async obj => {
                 if(SelectedResult.Value != 1) {
                     if(SelectedReason != null && !string.IsNullOrEmpty(ReasonComment)) {
-                        using HttpClient client = new HttpClient();
+                        using HttpClient client = new HttpClient(GetHttpClientHandler());
                         HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/id?id=" + so.NewServiceorderId);
                         var resp = response.Content.ReadAsStringAsync().Result;
                         NewServiceorderExtensionBase soeb = null;
@@ -271,7 +281,7 @@ namespace MounterApp.ViewModel {
                                 soeb.NewMoved = new DateTime(TransferDate.Year,TransferDate.Month,TransferDate.Day,TransferTime.Hours,TransferTime.Minutes,TransferTime.Seconds).AddHours(-5);
                                 //soeb.NewMoved = new DateTime(TransferDate.Year,TransferDate.Month,TransferDate.Day,0,0,0).AddHours(-5);
                             }
-                            using(HttpClient clientPut = new HttpClient()) {
+                            using(HttpClient clientPut = new HttpClient(GetHttpClientHandler())) {
                                 var httpContent = new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json");
                                 HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases",httpContent);
                             }
@@ -281,7 +291,7 @@ namespace MounterApp.ViewModel {
                                 Latitude = location.Latitude.ToString();
                                 Longitude = location.Longitude.ToString();
                             }
-                            using HttpClient clientGet = new HttpClient();
+                            using HttpClient clientGet = new HttpClient(GetHttpClientHandler());
                             HttpResponseMessage responseGet = await clientGet.GetAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates/id?so_id=" + so.NewServiceorderId);
                             var respGet = responseGet.Content.ReadAsStringAsync().Result;
                             List<ServiceOrderCoordinates> soc = null;
@@ -292,21 +302,21 @@ namespace MounterApp.ViewModel {
                                 soc = null;
                             }
                             if(soc != null) {
-                                using(HttpClient clientPut = new HttpClient()) {
+                                using(HttpClient clientPut = new HttpClient(GetHttpClientHandler())) {
                                     var httpContent = new StringContent(JsonConvert.SerializeObject(soc.First()),Encoding.UTF8,"application/json");
                                     HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates",httpContent);
                                 }
                             }
                         }
                         await App.Current.MainPage.Navigation.PopPopupAsync(true);
-                        ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans);
+                        ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans,Mounters);
                         App.Current.MainPage = new ServiceOrdersPage(vm);
                     }
                     else
                         await Application.Current.MainPage.DisplayAlert("Ошибка","Не выбрана причина отмены(переноса) или не указан комментарий к причине","OK");
                 }
                 else {
-                    using HttpClient client = new HttpClient();
+                    using HttpClient client = new HttpClient(GetHttpClientHandler());
                     HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/id?id=" + so.NewServiceorderId);
                     var resp = response.Content.ReadAsStringAsync().Result;
                     NewServiceorderExtensionBase soeb = null;
@@ -325,7 +335,7 @@ namespace MounterApp.ViewModel {
                         //if(SelectedResult.Value == 2) {
                         //    soeb.NewMoved = new DateTime(TransferDate.Year,TransferDate.Month,TransferDate.Day,TransferTime.Hours,TransferTime.Minutes,TransferTime.Seconds).AddHours(-5);
                         //}
-                        using(HttpClient clientPut = new HttpClient()) {
+                        using(HttpClient clientPut = new HttpClient(GetHttpClientHandler())) {
                             var httpContent = new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json");
                             HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases",httpContent);
                         }
@@ -335,7 +345,7 @@ namespace MounterApp.ViewModel {
                             Latitude = location.Latitude.ToString();
                             Longitude = location.Longitude.ToString();
                         }
-                        using HttpClient clientGet = new HttpClient();
+                        using HttpClient clientGet = new HttpClient(GetHttpClientHandler());
                         HttpResponseMessage responseGet = await clientGet.GetAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates/id?so_id=" + so.NewServiceorderId);
                         var respGet = responseGet.Content.ReadAsStringAsync().Result;
                         ServiceOrderCoordinates soc = null;
@@ -349,14 +359,14 @@ namespace MounterApp.ViewModel {
                         if(soc != null) {
                             soc.SocOutcomeLatitide = Latitude;
                             soc.SocOutcomeLongitude = Longitude;
-                            using(HttpClient clientPut = new HttpClient()) {
+                            using(HttpClient clientPut = new HttpClient(GetHttpClientHandler())) {
                                 var httpContent = new StringContent(JsonConvert.SerializeObject(soc),Encoding.UTF8,"application/json");
                                 HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates",httpContent);
                             }
                         }
                     }
                     await App.Current.MainPage.Navigation.PopPopupAsync(true);
-                    ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans);
+                    ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans,Mounters);
                     App.Current.MainPage = new ServiceOrdersPage(vm);
                 }
             });

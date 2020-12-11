@@ -6,6 +6,7 @@ using MounterApp.Views;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
@@ -23,20 +24,24 @@ namespace MounterApp.ViewModel {
             Serviceman = servicemans;
             SettingsImage= "settings.png";
             Analytics.TrackEvent("Инициализация окна главного меню приложения");
+            App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
         }
         public MainMenuPageViewModel(List<NewMounterExtensionBase> mounters) {
             Mounters = mounters;
             SettingsImage = "settings.png";
             Analytics.TrackEvent("Инициализация окна главного меню приложения");
+            App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
         }
         public MainMenuPageViewModel(List<NewServicemanExtensionBase> servicemans) {
             Serviceman = servicemans;
             SettingsImage = "settings.png";
             Analytics.TrackEvent("Инициализация окна главного меню приложения");
+            App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
         }
         public MainMenuPageViewModel() {
             SettingsImage = "settings.png";
             Analytics.TrackEvent("Инициализация окна главного меню приложения");
+            App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
         }
 
         private string _Message;
@@ -55,7 +60,7 @@ namespace MounterApp.ViewModel {
                     {"MountersPhone",Mounters.First().NewPhone }
                 };
                 Analytics.TrackEvent("Переход к монтажам",parameters);
-                MountsViewModel vm = new MountsViewModel(Mounters);
+                MountsViewModel vm = new MountsViewModel(Mounters,Serviceman);
                 App.Current.MainPage = new MountsPage(vm);
             });
         }
@@ -73,7 +78,7 @@ namespace MounterApp.ViewModel {
                     {"ServicemansPhone",Serviceman.First().NewPhone }
                 };
                 Analytics.TrackEvent("Переход к заявкам технику",parameters);
-                ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Serviceman);
+                ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Serviceman,Mounters);
                 App.Current.MainPage = new ServiceOrdersPage(vm);
             });
         }

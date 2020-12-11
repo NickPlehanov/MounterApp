@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
@@ -26,8 +27,12 @@ namespace MounterApp.ViewModel {
             if(Application.Current.Properties.ContainsKey("Compression"))
                 Compression = int.Parse(Application.Current.Properties["Compression"].ToString());
             SaveImage = "save.png";
-            SaveImage = "clear.png";
+            ClearImage = "clear.png";
             Analytics.TrackEvent("Инициализация окна настроек приложения");
+            AppVersions av = new AppVersions();
+            Version = null;
+            Version = "Версия приложения: "+av.GetVersionAndBuildNumber().VersionNumber;
+            App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
         }
 
         private List<NewMounterExtensionBase> _Mounters;
@@ -48,6 +53,14 @@ namespace MounterApp.ViewModel {
             }
         }
 
+        private string _Version;
+        public string Version {
+            get => _Version;
+            set {
+                _Version = value;
+                OnPropertyChanged(nameof(Version));
+            }
+        }
 
         private ImageSource _ClearImage;
         public ImageSource ClearImage {
@@ -99,7 +112,7 @@ namespace MounterApp.ViewModel {
         private RelayCommand _BackPressCommand;
         public RelayCommand BackPressCommand {
             get => _BackPressCommand ??= new RelayCommand(async obj => {
-                MainMenuPageViewModel vm = new MainMenuPageViewModel(Mounters);
+                MainMenuPageViewModel vm = new MainMenuPageViewModel(Mounters,Servicemans);
                 App.Current.MainPage = new MainMenuPage(vm);
             });
         }

@@ -13,7 +13,8 @@ using System.Text;
 
 namespace MounterApp.ViewModel {
     public class ObjectInfoViewModel : BaseViewModel {
-        public ObjectInfoViewModel(NewServiceorderExtensionBase _so,List<NewServicemanExtensionBase> _servicemans) {
+        public ObjectInfoViewModel(NewServiceorderExtensionBase _so,List<NewServicemanExtensionBase> _servicemans, List<NewMounterExtensionBase> _mounters) {
+            Mounters = _mounters;
             Servicemans = _servicemans;
             ServiceOrder = _so;
             GetWires.Execute(null);
@@ -55,15 +56,24 @@ namespace MounterApp.ViewModel {
         public RelayCommand CloseCommand {
             get => _CloseCommand ??= new RelayCommand(async obj => {
                 await App.Current.MainPage.Navigation.PopPopupAsync(true);
-                ServiceOrderViewModel vm = new ServiceOrderViewModel(ServiceOrder,Servicemans);
+                ServiceOrderViewModel vm = new ServiceOrderViewModel(ServiceOrder,Servicemans,Mounters);
                 App.Current.MainPage = new ServiceOrder(vm);
             });
+        }
+
+        private List<NewMounterExtensionBase> _Mounters;
+        public List<NewMounterExtensionBase> Mounters {
+            get => _Mounters;
+            set {
+                _Mounters = value;
+                OnPropertyChanged(nameof(Mounters));
+            }
         }
         private RelayCommand _GetWires;
         public RelayCommand GetWires {
             get => _GetWires ??= new RelayCommand(async obj => {
                 WiresCollection.Clear();
-                using HttpClient client = new HttpClient();
+                using HttpClient client = new HttpClient(GetHttpClientHandler());
                 HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/wires?objNumber=" + ServiceOrder.NewNumber);
                 var resp = response.Content.ReadAsStringAsync().Result;
                 List<Wires> _wrs = new List<Wires>();
@@ -82,7 +92,7 @@ namespace MounterApp.ViewModel {
         public RelayCommand GetExtFields {
             get => _GetExtFields ??= new RelayCommand(async obj => {
                 ExtFields.Clear();
-                using HttpClient client = new HttpClient();
+                using HttpClient client = new HttpClient(GetHttpClientHandler());
                 HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/ext?objNumber=" + ServiceOrder.NewNumber);
                 var resp = response.Content.ReadAsStringAsync().Result;
                 List<ExtFields> _ext = new List<ExtFields>();

@@ -1,13 +1,11 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
-	public class BaseViewModel : INotifyPropertyChanged {
+    public class BaseViewModel : INotifyPropertyChanged {
 
-		public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         protected void NotifyPropertyChanged(string propertyName) {
             if(this.PropertyChanged != null) {
@@ -16,6 +14,12 @@ namespace MounterApp.ViewModel {
         }
         public void OnPropertyChanged([CallerMemberName] string prop = "") {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
+
+        public HttpClientHandler GetHttpClientHandler() {
+            HttpClientHandler clientHandler = new HttpClientHandler();
+            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+            return clientHandler;
         }
 	}
 }
