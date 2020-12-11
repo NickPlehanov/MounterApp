@@ -283,9 +283,6 @@ namespace MounterApp.ViewModel {
                                 IndicatorText = "Подождите, идет загрузка...";
                                 bool error = false;
                                 ProgressValue = 0.1;
-                                //TODO:Проверять что монтаж уже есть
-                                //if(Mount == null) {
-                                    //Mounts mount = new Mounts() {
                                     Mount.ObjectNumber = ObjectNumber;
                                     Mount.ObjectName = ObjectName;
                                     Mount.AddressName = ObjectAddress;
@@ -297,33 +294,24 @@ namespace MounterApp.ViewModel {
                                     Mount.ObjectWiring = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Расшлейфовка объекта").Data;
                                     Mount.ObjectListResponsible = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Ответственные объекта").Data;
                                     Mount.ObjectSignboard = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Вывеска объекта").Data;
-                                    //};
                                     App.Database.SaveUpdateMount(Mount);
-                                //}
-                                //else {
-                                //    Mount.ObjectNumber = ObjectNumber;
-                                //    Mount.ObjectName = ObjectName;
-                                //    Mount.AddressName = ObjectAddress;
-                                //    Mount.MounterID = Mounters.FirstOrDefault().NewMounterId;
-                                //    Mount.Driveways = ObjectDriveways;
-                                //    Mount.State = 0;
-                                //    Mount.ObjectCard = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Карточка объекта").Data;
-                                //    Mount.ObjectScheme = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Схема объекта").Data;
-                                //    Mount.ObjectWiring = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Расшлейфовка объекта").Data;
-                                //    Mount.ObjectListResponsible = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Ответственные объекта").Data;
-                                //    Mount.ObjectSignboard = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Вывеска объекта").Data;
-                                //}
                                 Analytics.TrackEvent("Сохранение монтажа перед отправкой на сервер в локальной базе",
                                     new Dictionary<string,string> {
                                         {"ObjectNumber",ObjectNumber }
                                     });
-                                //App.Database.SaveMount(mount);
                                 int cnt = 1;
-                                string ObjectInfo = " Номер объекта: " + ObjectNumber + Environment.NewLine +
-                                " Наименование объекта: " + ObjectName + Environment.NewLine +
-                                " Адрес объекта: " + ObjectAddress + Environment.NewLine +
-                                " Монтажник: " + Mounters.FirstOrDefault().NewName + Environment.NewLine +
-                                " Подъездные пути: " + ObjectDriveways;
+                                StringBuilder sb = new StringBuilder();
+                                sb.AppendLine("Номер объекта: " + ObjectNumber);
+                                sb.AppendLine("Наименование объекта: " + ObjectName);
+                                sb.AppendLine("Адрес объекта: " + ObjectAddress);
+                                sb.AppendLine("Монтажник: " + Mounters.FirstOrDefault().NewName);
+                                sb.AppendLine("Подъездные пути: " + ObjectDriveways);
+
+                                //string ObjectInfo = "Номер объекта: " + ObjectNumber + Environment.NewLine +
+                                //"Наименование объекта: " + ObjectName + Environment.NewLine +
+                                //"Адрес объекта: " + ObjectAddress + Environment.NewLine +
+                                //"Монтажник: " + Mounters.FirstOrDefault().NewName + Environment.NewLine +
+                                //"Подъездные пути: " + ObjectDriveways;
                                 foreach(PhotoCollection ph in Photos.Where(x => x.Data != null)) {
                                     using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
                                         MultipartFormDataContent form = new MultipartFormDataContent();
@@ -331,7 +319,7 @@ namespace MounterApp.ViewModel {
                                             ,String.Format("file"),String.Format(ObjectNumber + "_" + ph._Types.PhotoTypeName + ".jpeg"));
                                         //form.Add(new StreamContent(ph.File.GetStream()),String.Format("file"),String.Format(ObjectNumber + "_" + ph._Types.PhotoTypeName + ".jpeg"));
                                         //HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress + "/api/Common"                                        
-                                        HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress + "/api/Common?ObjectInfo=" + ObjectInfo + ""
+                                        HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress + "/api/Common?ObjectInfo=" + sb.ToString() + ""
                                                 ,form);
                                         IndicatorText = "Подождите, идет загрузка..." + Environment.NewLine + "Загружено " + cnt.ToString() + " фото из " + Photos.Count.ToString();
                                         cnt++;
@@ -355,11 +343,12 @@ namespace MounterApp.ViewModel {
                                 if(!error) {
                                     if(Mount != null) {
                                         //App.Database.DeleteMount(Mount.ID);
-                                        //Mount.State = 1;
-                                        //App.Database.UpdateMount(Mount);
-                                        App.Database.DeleteMount(Mount.ID);
+                                        Mount.State = 1;
+                                        Mount.DateSended = DateTime.Now;
+                                        App.Database.UpdateMount(Mount);
+                                        //App.Database.DeleteMount(Mount.ID);
                                         Analytics.TrackEvent("Удаление монтажа из локальной базы данных");
-                                        var _ntMounts = App.Database.GetMounts().Where(x => x.State == 0 && x.MounterID == Mounters.FirstOrDefault().NewMounterId).ToList();
+                                        //var _ntMounts = App.Database.GetMounts().Where(x => x.State == 0 && x.MounterID == Mounters.FirstOrDefault().NewMounterId).ToList();
                                     }
                                 }
                             }

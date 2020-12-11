@@ -79,9 +79,9 @@ namespace MounterApp.ViewModel {
                 string Phone = null;
                 if(PhoneNumber.Substring(0,2) == "+7")
                     PhoneNumber=PhoneNumber.Replace("+7","8");
-                if(PhoneNumber.Length == 11) 
+                else if(PhoneNumber.Length == 11) 
                     Phone = PhoneNumber.Substring(1,PhoneNumber.Length - 1);
-                if(PhoneNumber.Length == 10) 
+                else if(PhoneNumber.Length == 10) 
                     Phone = PhoneNumber;
                 else {
                     Message = "Введен не корректный номер телефона";
@@ -96,8 +96,10 @@ namespace MounterApp.ViewModel {
                     var resp = response.Content.ReadAsStringAsync().Result;
                     List<NewMounterExtensionBase> mounters = new List<NewMounterExtensionBase>();
                     try {
-                        Analytics.TrackEvent("Попытка сериализации результата запроса монтажников");
-                        mounters = JsonConvert.DeserializeObject<List<NewMounterExtensionBase>>(resp).Where(x => x.NewIsWorking == true).ToList();
+                        if(response.StatusCode.ToString() == "OK") {
+                            Analytics.TrackEvent("Попытка сериализации результата запроса монтажников");
+                            mounters = JsonConvert.DeserializeObject<List<NewMounterExtensionBase>>(resp).Where(x => x.NewIsWorking == true).ToList();
+                        }
                     }
                     catch(Exception MountersParseExecption) {
                         Dictionary<string,string> parameters = new Dictionary<string,string> {
@@ -111,8 +113,10 @@ namespace MounterApp.ViewModel {
                     resp = response.Content.ReadAsStringAsync().Result;
                     List<NewServicemanExtensionBase> servicemans = new List<NewServicemanExtensionBase>();
                     try {
-                        Analytics.TrackEvent("Попытка сериализации результата запроса техников");
-                        servicemans = JsonConvert.DeserializeObject<List<NewServicemanExtensionBase>>(resp).Where(x => x.NewIswork == true).ToList();
+                        if(response.StatusCode.ToString() == "OK") {
+                            Analytics.TrackEvent("Попытка сериализации результата запроса техников");
+                            servicemans = JsonConvert.DeserializeObject<List<NewServicemanExtensionBase>>(resp).Where(x => x.NewIswork == true).ToList();
+                        }
                     }
                     catch(Exception ServicemansParseException) {
                         Dictionary<string,string> parameters = new Dictionary<string,string> {

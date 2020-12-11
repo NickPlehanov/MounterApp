@@ -33,7 +33,7 @@ namespace MounterApp.ViewModel {
             CollectionImage = "collections.png";
             CloseImage = "close.png";
             IsChanged = false;
-            Analytics.TrackEvent("Инициализация страницы выбора способа получения фото");
+            Analytics.TrackEvent("Инициализация страницы выбора способа получения фото");            
         }
 
         private ImageSource _CameraImage;

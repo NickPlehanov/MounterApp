@@ -73,5 +73,21 @@ namespace MounterApp.InternalModel {
         public int State { get; set; }
         //Отображает инфу о монтаже, если такой был в гугл таблице
         public string GoogleComment { get; set; }
+        /// <summary>
+        /// Отражает дату и время отправки монтажа
+        /// </summary>
+        public DateTime? DateSended { get; set; }
+        /// <summary>
+        /// Если очень хочется, то в это поле можно записать какую угодно инфу и показывать юзверю
+        /// </summary>
+        public string CompositeName {
+            get {
+                if (DateSended.HasValue)
+                    return "№: " + ObjectNumber + "(" + DateSended.Value.ToString() + ")";
+                else
+                    return "№: " + ObjectNumber;
+            }
+            //get => "№: " + ObjectNumber + "(" +DateSended.Value.ToString()+ ")";
+        }
     }
 }

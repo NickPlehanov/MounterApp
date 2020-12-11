@@ -50,11 +50,12 @@ namespace MounterApp.ViewModel {
             Mounters = mounters;
             HeaderNotSended = "Неотправленные (0)";
             HeaderGoogle = "Запланированные (0)";
+            HeaderHistory = "Отправленные (0)";
             try {
                 GetNotSendedMounts.Execute(null);
             }
             catch(Exception ex) {
-                Crashes.TrackError(new Exception("Ошибка получения монтажей из локальной базы данных"),
+                Crashes.TrackError(new Exception("Ошибка получения монтажей из локальной базы данных (неотправленные)"),
                 new Dictionary<string,string> {
                     {"Error",ex.Message }
                 });
@@ -68,11 +69,21 @@ namespace MounterApp.ViewModel {
                     {"Error",ex.Message }
                 });
             }
+            try {
+                GetHistoryMounts.Execute(null);
+            }
+            catch(Exception ex) {
+                Crashes.TrackError(new Exception("Ошибка получения монтажей из локальной базы данных (история)"),
+                new Dictionary<string,string> {
+                    {"Error",ex.Message }
+                });
+            }
 
             Opacity = 1;
             IndicatorVisible = false;
             ArrowCircleGoogle = "arrow_circle_down.png";
             ArrowCircleNotSended = "arrow_circle_down.png";
+            ArrowCircleHistory = "arrow_circle_down.png";
 
             Analytics.TrackEvent("Страница монтажей",
             new Dictionary<string,string> {
@@ -81,20 +92,49 @@ namespace MounterApp.ViewModel {
             App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
         }
 
+        private string _HeaderHistory;
+        public string HeaderHistory {
+            get => _HeaderHistory;
+            set {
+                _HeaderHistory = value;
+                OnPropertyChanged(nameof(HeaderHistory));
+            }
+        }
         private RelayCommand _GetNotSendedMounts;
         public RelayCommand GetNotSendedMounts {
             get => _GetNotSendedMounts ??= new RelayCommand(async obj => {
                 NotSendedMounts.Clear();
                 List<Mounts> _ntMounts = new List<Mounts>();
                 //_ntMounts = App.Database.GetMounts(Mounters.FirstOrDefault().NewMounterId).Where(x => x.State == 0).ToList();
-                _ntMounts = App.Database.GetMounts().Where(x => x.State == 0 && x.MounterID== Mounters.FirstOrDefault().NewMounterId).ToList();
+                _ntMounts = App.Database.GetMounts().Where(x => x.State == 0 && x.MounterID == Mounters.FirstOrDefault().NewMounterId).ToList();
                 if(_ntMounts != null)
                     if(_ntMounts.Any()) {
                         foreach(var item in _ntMounts)
                             NotSendedMounts.Add(item);
                         HeaderNotSended = "Неотправленные (" + _ntMounts.Count.ToString() + ")";
+                        if(NotSendedMounts.Count() > 0)
+                            NotSendedMountsExpander = true;
                     }
-                Analytics.TrackEvent("Получение списка монтажей из локальной базы данных",new Dictionary<string,string> {
+                Analytics.TrackEvent("Получение списка монтажей из локальной базы данных (неотправленные)",new Dictionary<string,string> {
+                {"CountMounts",_ntMounts.Count.ToString() }
+                });
+            });
+        }
+
+        private RelayCommand _GetHistoryMounts;
+        public RelayCommand GetHistoryMounts {
+            get => _GetHistoryMounts ??= new RelayCommand(async obj => {
+                HistoryMounts.Clear();
+                List<Mounts> _ntMounts = new List<Mounts>();
+                //_ntMounts = App.Database.GetMounts(Mounters.FirstOrDefault().NewMounterId).Where(x => x.State == 0).ToList();
+                _ntMounts = App.Database.GetMounts().Where(x => x.State == 1 && x.MounterID == Mounters.FirstOrDefault().NewMounterId).ToList();
+                if(_ntMounts != null)
+                    if(_ntMounts.Any()) {
+                        foreach(var item in _ntMounts)
+                            HistoryMounts.Add(item);
+                        HeaderHistory = "Отправленные (" + _ntMounts.Count.ToString() + ")";
+                    }
+                Analytics.TrackEvent("Получение списка монтажей из локальной базы данных (история)",new Dictionary<string,string> {
                 {"CountMounts",_ntMounts.Count.ToString() }
                 });
             });
@@ -121,6 +161,18 @@ namespace MounterApp.ViewModel {
             }
         }
 
+        private bool _HistoryMountsExpander;
+        public bool HistoryMountsExpander {
+            get => _HistoryMountsExpander;
+            set {
+                _HistoryMountsExpander = value;
+                if(_HistoryMountsExpander)
+                    ArrowCircleHistory = "arrow_circle_up.png";
+                else
+                    ArrowCircleHistory = "arrow_circle_down.png";
+                OnPropertyChanged(nameof(HistoryMountsExpander));
+            }
+        }
         private bool _NotSendedMountsExpander;
         public bool NotSendedMountsExpander {
             get => _NotSendedMountsExpander;
@@ -138,6 +190,13 @@ namespace MounterApp.ViewModel {
         public RelayCommand GoogleMountsExpanderCommand {
             get => _GoogleMountsExpanderCommand ??= new RelayCommand(async obj => {
                 GoogleMountsExpander = !GoogleMountsExpander;
+            });
+        }
+
+        private RelayCommand _HistoryMountsExpanderCommand;
+        public RelayCommand HistoryMountsExpanderCommand {
+            get => _HistoryMountsExpanderCommand ??= new RelayCommand(async obj => {
+                HistoryMountsExpander = !HistoryMountsExpander;
             });
         }
 
@@ -177,11 +236,12 @@ namespace MounterApp.ViewModel {
                         {"DateTime",DateTime.Now.Date.ToString() }
                     });
                     //Phone = Application.Current.Properties["Phone"].ToString();
-                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common?phone=8" + Mounters.FirstOrDefault().NewPhone + "&date=" + DateTime.Now.Date + "");
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common?phone=7" + Mounters.FirstOrDefault().NewPhone + "&date=" + DateTime.Now.Date + "");
                     var resp = response.Content.ReadAsStringAsync().Result;
                     List<GoogleMountModel> googleMounts = new List<GoogleMountModel>();
                     try {
-                        googleMounts = JsonConvert.DeserializeObject<List<GoogleMountModel>>(resp).ToList();
+                        if (response.StatusCode.ToString() == "OK")
+                            googleMounts = JsonConvert.DeserializeObject<List<GoogleMountModel>>(resp).ToList();
                     }
                     catch(Exception GoogleMountParseException) {
                         Crashes.TrackError(GoogleMountParseException,new Dictionary<string,string> {
@@ -193,6 +253,8 @@ namespace MounterApp.ViewModel {
                     foreach(GoogleMountModel item in googleMounts) {
                         GoogleMounts.Add(item);
                     }
+                    if(GoogleMounts.Count() > 0)
+                        GoogleMountsExpander = true;
                 }
                 catch(Exception GetGoogleMountsException) {
                     Crashes.TrackError(GetGoogleMountsException,new Dictionary<string,string> {
@@ -220,6 +282,15 @@ namespace MounterApp.ViewModel {
             set {
                 _ArrowCircleNotSended = value;
                 OnPropertyChanged(nameof(ArrowCircleNotSended));
+            }
+        }
+
+        private ImageSource _ArrowCircleHistory;
+        public ImageSource ArrowCircleHistory {
+            get => _ArrowCircleHistory;
+            set {
+                _ArrowCircleHistory = value;
+                OnPropertyChanged(nameof(ArrowCircleHistory));
             }
         }
         private List<NewMounterExtensionBase> _Mounters;
@@ -332,6 +403,24 @@ namespace MounterApp.ViewModel {
                 NotSendedMount.MounterID = Mounters.FirstOrDefault().NewMounterId;
                 NotSendedMount.GoogleComment = _GoogleMount.FullInfo;
                 OnPropertyChanged(nameof(GoogleMount));
+            }
+        }
+
+        private ObservableCollection<Mounts> _HistoryMounts = new ObservableCollection<Mounts>();
+        public ObservableCollection<Mounts> HistoryMounts {
+            get => _HistoryMounts;
+            set {
+                _HistoryMounts = value;
+                OnPropertyChanged(nameof(HistoryMounts));
+            }
+        }
+
+        private Mounts _HistoryMount;
+        public Mounts HistoryMount {
+            get => _HistoryMount;
+            set {
+                _HistoryMount = value;
+                OnPropertyChanged(nameof(HistoryMount));
             }
         }
     }

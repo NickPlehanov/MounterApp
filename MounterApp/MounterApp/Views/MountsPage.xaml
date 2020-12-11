@@ -21,13 +21,17 @@
                     </CollectionView.ItemsLayout>
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Grid>
+                            <!--<Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Label Text="{Binding Path=FullInfo}" HeightRequest="50" BackgroundColor="Azure" Margin="0,5" 
+                                </Grid.ColumnDefinitions>-->
+                            <Frame BorderColor="Blue" Padding="5" CornerRadius="20">
+                                <Frame.Content>
+                                    <Label Text="{Binding Path=FullInfo}" HeightRequest="50" BackgroundColor="Azure" Margin="0,5" 
                                        HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
-                            </Grid>
+                                </Frame.Content>
+                            </Frame>
+                            <!--</Grid>-->
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
@@ -35,7 +39,7 @@
         </Expander>
         <Expander Grid.Row="1" IsExpanded="{Binding NotSendedMountsExpander}">
             <Expander.Header>
-                <Button Command="{Binding NotSendedMountsExpanderCommand}" ImageSource="{Binding ArrowCircleNotSended}"  CharacterSpacing="2" CornerRadius="20" HorizontalOptions="Center" Text="{Binding HeaderNotSended}" FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Large"/>
+                <Button Command="{Binding NotSendedMountsExpanderCommand}" ImageSource="{Binding ArrowCircleNotSended}" CharacterSpacing="2" CornerRadius="20" HorizontalOptions="Center" Text="{Binding HeaderNotSended}" FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Large"/>
             </Expander.Header>
             <StackLayout >
                 <CollectionView Margin="5" 
@@ -48,13 +52,17 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <StackLayout>
-                                <Label CharacterSpacing="2" FontSize="Body" FontAttributes="Bold" AutomationId="{Binding Path=ID}" Text="{Binding Path=ObjectNumber}" HeightRequest="50" BackgroundColor="Azure" Margin="0,5" 
+                                <Frame BorderColor="Red" Padding="5" CornerRadius="20">
+                                    <Frame.Content>
+                                        <Label CharacterSpacing="2" FontSize="Body" FontAttributes="Bold" Text="{Binding Path=ObjectNumber}" Margin="0,5" 
                                        HorizontalTextAlignment="Center" VerticalTextAlignment="Center">
                                     <Label.GestureRecognizers>
                                         <TapGestureRecognizer NumberOfTapsRequired="1" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MountsViewModel}}, Path=SelectMountCommand}" CommandParameter="{Binding Path=ID}"/>
                                         <TapGestureRecognizer NumberOfTapsRequired="2" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MountsViewModel}}, Path=DeleteNotSendedMountCommand}" CommandParameter="{Binding Path=ID}"/>
                                     </Label.GestureRecognizers>
                                 </Label>
+                                    </Frame.Content>
+                                </Frame>
                             </StackLayout>
 
                         </DataTemplate>
@@ -62,6 +70,32 @@
                 </CollectionView>
             </StackLayout>
         </Expander>
-        <Button Margin="10" Padding="10" CornerRadius="20" BackgroundColor="#F35429" VerticalOptions="EndAndExpand" Grid.Row="1" Text="Новый монтаж" FontSize="Large" Command="{Binding NewMountCommand}"/>
+        <Expander IsExpanded="{Binding HistoryMountsExpander}">
+            <Expander.Header>
+                <Button Command="{Binding HistoryMountsExpanderCommand}" ImageSource="{Binding ArrowCircleHistory}" CharacterSpacing="2" CornerRadius="20" HorizontalOptions="Center" Text="{Binding HeaderHistory}" FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Large"/>
+            </Expander.Header>
+            <StackLayout>
+                <CollectionView Margin="5"
+                             ItemsSource="{Binding HistoryMounts}" SelectionMode="Single"
+                                SelectedItem="{Binding HistoryMount}" >
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Orientation="Vertical"/>
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <!--<StackLayout>-->
+                            <Frame BorderColor="ForestGreen" Padding="5" CornerRadius="20">
+                                <Frame.Content>
+                                <Label CharacterSpacing="2" FontSize="Body" FontAttributes="Bold" Text="{Binding Path=CompositeName}" Margin="0,5" 
+                                       HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                </Frame.Content>
+                            </Frame>
+                            <!--</StackLayout>-->
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </StackLayout>
+        </Expander>
+        <Button Margin="10" Padding="10" CornerRadius="20" BackgroundColor="#F35429" VerticalOptions="EndAndExpand" Grid.Row="1" Text="Новый монтаж" FontSize="Large" Command="{Binding NewMountCommand}" />
     </StackLayout>
 </ContentPage>
