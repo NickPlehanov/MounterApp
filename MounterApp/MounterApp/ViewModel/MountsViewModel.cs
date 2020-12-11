@@ -52,6 +52,15 @@ namespace MounterApp.ViewModel {
             HeaderGoogle = "Запланированные (0)";
             HeaderHistory = "Отправленные (0)";
             try {
+                ClearHistoryMounts.Execute(null);
+            }
+            catch(Exception ex) {
+                Crashes.TrackError(new Exception("Ошибка автоматической очистки монтажей старше чем неделя от текущей даты"),
+                new Dictionary<string,string> {
+                    {"Error",ex.Message }
+                });
+            }
+            try {
                 GetNotSendedMounts.Execute(null);
             }
             catch(Exception ex) {
@@ -120,7 +129,24 @@ namespace MounterApp.ViewModel {
                 });
             });
         }
-
+        private RelayCommand _ClearHistoryMounts;
+        public RelayCommand ClearHistoryMounts {
+            get => _ClearHistoryMounts ??= new RelayCommand(async obj => {
+                DateTime _dt = DateTime.Now.AddDays(-7);
+                var _ntMounts = App.Database.GetMounts().Where(x => x.State == 1 && x.MounterID == Mounters.FirstOrDefault().NewMounterId).ToList();
+                if(_ntMounts != null)
+                    if(_ntMounts.Any()) {
+                        foreach(var item in _ntMounts) {
+                            if (item.DateSended!=null)
+                                if (item.DateSended.Value.Date < _dt.Date)
+                                App.Database.DeleteMount(item.ID);
+                        }
+                        Analytics.TrackEvent("Очистка списка монтажей старше недели от текущей даты",new Dictionary<string,string> {
+                        {"CountMounts",_ntMounts.Count.ToString() }
+                        });
+                    }
+            });
+        }
         private RelayCommand _GetHistoryMounts;
         public RelayCommand GetHistoryMounts {
             get => _GetHistoryMounts ??= new RelayCommand(async obj => {
@@ -240,7 +266,7 @@ namespace MounterApp.ViewModel {
                     var resp = response.Content.ReadAsStringAsync().Result;
                     List<GoogleMountModel> googleMounts = new List<GoogleMountModel>();
                     try {
-                        if (response.StatusCode.ToString() == "OK")
+                        if(response.StatusCode.ToString() == "OK")
                             googleMounts = JsonConvert.DeserializeObject<List<GoogleMountModel>>(resp).ToList();
                     }
                     catch(Exception GoogleMountParseException) {
