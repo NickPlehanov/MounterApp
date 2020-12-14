@@ -9,7 +9,7 @@
     </ContentPage.Resources>
     <ScrollView>
         <StackLayout>
-            <Grid Opacity="{Binding Opacity}">
+            <Grid >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -20,7 +20,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <StackLayout Grid.Row="0" Grid.ColumnSpan="2" Margin="5">
+                <StackLayout Opacity="{Binding Opacity}" Grid.Row="0" Grid.ColumnSpan="2" Margin="5">
                     <Expander IsExpanded="True">
                         <Expander.Header>
                             <Label Text="Информация об охр. объекте" FontSize="Large" HorizontalTextAlignment="Center" FontAttributes="Bold" Margin="5"/>
@@ -31,7 +31,7 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
@@ -64,10 +64,10 @@
 
                             <Label Grid.Row="4" Grid.Column="0" Text="Подъездные пути" FontAttributes="Bold"/>
                             <Label Grid.Row="4" Grid.Column="1" Text="{Binding Siding}"/>
-
+                            
                             <Label Grid.Row="5" Grid.Column="0" Text="ТО ОС" FontAttributes="Bold" VerticalOptions="Center"/>
                             <CheckBox Grid.Row="5" Grid.Column="1" IsEnabled="False" IsChecked="{Binding rrOS}"/>
-
+                                
                             <Label Grid.Row="6" Grid.Column="0" Text="ТО ПС" FontAttributes="Bold" VerticalOptions="Center"/>
                             <CheckBox Grid.Row="6" Grid.Column="1" IsEnabled="False" IsChecked="{Binding rrPS}"/>
 
@@ -76,7 +76,7 @@
 
                             <Label Grid.Row="8" Grid.Column="0" Text="ТО СКУД" FontAttributes="Bold" VerticalOptions="Center"/>
                             <CheckBox Grid.Row="8" Grid.Column="1" IsEnabled="False" IsChecked="{Binding rrAccess}"/>
-
+                            
                             <Label Grid.Row="9" Grid.Column="0" Text="Дата заявки" FontAttributes="Bold"/>
                             <Label Grid.Row="9" Grid.Column="1" Text="{Binding ServiceOrderID.NewDate, StringFormat='{0:dd.MM.yyyy}'}"/>
 
@@ -94,12 +94,11 @@
                         </Grid>
                     </Expander>
                 </StackLayout>
-                <StackLayout Grid.Row="2" Grid.ColumnSpan="2" Margin="5">
-                    <Expander IsExpanded="True">
+                <StackLayout Opacity="{Binding Opacity}" Grid.Row="2" Grid.ColumnSpan="2" Margin="5">
+                    <Expander IsExpanded="False">
                         <Expander.Header>
                             <Label Text="Информация об объекте"  FontSize="Large" HorizontalTextAlignment="Center" FontAttributes="Bold"/>
                         </Expander.Header>
-                        <!--<StackLayout>-->
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -107,25 +106,24 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <StackLayout Grid.Row="0">
-                                <Button Text="Информация по объекту" Command="{Binding GetObjectInfoCommand}"/>
-                                <Button Text="Заявки по объекту" Command="{Binding ServiceOrderByObjectCommand}"/>
-                                <!--<Button Text="Схема объекта" Command="{Binding ObjectSchemeCommand}"/>-->
-                                <Button Text="События по объекту" Command="{Binding GetEventsCommand, Mode=TwoWay}"/>
+                                <Button ImageSource="{Binding InfoImage}" Text="Информация по объекту" Command="{Binding GetObjectInfoCommand}" CornerRadius="20"/>
+                                <Button ImageSource="{Binding ReorderImage}" Text="Заявки по объекту" Command="{Binding ServiceOrderByObjectCommand}" CornerRadius="20"/>
+                                <Button ImageSource="{Binding EventImage}" Text="События по объекту" Command="{Binding GetEventsCommand, Mode=TwoWay}" CornerRadius="20"/>
                             </StackLayout>
                         </Grid>
                     </Expander>
                 </StackLayout>
-                <StackLayout Grid.Row="3" Grid.Column="0" Margin="5">
-                    <Button Text="Пришел" Command="{Binding IncomeCommand}"/>
+                <StackLayout Opacity="{Binding Opacity}" Grid.Row="3" Grid.Column="0" Margin="5">
+                    <Button ImageSource="{Binding TransferImage}" Text="Пришел" Command="{Binding IncomeCommand, Mode=TwoWay}" CornerRadius="20"/>
                 </StackLayout>
-                <StackLayout Grid.Row="3" Grid.Column="1" Margin="5">
-                    <Button Text="Закрыть заявку" Command="{Binding CloseOrderCommand}"/>
+                <StackLayout Opacity="{Binding Opacity}" Grid.Row="3" Grid.Column="1" Margin="5">
+                    <Button ImageSource="{Binding CloseImage}" Text="Закрыть заявку" Command="{Binding CloseOrderCommand}" CornerRadius="20"/>
                 </StackLayout>
-            </Grid>
-            <StackLayout  IsVisible="{Binding IndicatorVisible}" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
-                <ActivityIndicator IsRunning="True" Color="Red" HeightRequest="50" WidthRequest="50"  />
-                <Label FontAttributes="Bold" Text="Подождите, идет загрузка..."/>
-            </StackLayout>
+                <StackLayout Grid.Row="1" Grid.ColumnSpan="2" IsVisible="{Binding IndicatorVisible}" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
+                    <ActivityIndicator IsRunning="True" Color="Red" HeightRequest="50" WidthRequest="50"  />
+                    <Label FontAttributes="Bold" Text="Подождите, идет загрузка..."/>
+                </StackLayout>
+            </Grid>            
         </StackLayout>
     </ScrollView>
 </ContentPage>

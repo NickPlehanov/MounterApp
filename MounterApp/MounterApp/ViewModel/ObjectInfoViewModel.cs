@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class ObjectInfoViewModel : BaseViewModel {
@@ -19,6 +20,29 @@ namespace MounterApp.ViewModel {
             ServiceOrder = _so;
             GetWires.Execute(null);
             GetExtFields.Execute(null);
+            ArrowCircleWires= "arrow_circle_down.png";
+            ArrowCircleExtFields = "arrow_circle_down.png";
+            CloseImage = "close.png";
+            OpacityForm = 1;
+            IndicatorVisible = false;
+        }
+
+        private bool _IndicatorVisible;
+        public bool IndicatorVisible {
+            get => _IndicatorVisible;
+            set {
+                _IndicatorVisible = value;
+                OnPropertyChanged(nameof(IndicatorVisible));
+            }
+        }
+
+        private double _OpacityForm;
+        public double OpacityForm {
+            get => _OpacityForm;
+            set {
+                _OpacityForm = value;
+                OnPropertyChanged(nameof(OpacityForm));
+            }
         }
         private NewServiceorderExtensionBase _ServiceOrder;
         public NewServiceorderExtensionBase ServiceOrder {
@@ -56,8 +80,8 @@ namespace MounterApp.ViewModel {
         public RelayCommand CloseCommand {
             get => _CloseCommand ??= new RelayCommand(async obj => {
                 await App.Current.MainPage.Navigation.PopPopupAsync(true);
-                ServiceOrderViewModel vm = new ServiceOrderViewModel(ServiceOrder,Servicemans,Mounters);
-                App.Current.MainPage = new ServiceOrder(vm);
+                //ServiceOrderViewModel vm = new ServiceOrderViewModel(ServiceOrder,Servicemans,Mounters);
+                //App.Current.MainPage = new ServiceOrder(vm);
             });
         }
 
@@ -72,6 +96,8 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetWires;
         public RelayCommand GetWires {
             get => _GetWires ??= new RelayCommand(async obj => {
+                OpacityForm = 0.1;
+                IndicatorVisible = true;
                 WiresCollection.Clear();
                 using HttpClient client = new HttpClient(GetHttpClientHandler());
                 HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/wires?objNumber=" + ServiceOrder.NewNumber);
@@ -86,11 +112,15 @@ namespace MounterApp.ViewModel {
                         WiresCollection.Add(item);
                     }
                 }
+                OpacityForm = 1;
+                IndicatorVisible = false;
             });
         }
         private RelayCommand _GetExtFields;
         public RelayCommand GetExtFields {
             get => _GetExtFields ??= new RelayCommand(async obj => {
+                OpacityForm = 0.1;
+                IndicatorVisible = true;
                 ExtFields.Clear();
                 using HttpClient client = new HttpClient(GetHttpClientHandler());
                 HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/ext?objNumber=" + ServiceOrder.NewNumber);
@@ -105,7 +135,75 @@ namespace MounterApp.ViewModel {
                         ExtFields.Add(item);
                     }
                 }
+                OpacityForm = 1;
+                IndicatorVisible = false;
             });
+        }
+
+        private bool _WiresExpandedState;
+        public bool WiresExpandedState {
+            get => _WiresExpandedState;
+            set {
+                _WiresExpandedState = value;
+                if(_WiresExpandedState)
+                    ArrowCircleWires = "arrow_circle_up.png";
+                else
+                    ArrowCircleWires = "arrow_circle_down.png";
+                OnPropertyChanged(nameof(WiresExpandedState));
+            }
+        }
+
+        private bool _ExtFieldsExpandedState;
+        public bool ExtFieldsExpandedState {
+            get => _ExtFieldsExpandedState;
+            set {
+                if(_ExtFieldsExpandedState)
+                    ArrowCircleExtFields = "arrow_circle_up.png";
+                else
+                    ArrowCircleExtFields = "arrow_circle_down.png";
+                _ExtFieldsExpandedState = value;
+                OnPropertyChanged(nameof(ExtFieldsExpandedState));
+            }
+        }
+
+        private RelayCommand _ExtFieldsExpanderCommand;
+        public RelayCommand ExtFieldsExpanderCommand {
+            get => _ExtFieldsExpanderCommand ??= new RelayCommand(async obj => {
+                ExtFieldsExpandedState = !ExtFieldsExpandedState;
+            });
+        }
+        private RelayCommand _WiresExpanderCommand;
+        public RelayCommand WiresExpanderCommand {
+            get => _WiresExpanderCommand ??= new RelayCommand(async obj => {
+                WiresExpandedState = !WiresExpandedState;
+            });
+        }
+
+        private ImageSource _ArrowCircleWires;
+        public ImageSource ArrowCircleWires {
+            get => _ArrowCircleWires;
+            set {
+                _ArrowCircleWires = value;
+                OnPropertyChanged(nameof(ArrowCircleWires));
+            }
+        }
+
+        private ImageSource _ArrowCircleExtFields;
+        public ImageSource ArrowCircleExtFields {
+            get => _ArrowCircleExtFields;
+            set {
+                _ArrowCircleExtFields = value;
+                OnPropertyChanged(nameof(ArrowCircleExtFields));
+            }
+        }
+
+        private ImageSource _CloseImage;
+        public ImageSource CloseImage {
+            get => _CloseImage;
+            set {
+                _CloseImage = value;
+                OnPropertyChanged(nameof(CloseImage));
+            }
         }
     }
 }

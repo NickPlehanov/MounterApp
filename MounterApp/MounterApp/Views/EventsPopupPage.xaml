@@ -3,9 +3,50 @@
                   xmlns:dg="clr-namespace:Xamarin.Forms.DataGrid;assembly=Xamarin.Forms.DataGrid"
                   x:Class="MounterApp.Views.EventsPopupPage" >
     <popup:PopupPage.Content>
-        <ScrollView>
-        <StackLayout Padding="5" BackgroundColor="GhostWhite" Margin="5" VerticalOptions="Center">
-            <Grid Margin="5" Padding="5">
+        <!--<ScrollView>-->
+        <StackLayout Padding="10" BackgroundColor="GhostWhite" Margin="10" VerticalOptions="Center">
+            <FlexLayout>
+                <DatePicker Margin="2" Date="{Binding StartDate}"/>
+                <DatePicker Margin="2" Date="{Binding EndDate}"/>
+                <Button ImageSource="{Binding GetImage}" Margin="5" Text="Получить" Command="{Binding GetEventsCommands}" CornerRadius="20"/>
+            </FlexLayout>
+            <StackLayout  IsVisible="{Binding IndicatorVisible}" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
+                <ActivityIndicator IsRunning="True" Color="Red" HeightRequest="50" WidthRequest="50"  />
+                <Label FontAttributes="Bold" Text="Подождите, идет загрузка..."/>
+            </StackLayout>
+            <ScrollView>                
+                <StackLayout Opacity="{Binding OpacityForm}">
+                    <CollectionView Margin="5" ItemsSource="{Binding Events, Mode=TwoWay}" SelectionMode="Single">
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Vertical"/>
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Frame BorderColor="Blue" Padding="5" CornerRadius="20">
+                                    <Frame.Content>
+                                        <StackLayout>
+                                            <Label Text="{Binding Path=REDateTime}" Margin="5"/>
+                                            <FlexLayout>
+                                                <Label Text="{Binding Path=RChannelNameText}" Margin="5" />
+                                                <Label Text="{Binding Path=EventCodeText}" Margin="5" />
+                                                <Label Text="{Binding Path=EventClassNameText}" Margin="5" />
+                                            </FlexLayout>
+                                            <FlexLayout>
+                                                <Label Text="{Binding Path=ZoneUserText}" Margin="5" />
+                                                <Label Text="{Binding Path=PartNumberText}" Margin="5" />
+                                            </FlexLayout>
+                                            <Label Text="{Binding Path=EventDesc}" Margin="5" />
+                                        </StackLayout>
+                                    </Frame.Content>
+                                </Frame>
+                                <!--</Grid>-->
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </StackLayout>
+            </ScrollView>
+            <Button ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding ExitCommand}" CornerRadius="20" Padding="5"/>
+            <!--<Grid Margin="5" Padding="5">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -39,8 +80,8 @@
                         </dg:DataGrid>
                 </ScrollView>
                 <Button Grid.Row="3" Grid.ColumnSpan="2" Text="Закрыть" Command="{Binding ExitCommand}"/>
-            </Grid>
+            </Grid>-->
         </StackLayout>
-        </ScrollView>
+        <!--</ScrollView>-->
     </popup:PopupPage.Content>
 </popup:PopupPage>

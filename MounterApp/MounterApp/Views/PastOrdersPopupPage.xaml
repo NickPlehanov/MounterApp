@@ -1,11 +1,9 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<popup:PopupPage  xmlns:popup="http://rotorgames.com" xmlns="http://xamarin.com/schemas/2014/forms"
+﻿<popup:PopupPage  xmlns:popup="http://rotorgames.com" xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:dg="clr-namespace:Xamarin.Forms.DataGrid;assembly=Xamarin.Forms.DataGrid"
                   x:Class="MounterApp.Views.PastOrdersPopupPage">
     <popup:PopupPage.Content>
-        <ScrollView>
-            <StackLayout Padding="5" BackgroundColor="GhostWhite" Margin="5" VerticalOptions="Center">
-                <Grid>
+            <StackLayout Padding="15" BackgroundColor="GhostWhite" Margin="15" VerticalOptions="Center">
+                <!--<Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -23,8 +21,39 @@
                         </dg:DataGrid.RowsBackgroundColorPalette>
                     </dg:DataGrid>
                     <Button Grid.Row="1" Text="Закрыть" Command="{Binding CloseCommand}"/>
-                </Grid>
-            </StackLayout>
-        </ScrollView>
+                </Grid>-->
+
+                <Expander IsExpanded="{Binding PastServiceOrdersExpandedState}">
+                    <Expander.Header>
+                        <Button CharacterSpacing="2" CornerRadius="20" Command="{Binding PastServiceOrdersExpanderCommand}" Text="Заявки по объекту" 
+ImageSource="{Binding ArrowCirclePastServiceOrders}" FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Medium"/>
+                    </Expander.Header>
+                    <StackLayout>
+                    <StackLayout  IsVisible="{Binding IndicatorVisible}" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
+                        <ActivityIndicator IsRunning="True" Color="Red" HeightRequest="50" WidthRequest="50"  />
+                        <Label FontAttributes="Bold" Text="Подождите, идет загрузка..."/>
+                    </StackLayout>
+                    <CollectionView Opacity="{Binding OpacityForm}" Margin="5" ItemsSource="{Binding PastServiceOrders, Mode=TwoWay}" SelectionMode="Single">
+                            <CollectionView.ItemsLayout>
+                                <GridItemsLayout Orientation="Vertical"/>
+                            </CollectionView.ItemsLayout>
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Frame BorderColor="Blue" Padding="5" CornerRadius="20">
+                                        <Frame.Content>
+                                            <!--<RelativeLayout>-->
+                                            <Label Text="{Binding Path=FullInfo}" Margin="5" 
+                                       HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                            <!--</RelativeLayout>-->
+                                        </Frame.Content>
+                                    </Frame>
+                                    <!--</Grid>-->
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </StackLayout>
+                </Expander>
+            <Button ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding CloseCommand}" CornerRadius="20"/>
+        </StackLayout>
     </popup:PopupPage.Content>
 </popup:PopupPage>

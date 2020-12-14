@@ -10,6 +10,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
+using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class PastOrdersPopupViewModel : BaseViewModel {
@@ -18,8 +20,37 @@ namespace MounterApp.ViewModel {
             Servicemans = _servicemans;
             ServiceOrder = _so;
             GetPastServiceOrders.Execute(null);
+            ArrowCirclePastServiceOrders = "arrow_circle_down.png";
+            CloseImage = "close.png";
+            IndicatorVisible = false;
+            OpacityForm = 1;
         }
 
+        private bool _IndicatorVisible;
+        public bool IndicatorVisible {
+            get => _IndicatorVisible;
+            set {
+                _IndicatorVisible = value;
+                OnPropertyChanged(nameof(IndicatorVisible));
+            }
+        }
+
+        private double _OpacityForm;
+        public double OpacityForm {
+            get => _OpacityForm;
+            set {
+                _OpacityForm = value;
+                OnPropertyChanged(nameof(OpacityForm));
+            }
+        }
+        private ImageSource _CloseImage;
+        public ImageSource CloseImage {
+            get => _CloseImage;
+            set {
+                _CloseImage = value;
+                OnPropertyChanged(nameof(CloseImage));
+            }
+        }
         private List<NewMounterExtensionBase> _Mounters;
         public List<NewMounterExtensionBase> Mounters {
             get => _Mounters;
@@ -57,6 +88,8 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetPastServiceOrders;
         public RelayCommand GetPastServiceOrders {
             get => _GetPastServiceOrders ??= new RelayCommand(async obj => {
+                IndicatorVisible = true;
+                OpacityForm = 0.1;
                 PastServiceOrders.Clear();
                 using HttpClient client = new HttpClient(GetHttpClientHandler());
                 HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByObject?Andromeda_ID="+ServiceOrder.NewAndromedaServiceorder+"&ObjectNumber="+ServiceOrder.NewNumber);
@@ -66,12 +99,15 @@ namespace MounterApp.ViewModel {
                     _pso = JsonConvert.DeserializeObject<List<NewServiceorderExtensionBase>>(resp);
                 }
                 catch { }
-                if(_pso.Count() > 0)
+                if(_pso.Count() > 0) {
                     foreach(var item in _pso.OrderByDescending(o => o.NewDate)) {
                         NewServiceorderExtensionBase _item = item;
                         _item.NewDate = _item.NewDate.Value.AddHours(5).Date;
                         PastServiceOrders.Add(_item);
                     }
+                }
+                IndicatorVisible = false;
+                OpacityForm = 1;
             });
         }
 
@@ -79,8 +115,36 @@ namespace MounterApp.ViewModel {
         public RelayCommand CloseCommand {
             get => _CloseCommand ??= new RelayCommand(async obj => {
                 await App.Current.MainPage.Navigation.PopPopupAsync(true);
-                ServiceOrderViewModel vm = new ServiceOrderViewModel(ServiceOrder,Servicemans,Mounters);
-                App.Current.MainPage = new ServiceOrder(vm);
+                //ServiceOrderViewModel vm = new ServiceOrderViewModel(ServiceOrder,Servicemans,Mounters);
+                //App.Current.MainPage = new ServiceOrder(vm);
+            });
+        }
+
+        private bool _PastServiceOrdersExpandedState;
+        public bool PastServiceOrdersExpandedState {
+            get => _PastServiceOrdersExpandedState;
+            set {
+                if(_PastServiceOrdersExpandedState)
+                    ArrowCirclePastServiceOrders = "arrow_circle_up.png";
+                else
+                    ArrowCirclePastServiceOrders = "arrow_circle_down.png";
+                _PastServiceOrdersExpandedState = value;
+                OnPropertyChanged(nameof(PastServiceOrdersExpandedState));
+            }
+        }
+        private ImageSource _ArrowCirclePastServiceOrders;
+        public ImageSource ArrowCirclePastServiceOrders {
+            get => _ArrowCirclePastServiceOrders;
+            set {
+                _ArrowCirclePastServiceOrders = value;
+                OnPropertyChanged(nameof(ArrowCirclePastServiceOrders));
+            }
+        }
+
+        private RelayCommand _PastServiceOrdersExpanderCommand;
+        public RelayCommand PastServiceOrdersExpanderCommand {
+            get => _PastServiceOrdersExpanderCommand ??= new RelayCommand(async obj => {
+                PastServiceOrdersExpandedState = !PastServiceOrdersExpandedState;
             });
         }
     }

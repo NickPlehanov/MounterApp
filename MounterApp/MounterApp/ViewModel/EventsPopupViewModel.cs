@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Net.Http;
 using System.Text;
+using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class EventsPopupViewModel : BaseViewModel {
@@ -16,6 +17,45 @@ namespace MounterApp.ViewModel {
             ServiceOrder = _so;
             Servicemans = _servicemans;
             Mounters = _mounters;
+            CloseImage = "close.png";
+            GetImage = "get.png";
+            IndicatorVisible = false;
+            OpacityForm = 1;
+        }
+
+        private bool _IndicatorVisible;
+        public bool IndicatorVisible {
+            get => _IndicatorVisible;
+            set {
+                _IndicatorVisible = value;  
+                OnPropertyChanged(nameof(IndicatorVisible));
+            }
+        }
+
+        private double _OpacityForm;
+        public double OpacityForm {
+            get => _OpacityForm;
+            set {
+                _OpacityForm = value;
+                OnPropertyChanged(nameof(OpacityForm));
+            }
+        }
+        private ImageSource _CloseImage;
+        public ImageSource CloseImage {
+            get => _CloseImage;
+            set {
+                _CloseImage = value;
+                OnPropertyChanged(nameof(CloseImage));
+            }
+        }
+
+        private ImageSource _GetImage;
+        public ImageSource GetImage {
+            get => _GetImage;
+            set {
+                _GetImage = value;
+                OnPropertyChanged(nameof(GetImage));
+            }
         }
         private NewServiceorderExtensionBase _ServiceOrder;
         public NewServiceorderExtensionBase ServiceOrder {
@@ -67,6 +107,8 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetEventsCommands;
         public RelayCommand GetEventsCommands {
             get => _GetEventsCommands ??= new RelayCommand(async obj => {
+                IndicatorVisible = true;
+                OpacityForm = 0.1;
                 Events.Clear();
                 using HttpClient client = new HttpClient(GetHttpClientHandler());
                 HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/events?objNumber=" + ServiceOrder.NewNumber +
@@ -85,6 +127,8 @@ namespace MounterApp.ViewModel {
                         Events.Add(item);
                     //EventsVisible = true;
                 }
+                IndicatorVisible = false;
+                OpacityForm = 1;
             },obj => StartDate <= EndDate);
         }
 
@@ -100,8 +144,8 @@ namespace MounterApp.ViewModel {
         public RelayCommand ExitCommand {
             get => _ExitCommand ??= new RelayCommand(async obj => {
                 await App.Current.MainPage.Navigation.PopPopupAsync(true);
-                ServiceOrderViewModel vm = new ServiceOrderViewModel(ServiceOrder,Servicemans,Mounters);
-                App.Current.MainPage = new ServiceOrder(vm);
+                //ServiceOrderViewModel vm = new ServiceOrderViewModel(ServiceOrder,Servicemans,Mounters);
+                //App.Current.MainPage = new ServiceOrder(vm);
             });
         }
     }
