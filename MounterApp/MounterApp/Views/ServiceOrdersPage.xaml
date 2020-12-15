@@ -1,51 +1,124 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:sys="clr-namespace:System;assembly=netstandard"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:sys="clr-namespace:System;assembly=netstandard" xmlns:vm="clr-namespace:MounterApp.ViewModel"
              x:Class="MounterApp.Views.ServiceOrdersPage">
+    <ContentPage.Resources>
+        <vm:ServiceOrdersPageViewModel x:Key="vm"/>
+    </ContentPage.Resources>
     <ContentPage.Content>
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="5*"/>
+                <RowDefinition Height="Auto"/>
+                <!--<RowDefinition Height="*"/>-->
             </Grid.RowDefinitions>
-            <FlexLayout Grid.Row="0"  Margin="5" Opacity="{Binding OpacityForm}">
-                <Button Text="Обновить" Command="{Binding GetServiceOrders}" HorizontalOptions="Start"/>
-                <DatePicker Date="{Binding Date, Mode=TwoWay}" HorizontalOptions="End"/>
-                <!--<DatePicker.Format>d</DatePicker.Format>
-                    <DatePicker.MinimumDate>
-                        <sys:DateTime x:FactoryMethod="Parse">
-                            <x:Arguments>
-                                <x:String>Jan 1 2010</x:String>
-                            </x:Arguments>
-                        </sys:DateTime>
-                    </DatePicker.MinimumDate>
-                    <DatePicker.MaximumDate>
-                        <sys:DateTime x:FactoryMethod="Parse">
-                            <x:Arguments>
-                                <x:String>Dec 31 2050</x:String>
-                            </x:Arguments>
-                        </sys:DateTime>
-                    </DatePicker.MaximumDate>
-                </DatePicker>-->
-            </FlexLayout>
-        <CollectionView Margin="5" Grid.Row="1" ItemsSource="{Binding ServiceOrders}" SelectionMode="Single" 
+            <StackLayout Grid.Row="0"  Margin="5" Opacity="{Binding OpacityForm}" > 
+                <DatePicker Date="{Binding Date, Mode=TwoWay}" HorizontalOptions="Center"/>
+                <Button ImageSource="{Binding RefreshImage}" Text="Обновить" Command="{Binding GetServiceOrders}" CornerRadius="20"/>
+            </StackLayout>
+            <CollectionView Margin="5" Grid.Row="1" ItemsSource="{Binding ServiceOrders}" SelectionMode="Single" 
                                 SelectionChangedCommand="{Binding SelectServiceOrderCommand, Mode=TwoWay}"
                                 SelectedItem="{Binding ServiceOrder}">
-            <CollectionView.ItemsLayout>
-                <GridItemsLayout Orientation="Vertical" />
-            </CollectionView.ItemsLayout>
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <StackLayout>
-                            <Label BackgroundColor="AntiqueWhite" Text="{Binding Path=FullName}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" WidthRequest="100" HeightRequest="100"/>
-                    </StackLayout>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-            <StackLayout IsVisible="{Binding IndicatorVisible}" Grid.Row="2" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <!--как в гугл почте-->
+                        <SwipeView >
+                            <SwipeView.LeftItems>
+                                <SwipeItems Mode="Execute">
+                                    <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
+                                                   CommandParameter="{Binding Path=NewNumber}">
+                                        <Grid>
+                                            <Label FontAttributes="Italic" Text="Открыть карту>>>" BackgroundColor="OrangeRed" FontSize="Medium" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                        </Grid>
+                                    </SwipeItemView>
+                                </SwipeItems>
+                            </SwipeView.LeftItems>
+                            <Frame BorderColor="Blue" Padding="5" CornerRadius="20">
+                                <Frame.Content>
+                                    <StackLayout>
+                                        <Label Text="{Binding Path=FullName}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                                    </StackLayout>
+                                </Frame.Content>
+                            </Frame>
+                        </SwipeView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <SwipeView Grid.Row="2">
+                <SwipeView.BottomItems>
+                    <SwipeItems Mode="Execute">
+                        <SwipeItemView Command="{Binding GetServiceOrders}">
+                            <StackLayout Padding="30" HorizontalOptions="End" VerticalOptions="End">
+                                <!--<ActivityIndicator IsVisible="True" IsRunning="False" Color="Purple" HeightRequest="20" WidthRequest="20"  />-->
+                                <Label HorizontalOptions="Center" FontAttributes="Italic" Text="Отпустите, для обновления"/>
+                            </StackLayout>
+                        </SwipeItemView>
+                    </SwipeItems>
+                </SwipeView.BottomItems>
+                <SwipeView.TopItems>
+                    <SwipeItems Mode="Execute">
+                        <SwipeItemView Command="{Binding GetServiceOrders}">
+                            <StackLayout Padding="30" HorizontalOptions="End" VerticalOptions="End">
+                                <!--<ActivityIndicator IsVisible="True" IsRunning="False" Color="Purple" HeightRequest="20" WidthRequest="20"  />-->
+                                <Label HorizontalOptions="Center" FontAttributes="Italic" Text="Отпустите, для обновления"/>
+                            </StackLayout>
+                        </SwipeItemView>
+                    </SwipeItems>
+                </SwipeView.TopItems>
+            </SwipeView>
+            <StackLayout Grid.Row="1" IsVisible="{Binding IndicatorVisible}" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
                 <ActivityIndicator IsRunning="True" Color="Red" HeightRequest="50" WidthRequest="50"  />
                 <Label FontAttributes="Bold" Text="Подождите, идет загрузка..."/>
             </StackLayout>
-        </Grid>        
+        </Grid>
+
+        <!--<SwipeView>
+            <SwipeView.BottomItems>
+                <SwipeItems>
+                    <SwipeItemView Command="{Binding GetServiceOrders}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="5*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <StackLayout Grid.Row="0"  Margin="5" Opacity="{Binding OpacityForm}">
+                                <DatePicker Date="{Binding Date, Mode=TwoWay}" HorizontalOptions="Center"/>
+                                <Button Text="Обновить" Command="{Binding GetServiceOrders}"/>
+                            </StackLayout>
+                            <CollectionView Margin="5" Grid.Row="1" ItemsSource="{Binding ServiceOrders}" SelectionMode="Single" 
+                                SelectionChangedCommand="{Binding SelectServiceOrderCommand, Mode=TwoWay}"
+                                SelectedItem="{Binding ServiceOrder}">
+                                <CollectionView.ItemsLayout>
+                                    <GridItemsLayout Orientation="Vertical" />
+                                </CollectionView.ItemsLayout>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackLayout>
+                                            <Label BackgroundColor="AntiqueWhite" Text="{Binding Path=FullName}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" WidthRequest="100" HeightRequest="100"/>
+                                        </StackLayout>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                            <SwipeView Grid.Row="2">
+                                <SwipeView.BottomItems>
+                                    <SwipeItems Mode="Execute">
+                                        <SwipeItem Text="Обновить" Command="{Binding GetServiceOrders}"/>
+                                    </SwipeItems>
+                                </SwipeView.BottomItems>
+                            </SwipeView>
+                            <StackLayout Grid.Row="2" IsVisible="{Binding IndicatorVisible}" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
+                                <ActivityIndicator IsRunning="True" Color="Red" HeightRequest="50" WidthRequest="50"  />
+                                <Label FontAttributes="Bold" Text="Подождите, идет загрузка..."/>
+                            </StackLayout>
+                        </Grid>
+                    </SwipeItemView>
+                </SwipeItems>
+            </SwipeView.BottomItems>
+        </SwipeView>-->
     </ContentPage.Content>
 </ContentPage>

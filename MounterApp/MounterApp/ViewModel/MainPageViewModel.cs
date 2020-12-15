@@ -1,4 +1,5 @@
 ﻿//using Android.Content.Res;
+using Android.Content;
 using Android.Hardware;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
@@ -45,7 +46,6 @@ namespace MounterApp.ViewModel {
                 Application.Current.SavePropertiesAsync();
             }
             CheckAndRequestPermissions.Execute(null);
-
             //clientHandler.ServerCertificateCustomValidationCallback = (sender,cert,chain,sslPolicyErrors) => { return true; };
         }
 

@@ -64,7 +64,7 @@
 
                             <Label Grid.Row="4" Grid.Column="0" Text="Подъездные пути" FontAttributes="Bold"/>
                             <Label Grid.Row="4" Grid.Column="1" Text="{Binding Siding}"/>
-                            
+
                             <Label Grid.Row="5" Grid.Column="0" Text="ТО ОС" FontAttributes="Bold" VerticalOptions="Center"/>
                             <CheckBox Grid.Row="5" Grid.Column="1" IsEnabled="False" IsChecked="{Binding rrOS}"/>
                                 

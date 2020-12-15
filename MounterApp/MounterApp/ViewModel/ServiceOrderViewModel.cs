@@ -467,10 +467,10 @@ namespace MounterApp.ViewModel {
                     {"ServiceOrderID",ServiceOrderID.NewServiceorderId.ToString() }
                 });
                 using HttpClient client = new HttpClient(GetHttpClientHandler());
-                HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/id?id=" + ServiceOrderID.NewServiceorderId);
-                var resp = response.Content.ReadAsStringAsync().Result;
+                HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/id?id=" + ServiceOrderID.NewServiceorderId);                
                 NewServiceorderExtensionBase soeb = null;
                 if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                    var resp = response.Content.ReadAsStringAsync().Result;
                     try {
                         soeb = JsonConvert.DeserializeObject<NewServiceorderExtensionBase>(resp);
                     }

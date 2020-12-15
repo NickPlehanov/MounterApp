@@ -21,6 +21,24 @@ namespace MounterApp.ViewModel {
             Servicemans = _servicemans;
             Mounters = _mounters;
             GetResults.Execute(null);
+            NecesseryRead = false;
+            SaveImage = "save.png";
+        }
+
+        private ImageSource _SaveImage;
+        public ImageSource SaveImage {
+            get => _SaveImage;
+            set {
+                _SaveImage = value;
+                OnPropertyChanged(nameof(SaveImage));
+            }
+        }
+
+        private RelayCommand _SetValueNecesseryReadCommand;
+        public RelayCommand SetValueNecesseryReadCommand {
+            get => _SetValueNecesseryReadCommand ??= new RelayCommand(async obj => {
+                NecesseryRead = !NecesseryRead;
+            });
         }
 
         private List<NewMounterExtensionBase> _Mounters;
@@ -29,6 +47,24 @@ namespace MounterApp.ViewModel {
             set {
                 _Mounters = value;
                 OnPropertyChanged(nameof(Mounters));
+            }
+        }
+
+        private string _ConclusionByOrder;
+        public string ConclusionByOrder {
+            get => _ConclusionByOrder;
+            set {
+                _ConclusionByOrder = value;
+                OnPropertyChanged(nameof(ConclusionByOrder));
+            }
+        }
+
+        private bool _NecesseryRead;
+        public bool NecesseryRead {
+            get => _NecesseryRead;
+            set {
+                _NecesseryRead = value;
+                OnPropertyChanged(nameof(NecesseryRead));
             }
         }
         private NewServiceorderExtensionBase _so;
@@ -259,8 +295,16 @@ namespace MounterApp.ViewModel {
         private RelayCommand _CloseServiceOrderCommand;
         public RelayCommand CloseServiceOrderCommand {
             get => _CloseServiceOrderCommand ??= new RelayCommand(async obj => {
+                if(NecesseryRead && string.IsNullOrEmpty(ConclusionByOrder)) {
+                    await Application.Current.MainPage.DisplayAlert("Ошибка","Не указано заключение по заявке","OK");
+                    return;
+                }
+                if(SelectedResult == null) {
+                    await Application.Current.MainPage.DisplayAlert("Ошибка","Не выбрана результат","OK");
+                    return;
+                }
                 if(SelectedResult.Value != 1) {
-                    if(SelectedReason != null && !string.IsNullOrEmpty(ReasonComment)) {
+                    if(SelectedReason != null && !string.IsNullOrEmpty(ReasonComment) && !string.IsNullOrEmpty(ConclusionByOrder)) {
                         using HttpClient client = new HttpClient(GetHttpClientHandler());
                         HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/id?id=" + so.NewServiceorderId);
                         var resp = response.Content.ReadAsStringAsync().Result;
@@ -277,6 +321,8 @@ namespace MounterApp.ViewModel {
                             soeb.NewResult = SelectedResult.Value;
                             soeb.NewResultId = SelectedReason.Value;
                             soeb.NewTransferReason = ReasonComment;
+                            soeb.NewTechConclusion = ConclusionByOrder;
+                            soeb.NewMustRead = NecesseryRead;
                             if(SelectedResult.Value == 2) {
                                 soeb.NewMoved = new DateTime(TransferDate.Year,TransferDate.Month,TransferDate.Day,TransferTime.Hours,TransferTime.Minutes,TransferTime.Seconds).AddHours(-5);
                                 //soeb.NewMoved = new DateTime(TransferDate.Year,TransferDate.Month,TransferDate.Day,0,0,0).AddHours(-5);
@@ -313,58 +359,65 @@ namespace MounterApp.ViewModel {
                         App.Current.MainPage = new ServiceOrdersPage(vm);
                     }
                     else
-                        await Application.Current.MainPage.DisplayAlert("Ошибка","Не выбрана причина отмены(переноса) или не указан комментарий к причине","OK");
+                        await Application.Current.MainPage.DisplayAlert("Ошибка","Не выбрана причина отмены(переноса), не указан комментарий к причине или заключение по заявке пустое","OK");
                 }
-                else {
-                    using HttpClient client = new HttpClient(GetHttpClientHandler());
-                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/id?id=" + so.NewServiceorderId);
-                    var resp = response.Content.ReadAsStringAsync().Result;
-                    NewServiceorderExtensionBase soeb = null;
-                    try {
-                        soeb = JsonConvert.DeserializeObject<NewServiceorderExtensionBase>(resp);
-                    }
-                    catch {
-                        soeb = null;
-                    }
-                    if(soeb != null) {
-                        soeb.NewOutgone = DateTime.Now.AddHours(-5);
-                        soeb.NewNewServiceman = Servicemans.FirstOrDefault().NewServicemanId;
-                        soeb.NewResult = SelectedResult.Value;
-                        //soeb.NewResultId = SelectedReason.Value;
-                        //soeb.NewTransferReason = ReasonComment;
-                        //if(SelectedResult.Value == 2) {
-                        //    soeb.NewMoved = new DateTime(TransferDate.Year,TransferDate.Month,TransferDate.Day,TransferTime.Hours,TransferTime.Minutes,TransferTime.Seconds).AddHours(-5);
-                        //}
-                        using(HttpClient clientPut = new HttpClient(GetHttpClientHandler())) {
-                            var httpContent = new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json");
-                            HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases",httpContent);
-                        }
-                        //запишем координаты
-                        Location location = await Geolocation.GetLastKnownLocationAsync();
-                        if(location != null) {
-                            Latitude = location.Latitude.ToString();
-                            Longitude = location.Longitude.ToString();
-                        }
-                        using HttpClient clientGet = new HttpClient(GetHttpClientHandler());
-                        HttpResponseMessage responseGet = await clientGet.GetAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates/id?so_id=" + so.NewServiceorderId);
-                        var respGet = responseGet.Content.ReadAsStringAsync().Result;
-                        ServiceOrderCoordinates soc = null;
+                else {//выполнено
+                    if (!string.IsNullOrEmpty(ConclusionByOrder)) {
+                        using HttpClient client = new HttpClient(GetHttpClientHandler());
+                        HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/id?id=" + so.NewServiceorderId);
+                        var resp = response.Content.ReadAsStringAsync().Result;
+                        NewServiceorderExtensionBase soeb = null;
                         try {
-                            //soc = JsonConvert.DeserializeObject<ServiceOrderCoordinates>(respGet).Where(x => x.SocOutcomeLatitide == null && x.SocOutcomeLongitude == null);
-                            soc = JsonConvert.DeserializeObject<ServiceOrderCoordinates>(respGet);
+                            soeb = JsonConvert.DeserializeObject<NewServiceorderExtensionBase>(resp);
                         }
-                        catch (Exception ex) {
-                            soc = null;
+                        catch {
+                            soeb = null;
                         }
-                        if(soc != null) {
-                            soc.SocOutcomeLatitide = Latitude;
-                            soc.SocOutcomeLongitude = Longitude;
+                        if(soeb != null) {
+                            soeb.NewOutgone = DateTime.Now.AddHours(-5);
+                            soeb.NewNewServiceman = Servicemans.FirstOrDefault().NewServicemanId;
+                            soeb.NewResult = SelectedResult.Value;
+                            soeb.NewTechConclusion = ConclusionByOrder;
+                            soeb.NewMustRead = NecesseryRead;
+                            //soeb.NewResultId = SelectedReason.Value;
+                            //soeb.NewTransferReason = ReasonComment;
+                            //if(SelectedResult.Value == 2) {
+                            //    soeb.NewMoved = new DateTime(TransferDate.Year,TransferDate.Month,TransferDate.Day,TransferTime.Hours,TransferTime.Minutes,TransferTime.Seconds).AddHours(-5);
+                            //}
                             using(HttpClient clientPut = new HttpClient(GetHttpClientHandler())) {
-                                var httpContent = new StringContent(JsonConvert.SerializeObject(soc),Encoding.UTF8,"application/json");
-                                HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates",httpContent);
+                                var httpContent = new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json");
+                                HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases",httpContent);
+                            }
+                            //запишем координаты
+                            Location location = await Geolocation.GetLastKnownLocationAsync();
+                            if(location != null) {
+                                Latitude = location.Latitude.ToString();
+                                Longitude = location.Longitude.ToString();
+                            }
+                            using HttpClient clientGet = new HttpClient(GetHttpClientHandler());
+                            HttpResponseMessage responseGet = await clientGet.GetAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates/id?so_id=" + so.NewServiceorderId);
+                            var respGet = responseGet.Content.ReadAsStringAsync().Result;
+                            ServiceOrderCoordinates soc = null;
+                            try {
+                                //soc = JsonConvert.DeserializeObject<ServiceOrderCoordinates>(respGet).Where(x => x.SocOutcomeLatitide == null && x.SocOutcomeLongitude == null);
+                                soc = JsonConvert.DeserializeObject<ServiceOrderCoordinates>(respGet);
+                            }
+                            catch(Exception ex) {
+                                soc = null;
+                            }
+                            if(soc != null) {
+                                soc.SocOutcomeLatitide = Latitude;
+                                soc.SocOutcomeLongitude = Longitude;
+                                using(HttpClient clientPut = new HttpClient(GetHttpClientHandler())) {
+                                    var httpContent = new StringContent(JsonConvert.SerializeObject(soc),Encoding.UTF8,"application/json");
+                                    HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates",httpContent);
+                                }
                             }
                         }
                     }
+                    else
+                        await Application.Current.MainPage.DisplayAlert("Ошибка","Заключение по заявке не может быть пустым!","OK");
+
                     await App.Current.MainPage.Navigation.PopPopupAsync(true);
                     ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans,Mounters);
                     App.Current.MainPage = new ServiceOrdersPage(vm);
