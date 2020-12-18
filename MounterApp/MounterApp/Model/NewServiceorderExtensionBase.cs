@@ -1,8 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Drawing;
 
 namespace MounterApp.Model {
-	public partial class NewServiceorderExtensionBase {
+    public partial class NewServiceorderExtensionBase {
         public Guid NewServiceorderId { get; set; }
         public string NewName { get; set; }
         public DateTime? NewDate { get; set; }
@@ -76,9 +77,22 @@ namespace MounterApp.Model {
             get {
                 if(NewDate.HasValue)
                     return string.Format("Дата: {0} {1} Причина: {2}",NewDate.Value.ToShortDateString(),NewTime,string.IsNullOrEmpty(NewName) ? "<не указана>" : NewName);
-                    //return NewDate.Value.ToShortDateString()+" " + NewName;
+                //return NewDate.Value.ToShortDateString()+" " + NewName;
                 else
                     return string.Format("Дата: <не указана>; Причина: {0}",string.IsNullOrEmpty(NewName) ? "<не указана>" : NewName);
+            }
+        }
+        [NotMapped]
+        public Color ColorOrder {
+            get {
+                if(NewIncome.HasValue) {
+                    if(NewIncome.Value!=null)
+                        return Color.Red;
+                    else
+                        return Color.Black;
+                }
+                else
+                    return Color.Black;
             }
         }
 

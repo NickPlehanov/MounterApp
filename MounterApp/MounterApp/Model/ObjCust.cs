@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace MounterApp.Model {
@@ -26,6 +27,42 @@ namespace MounterApp.Model {
         public string MyAlarmUserPhone { get; set; }
         public Guid ObjCustGuid { get; set; }
         public bool? MyAlarmPanicEnabled { get; set; }
+        [NotMapped]
+        public string UserNumberText {
+            get {
+                if(!int.TryParse(UserNumber.ToString(),out _))
+                    return "Номер пользователя: <не определен>";
+                else
+                    return string.Format("Номер пользователя: {0}",UserNumber);
+            }
+        }
+        [NotMapped]
+        public string ObjCustTitleText {
+            get {
+                if(string.IsNullOrEmpty(ObjCustTitle))
+                    return "Должность: <не указана>";
+                else
+                    return string.Format("Должность: {0}",ObjCustTitle);
+            }
+        }
+        [NotMapped]
+        public string ObjCustNameText {
+            get {
+                if(string.IsNullOrEmpty(ObjCustName))
+                    return "ФИО: <не указаны>";
+                else
+                    return string.Format("ФИО: {0}",ObjCustName);
+            }
+        }
+        [NotMapped]
+        public string ObjCustPhone1Text {
+            get {
+                if(string.IsNullOrEmpty(ObjCustPhone1))
+                    return "Телефон: <не указан>";
+                else
+                    return string.Format("Телефон: {0}",ObjCustPhone1);
+            }
+        }
 
         public virtual A28Object Object { get; set; }
     }

@@ -17,9 +17,10 @@ using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class SelectActionsPopupPageViewModel : BaseViewModel {
-        public SelectActionsPopupPageViewModel(Mounts _mount,List<NewMounterExtensionBase> _mounters) {
+        public SelectActionsPopupPageViewModel(Mounts _mount,List<NewMounterExtensionBase> _mounters, List<NewServicemanExtensionBase> _servicemans) {
             Mount = _mount;
             Mounters = _mounters;
+            Servicemans = _servicemans;
             IsPickPhoto = null;
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Карточка объекта" });
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Схема объекта" });
@@ -36,6 +37,14 @@ namespace MounterApp.ViewModel {
             Analytics.TrackEvent("Инициализация страницы выбора способа получения фото");            
         }
 
+        private List<NewServicemanExtensionBase> _Servicemans;
+        public List<NewServicemanExtensionBase> Servicemans {
+            get => _Servicemans;
+            set {
+                _Servicemans = value;
+                OnPropertyChanged(nameof(Servicemans));
+            }
+        }
         private ImageSource _CameraImage;
         public ImageSource CameraImage {
             get => _CameraImage;
@@ -235,7 +244,7 @@ namespace MounterApp.ViewModel {
         public RelayCommand BackPressedCommand {
             get => _BackPressedCommand ??= new RelayCommand(async obj => {
                 await App.Current.MainPage.Navigation.PopPopupAsync(true);
-                NewMountPageViewModel vm = new NewMountPageViewModel(Mount,Mounters,IsChanged);
+                NewMountPageViewModel vm = new NewMountPageViewModel(Mount,Mounters,IsChanged,Servicemans);
                 App.Current.MainPage = new NewMountpage(vm);
             });
         }

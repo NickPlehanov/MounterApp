@@ -125,6 +125,7 @@ namespace MounterApp.ViewModel {
                         };
                         Crashes.TrackError(ServicemansParseException,parameters);
                     }
+                    //TODO: перелопатить авторизацию
                     if(mounters != null || servicemans != null) {
                         if(mounters.Count > 0 || servicemans.Count > 0) {
                             if(mounters.Count > 1 || servicemans.Count > 1) {
@@ -141,14 +142,14 @@ namespace MounterApp.ViewModel {
                                 App.Current.MainPage = new MainMenuPage(vm);
                             }
                         }
-                        else {
-                            Message = "Сотрудника с таким номером телефона не найдено" + Environment.NewLine + "Проверьте правильность ввода номера телефона";
-                            Dictionary<string,string> parameters = new Dictionary<string,string> {
-                                { "Phone",PhoneNumber },
-                                { "Error","Не найден сотрудник по номеру телефона" }
-                            };
-                            Crashes.TrackError(new Exception("Не найден сотрудник по номеру телефона"),parameters);
-                        }
+                        //else {
+                        //    Message = "Сотрудника с таким номером телефона не найдено" + Environment.NewLine + "Проверьте правильность ввода номера телефона";
+                        //    Dictionary<string,string> parameters = new Dictionary<string,string> {
+                        //        { "Phone",PhoneNumber },
+                        //        { "Error","Не найден сотрудник по номеру телефона" }
+                        //    };
+                        //    Crashes.TrackError(new Exception("Не найден сотрудник по номеру телефона"),parameters);
+                        //}
                     }
                     else {
                         Message = "Сотрудника с таким номером телефона не найдено";

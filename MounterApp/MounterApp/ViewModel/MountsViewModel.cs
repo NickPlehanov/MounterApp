@@ -336,7 +336,7 @@ namespace MounterApp.ViewModel {
                         new Dictionary<string,string> {
                             {"MounterPhone",Mounters.FirstOrDefault().NewPhone }
                         });
-                    NewMountPageViewModel vm = new NewMountPageViewModel(Mounters);
+                    NewMountPageViewModel vm = new NewMountPageViewModel(Mounters,Servicemans);
                     App.Current.MainPage = new NewMountpage(vm);
                 }
             });
@@ -354,7 +354,7 @@ namespace MounterApp.ViewModel {
                             {"MounterPhone",Mounters.FirstOrDefault().NewPhone },
                             {"ObjectNumber",NotSendedMount.ObjectNumber }
                             });
-                        NewMountPageViewModel vm = new NewMountPageViewModel(NotSendedMount,Mounters,false);
+                        NewMountPageViewModel vm = new NewMountPageViewModel(NotSendedMount,Mounters,false,Servicemans);
                         App.Current.MainPage = new NewMountpage(vm);
                     }
                 }

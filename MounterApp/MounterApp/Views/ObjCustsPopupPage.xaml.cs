@@ -12,9 +12,12 @@ using Xamarin.Forms.Xaml;
 
 namespace MounterApp.Views {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class PastOrdersPopupPage : PopupPage {
-        public PastOrdersPopupViewModel VM { get; private set; }
-        public PastOrdersPopupPage(PastOrdersPopupViewModel vm) {
+    public partial class ObjCustsPopupPage : PopupPage {
+        //public ObjCustsPopupPage() {
+        //    InitializeComponent();
+        //}
+        public ObjCustsPopupViewModel VM { get; private set; }
+        public ObjCustsPopupPage(ObjCustsPopupViewModel vm) {
             InitializeComponent();
             VM = vm;
             this.BindingContext = VM;

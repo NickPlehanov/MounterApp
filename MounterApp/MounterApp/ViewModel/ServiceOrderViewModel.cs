@@ -51,6 +51,7 @@ namespace MounterApp.ViewModel {
             EventImage = "event.png";
             CloseImage = "close.png";
             TransferImage = "transfer.png";
+            PeopleImage = "people.png";
         }
 
         private ImageSource _InfoImage;
@@ -537,12 +538,15 @@ namespace MounterApp.ViewModel {
                 IndicatorVisible = false;
             },obj=> ServiceOrderID.NewIncome==null);
         }
-        //private RelayCommand _OutcomeCommand;
-        //public RelayCommand OutcomeCommand {
-        //    get => _OutcomeCommand ??= new RelayCommand(async obj => {
 
-        //    });
-        //}
+        private ImageSource _PeopleImage;
+        public ImageSource PeopleImage {
+            get => _PeopleImage;
+            set {
+                _PeopleImage = value;
+                OnPropertyChanged(nameof(PeopleImage));
+            }
+        }
         private RelayCommand _CallClientCommand;
         public RelayCommand CallClientCommand {
             get => _CallClientCommand ??= new RelayCommand(async obj => {
@@ -575,6 +579,18 @@ namespace MounterApp.ViewModel {
                     });
                 ObjectInfoViewModel vm = new ObjectInfoViewModel(ServiceOrderID,Servicemans,Mounters);
                 await App.Current.MainPage.Navigation.PushPopupAsync(new ObjectInfoPopup(vm));
+            });
+        }
+
+        private RelayCommand _GetCustomersCommand;
+        public RelayCommand GetCustomersCommand {
+            get => _GetCustomersCommand ??= new RelayCommand(async obj => {
+                Analytics.TrackEvent("Переход на страницу получения информации об ответсвенных лицах объекта",
+                    new Dictionary<string,string> {
+                        {"ServiceOrderID",ServiceOrderID.NewServiceorderId.ToString() }
+                    });
+                ObjCustsPopupViewModel vm = new ObjCustsPopupViewModel(ServiceOrderID);
+                await App.Current.MainPage.Navigation.PushPopupAsync(new ObjCustsPopupPage(vm));
             });
         }
         private RelayCommand _GetEventsCommand;

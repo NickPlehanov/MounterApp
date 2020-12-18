@@ -1,11 +1,16 @@
 ﻿using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using MounterApp.Helpers;
 using MounterApp.InternalModel;
 using MounterApp.Model;
+using MounterApp.Properties;
 using MounterApp.Views;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.Http;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -20,11 +25,18 @@ namespace MounterApp.ViewModel {
             }
         }
         public MainMenuPageViewModel(List<NewMounterExtensionBase> mounters,List<NewServicemanExtensionBase> servicemans) {
+            //if(Application.Current.Properties.ContainsKey("Phone")) {
+            //    if(mounters == null)
+            //        GetMounter.Execute(null);
+            //    if(servicemans == null)
+            //        GetServiceman.Execute(null);
+            //}
             Mounters = mounters;
             Serviceman = servicemans;
-            SettingsImage= "settings.png";
+            SettingsImage = "settings.png";
             Analytics.TrackEvent("Инициализация окна главного меню приложения");
             App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
+            
         }
         public MainMenuPageViewModel(List<NewMounterExtensionBase> mounters) {
             Mounters = mounters;
@@ -44,6 +56,80 @@ namespace MounterApp.ViewModel {
             App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
         }
 
+        private string _PhoneNumber;
+        public string PhoneNumber {
+            get => _PhoneNumber;
+            set {
+                _PhoneNumber = value;
+                OnPropertyChanged(nameof(PhoneNumber));
+            }
+        }
+
+        //private RelayCommand _GetMounter;
+        //public RelayCommand GetMounter {
+        //    get => _GetMounter ??= new RelayCommand(async obj => {
+        //        //if(Application.Current.Properties.ContainsKey("Phone")) {
+        //        PhoneNumber = Application.Current.Properties["Phone"] as string;
+        //        using HttpClient client = new HttpClient(GetHttpClientHandler());
+        //        HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewMounterExtensionBases/phone?phone=" + PhoneNumber);
+        //        var resp = response.Content.ReadAsStringAsync().Result;
+        //        List<NewMounterExtensionBase> mounters = new List<NewMounterExtensionBase>();
+        //        try {
+        //            if(response.StatusCode.ToString() == "OK") {
+        //                Analytics.TrackEvent("Попытка сериализации результата запроса монтажников");
+        //                mounters = JsonConvert.DeserializeObject<List<NewMounterExtensionBase>>(resp).Where(x => x.NewIsWorking == true).ToList();
+        //            }
+        //        }
+        //        catch(Exception MountersParseExecption) {
+        //            Dictionary<string,string> parameters = new Dictionary<string,string> {
+        //                    { "Phone",PhoneNumber },
+        //                    { "Error","Не удалось провести сериализацию объекта монтажники" }
+        //                };
+        //            Crashes.TrackError(MountersParseExecption,parameters);
+        //        }
+        //        if(mounters != null) {
+        //            Mounters.Clear();
+        //            foreach(var item in mounters)
+        //                Mounters.Add(item);
+        //        }
+        //        //}
+        //    });
+        //}
+
+        //private RelayCommand _GetServiceman;
+        //public RelayCommand GetServiceman {
+        //    get => _GetServiceman ??= new RelayCommand(async obj => {
+        //        //if(Application.Current.Properties.ContainsKey("Phone")) {
+        //        PhoneNumber = Application.Current.Properties["Phone"] as string;
+        //        using HttpClient client = new HttpClient(GetHttpClientHandler());
+        //        Analytics.TrackEvent("Запрос техников по номеру телефона");
+        //        HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServicemanExtensionBases/phone?phone=" + PhoneNumber.Substring(1,PhoneNumber.Length - 1));
+        //        var resp = response.Content.ReadAsStringAsync().Result;
+        //        List<NewServicemanExtensionBase> servicemans = new List<NewServicemanExtensionBase>();
+        //        try {
+        //            if(response.StatusCode.ToString() == "OK") {
+        //                Analytics.TrackEvent("Попытка сериализации результата запроса техников");
+        //                servicemans = JsonConvert.DeserializeObject<List<NewServicemanExtensionBase>>(resp).Where(x => x.NewIswork == true).ToList();
+        //            }
+        //        }
+        //        catch(Exception ServicemansParseException) {
+        //            Dictionary<string,string> parameters = new Dictionary<string,string> {
+        //                    { "Phone",PhoneNumber },
+        //                    { "Error","Не удалось провести сериализацию объекта техники" }
+        //                };
+        //            Crashes.TrackError(ServicemansParseException,parameters);
+        //        }
+        //        if(servicemans != null) {
+        //            if(servicemans.Count > 0) {
+        //                Serviceman = new List<NewServicemanExtensionBase>();
+        //                //Serviceman.Clear();
+        //                foreach(var item in servicemans)
+        //                    Serviceman.Add(item);
+        //            }
+        //        }
+        //        //}
+        //    });
+        //}
         private string _Message;
         public string Message {
             get => _Message;
@@ -56,13 +142,22 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetMountworksCommand;
         public RelayCommand GetMountworksCommand {
             get => _GetMountworksCommand ??= new RelayCommand(async obj => {
-                Dictionary<string,string> parameters = new Dictionary<string,string> {
+                try {
+                    Dictionary<string,string> parameters = new Dictionary<string,string> {
                     {"MountersPhone",Mounters.First().NewPhone }
-                };
-                Analytics.TrackEvent("Переход к монтажам",parameters);
+                    };
+                    Analytics.TrackEvent("Переход к монтажам",parameters);
+                }
+                catch(Exception ex) {
+                    Crashes.TrackError(new Exception("Ошибка перехода к странице монтажей(возможно не найден монтажник)"),
+                    new Dictionary<string,string> {
+                        {"Mounters",Application.Current.Properties["Phone"] as string },
+                        {"Exception",ex.Message }
+                    });
+                }
                 MountsViewModel vm = new MountsViewModel(Mounters,Serviceman);
                 App.Current.MainPage = new MountsPage(vm);
-            });
+            },obj => Mounters != null && Mounters.Count > 0);
         }
         //private RelayCommand _ClearDatabaseCommand;
         //public RelayCommand ClearDatabaseCommand {
@@ -74,13 +169,22 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetServiceordersCommand;
         public RelayCommand GetServiceordersCommand {
             get => _GetServiceordersCommand ??= new RelayCommand(async obj => {
-                Dictionary<string,string> parameters = new Dictionary<string,string> {
+                try {
+                    Dictionary<string,string> parameters = new Dictionary<string,string> {
                     {"ServicemansPhone",Serviceman.First().NewPhone }
                 };
-                Analytics.TrackEvent("Переход к заявкам технику",parameters);
+                    Analytics.TrackEvent("Переход к заявкам технику",parameters);
+                }
+                catch(Exception ex) {
+                    Crashes.TrackError(new Exception("Ошибка перехода к странице заявок техника(возможно не найден техник)"),
+                    new Dictionary<string,string> {
+                        {"Servicemans",Application.Current.Properties["Phone"] as string },
+                        {"Exception",ex.Message }
+                    });
+                }
                 ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Serviceman,Mounters);
                 App.Current.MainPage = new ServiceOrdersPage(vm);
-            });
+            },obj => Serviceman != null && Serviceman.Count > 0);
         }
         private List<NewMounterExtensionBase> _Mounters;
         public List<NewMounterExtensionBase> Mounters {

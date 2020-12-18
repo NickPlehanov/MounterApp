@@ -1,0 +1,52 @@
+﻿<popup:PopupPage xmlns:popup="http://rotorgames.com" xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                 x:Class="MounterApp.Views.ObjCustsPopupPage" xmlns:vm="clr-namespace:MounterApp.ViewModel">
+    <popup:PopupPage.Content>
+        <StackLayout Padding="15" BackgroundColor="GhostWhite" Margin="30" VerticalOptions="Center">
+            <Expander IsExpanded="{Binding CustomersExpandedState}">
+                <Expander.Header>
+                    <Button CharacterSpacing="2" CornerRadius="20" Command="{Binding CustomersExpanderCommand}" Text="Ответственные лица" ImageSource="{Binding ArrowCircleCustomers}"  FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Medium"/>
+                </Expander.Header>
+                <StackLayout>
+                    <StackLayout  IsVisible="{Binding IndicatorVisible}" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
+                        <ActivityIndicator IsRunning="True" Color="Red" HeightRequest="50" WidthRequest="50"  />
+                        <Label FontAttributes="Bold" Text="Подождите, идет загрузка..."/>
+                    </StackLayout>
+                    <CollectionView Opacity="{Binding OpacityForm}" Margin="5" ItemsSource="{Binding Path=CutomersCollection}" SelectionMode="Single">
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Vertical"/>
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <SwipeView>
+                                    <SwipeView.LeftItems>
+                                        <SwipeItems Mode="Execute">
+                                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ObjCustsPopupViewModel}}, Path=CallCustomer}"
+                                                   CommandParameter="{Binding Path=ObjCustPhone1}">
+                                                <Grid>
+                                                    <Button Text="Вызов" BackgroundColor="OrangeRed" WidthRequest="200" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ObjCustsPopupViewModel}}, Path=MapImage}"/>
+                                                    <!--<Label FontAttributes="Italic" Text="Открыть карту>>>" BackgroundColor="OrangeRed" FontSize="Medium" HorizontalOptions="Center" VerticalOptions="Center"/>-->
+                                                </Grid>
+                                            </SwipeItemView>
+                                        </SwipeItems>
+                                    </SwipeView.LeftItems>
+                                    <Frame BorderColor="Blue" Padding="5" CornerRadius="20">
+                                        <Frame.Content>
+                                            <StackLayout>
+                                                <Label Text="{Binding Path=UserNumberText}" Margin="5,0" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                                <Label Text="{Binding Path=ObjCustTitleText}" Margin="5,0" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                                <Label Text="{Binding Path=ObjCustNameText}" Margin="5,0" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                                <Label Text="{Binding Path=ObjCustPhone1Text}" Margin="5,0" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                            </StackLayout>
+                                        </Frame.Content>
+                                    </Frame>
+                                </SwipeView>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </StackLayout>
+            </Expander>
+            <Button Opacity="{Binding OpacityForm}" ImageSource="{Binding CloseImage}" CornerRadius="20" FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Medium" Text="Закрыть" Command="{Binding CloseCommand}"/>
+        </StackLayout>
+    </popup:PopupPage.Content>
+</popup:PopupPage>

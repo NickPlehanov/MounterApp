@@ -107,6 +107,7 @@
                             </Grid.RowDefinitions>
                             <StackLayout Grid.Row="0">
                                 <Button ImageSource="{Binding InfoImage}" Text="Информация по объекту" Command="{Binding GetObjectInfoCommand}" CornerRadius="20"/>
+                                <Button ImageSource="{Binding PeopleImage}" Text="Ответственные лица" Command="{Binding GetCustomersCommand}" CornerRadius="20"/>
                                 <Button ImageSource="{Binding ReorderImage}" Text="Заявки по объекту" Command="{Binding ServiceOrderByObjectCommand}" CornerRadius="20"/>
                                 <Button ImageSource="{Binding EventImage}" Text="События по объекту" Command="{Binding GetEventsCommand, Mode=TwoWay}" CornerRadius="20"/>
                             </StackLayout>

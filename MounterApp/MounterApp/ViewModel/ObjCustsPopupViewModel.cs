@@ -1,0 +1,166 @@
+﻿using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+using MounterApp.Helpers;
+using MounterApp.Model;
+using MounterApp.Properties;
+using Newtonsoft.Json;
+using Rg.Plugins.Popup.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Net.Http;
+using System.Text;
+using Xamarin.Essentials;
+using Xamarin.Forms;
+
+namespace MounterApp.ViewModel {
+    public class ObjCustsPopupViewModel:BaseViewModel {
+        public ObjCustsPopupViewModel(NewServiceorderExtensionBase _serviceorder) {
+            ServiceOrder = _serviceorder;
+            GetCustomers.Execute(null);
+            ArrowCircleCustomers = "arrow_circle_down.png";
+            OpacityForm = 1;
+            IndicatorVisible = false;
+            CloseImage = "close.png";
+            CallImage = "call.png";
+        }
+
+        private NewServiceorderExtensionBase _ServiceOrder;
+        public NewServiceorderExtensionBase ServiceOrder {
+            get => _ServiceOrder;
+            set {
+                _ServiceOrder = value;
+                OnPropertyChanged(nameof(ServiceOrder));
+            }
+        }
+
+        private bool _IndicatorVisible;
+        public bool IndicatorVisible {
+            get => _IndicatorVisible;
+            set {
+                _IndicatorVisible = value;
+                OnPropertyChanged(nameof(IndicatorVisible));
+            }
+        }
+
+        private double _OpacityForm;
+        public double OpacityForm {
+            get => _OpacityForm;
+            set {
+                _OpacityForm = value;
+                OnPropertyChanged(nameof(OpacityForm));
+            }
+        }
+
+        private bool _CustomersExpandedState;
+        public bool CustomersExpandedState {
+            get => _CustomersExpandedState;
+            set {
+                if(_CustomersExpandedState)
+                    ArrowCircleCustomers = "arrow_circle_up.png";
+                else
+                    ArrowCircleCustomers = "arrow_circle_down.png";
+                _CustomersExpandedState = value;
+                OnPropertyChanged(nameof(CustomersExpandedState));
+            }
+        }
+
+        private ImageSource _ArrowCircleCustomers;
+        public ImageSource ArrowCircleCustomers {
+            get => _ArrowCircleCustomers;
+            set {
+                _ArrowCircleCustomers = value;
+                OnPropertyChanged(nameof(ArrowCircleCustomers));
+            }
+        }
+
+        private ImageSource _CallImage;
+        public ImageSource CallImage {
+            get => _CallImage;
+            set {
+                _CallImage = value;
+                OnPropertyChanged(nameof(CallImage));
+            }
+        }
+        private ImageSource _CloseImage;
+        public ImageSource CloseImage {
+            get => _CloseImage;
+            set {
+                _CloseImage = value;
+                OnPropertyChanged(nameof(CloseImage));
+            }
+        }
+
+        private ObservableCollection<ObjCust> _CutomersCollection=new ObservableCollection<ObjCust>();
+        public ObservableCollection<ObjCust> CutomersCollection {
+            get => _CutomersCollection;
+            set {
+                _CutomersCollection = value;
+                OnPropertyChanged(nameof(CutomersCollection));
+            }
+        }
+
+        private RelayCommand _CustomersExpanderCommand;
+        public RelayCommand CustomersExpanderCommand {
+            get => _CustomersExpanderCommand ??= new RelayCommand(async obj => {
+                CustomersExpandedState = !CustomersExpandedState;
+            });
+        }
+
+        private RelayCommand _CloseCommand;
+        public RelayCommand CloseCommand {
+            get => _CloseCommand ??= new RelayCommand(async obj => {
+                await App.Current.MainPage.Navigation.PopPopupAsync(true);
+            });
+        }
+
+        private RelayCommand _CallCustomer;
+        public RelayCommand CallCustomer {
+            get => _CallCustomer ??= new RelayCommand(async obj => {
+                Analytics.TrackEvent("Звонок клиенту",
+                    new Dictionary<string,string> {
+                        {"ServiceOrderID",ServiceOrder.NewServiceorderId.ToString() },
+                        {"PhoneNumber",obj.ToString() }
+                    });
+                //TODO: если obj не пустой
+                Uri uri = new Uri("tel:" + obj);
+                await Launcher.OpenAsync(uri);
+            },obj=>obj!=null);
+        }
+
+        private RelayCommand _GetCustomers;
+        public RelayCommand GetCustomers {
+            get => _GetCustomers ??= new RelayCommand(async obj => {
+                OpacityForm = 0.1;
+                IndicatorVisible = true;
+                Analytics.TrackEvent("Получение списка ответственных лиц по объекту");
+                using HttpClient client = new HttpClient(GetHttpClientHandler());
+                HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/Customer?ObjectNumber=" + ServiceOrder.NewNumber);
+                List<ObjCust> custs = new List<ObjCust>();
+                if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                    var resp = response.Content.ReadAsStringAsync().Result;
+                    try {
+                        Analytics.TrackEvent("Попытка десериализации ответа от сервера с ответсвенными лицами");
+                        custs = JsonConvert.DeserializeObject<List<ObjCust>>(resp);
+                    }
+                    catch(Exception ex) {
+                        Crashes.TrackError(new Exception("Ошибка получения списка ответственных лиц по объекту"),
+                        new Dictionary<string,string> {
+                        {"ServiceOrderId",ServiceOrder.NewServiceorderId.ToString() },
+                        {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                        {"ErrorMessage",ex.Message },
+                        {"StatusCode",response.StatusCode.ToString() },
+                        {"Response",response.ToString() }
+                        });
+                    }
+                }
+                if(custs != null)
+                    foreach(var item in custs) {
+                        CutomersCollection.Add(item);
+                    }
+                OpacityForm = 1;
+                IndicatorVisible = false;
+            });
+        }
+    }
+}

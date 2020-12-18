@@ -1,4 +1,7 @@
-﻿using MounterApp.Helpers;
+﻿using Android.Widget;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+using MounterApp.Helpers;
 using MounterApp.InternalModel;
 using MounterApp.Model;
 using MounterApp.Properties;
@@ -39,6 +42,96 @@ namespace MounterApp.ViewModel {
             get => _SetValueNecesseryReadCommand ??= new RelayCommand(async obj => {
                 NecesseryRead = !NecesseryRead;
             });
+        }
+        private RelayCommand _IncomeCommand;
+        public RelayCommand IncomeCommand {
+            get => _IncomeCommand ??= new RelayCommand(async obj => {
+                Analytics.TrackEvent("Заявка технику: вызов команды Пришел. Попытка получения координат",
+                new Dictionary<string,string> {
+                    {"ServiceOrderID",so.NewServiceorderId.ToString() },
+                    {"Serviceman",Servicemans.FirstOrDefault().NewPhone}
+                });
+                //OpacityForm = 0.1;
+                //IndicatorVisible = true;
+                Location location = await Geolocation.GetLastKnownLocationAsync();
+                if(location != null) {
+                    Latitude = location.Latitude.ToString();
+                    Longitude = location.Longitude.ToString();
+                }
+                Analytics.TrackEvent("Запрос данных на сервере (могло же что-то измениться",
+                new Dictionary<string,string> {
+                    {"ServiceOrderID",so.NewServiceorderId.ToString() }
+                });
+                using HttpClient client = new HttpClient(GetHttpClientHandler());
+                HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/id?id=" + so.NewServiceorderId);
+                NewServiceorderExtensionBase soeb = null;
+                if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                    var resp = response.Content.ReadAsStringAsync().Result;
+                    try {
+                        soeb = JsonConvert.DeserializeObject<NewServiceorderExtensionBase>(resp);
+                    }
+                    catch(Exception ex) {
+                        Crashes.TrackError(new Exception("Ошибка десериализации объекта заявка технику"),
+                        new Dictionary<string,string> {
+                        {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                        {"ErrorMessage",ex.Message },
+                        {"StatusCode",response.StatusCode.ToString() }
+                        });
+                    }
+                }
+                else
+                    Crashes.TrackError(new Exception("Ошибка получения данных об объекте заявка технику с сервера"),
+                    new Dictionary<string,string> {
+                    {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                    {"StatusCode",response.StatusCode.ToString() },
+                    {"Response",response.ToString() }
+                    });
+                if(soeb != null) {
+                    Analytics.TrackEvent("Попытка записи данных на сервер по объекту заявка технику, заполняем поле Пришел",
+                    new Dictionary<string,string> {
+                        {"ServiceOrderID",so.NewServiceorderId.ToString() }
+                    });
+                    soeb.NewIncome = DateTime.Now.AddHours(-5);
+                    using HttpClient clientPut = new HttpClient(GetHttpClientHandler());
+                    var httpContent = new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json");
+                    HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases",httpContent);
+                    if(!responsePut.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
+                        Crashes.TrackError(new Exception("Ошибка при сохранении объекта Заявка технику"),
+                        new Dictionary<string,string> {
+                        {"ServerResponse",responsePut.Content.ReadAsStringAsync().Result },
+                        {"StatusCode",responsePut.StatusCode.ToString() },
+                        {"Response",responsePut.ToString() }
+                        });
+                    }
+                    else
+                        Toast.MakeText(Android.App.Application.Context,"Время прихода записано",ToastLength.Long).Show();
+                }
+                //запишем координаты
+                Analytics.TrackEvent("Попытка записи координат на сервер по объекту заявка технику",
+                    new Dictionary<string,string> {
+                        {"ServiceOrderID",so.NewServiceorderId.ToString() }
+                    });
+                using(HttpClient clientPost = new HttpClient(GetHttpClientHandler())) {
+                    var data = JsonConvert.SerializeObject(new ServiceOrderCoordinates() {
+                        SocId = Guid.NewGuid(),
+                        SocServiceOrderId = so.NewServiceorderId,
+                        SocIncomeLatitude = Latitude,
+                        SocIncomeLongitude = Longitude
+                    });
+                    StringContent content = new StringContent(data,Encoding.UTF8,"application/json");
+                    HttpResponseMessage responsePost = await clientPost.PostAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates",content);
+                    if(!responsePost.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
+                        Crashes.TrackError(new Exception("Ошибка при сохранении объекта Заявка технику"),
+                        new Dictionary<string,string> {
+                        {"ServerResponse",responsePost.Content.ReadAsStringAsync().Result },
+                        {"StatusCode",responsePost.StatusCode.ToString() },
+                        {"Response",responsePost.ToString() }
+                        });
+                    }
+                }
+                //Opacity = 1;
+                //IndicatorVisible = false;
+            },obj => so.NewIncome == null);
         }
 
         private List<NewMounterExtensionBase> _Mounters;
@@ -146,39 +239,91 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetReasons;
         public RelayCommand GetReasons {
             get => _GetReasons ??= new RelayCommand(async obj => {
+                Analytics.TrackEvent("Форма закрытия заявок. Получение причин для переноса заявки",
+                new Dictionary<string,string> {
+                    {"Query","Common/metadata?ColumnName=New_resultid&ObjectName=New_serviceorder" }
+                });
                 using HttpClient client = new HttpClient(GetHttpClientHandler());
                 HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/metadata?ColumnName=New_resultid&ObjectName=New_serviceorder");
-                var resp = response.Content.ReadAsStringAsync().Result;
                 List<MetadataModel> mm = new List<MetadataModel>();
-                try {
-                    mm = JsonConvert.DeserializeObject<List<MetadataModel>>(resp);
+                if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                    var resp = response.Content.ReadAsStringAsync().Result;
+                    try {
+                        mm = JsonConvert.DeserializeObject<List<MetadataModel>>(resp);
+                    }
+                    catch(Exception ex) {
+                        mm = null;
+                        Crashes.TrackError(new Exception("Форма закрытия заявок. Ошибка десереализации причин для переноса заявки"),
+                        new Dictionary<string,string> {
+                            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                            {"ErrorMessage",ex.Message },
+                            {"StatusCode",response.StatusCode.ToString() },
+                            {"Response",response.ToString() },
+                            {"Query","Common/metadata?ColumnName=New_resultid&ObjectName=New_serviceorder" }
+                        });
+                    }
+                    if(mm != null) {
+                        Reasons.Clear();
+                        foreach(MetadataModel item in mm)
+                            Reasons.Add(item);
+                    }
+                    else {
+                        Analytics.TrackEvent("Форма закрытия заявок. Не получен список причин. Список причин пустой");
+                    }
                 }
-                catch {
-                    mm = null;
-                }
-                if(mm != null) {
-                    foreach(MetadataModel item in mm)
-                        Reasons.Add(item);
-                }
+                else
+                    Crashes.TrackError(new Exception("Форма закрытия заявок. От сервера не получен корректный ответ"),
+                        new Dictionary<string,string> {
+                            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                            {"StatusCode",response.StatusCode.ToString() },
+                            {"Response",response.ToString() },
+                            {"Query","Common/metadata?ColumnName=New_resultid&ObjectName=New_serviceorder" }
+                        });
             });
         }
         private RelayCommand _GetResults;
         public RelayCommand GetResults {
             get => _GetResults ??= new RelayCommand(async obj => {
+                Analytics.TrackEvent("Форма закрытия заявок. Получение результата работы по заявке",
+                new Dictionary<string,string> {
+                    {"Query","Common/metadata?ColumnName=New_result&ObjectName=New_serviceorder" }
+                });
                 using HttpClient client = new HttpClient(GetHttpClientHandler());
                 HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/metadata?ColumnName=New_result&ObjectName=New_serviceorder");
-                var resp = response.Content.ReadAsStringAsync().Result;
                 List<MetadataModel> mm = new List<MetadataModel>();
-                try {
-                    mm = JsonConvert.DeserializeObject<List<MetadataModel>>(resp);
+                if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                    var resp = response.Content.ReadAsStringAsync().Result;
+                    try {
+                        mm = JsonConvert.DeserializeObject<List<MetadataModel>>(resp);
+                    }
+                    catch(Exception ex) {
+                        mm = null;
+                        Crashes.TrackError(new Exception("Форма закрытия заявок. Ошибка десереализации результатов по заявке"),
+                        new Dictionary<string,string> {
+                            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                            {"ErrorMessage",ex.Message },
+                            {"StatusCode",response.StatusCode.ToString() },
+                            {"Response",response.ToString() },
+                            {"Query","Common/metadata?ColumnName=New_result&ObjectName=New_serviceorder" }
+                        });
+                    }
+                    if(mm != null) {
+                        Results.Clear();
+                        foreach(MetadataModel item in mm)
+                            Results.Add(item);
+                    }
+                    else {
+                        Analytics.TrackEvent("Форма закрытия заявок. Не получен список результатов. Список результатов пустой");
+                    }
                 }
-                catch {
-                    mm = null;
-                }
-                if(mm != null) {
-                    foreach(MetadataModel item in mm)
-                        Results.Add(item);
-                }
+                else
+                    Crashes.TrackError(new Exception("Форма закрытия заявок. От сервера не получен корректный ответ"),
+                        new Dictionary<string,string> {
+                            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                            {"StatusCode",response.StatusCode.ToString() },
+                            {"Response",response.ToString() },
+                            {"Query","Common/metadata?ColumnName=New_result&ObjectName=New_serviceorder" }
+                        });
             });
         }
         private bool _IsTransfer;
@@ -295,11 +440,34 @@ namespace MounterApp.ViewModel {
         private RelayCommand _CloseServiceOrderCommand;
         public RelayCommand CloseServiceOrderCommand {
             get => _CloseServiceOrderCommand ??= new RelayCommand(async obj => {
+                if(so.NewIncome == null) {
+                    Analytics.TrackEvent("забыли жмакнуть пришел",
+                    new Dictionary<string,string> {
+                        {"ServiceOrder",so.NewServiceorderId.ToString() },
+                        {"ServicemanPhone",Servicemans.FirstOrDefault().NewPhone }
+                    });
+                    IncomeCommand.Execute(null);
+                }
+                Analytics.TrackEvent("Начало закрытия заявки",
+                    new Dictionary<string,string> {
+                        {"ServiceOrder",so.NewServiceorderId.ToString() },
+                        {"ServicemanPhone",Servicemans.FirstOrDefault().NewPhone }
+                    });
                 if(NecesseryRead && string.IsNullOrEmpty(ConclusionByOrder)) {
+                    Analytics.TrackEvent("Не указано заключение по заявке",
+                    new Dictionary<string,string> {
+                        {"ServiceOrder",so.NewServiceorderId.ToString() },
+                        {"ServicemanPhone",Servicemans.FirstOrDefault().NewPhone }
+                    });
                     await Application.Current.MainPage.DisplayAlert("Ошибка","Не указано заключение по заявке","OK");
                     return;
                 }
                 if(SelectedResult == null) {
+                    Analytics.TrackEvent("Не выбрана результат",
+                    new Dictionary<string,string> {
+                        {"ServiceOrder",so.NewServiceorderId.ToString() },
+                        {"ServicemanPhone",Servicemans.FirstOrDefault().NewPhone }
+                    });
                     await Application.Current.MainPage.DisplayAlert("Ошибка","Не выбрана результат","OK");
                     return;
                 }
@@ -307,120 +475,246 @@ namespace MounterApp.ViewModel {
                     if(SelectedReason != null && !string.IsNullOrEmpty(ReasonComment) && !string.IsNullOrEmpty(ConclusionByOrder)) {
                         using HttpClient client = new HttpClient(GetHttpClientHandler());
                         HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/id?id=" + so.NewServiceorderId);
-                        var resp = response.Content.ReadAsStringAsync().Result;
                         NewServiceorderExtensionBase soeb = null;
-                        try {
-                            soeb = JsonConvert.DeserializeObject<NewServiceorderExtensionBase>(resp);
-                        }
-                        catch {
-                            soeb = null;
-                        }
-                        if(soeb != null) {
-                            soeb.NewOutgone = DateTime.Now.AddHours(-5);
-                            //soeb.NewNewServiceman = Servicemans.FirstOrDefault().NewServicemanId;
-                            soeb.NewResult = SelectedResult.Value;
-                            soeb.NewResultId = SelectedReason.Value;
-                            soeb.NewTransferReason = ReasonComment;
-                            soeb.NewTechConclusion = ConclusionByOrder;
-                            soeb.NewMustRead = NecesseryRead;
-                            if(SelectedResult.Value == 2) {
-                                soeb.NewMoved = new DateTime(TransferDate.Year,TransferDate.Month,TransferDate.Day,TransferTime.Hours,TransferTime.Minutes,TransferTime.Seconds).AddHours(-5);
-                                //soeb.NewMoved = new DateTime(TransferDate.Year,TransferDate.Month,TransferDate.Day,0,0,0).AddHours(-5);
-                            }
-                            using(HttpClient clientPut = new HttpClient(GetHttpClientHandler())) {
-                                var httpContent = new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json");
-                                HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases",httpContent);
-                            }
-                            //запишем координаты
-                            Location location = await Geolocation.GetLastKnownLocationAsync();
-                            if(location != null) {
-                                Latitude = location.Latitude.ToString();
-                                Longitude = location.Longitude.ToString();
-                            }
-                            using HttpClient clientGet = new HttpClient(GetHttpClientHandler());
-                            HttpResponseMessage responseGet = await clientGet.GetAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates/id?so_id=" + so.NewServiceorderId);
-                            var respGet = responseGet.Content.ReadAsStringAsync().Result;
-                            List<ServiceOrderCoordinates> soc = null;
+                        var resp = response.Content.ReadAsStringAsync().Result;
+                        if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
                             try {
-                                soc = JsonConvert.DeserializeObject<List<ServiceOrderCoordinates>>(respGet).Where(x => x.SocOutcomeLatitide == null && x.SocOutcomeLongitude == null).ToList();
+                                soeb = JsonConvert.DeserializeObject<NewServiceorderExtensionBase>(resp);
                             }
-                            catch {
-                                soc = null;
+                            catch (Exception ex) {
+                                soeb = null;
+                                Crashes.TrackError(new Exception("Ошибка десериализации результата запроса(информация о заявке технику)"),
+                                new Dictionary<string,string> {
+                                    {"Servicemans",Servicemans.First().NewPhone },
+                                    {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                                    {"ErrorMessage",ex.Message },
+                                    {"StatusCode",response.StatusCode.ToString() },
+                                    {"Response",response.ToString() },
+                                    {"Query","/api/NewServiceorderExtensionBases/id?id=" + so.NewServiceorderId.ToString() }
+                                });
                             }
-                            if(soc != null) {
+                            if(soeb != null) {
+                                soeb.NewOutgone = DateTime.Now.AddHours(-5);
+                                //soeb.NewNewServiceman = Servicemans.FirstOrDefault().NewServicemanId;
+                                soeb.NewResult = SelectedResult.Value;
+                                soeb.NewResultId = SelectedReason.Value;
+                                soeb.NewTransferReason = ReasonComment;
+                                soeb.NewTechConclusion = ConclusionByOrder;
+                                soeb.NewMustRead = NecesseryRead;
+                                if(SelectedResult.Value == 2) {
+                                    Analytics.TrackEvent("Указание времени переноса",
+                                    new Dictionary<string,string> {
+                                        {"ServiceOrder",so.NewServiceorderId.ToString() },
+                                        {"ServicemanPhone",Servicemans.FirstOrDefault().NewPhone }
+                                    });
+                                    soeb.NewMoved = new DateTime(TransferDate.Year,TransferDate.Month,TransferDate.Day,TransferTime.Hours,TransferTime.Minutes,TransferTime.Seconds).AddHours(-5);
+                                    //soeb.NewMoved = new DateTime(TransferDate.Year,TransferDate.Month,TransferDate.Day,0,0,0).AddHours(-5);
+                                }
                                 using(HttpClient clientPut = new HttpClient(GetHttpClientHandler())) {
-                                    var httpContent = new StringContent(JsonConvert.SerializeObject(soc.First()),Encoding.UTF8,"application/json");
-                                    HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates",httpContent);
+                                    Analytics.TrackEvent("Сохранение информации о заявке технику",
+                                    new Dictionary<string,string> {
+                                        {"ServiceOrder",so.NewServiceorderId.ToString() },
+                                        {"ServicemanPhone",Servicemans.FirstOrDefault().NewPhone }
+                                    });
+                                    var httpContent = new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json");
+                                    HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases",httpContent);
+                                    if(!responsePut.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
+                                        Crashes.TrackError(new Exception("При сохранении информации о заявке технику, произошла ошибка, не был получен корректный ответ"),
+                                        new Dictionary<string,string> {
+                                            {"ServiceOrder",so.NewServiceorderId.ToString() },
+                                            {"Servicemans",Servicemans.First().NewPhone },
+                                            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                                            //{"ErrorMessage",ex.Message },
+                                            {"StatusCode",response.StatusCode.ToString() },
+                                            {"Response",response.ToString() }
+                                        });
+                                        await Application.Current.MainPage.DisplayAlert("Ошибка","При сохранении информации о заявке технику, произошла ошибка, не был получен корректный ответ от сервера. Попробуйте позже, в случае повторной ошибки, сообщите в ИТ-отдел.","OK");
+                                    }
+                                    else
+                                        Toast.MakeText(Android.App.Application.Context,"Информация о заявке сохранена успешно",ToastLength.Long).Show();
+                                }
+                                Analytics.TrackEvent("Попытка получения координат (Перенос/Отмена)");
+                                //запишем координаты
+                                Location location = await Geolocation.GetLastKnownLocationAsync();
+                                if(location != null) {
+                                    Latitude = location.Latitude.ToString();
+                                    Longitude = location.Longitude.ToString();
+                                }
+                                using HttpClient clientGet = new HttpClient(GetHttpClientHandler());
+                                HttpResponseMessage responseGet = await clientGet.GetAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates/id?so_id=" + so.NewServiceorderId);
+                                List<ServiceOrderCoordinates> soc = null;
+                                if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                                    var respGet = responseGet.Content.ReadAsStringAsync().Result;
+                                    try {
+                                        soc = JsonConvert.DeserializeObject<List<ServiceOrderCoordinates>>(respGet).Where(x => x.SocOutcomeLatitide == null && x.SocOutcomeLongitude == null).ToList();
+                                    }
+                                    catch (Exception ex) {
+                                        soc = null;
+                                        Crashes.TrackError(new Exception("Ошибка десериализации при получении координат, для формирования запроса"),
+                                        new Dictionary<string,string> {
+                                            {"Servicemans",Servicemans.First().NewPhone },
+                                            {"ServerResponse",responseGet.Content.ReadAsStringAsync().Result },
+                                            {"ErrorMessage",ex.Message },
+                                            {"StatusCode",responseGet.StatusCode.ToString() },
+                                            {"Response",responseGet.ToString() },
+                                            {"Query","/api/ServiceOrderCoordinates/id?so_id=" + so.NewServiceorderId.ToString() }
+                                        });
+                                    }
+                                    if(soc != null) {
+                                        using(HttpClient clientPut = new HttpClient(GetHttpClientHandler())) {
+                                            var httpContent = new StringContent(JsonConvert.SerializeObject(soc.First()),Encoding.UTF8,"application/json");
+                                            HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates",httpContent);
+                                        }
+                                    }
+                                    else {
+                                        Crashes.TrackError(new Exception("Не найдены запись с координатами прихода техника на объект по данной заявке"),
+                                        new Dictionary<string,string> {
+                                            {"Servicemans",Servicemans.First().NewPhone },
+                                            {"ServiceOrder", so.NewServiceorderId.ToString() }
+                                        });
+                                    }
                                 }
                             }
+                            await App.Current.MainPage.Navigation.PopPopupAsync(true);
+                            ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans,Mounters);
+                            App.Current.MainPage = new ServiceOrdersPage(vm);
                         }
-                        await App.Current.MainPage.Navigation.PopPopupAsync(true);
-                        ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans,Mounters);
-                        App.Current.MainPage = new ServiceOrdersPage(vm);
+                        else
+                            Crashes.TrackError(new Exception("При запросе информация о заявке технику от сервера пришел ответ с ошибкой"),
+                            new Dictionary<string,string> {
+                                {"Servicemans",Servicemans.First().NewPhone },
+                                {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                                {"StatusCode",response.StatusCode.ToString() },
+                                {"Response",response.ToString() },
+                                {"Query","/api/NewServiceorderExtensionBases/id?id=" + so.NewServiceorderId.ToString() }
+                            });
                     }
                     else
                         await Application.Current.MainPage.DisplayAlert("Ошибка","Не выбрана причина отмены(переноса), не указан комментарий к причине или заключение по заявке пустое","OK");
                 }
                 else {//выполнено
-                    if (!string.IsNullOrEmpty(ConclusionByOrder)) {
+                    if(!string.IsNullOrEmpty(ConclusionByOrder)) {
                         using HttpClient client = new HttpClient(GetHttpClientHandler());
                         HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/id?id=" + so.NewServiceorderId);
-                        var resp = response.Content.ReadAsStringAsync().Result;
                         NewServiceorderExtensionBase soeb = null;
+                        if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) { 
+                            var resp = response.Content.ReadAsStringAsync().Result;
                         try {
                             soeb = JsonConvert.DeserializeObject<NewServiceorderExtensionBase>(resp);
                         }
-                        catch {
+                        catch (Exception ex) {
                             soeb = null;
-                        }
-                        if(soeb != null) {
-                            soeb.NewOutgone = DateTime.Now.AddHours(-5);
-                            soeb.NewNewServiceman = Servicemans.FirstOrDefault().NewServicemanId;
-                            soeb.NewResult = SelectedResult.Value;
-                            soeb.NewTechConclusion = ConclusionByOrder;
-                            soeb.NewMustRead = NecesseryRead;
-                            //soeb.NewResultId = SelectedReason.Value;
-                            //soeb.NewTransferReason = ReasonComment;
-                            //if(SelectedResult.Value == 2) {
-                            //    soeb.NewMoved = new DateTime(TransferDate.Year,TransferDate.Month,TransferDate.Day,TransferTime.Hours,TransferTime.Minutes,TransferTime.Seconds).AddHours(-5);
-                            //}
-                            using(HttpClient clientPut = new HttpClient(GetHttpClientHandler())) {
-                                var httpContent = new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json");
-                                HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases",httpContent);
+                                Crashes.TrackError(new Exception("Ошибка десериализации результата запроса для получения информации по заявке технику. Ветка(выполнено)"),
+                                new Dictionary<string,string> {
+                                    {"Servicemans",Servicemans.First().NewPhone },
+                                    {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                                    {"ErrorMessage",ex.Message },
+                                    {"StatusCode",response.StatusCode.ToString() },
+                                    {"Response",response.ToString() },
+                                    {"Query","NewServiceorderExtensionBases/id?id=" + so.NewServiceorderId.ToString() }
+                                });
                             }
-                            //запишем координаты
-                            Location location = await Geolocation.GetLastKnownLocationAsync();
-                            if(location != null) {
-                                Latitude = location.Latitude.ToString();
-                                Longitude = location.Longitude.ToString();
-                            }
-                            using HttpClient clientGet = new HttpClient(GetHttpClientHandler());
-                            HttpResponseMessage responseGet = await clientGet.GetAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates/id?so_id=" + so.NewServiceorderId);
-                            var respGet = responseGet.Content.ReadAsStringAsync().Result;
-                            ServiceOrderCoordinates soc = null;
-                            try {
-                                //soc = JsonConvert.DeserializeObject<ServiceOrderCoordinates>(respGet).Where(x => x.SocOutcomeLatitide == null && x.SocOutcomeLongitude == null);
-                                soc = JsonConvert.DeserializeObject<ServiceOrderCoordinates>(respGet);
-                            }
-                            catch(Exception ex) {
-                                soc = null;
-                            }
-                            if(soc != null) {
-                                soc.SocOutcomeLatitide = Latitude;
-                                soc.SocOutcomeLongitude = Longitude;
+                            if(soeb != null) {
+                                soeb.NewOutgone = DateTime.Now.AddHours(-5);
+                                soeb.NewNewServiceman = Servicemans.FirstOrDefault().NewServicemanId;
+                                soeb.NewResult = SelectedResult.Value;
+                                soeb.NewTechConclusion = ConclusionByOrder;
+                                soeb.NewMustRead = NecesseryRead;
+                                //soeb.NewResultId = SelectedReason.Value;
+                                //soeb.NewTransferReason = ReasonComment;
+                                //if(SelectedResult.Value == 2) {
+                                //    soeb.NewMoved = new DateTime(TransferDate.Year,TransferDate.Month,TransferDate.Day,TransferTime.Hours,TransferTime.Minutes,TransferTime.Seconds).AddHours(-5);
+                                //}
                                 using(HttpClient clientPut = new HttpClient(GetHttpClientHandler())) {
-                                    var httpContent = new StringContent(JsonConvert.SerializeObject(soc),Encoding.UTF8,"application/json");
-                                    HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates",httpContent);
+                                    var httpContent = new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json");
+                                    HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases",httpContent);
+                                    if(responsePut.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
+                                        Toast.MakeText(Android.App.Application.Context,"Заявка технику сохранена",ToastLength.Long).Show();
+                                    }
+                                    else {
+                                        Crashes.TrackError(new Exception("Ошибка при сохранении заявки технику"),
+                                        new Dictionary<string,string> {
+                                            {"Servicemans",Servicemans.First().NewPhone },
+                                            {"ServiceOrder",so.NewServiceorderId.ToString() },
+                                            {"ServerResponse",responsePut.Content.ReadAsStringAsync().Result },
+                                            {"StatusCode",responsePut.StatusCode.ToString() },
+                                            {"Response",responsePut.ToString() }
+                                        });
+                                    }
                                 }
+                                //запишем координаты
+                                Analytics.TrackEvent("Попытка получения координат (Выполнено)");
+                                Location location = await Geolocation.GetLastKnownLocationAsync();
+                                if(location != null) {
+                                    Latitude = location.Latitude.ToString();
+                                    Longitude = location.Longitude.ToString();
+                                }
+                                using HttpClient clientGet = new HttpClient(GetHttpClientHandler());
+                                HttpResponseMessage responseGet = await clientGet.GetAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates/id?so_id=" + so.NewServiceorderId);
+                                ServiceOrderCoordinates soc = null;
+                                if(responseGet.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                                    var respGet = responseGet.Content.ReadAsStringAsync().Result;
+                                    try {
+                                        soc = JsonConvert.DeserializeObject<ServiceOrderCoordinates>(respGet);
+                                    }
+                                    catch(Exception ex) {
+                                        Crashes.TrackError(new Exception("Ошибка десериализации результата запросакоординат по заявке "),
+                                        new Dictionary<string,string> {
+                                            {"Servicemans",Servicemans.First().NewPhone },
+                                            {"Serviceorder",so.NewServiceorderId.ToString() },
+                                            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                                            {"ErrorMessage",ex.Message },
+                                            {"StatusCode",response.StatusCode.ToString() },
+                                            {"Response",response.ToString() }
+                                        });
+                                        soc = null;
+                                    }
+                                    if(soc != null) {
+                                        soc.SocOutcomeLatitide = Latitude;
+                                        soc.SocOutcomeLongitude = Longitude;
+                                        using HttpClient clientPut = new HttpClient(GetHttpClientHandler()) ;
+                                            var httpContent = new StringContent(JsonConvert.SerializeObject(soc),Encoding.UTF8,"application/json");
+                                            HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates",httpContent);
+                                        if(!responsePut.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
+                                            Crashes.TrackError(new Exception("Ошибка при записи координат в базу"),
+                                            new Dictionary<string,string> {
+                                                {"Servicemans",Servicemans.First().NewPhone },
+                                                {"Serviceorder",so.NewServiceorderId.ToString() },
+                                                {"ServerResponse",responsePut.Content.ReadAsStringAsync().Result },
+                                                //{"ErrorMessage",ex.Message },
+                                                {"StatusCode",responsePut.StatusCode.ToString() },
+                                                {"Response",responsePut.ToString() }
+                                            });
+                                        }
+                                            try {
+                                                await App.Current.MainPage.Navigation.PopPopupAsync(true);
+                                            }
+                                            catch(Exception ex) {
+                                            Crashes.TrackError(new Exception("Ошибка при закрытии текущей страницы CloseOrderPopupPage при установлении статуса заявки выполнено"),
+                                            new Dictionary<string,string> {
+                                                {"Servicemans",Servicemans.First().NewPhone },
+                                                {"Serviceorder",so.NewServiceorderId.ToString() },
+                                                {"ErrorMessage",ex.Message }
+                                            });
+                                        }
+                                        ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans,Mounters);
+                                        App.Current.MainPage = new ServiceOrdersPage(vm);
+                                    }
+                                }
+                                else
+                                    Crashes.TrackError(new Exception("При попытке получения записи с координатами по текущей заявке, сервер вернул ошибку"),
+                                    new Dictionary<string,string> {
+                                        {"Servicemans",Servicemans.First().NewPhone },
+                                        {"ServerResponse",responseGet.Content.ReadAsStringAsync().Result },
+                                        //{"ErrorMessage",ex.Message },
+                                        {"StatusCode",responseGet.StatusCode.ToString() },
+                                        {"Response",responseGet.ToString() }
+                                    });
                             }
                         }
                     }
                     else
                         await Application.Current.MainPage.DisplayAlert("Ошибка","Заключение по заявке не может быть пустым!","OK");
-
-                    await App.Current.MainPage.Navigation.PopPopupAsync(true);
-                    ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans,Mounters);
-                    App.Current.MainPage = new ServiceOrdersPage(vm);
                 }
             });
         }

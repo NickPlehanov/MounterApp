@@ -23,6 +23,7 @@ using Android.Widget;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Xamarin.Essentials;
+using System.Net;
 
 namespace MounterApp.ViewModel {
     public class NewMountPageViewModel : BaseViewModel {
@@ -55,7 +56,8 @@ namespace MounterApp.ViewModel {
         //                });
         //    //IsChanged = false;
         //}
-        public NewMountPageViewModel(List<NewMounterExtensionBase> mounters) {
+        public NewMountPageViewModel(List<NewMounterExtensionBase> mounters, List<NewServicemanExtensionBase> servicemans) {
+            Servicemans = servicemans;
             Mounters = mounters;
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Карточка объекта" });
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Схема объекта" });
@@ -78,7 +80,8 @@ namespace MounterApp.ViewModel {
             //var height = mainDisplayInfo.Height;
             App.Current.MainPage.HeightRequest= DeviceDisplay.MainDisplayInfo.Height;
         }
-        public NewMountPageViewModel(Mounts mount,List<NewMounterExtensionBase> mounters,bool _IsChanged) {
+        public NewMountPageViewModel(Mounts mount,List<NewMounterExtensionBase> mounters,bool _IsChanged,List<NewServicemanExtensionBase> servicemans) {
+            Servicemans = servicemans;
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Карточка объекта" });
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Схема объекта" });
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Расшлейфовка объекта" });
@@ -131,6 +134,15 @@ namespace MounterApp.ViewModel {
                         });
             IsChanged = _IsChanged;
             App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
+        }
+
+        private List<NewServicemanExtensionBase> _Servicemans;
+        public List<NewServicemanExtensionBase> Servicemans {
+            get => _Servicemans;
+            set {
+                _Servicemans = value;
+                OnPropertyChanged(nameof(Servicemans));
+            }
         }
         private GoogleMountModel _GoogleMount;
         public GoogleMountModel GoogleMount {
@@ -395,12 +407,25 @@ namespace MounterApp.ViewModel {
                         Crashes.TrackError(new Exception("Не удачная попытка записи Web-ссылки в андромеду"),
                         new Dictionary<string,string> {
                         {"ResponseStatusCode",responseEvents.StatusCode.ToString() },
-                        {"ResponseError",responseEvents.Content.ReadAsStringAsync().Result }
+                        {"ResponseError",responseEvents.Content.ReadAsStringAsync().Result },
+                        {"Response",responseEvents.ToString() },
+                        {"ObjectNumber",ObjectNumber },
+                        {"Path",Path }
                         });
                         await Application.Current.MainPage.DisplayAlert("Внимание"
-                            ,"Операторы получили уведомление о электронном обходном по объекту, но при попытке записи ссылки на обходной к информации по объекту возникла ошибка, сообщите об этом операторам."
+                            ,"Операторы получили уведомление об электронном обходном по объекту, но при попытке записи ссылки на обходной к информации по объекту возникла ошибка, сообщите об этом операторам."
                             ,"OK");
                     }
+                    //if (responseEvents.StatusCode == HttpStatusCode.InternalServerError) {
+                    //    Crashes.TrackError(new Exception("Не удачная попытка записи Web-ссылки в андромеду"),
+                    //        new Dictionary<string,string> {
+                    //            {"Servicemans",Servicemans.First().NewPhone },
+                    //            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                    //            {"ErrorMessage",ex.Message },
+                    //            {"StatusCode",response.StatusCode.ToString() },
+                    //            {"Response",response.ToString() }
+                    //        });
+                    //}
                     else if(responseEvents.StatusCode.ToString() == "Accepted") {
                         Toast.MakeText(Android.App.Application.Context,"Монтаж отправлен, данные получены оператором",ToastLength.Long).Show();
                         Analytics.TrackEvent("Монтаж отправлен, данные получены оператором");
@@ -491,14 +516,7 @@ namespace MounterApp.ViewModel {
             }/*,obj => Photos.Count >= 5*/);
         }
 
-        private List<NewServicemanExtensionBase> _Servicemans;
-        public List<NewServicemanExtensionBase> Servicemans {
-            get => _Servicemans;
-            set {
-                _Servicemans = value;
-                OnPropertyChanged(nameof(Servicemans));
-            }
-        }
+        
         //private RelayCommand _AddNewPhotoCommand;
         //public RelayCommand AddNewPhotoCommand {
         //    get => _AddNewPhotoCommand ??= new RelayCommand(async obj => {
@@ -593,7 +611,7 @@ namespace MounterApp.ViewModel {
                 Mount.AddressName = ObjectAddress;
                 Mount.Driveways = ObjectDriveways;
                 Mount.MounterID = Mounters.FirstOrDefault().NewMounterId;
-                SelectActionsPopupPageViewModel vm = new SelectActionsPopupPageViewModel(Mount,Mounters);
+                SelectActionsPopupPageViewModel vm = new SelectActionsPopupPageViewModel(Mount,Mounters,Servicemans);
                 await App.Current.MainPage.Navigation.PushPopupAsync(new SelectActionsPopupPage(vm));
                 //}
 

@@ -1,5 +1,5 @@
 ﻿<popup:PopupPage  xmlns:popup="http://rotorgames.com" xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:dg="clr-namespace:Xamarin.Forms.DataGrid;assembly=Xamarin.Forms.DataGrid"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:views="clr-namespace:MounterApp.Views" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   x:Class="MounterApp.Views.PastOrdersPopupPage">
     <popup:PopupPage.Content>
             <StackLayout Padding="15" BackgroundColor="GhostWhite" Margin="15" VerticalOptions="Center">
@@ -29,11 +29,11 @@
 ImageSource="{Binding ArrowCirclePastServiceOrders}" FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Medium"/>
                     </Expander.Header>
                     <StackLayout>
-                    <StackLayout  IsVisible="{Binding IndicatorVisible}" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
-                        <ActivityIndicator IsRunning="True" Color="Red" HeightRequest="50" WidthRequest="50"  />
-                        <Label FontAttributes="Bold" Text="Подождите, идет загрузка..."/>
-                    </StackLayout>
-                    <CollectionView Opacity="{Binding OpacityForm}" Margin="5" ItemsSource="{Binding PastServiceOrders, Mode=TwoWay}" SelectionMode="Single">
+                        <StackLayout  IsVisible="{Binding IndicatorVisible}" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
+                            <ActivityIndicator IsRunning="True" Color="Red" HeightRequest="50" WidthRequest="50"  />
+                            <Label FontAttributes="Bold" Text="Подождите, идет загрузка..."/>
+                        </StackLayout>
+                        <CollectionView Opacity="{Binding OpacityForm}" Margin="5" ItemsSource="{Binding PastServiceOrders, Mode=TwoWay}" SelectionMode="Single">
                             <CollectionView.ItemsLayout>
                                 <GridItemsLayout Orientation="Vertical"/>
                             </CollectionView.ItemsLayout>
@@ -43,7 +43,7 @@ ImageSource="{Binding ArrowCirclePastServiceOrders}" FontAttributes="Bold" Visua
                                         <Frame.Content>
                                             <!--<RelativeLayout>-->
                                             <Label Text="{Binding Path=FullInfo}" Margin="5" 
-                                       HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                               HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
                                             <!--</RelativeLayout>-->
                                         </Frame.Content>
                                     </Frame>
@@ -51,7 +51,7 @@ ImageSource="{Binding ArrowCirclePastServiceOrders}" FontAttributes="Bold" Visua
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
                         </CollectionView>
-                    </StackLayout>
+                </StackLayout>
                 </Expander>
             <Button ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding CloseCommand}" CornerRadius="20"/>
         </StackLayout>
