@@ -24,7 +24,7 @@
                                             <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ObjCustsPopupViewModel}}, Path=CallCustomer}"
                                                    CommandParameter="{Binding Path=ObjCustPhone1}">
                                                 <Grid>
-                                                    <Button Text="Вызов" BackgroundColor="OrangeRed" WidthRequest="200" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ObjCustsPopupViewModel}}, Path=MapImage}"/>
+                                                    <Button Text="Вызов" BackgroundColor="OrangeRed" WidthRequest="200" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ObjCustsPopupViewModel}}, Path=CallImage}"/>
                                                     <!--<Label FontAttributes="Italic" Text="Открыть карту>>>" BackgroundColor="OrangeRed" FontSize="Medium" HorizontalOptions="Center" VerticalOptions="Center"/>-->
                                                 </Grid>
                                             </SwipeItemView>

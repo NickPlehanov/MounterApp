@@ -12,6 +12,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -39,6 +40,19 @@ namespace MounterApp.ViewModel {
             TransferServiceOrder = "Перенесенные (0)";
             TimeServiceOrder = "Временные (0)";
             OtherServiceOrder = "Прочие (0)";
+            Device.StartTimer(TimeSpan.FromMinutes(1),() => {
+                Task.Run(async () => {
+                    int count_time = ServiceOrdersByTime.Count;
+                    int count_ordr = ServiceOrders.Count;
+                    int count_transfer = ServiceOrderByTransfer.Count;
+                    GetServiceOrders.Execute(Servicemans);
+                    GetServiceOrderByTransfer.Execute(Servicemans);
+                    //if (count_time< ServiceOrdersByTime.Count || count_ordr< ServiceOrders.Count || count_transfer< ServiceOrderByTransfer.Count) { }
+                });
+                return true; //use this to run continuously 
+                //return false; //to stop running continuously 
+
+            });
         }
 
         public ServiceOrdersPageViewModel() {

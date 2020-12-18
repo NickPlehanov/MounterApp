@@ -1,4 +1,5 @@
-﻿using Microsoft.AppCenter.Analytics;
+﻿using Android.Widget;
+using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using MounterApp.Helpers;
 using MounterApp.Model;
@@ -23,6 +24,7 @@ namespace MounterApp.ViewModel {
             IndicatorVisible = false;
             CloseImage = "close.png";
             CallImage = "call.png";
+            Analytics.TrackEvent("Инициализация окна списка ответсвенных");
         }
 
         private NewServiceorderExtensionBase _ServiceOrder;
@@ -117,15 +119,18 @@ namespace MounterApp.ViewModel {
         private RelayCommand _CallCustomer;
         public RelayCommand CallCustomer {
             get => _CallCustomer ??= new RelayCommand(async obj => {
-                Analytics.TrackEvent("Звонок клиенту",
-                    new Dictionary<string,string> {
+                if(!string.IsNullOrEmpty(obj.ToString())) {
+                    Analytics.TrackEvent("Звонок клиенту",
+                        new Dictionary<string,string> {
                         {"ServiceOrderID",ServiceOrder.NewServiceorderId.ToString() },
                         {"PhoneNumber",obj.ToString() }
-                    });
-                //TODO: если obj не пустой
-                Uri uri = new Uri("tel:" + obj);
-                await Launcher.OpenAsync(uri);
-            },obj=>obj!=null);
+                        });
+                    Uri uri = new Uri("tel:" + obj);
+                    await Launcher.OpenAsync(uri);
+                }
+                else
+                    Toast.MakeText(Android.App.Application.Context,"Номер телефона не указан",ToastLength.Long).Show();
+            });
         }
 
         private RelayCommand _GetCustomers;

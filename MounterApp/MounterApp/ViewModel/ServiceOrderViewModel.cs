@@ -1,4 +1,6 @@
-﻿using Android.Widget;
+﻿using Android.Content;
+using Android.OS;
+using Android.Widget;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using MounterApp.Helpers;
@@ -54,6 +56,12 @@ namespace MounterApp.ViewModel {
             PeopleImage = "people.png";
         }
 
+
+        private RelayCommand _NotifyCommand;
+        public RelayCommand NotifyCommand {
+            get => _NotifyCommand ??= new RelayCommand(async obj => {
+            });
+        }
         private ImageSource _InfoImage;
         public ImageSource InfoImage {
             get => _InfoImage;
