@@ -6,6 +6,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
+using Shiny;
 
 namespace MounterApp.Droid {
 	[Activity(Label = "MounterApp",Icon = "@drawable/icon",Theme = "@style/MainTheme",MainLauncher = true,ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize)]
@@ -26,7 +27,7 @@ namespace MounterApp.Droid {
 		}
 		public override void OnRequestPermissionsResult(int requestCode,string[] permissions,[GeneratedEnum] Android.Content.PM.Permission[] grantResults) {
 			Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode,permissions,grantResults);
-
+			AndroidShinyHost.OnRequestPermissionsResult(requestCode,permissions,grantResults);
 			base.OnRequestPermissionsResult(requestCode,permissions,grantResults);
 		}
 	}

@@ -40,19 +40,28 @@ namespace MounterApp.ViewModel {
             TransferServiceOrder = "Перенесенные (0)";
             TimeServiceOrder = "Временные (0)";
             OtherServiceOrder = "Прочие (0)";
-            Device.StartTimer(TimeSpan.FromMinutes(1),() => {
-                Task.Run(async () => {
-                    int count_time = ServiceOrdersByTime.Count;
-                    int count_ordr = ServiceOrders.Count;
-                    int count_transfer = ServiceOrderByTransfer.Count;
-                    GetServiceOrders.Execute(Servicemans);
-                    GetServiceOrderByTransfer.Execute(Servicemans);
-                    //if (count_time< ServiceOrdersByTime.Count || count_ordr< ServiceOrders.Count || count_transfer< ServiceOrderByTransfer.Count) { }
-                });
-                return true; //use this to run continuously 
-                //return false; //to stop running continuously 
+            //Device.StartTimer(TimeSpan.FromMinutes(1),() => {
+            //    Task.Run(async () => {
+            //        if(ServiceOrdersByTime != null)
+            //            if(ServiceOrdersByTime.Any()) {
+            //                int count_time = ServiceOrdersByTime.Count;
+            //            }
+            //        if(ServiceOrders != null)
+            //            if(ServiceOrders.Any()) {
+            //                int count_ordr = ServiceOrders.Count;
+            //            }
+            //        if(ServiceOrderByTransfer != null)
+            //            if(ServiceOrderByTransfer.Any()) {
+            //                int count_transfer = ServiceOrderByTransfer.Count;
+            //            }
+            //        GetServiceOrders.Execute(Servicemans);
+            //        GetServiceOrderByTransfer.Execute(Servicemans);
+            //        //if (count_time< ServiceOrdersByTime.Count || count_ordr< ServiceOrders.Count || count_transfer< ServiceOrderByTransfer.Count) { }
+            //    });
+            //    return true; //use this to run continuously 
+            //    //return false; //to stop running continuously 
 
-            });
+            //});
         }
 
         public ServiceOrdersPageViewModel() {
@@ -231,7 +240,7 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(OpacityForm));
             }
         }
-        
+
         private RelayCommand _BackPressCommand;
         public RelayCommand BackPressCommand {
             get => _BackPressCommand ??= new RelayCommand(async obj => {
@@ -296,7 +305,7 @@ namespace MounterApp.ViewModel {
         }
         private RelayCommand _GetServiceOrders;
         public RelayCommand GetServiceOrders {
-            get => _GetServiceOrders ??= new RelayCommand(async obj => {                
+            get => _GetServiceOrders ??= new RelayCommand(async obj => {
                 OpacityForm = 0.1;
                 IndicatorVisible = true;
                 if(Servicemans.Count > 0) {
@@ -309,7 +318,7 @@ namespace MounterApp.ViewModel {
                     if(Date == DateTime.Parse("01.01.0001 00:00:00"))
                         Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
                     using HttpClient client = new HttpClient(GetHttpClientHandler());
-                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByUser?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);                    
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByUser?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
                     List<NewServiceorderExtensionBase> _serviceorders = new List<NewServiceorderExtensionBase>();
                     if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
                         var resp = response.Content.ReadAsStringAsync().Result;
@@ -339,8 +348,10 @@ namespace MounterApp.ViewModel {
                         });
                     }
                     if(_serviceorders != null) {
-                        ServiceOrders.Clear();
-                        ServiceOrdersByTime.Clear();
+                        if (ServiceOrders!=null)
+                            ServiceOrders.Clear();
+                        if(ServiceOrdersByTime != null)
+                            ServiceOrdersByTime.Clear();
                         foreach(NewServiceorderExtensionBase item in _serviceorders) {
                             if(string.IsNullOrEmpty(item.NewTime))
                                 ServiceOrders.Add(item);
@@ -401,7 +412,8 @@ namespace MounterApp.ViewModel {
                         });
                     }
                     if(_serviceorders != null) {
-                        ServiceOrderByTransfer.Clear();
+                        if(ServiceOrderByTransfer!=null)
+                            ServiceOrderByTransfer.Clear();
                         foreach(NewServiceorderExtensionBase item in _serviceorders) {
                             ServiceOrderByTransfer.Add(item);
                         }
@@ -453,7 +465,7 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(ServiceOrderByTransfer));
             }
         }
-        private ObservableCollection<NewServiceorderExtensionBase> _ServiceOrdersByTime=new ObservableCollection<NewServiceorderExtensionBase>();
+        private ObservableCollection<NewServiceorderExtensionBase> _ServiceOrdersByTime = new ObservableCollection<NewServiceorderExtensionBase>();
         public ObservableCollection<NewServiceorderExtensionBase> ServiceOrdersByTime {
             get => _ServiceOrdersByTime;
             set {

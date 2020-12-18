@@ -5,6 +5,7 @@ using Xamarin.Forms;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using System.Threading.Tasks;
 
 namespace MounterApp {
     public partial class App : Application {
@@ -22,7 +23,7 @@ namespace MounterApp {
 			}
         }
 
-		protected override void OnStart() {
+        protected override void OnStart() {
 			AppCenter.Start("android=f1b532c5-c456-4b0d-b829-5f167beae220;",
 				  typeof(Analytics),typeof(Crashes));
 		}
