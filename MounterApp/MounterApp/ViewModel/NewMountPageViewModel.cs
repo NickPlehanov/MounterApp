@@ -331,8 +331,13 @@ namespace MounterApp.ViewModel {
                                             ,String.Format("file"),String.Format(ObjectNumber + "_" + ph._Types.PhotoTypeName + ".jpeg"));
                                         //form.Add(new StreamContent(ph.File.GetStream()),String.Format("file"),String.Format(ObjectNumber + "_" + ph._Types.PhotoTypeName + ".jpeg"));
                                         //HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress + "/api/Common"                                        
-                                        HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress + "/api/Common?ObjectInfo=" + sb.ToString() + ""
-                                                ,form);
+                                        //HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress + "/api/Common?ObjectInfo=" + sb.ToString() + "",form);                                        
+                                        HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress + "/api/Common?NumberObject=" + ObjectNumber + 
+                                            "&NameObject="+ObjectName+
+                                            "&AddressObject=" + ObjectAddress+
+                                            "&MounterName=" + Mounters.FirstOrDefault().NewName+
+                                            "&Driveways=" + ObjectDriveways
+                                            ,form);
                                         IndicatorText = "Подождите, идет загрузка..." + Environment.NewLine + "Загружено " + cnt.ToString() + " фото из " + Photos.Count.ToString();
                                         cnt++;
                                         if(response.StatusCode.ToString() == "OK") {
@@ -347,6 +352,7 @@ namespace MounterApp.ViewModel {
                                             Crashes.TrackError(new Exception("Ошибка отправки фото на сервер"),
                                                 new Dictionary<string,string> {
                                                     {"Error",response.Content.ReadAsStringAsync().Result },
+                                                    {"ErrorResponse",response.ToString() },
                                                     {"ErrorPhotoNumber",cnt.ToString() }
                                                 });
                                         }

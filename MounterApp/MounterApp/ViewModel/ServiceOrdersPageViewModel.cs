@@ -2,6 +2,7 @@
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using MounterApp.Helpers;
+using MounterApp.InternalModel;
 using MounterApp.Model;
 using MounterApp.Properties;
 using MounterApp.Views;
@@ -18,6 +19,9 @@ using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class ServiceOrdersPageViewModel : BaseViewModel {
+        public ServiceOrdersPageViewModel() {
+
+        }
         public ServiceOrdersPageViewModel(List<NewServicemanExtensionBase> _servicemans,List<NewMounterExtensionBase> _mounters) {
             Servicemans = _servicemans;
             Mounters = _mounters;
@@ -40,6 +44,13 @@ namespace MounterApp.ViewModel {
             TransferServiceOrder = "Перенесенные (0)";
             TimeServiceOrder = "Временные (0)";
             OtherServiceOrder = "Прочие (0)";
+            GetCategory.Execute(Category);
+            var sm = Servicemans.First(x => x.NewCategory == Category.FirstOrDefault(x => x.Value == 6).Value);
+            if(sm!=null) {
+                GetServiceOrderByTransferFireAlarm.Execute(null);
+                GetServiceOrdersFireAlarm.Execute(null);
+            }
+            #region Данный код прекрасно мог бы обновлять заявки в фоне, но иногда он крашится, из-за коллекции
             //Device.StartTimer(TimeSpan.FromMinutes(1),() => {
             //    Task.Run(async () => {
             //        if(ServiceOrdersByTime != null)
@@ -62,10 +73,7 @@ namespace MounterApp.ViewModel {
             //    //return false; //to stop running continuously 
 
             //});
-        }
-
-        public ServiceOrdersPageViewModel() {
-
+            #endregion
         }
 
         private ImageSource _RefreshImage;
@@ -241,6 +249,51 @@ namespace MounterApp.ViewModel {
             }
         }
 
+        private RelayCommand _GetCategory;
+        public RelayCommand GetCategory {
+            get => _GetCategory ??= new RelayCommand(async obj => {
+                Analytics.TrackEvent("Получение категорий техников",
+                new Dictionary<string,string> {
+                    {"Query","Common/metadata?ColumnName=new_category&ObjectName=New_serviceman" }
+                });
+                HttpClient client = new HttpClient(GetHttpClientHandler());
+                HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/metadata?ColumnName=new_category&ObjectName=New_serviceman");
+                List <MetadataModel> mm = new List<MetadataModel>();
+                if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                    var resp = response.Content.ReadAsStringAsync().Result;
+                    try {
+                        mm = JsonConvert.DeserializeObject<List<MetadataModel>>(resp);
+                    }
+                    catch(Exception ex) {
+                        mm = null;
+                        Crashes.TrackError(new Exception("Ошибка десериализации категорий техников"),
+                        new Dictionary<string,string> {
+                            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                            {"ErrorMessage",ex.Message },
+                            {"StatusCode",response.StatusCode.ToString() },
+                            {"Response",response.ToString() },
+                            {"Query","Common/metadata?ColumnName=new_category&ObjectName=New_serviceman" }
+                        });
+                    }
+                    if(mm != null) {
+                        Category.Clear();
+                        foreach(MetadataModel item in mm)
+                            Category.Add(item);
+                    }
+                    else {
+                        Analytics.TrackEvent("Не получен список категорий техников. Список причин пустой");
+                    }
+                }
+                else
+                    Crashes.TrackError(new Exception("Категории техников. От сервера не получен корректный ответ"),
+                        new Dictionary<string,string> {
+                            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                            {"StatusCode",response.StatusCode.ToString() },
+                            {"Response",response.ToString() },
+                            {"Query","Common/metadata?ColumnName=new_category&ObjectName=New_serviceman" }
+                        });
+            });
+        }
         private RelayCommand _BackPressCommand;
         public RelayCommand BackPressCommand {
             get => _BackPressCommand ??= new RelayCommand(async obj => {
@@ -309,7 +362,7 @@ namespace MounterApp.ViewModel {
                 OpacityForm = 0.1;
                 IndicatorVisible = true;
                 if(Servicemans.Count > 0) {
-                    Analytics.TrackEvent("Получение заявок технику заявок технику",
+                    Analytics.TrackEvent("Получение заявок технику",
                     new Dictionary<string,string> {
                         {"Serviceman",Servicemans.FirstOrDefault().NewPhone },
                         {"Date",Date.ToString() }
@@ -360,6 +413,69 @@ namespace MounterApp.ViewModel {
                         }
                         TimeServiceOrder = "Временные (" + ServiceOrdersByTime.Count.ToString() + ")";
                         OtherServiceOrder = "Прочие (" + ServiceOrders.Count.ToString() + ")";
+                    }
+                }
+                IndicatorVisible = false;
+                OpacityForm = 1;
+            });
+        }
+        private RelayCommand _GetServiceOrdersFireAlarm;
+        public RelayCommand GetServiceOrdersFireAlarm {
+            get => _GetServiceOrdersFireAlarm ??= new RelayCommand(async obj => {
+                OpacityForm = 0.1;
+                IndicatorVisible = true;
+                if(Servicemans.Count > 0) {
+                    Analytics.TrackEvent("Получение заявок технику на ПС",
+                    new Dictionary<string,string> {
+                        {"Serviceman",Servicemans.FirstOrDefault().NewPhone },
+                        {"Date",Date.ToString() }
+                    });
+                    ///api/NewServiceorderExtensionBases/ServiceOrderByUser?usr_ID=FEF46B07-8D7A-E311-920A-00155D01051D&date=18.11.2020
+                    if(Date == DateTime.Parse("01.01.0001 00:00:00"))
+                        Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
+                    using HttpClient client = new HttpClient(GetHttpClientHandler());
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceOrderForFireAlarmExtensionBase/ServiceOrderByUser?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
+                    List<NewTest2ExtensionBase> _serviceorders = new List<NewTest2ExtensionBase>();
+                    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                        var resp = response.Content.ReadAsStringAsync().Result;
+                        try {
+                            _serviceorders = JsonConvert.DeserializeObject<List<NewTest2ExtensionBase>>(resp).ToList();
+                        }
+                        catch(Exception ex) {
+                            _serviceorders = null;
+                            Crashes.TrackError(new Exception("Ошибка десериализации результата запроса(Заявки технику ПС)"),
+                            new Dictionary<string,string> {
+                                {"Servicemans",Servicemans.First().NewPhone },
+                                {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                                {"ErrorMessage",ex.Message },
+                                {"StatusCode",response.StatusCode.ToString() },
+                                {"Response",response.ToString() }
+                            });
+                        }
+                    }
+                    else {
+                        _serviceorders = null;
+                        Crashes.TrackError(new Exception("Ошибка запроса(Заявки технику)"),
+                        new Dictionary<string,string> {
+                                {"Servicemans",Servicemans.First().NewPhone },
+                                {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                                {"StatusCode",response.StatusCode.ToString() },
+                                {"Response",response.ToString() }
+                        });
+                    }
+                    if(_serviceorders != null) {
+                        if(ServiceOrdersFireAlarm != null)
+                            ServiceOrdersFireAlarm.Clear();
+                        if(ServiceOrdersByTimeFireAlarm != null)
+                            ServiceOrdersByTimeFireAlarm.Clear();
+                        foreach(NewTest2ExtensionBase item in _serviceorders) {
+                            if(string.IsNullOrEmpty(item.NewTime))
+                                ServiceOrdersFireAlarm.Add(item);
+                            else
+                                ServiceOrdersByTimeFireAlarm.Add(item);
+                        }
+                        //TimeServiceOrder = "Временные (" + ServiceOrdersByTime.Count.ToString() + ")";
+                        //OtherServiceOrder = "Прочие (" + ServiceOrders.Count.ToString() + ")";
                     }
                 }
                 IndicatorVisible = false;
@@ -424,6 +540,63 @@ namespace MounterApp.ViewModel {
                 OpacityForm = 1;
             });
         }
+        private RelayCommand _GetServiceOrderByTransferFireAlarm;
+        public RelayCommand GetServiceOrderByTransferFireAlarm {
+            get => _GetServiceOrderByTransferFireAlarm ??= new RelayCommand(async obj => {
+                OpacityForm = 0.1;
+                IndicatorVisible = true;
+                if(Servicemans.Count > 0) {
+                    Analytics.TrackEvent("Получение заявок технику на ПС - переносы",
+                    new Dictionary<string,string> {
+                        {"Serviceman",Servicemans.FirstOrDefault().NewPhone },
+                        {"Date",Date.ToString() }
+                    });
+                    ///api/NewServiceorderExtensionBases/ServiceOrderByUser?usr_ID=FEF46B07-8D7A-E311-920A-00155D01051D&date=18.11.2020
+                    if(Date == DateTime.Parse("01.01.0001 00:00:00"))
+                        Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
+                    using HttpClient client = new HttpClient(GetHttpClientHandler());
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceOrderForFireAlarmExtensionBase/ServiceOrderByUserTransferReason?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
+                    List<NewTest2ExtensionBase> _serviceorders = new List<NewTest2ExtensionBase>();
+                    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                        var resp = response.Content.ReadAsStringAsync().Result;
+                        try {
+                            _serviceorders = JsonConvert.DeserializeObject<List<NewTest2ExtensionBase>>(resp).ToList();
+                        }
+                        catch(Exception ex) {
+                            _serviceorders = null;
+                            Crashes.TrackError(new Exception("Ошибка десериализации результата запроса(Заявки технику - переносы(ПС))"),
+                            new Dictionary<string,string> {
+                                {"Servicemans",Servicemans.First().NewPhone },
+                                {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                                {"ErrorMessage",ex.Message },
+                                {"StatusCode",response.StatusCode.ToString() },
+                                {"Response",response.ToString() }
+                            });
+                        }
+                    }
+                    else {
+                        _serviceorders = null;
+                        Crashes.TrackError(new Exception("Ошибка запроса(Заявки технику - переносы)"),
+                        new Dictionary<string,string> {
+                                {"Servicemans",Servicemans.First().NewPhone },
+                                {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                                {"StatusCode",response.StatusCode.ToString() },
+                                {"Response",response.ToString() }
+                        });
+                    }
+                    if(_serviceorders != null) {
+                        if(ServiceOrderByTransferFireAlarm != null)
+                            ServiceOrderByTransferFireAlarm.Clear();
+                        foreach(NewTest2ExtensionBase item in _serviceorders) {
+                            ServiceOrderByTransferFireAlarm.Add(item);
+                        }
+                        //TransferServiceOrder = "Перенесенные (" + ServiceOrderByTransferFireAlarm.Count.ToString() + ")";
+                    }
+                }
+                IndicatorVisible = false;
+                OpacityForm = 1;
+            });
+        }
         private RelayCommand _SelectServiceOrderCommand;
         public RelayCommand SelectServiceOrderCommand {
             get => _SelectServiceOrderCommand ??= new RelayCommand(async obj => {
@@ -438,6 +611,14 @@ namespace MounterApp.ViewModel {
             });
         }
 
+        private ObservableCollection<MetadataModel> _Category = new ObservableCollection<MetadataModel>();
+        public ObservableCollection<MetadataModel> Category {
+            get => _Category;
+            set {
+                _Category = value;
+                OnPropertyChanged(nameof(Category));
+            }
+        }
 
         private NewServiceorderExtensionBase _ServiceOrder;
         public NewServiceorderExtensionBase ServiceOrder {
@@ -474,6 +655,33 @@ namespace MounterApp.ViewModel {
             }
         }
 
+        private ObservableCollection<NewTest2ExtensionBase> _ServiceOrdersByTimeFireAlarm=new ObservableCollection<NewTest2ExtensionBase>();
+        public ObservableCollection<NewTest2ExtensionBase> ServiceOrdersByTimeFireAlarm {
+            get => _ServiceOrdersByTimeFireAlarm;
+            set {
+                _ServiceOrdersByTimeFireAlarm = value;
+                OnPropertyChanged(nameof(ServiceOrdersByTimeFireAlarm));
+            }
+        }
+
+        private ObservableCollection<NewTest2ExtensionBase> _ServiceOrdersFireAlarm=new ObservableCollection<NewTest2ExtensionBase>();
+        public ObservableCollection<NewTest2ExtensionBase> ServiceOrdersFireAlarm {
+            get => _ServiceOrdersFireAlarm;
+            set {
+                _ServiceOrdersFireAlarm = value;
+                OnPropertyChanged(nameof(ServiceOrdersFireAlarm));
+            }
+        }
+
+        private ObservableCollection<NewTest2ExtensionBase> _ServiceOrderByTransferFireAlarm=new ObservableCollection<NewTest2ExtensionBase>();
+        public ObservableCollection<NewTest2ExtensionBase> ServiceOrderByTransferFireAlarm {
+            get => _ServiceOrderByTransferFireAlarm;
+            set {
+                _ServiceOrderByTransferFireAlarm = value;
+                OnPropertyChanged(nameof(ServiceOrderByTransferFireAlarm));
+            }
+        }
+
         private bool _TransferServiceOrderExpanded;
         public bool TransferServiceOrderExpanded {
             get => _TransferServiceOrderExpanded;
@@ -493,9 +701,9 @@ namespace MounterApp.ViewModel {
             set {
                 _TimeServiceOrderExpanded = value;
                 if(_TimeServiceOrderExpanded)
-                    ArrowCircleTransferServiceOrder = "arrow_circle_up.png";
+                    ArrowCircleTimeServiceOrder = "arrow_circle_up.png";
                 else
-                    ArrowCircleTransferServiceOrder = "arrow_circle_down.png";
+                    ArrowCircleTimeServiceOrder = "arrow_circle_down.png";
                 OnPropertyChanged(nameof(TimeServiceOrderExpanded));
             }
         }

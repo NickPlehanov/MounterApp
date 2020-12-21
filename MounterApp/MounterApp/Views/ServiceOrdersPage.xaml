@@ -131,6 +131,11 @@
                     </CollectionView>
                 </StackLayout>
             </Expander>
+            <Expander>
+                <Expander.Header>
+                    <Button CharacterSpacing="2" CornerRadius="20" Text="Заявки на ПС"/>
+                </Expander.Header>
+            </Expander>
             <StackLayout IsVisible="{Binding IndicatorVisible}" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
                 <ActivityIndicator IsRunning="True" Color="Red" HeightRequest="50" WidthRequest="50"  />
                 <Label FontAttributes="Bold" Text="Подождите, идет загрузка..."/>

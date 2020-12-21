@@ -492,13 +492,17 @@ namespace MounterApp.ViewModel {
                         });
                     }
                 }
-                else
+                else {
                     Crashes.TrackError(new Exception("Ошибка получения данных об объекте заявка технику с сервера"),
                     new Dictionary<string,string> {
                     {"ServerResponse",response.Content.ReadAsStringAsync().Result },
                     {"StatusCode",response.StatusCode.ToString() },
                     {"Response",response.ToString() }
                     });
+                    await Application.Current.MainPage.DisplayAlert("Ошибка"
+                            ,"От сервера не получена информация о текущей заявке. Повторите попытку позже, в случае если ошибка повторяется, сообщите в IT-отдел."
+                            ,"OK");
+                }
                 if(soeb != null) {
                     Analytics.TrackEvent("Попытка записи данных на сервер по объекту заявка технику, заполняем поле Пришел",
                     new Dictionary<string,string> {
@@ -515,6 +519,9 @@ namespace MounterApp.ViewModel {
                         {"StatusCode",responsePut.StatusCode.ToString() },
                         {"Response",responsePut.ToString() }
                         });
+                        await Application.Current.MainPage.DisplayAlert("Ошибка"
+                            ,"При попытке сохранения данных произошла ошибка. Повторите попытку позже, в случае если ошибка повторяется, сообщите в IT-отдел."
+                            ,"OK");
                     }
                     else
                         Toast.MakeText(Android.App.Application.Context,"Время прихода записано",ToastLength.Long).Show();
