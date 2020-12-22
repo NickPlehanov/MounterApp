@@ -22,7 +22,24 @@ namespace MounterApp.ViewModel {
             IndicatorVisible = false;
             OpacityForm = 1;
         }
+        public EventsPopupViewModel(NewTest2ExtensionBase _so,List<NewServicemanExtensionBase> _servicemans,List<NewMounterExtensionBase> _mounters) {
+            ServiceOrderFireAlarm = _so;
+            Servicemans = _servicemans;
+            Mounters = _mounters;
+            CloseImage = "close.png";
+            GetImage = "get.png";
+            IndicatorVisible = false;
+            OpacityForm = 1;
+        }
 
+        private NewTest2ExtensionBase _ServiceOrderFireAlarm;
+        public NewTest2ExtensionBase ServiceOrderFireAlarm {
+            get => _ServiceOrderFireAlarm;
+            set {
+                _ServiceOrderFireAlarm = value;
+                OnPropertyChanged(nameof(ServiceOrderFireAlarm));
+            }
+        }
         private bool _IndicatorVisible;
         public bool IndicatorVisible {
             get => _IndicatorVisible;
@@ -110,14 +127,26 @@ namespace MounterApp.ViewModel {
                 IndicatorVisible = true;
                 OpacityForm = 0.1;
                 Events.Clear();
-                using HttpClient client = new HttpClient(GetHttpClientHandler());
-                HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/events?objNumber=" + ServiceOrder.NewNumber +
-                    "&startDate=" + StartDate +
-                    "&endDate=" + EndDate +
-                    "&testFiltered=0&doubleFiltered=0"
-                    );
-                var resp = response.Content.ReadAsStringAsync().Result;
+                string resp = null;
                 List<GetEventsReceivedFromObject_Result> _evnts = new List<GetEventsReceivedFromObject_Result>();
+                using (HttpClient client =new HttpClient(GetHttpClientHandler())) {
+                    if(ServiceOrder != null) {
+                        HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/events?objNumber=" + ServiceOrder.NewNumber +
+                                            "&startDate=" + StartDate +
+                                            "&endDate=" + EndDate +
+                                            "&testFiltered=0&doubleFiltered=0"
+                                            );
+                        resp = response.Content.ReadAsStringAsync().Result;
+                    }
+                    else if(ServiceOrderFireAlarm != null) {
+                        HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/events?objNumber=" + ServiceOrderFireAlarm.NewNumber +
+                                            "&startDate=" + StartDate +
+                                            "&endDate=" + EndDate +
+                                            "&testFiltered=0&doubleFiltered=0"
+                                            );
+                        resp = response.Content.ReadAsStringAsync().Result;
+                    }
+                }
                 try {
                     _evnts = JsonConvert.DeserializeObject<List<GetEventsReceivedFromObject_Result>>(resp);
                 }
@@ -125,7 +154,6 @@ namespace MounterApp.ViewModel {
                 if(_evnts.Count > 0) {
                     foreach(var item in _evnts)
                         Events.Add(item);
-                    //EventsVisible = true;
                 }
                 IndicatorVisible = false;
                 OpacityForm = 1;
@@ -144,8 +172,6 @@ namespace MounterApp.ViewModel {
         public RelayCommand ExitCommand {
             get => _ExitCommand ??= new RelayCommand(async obj => {
                 await App.Current.MainPage.Navigation.PopPopupAsync(true);
-                //ServiceOrderViewModel vm = new ServiceOrderViewModel(ServiceOrder,Servicemans,Mounters);
-                //App.Current.MainPage = new ServiceOrder(vm);
             });
         }
     }

@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
@@ -21,6 +22,18 @@ namespace MounterApp.ViewModel {
             GetWires.Execute(null);
             GetExtFields.Execute(null);
             ArrowCircleWires= "arrow_circle_down.png";
+            ArrowCircleExtFields = "arrow_circle_down.png";
+            CloseImage = "close.png";
+            OpacityForm = 1;
+            IndicatorVisible = false;
+        }
+        public ObjectInfoViewModel(NewTest2ExtensionBase _so,List<NewServicemanExtensionBase> _servicemans,List<NewMounterExtensionBase> _mounters) {
+            Mounters = _mounters;
+            Servicemans = _servicemans;
+            ServiceOrderFireAlarm = _so;            
+            GetWires.ExecuteAsync(null);
+            GetExtFields.ExecuteAsync(null);
+            ArrowCircleWires = "arrow_circle_down.png";
             ArrowCircleExtFields = "arrow_circle_down.png";
             CloseImage = "close.png";
             OpacityForm = 1;
@@ -50,6 +63,15 @@ namespace MounterApp.ViewModel {
             set {
                 _ServiceOrder = value;
                 OnPropertyChanged(nameof(ServiceOrder));
+            }
+        }
+
+        private NewTest2ExtensionBase _ServiceOrderFireAlarm;
+        public NewTest2ExtensionBase ServiceOrderFireAlarm {
+            get => _ServiceOrderFireAlarm;
+            set {
+                _ServiceOrderFireAlarm = value;
+                OnPropertyChanged(nameof(ServiceOrderFireAlarm));
             }
         }
         private List<NewServicemanExtensionBase> _Servicemans;
@@ -93,18 +115,26 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(Mounters));
             }
         }
-        private RelayCommand _GetWires;
-        public RelayCommand GetWires {
-            get => _GetWires ??= new RelayCommand(async obj => {
+        private AsyncCommand _GetWires;
+        public AsyncCommand GetWires {
+            get => _GetWires ??= new AsyncCommand(async () => {
                 OpacityForm = 0.1;
                 IndicatorVisible = true;
                 WiresCollection.Clear();
                 using HttpClient client = new HttpClient(GetHttpClientHandler());
-                HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/wires?objNumber=" + ServiceOrder.NewNumber);
-                var resp = response.Content.ReadAsStringAsync().Result;
                 List<Wires> _wrs = new List<Wires>();
+                string resp = "";
+                if(ServiceOrder != null) {
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/wires?objNumber=" + ServiceOrder.NewNumber);
+                    resp = response.Content.ReadAsStringAsync().Result;
+                }
+                else if(ServiceOrderFireAlarm != null) {
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/wires?objNumber=" + ServiceOrderFireAlarm.NewNumber);
+                    resp = response.Content.ReadAsStringAsync().Result;
+                }
                 try {
-                    _wrs = JsonConvert.DeserializeObject<List<Wires>>(resp);
+                    if(!string.IsNullOrEmpty(resp))
+                        _wrs = JsonConvert.DeserializeObject<List<Wires>>(resp);
                 }
                 catch { }
                 if(_wrs.Count() > 0) {
@@ -116,18 +146,39 @@ namespace MounterApp.ViewModel {
                 IndicatorVisible = false;
             });
         }
-        private RelayCommand _GetExtFields;
-        public RelayCommand GetExtFields {
-            get => _GetExtFields ??= new RelayCommand(async obj => {
+        private AsyncCommand _GetExtFields;
+        public AsyncCommand GetExtFields {
+            get => _GetExtFields ??= new AsyncCommand(async () => {
                 OpacityForm = 0.1;
                 IndicatorVisible = true;
                 ExtFields.Clear();
-                using HttpClient client = new HttpClient(GetHttpClientHandler());
-                HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/ext?objNumber=" + ServiceOrder.NewNumber);
-                var resp = response.Content.ReadAsStringAsync().Result;
                 List<ExtFields> _ext = new List<ExtFields>();
+                string resp = "";
+                //using(HttpClient httpClient = new HttpClient(GetHttpClientHandler())) {
+                //    if(ServiceOrder != null) {
+                //        HttpResponseMessage response = await httpClient.GetAsync(Resources.BaseAddress + "/api/Andromeda/ext?objNumber=" + ServiceOrder.NewNumber);
+                //        resp = response.Content.ReadAsStringAsync().Result;
+                //    }
+                //    else if(ServiceOrderFireAlarm != null) {
+                //        HttpResponseMessage response = await httpClient.GetAsync(Resources.BaseAddress + "/api/Andromeda/ext?objNumber=" + ServiceOrder.NewNumber) ;
+                //        resp = response.Content.ReadAsStringAsync().Result;
+                //    }
+                //}
+
+                using HttpClient client = new HttpClient(GetHttpClientHandler());
+                //List<ExtFields> _ext = new List<ExtFields>();
+                //string resp = "";
+                if(ServiceOrder != null) {
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/ext?objNumber=" + ServiceOrder.NewNumber);
+                    resp = response.Content.ReadAsStringAsync().Result;
+                }
+                else if(ServiceOrderFireAlarm != null) {
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/ext?objNumber=" + ServiceOrderFireAlarm.NewNumber);
+                    resp = response.Content.ReadAsStringAsync().Result;
+                }
                 try {
-                    _ext = JsonConvert.DeserializeObject<List<ExtFields>>(resp);
+                    if(!string.IsNullOrEmpty(resp))
+                        _ext = JsonConvert.DeserializeObject<List<ExtFields>>(resp);
                 }
                 catch { }
                 if(_ext.Count() > 0) {
@@ -139,7 +190,75 @@ namespace MounterApp.ViewModel {
                 IndicatorVisible = false;
             });
         }
+        //private RelayCommand _GetWires;
+        //public RelayCommand GetWires {
+        //    get => _GetWires ??= new RelayCommand(async obj => {
+        //        OpacityForm = 0.1;
+        //        IndicatorVisible = true;
+        //        WiresCollection.Clear();
+        //        using HttpClient client = new HttpClient(GetHttpClientHandler());
+        //        List<Wires> _wrs = new List<Wires>();
+        //        string resp = "";
+        //        if(ServiceOrder != null) {
+        //            HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/wires?objNumber=" + ServiceOrder.NewNumber);
+        //            resp = response.Content.ReadAsStringAsync().Result;
+        //        }
+        //        else if(ServiceOrderFireAlarm != null) {
+        //            HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/wires?objNumber=" + ServiceOrderFireAlarm.NewNumber);
+        //            resp = response.Content.ReadAsStringAsync().Result;
+        //        }
+        //        try {
+        //            if (!string.IsNullOrEmpty(resp))
+        //                _wrs = JsonConvert.DeserializeObject<List<Wires>>(resp);
+        //        }
+        //        catch { }
+        //        if(_wrs.Count() > 0) {
+        //            foreach(var item in _wrs) {
+        //                WiresCollection.Add(item);
+        //            }
+        //        }
+        //        OpacityForm = 1;
+        //        IndicatorVisible = false;
+        //    });
+        //}
+        //private RelayCommand _GetExtFields;
+        //public RelayCommand GetExtFields {
+        //    get => _GetExtFields ??= new RelayCommand(async obj => {
+        //        OpacityForm = 0.1;
+        //        IndicatorVisible = true;
+        //        ExtFields.Clear();
+        //        using HttpClient client = new HttpClient(GetHttpClientHandler());
+        //        List<ExtFields> _ext = new List<ExtFields>();
+        //        string resp = "";
+        //        if(ServiceOrder != null) {
+        //            HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/ext?objNumber=" + ServiceOrder.NewNumber);
+        //             resp = response.Content.ReadAsStringAsync().Result;
+        //        }
+        //        else if(ServiceOrderFireAlarm != null) {
+        //            HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/ext?objNumber=" + ServiceOrder.NewNumber);
+        //            resp = response.Content.ReadAsStringAsync().Result;
+        //        }
+        //        try {
+        //            if(!string.IsNullOrEmpty(resp))
+        //                _ext = JsonConvert.DeserializeObject<List<ExtFields>>(resp);
+        //        }
+        //        catch { }
+        //        if(_ext.Count() > 0) {
+        //            foreach(var item in _ext) {
+        //                ExtFields.Add(item);
+        //            }
+        //        }
+        //        OpacityForm = 1;
+        //        IndicatorVisible = false;
+        //    });
+        //}
 
+
+        private RelayCommand _RefreshCommand;
+        public RelayCommand RefreshCommand {
+            get => _RefreshCommand ??= new RelayCommand(async obj => {
+            });
+        }
         private bool _WiresExpandedState;
         public bool WiresExpandedState {
             get => _WiresExpandedState;

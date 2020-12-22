@@ -27,29 +27,40 @@ namespace MounterApp.ViewModel {
             Mounters = _mounters;
             OpacityForm = 1;
             IndicatorVisible = false;
-            GetServiceOrders.Execute(Servicemans);
-            GetServiceOrderByTransfer.Execute(Servicemans);
+            //GetServiceOrders.Execute(Servicemans);
+            //GetServiceOrderByTransfer.Execute(Servicemans);
+            RefreshOrdersCommand.Execute(null);
             App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
             Analytics.TrackEvent("Инициализация страницы заявок технику",
             new Dictionary<string,string> {
                 {"Serviceman",Servicemans.FirstOrDefault().NewPhone }
             });
+            if(Category.Count > 0) {
+                var sm = Servicemans.First(x => x.NewCategory == Category.FirstOrDefault(x => x.Value == 6).Value);
+                if(sm != null) {
+                    GetServiceOrderByTransferFireAlarm.Execute(null);
+                    GetServiceOrdersFireAlarm.Execute(null);
+                }
+            }
             RefreshImage = "refresh.png";
             MapImage = "map.png";
             TransferImage = "transfer.png";
             FrameColor = Color.Red;
+            ArrowCircleServiceOrder = "arrow_circle_down.png";
             ArrowCircleTransferServiceOrder = "arrow_circle_down.png";
             ArrowCircleTimeServiceOrder = "arrow_circle_down.png";
             ArrowCircleOtherServiceOrder = "arrow_circle_down.png";
+            ArrowCircleFireAlarmServiceOrder = "arrow_circle_down.png";
+            ArrowCircleFireAlarmTransferServiceOrder = "arrow_circle_down.png";
+            ArrowCircleFireAlarmTimeServiceOrder = "arrow_circle_down.png";
+            ArrowCircleFireAlarmOtherServiceOrder = "arrow_circle_down.png";
             TransferServiceOrder = "Перенесенные (0)";
+            FireAlarmTransferServiceOrderText = "Перенесенные(пс) (0)";
             TimeServiceOrder = "Временные (0)";
+            FireAlarmTimeServiceOrderText = "Временные(пс) (0)";
             OtherServiceOrder = "Прочие (0)";
-            GetCategory.Execute(Category);
-            var sm = Servicemans.First(x => x.NewCategory == Category.FirstOrDefault(x => x.Value == 6).Value);
-            if(sm!=null) {
-                GetServiceOrderByTransferFireAlarm.Execute(null);
-                GetServiceOrdersFireAlarm.Execute(null);
-            }
+            FireAlarmOtherServiceOrderText = "Прочие(пс) (0)";
+            
             #region Данный код прекрасно мог бы обновлять заявки в фоне, но иногда он крашится, из-за коллекции
             //Device.StartTimer(TimeSpan.FromMinutes(1),() => {
             //    Task.Run(async () => {
@@ -249,18 +260,19 @@ namespace MounterApp.ViewModel {
             }
         }
 
-        private RelayCommand _GetCategory;
-        public RelayCommand GetCategory {
-            get => _GetCategory ??= new RelayCommand(async obj => {
+
+        private RelayCommand _GetCategoryTech;
+        public RelayCommand GetCategoryTech {
+            get => _GetCategoryTech ??= new RelayCommand(async obj => {
                 Analytics.TrackEvent("Получение категорий техников",
                 new Dictionary<string,string> {
                     {"Query","Common/metadata?ColumnName=new_category&ObjectName=New_serviceman" }
                 });
-                HttpClient client = new HttpClient(GetHttpClientHandler());
-                HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/metadata?ColumnName=new_category&ObjectName=New_serviceman");
-                List <MetadataModel> mm = new List<MetadataModel>();
-                if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                    var resp = response.Content.ReadAsStringAsync().Result;
+                using HttpClient httpClient = new HttpClient(GetHttpClientHandler());
+                HttpResponseMessage httpResponse = await httpClient.GetAsync(Resources.BaseAddress + "/api/Common/metadata?ColumnName=new_category&ObjectName=New_serviceman");
+                List<MetadataModel> mm = new List<MetadataModel>();
+                if(httpResponse.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                    var resp = httpResponse.Content.ReadAsStringAsync().Result;
                     try {
                         mm = JsonConvert.DeserializeObject<List<MetadataModel>>(resp);
                     }
@@ -268,10 +280,10 @@ namespace MounterApp.ViewModel {
                         mm = null;
                         Crashes.TrackError(new Exception("Ошибка десериализации категорий техников"),
                         new Dictionary<string,string> {
-                            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                            {"ServerResponse",httpResponse.Content.ReadAsStringAsync().Result },
                             {"ErrorMessage",ex.Message },
-                            {"StatusCode",response.StatusCode.ToString() },
-                            {"Response",response.ToString() },
+                            {"StatusCode",httpResponse.StatusCode.ToString() },
+                            {"Response",httpResponse.ToString() },
                             {"Query","Common/metadata?ColumnName=new_category&ObjectName=New_serviceman" }
                         });
                     }
@@ -287,9 +299,9 @@ namespace MounterApp.ViewModel {
                 else
                     Crashes.TrackError(new Exception("Категории техников. От сервера не получен корректный ответ"),
                         new Dictionary<string,string> {
-                            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                            {"StatusCode",response.StatusCode.ToString() },
-                            {"Response",response.ToString() },
+                            {"ServerResponse",httpResponse.Content.ReadAsStringAsync().Result },
+                            {"StatusCode",httpResponse.StatusCode.ToString() },
+                            {"Response",httpResponse.ToString() },
                             {"Query","Common/metadata?ColumnName=new_category&ObjectName=New_serviceman" }
                         });
             });
@@ -355,6 +367,22 @@ namespace MounterApp.ViewModel {
                 _FrameColor = value;
                 OnPropertyChanged(nameof(FrameColor));
             }
+        }
+
+        private RelayCommand _RefreshOrdersCommand;
+        public RelayCommand RefreshOrdersCommand {
+            get => _RefreshOrdersCommand ??= new RelayCommand(async obj => {
+                GetCategoryTech.Execute(Category);
+                GetServiceOrders.Execute(Servicemans);
+                GetServiceOrderByTransfer.Execute(Servicemans);
+                if(Category.Count > 0) {
+                    var sm = Servicemans.First(x => x.NewCategory == Category.FirstOrDefault(x => x.Value == 6).Value);
+                    if(sm != null) {
+                        GetServiceOrderByTransferFireAlarm.Execute(null);
+                        GetServiceOrdersFireAlarm.Execute(null);
+                    }
+                }
+            });
         }
         private RelayCommand _GetServiceOrders;
         public RelayCommand GetServiceOrders {
@@ -474,8 +502,8 @@ namespace MounterApp.ViewModel {
                             else
                                 ServiceOrdersByTimeFireAlarm.Add(item);
                         }
-                        //TimeServiceOrder = "Временные (" + ServiceOrdersByTime.Count.ToString() + ")";
-                        //OtherServiceOrder = "Прочие (" + ServiceOrders.Count.ToString() + ")";
+                        FireAlarmTimeServiceOrderText = "Временные(пс) (" + ServiceOrdersByTimeFireAlarm.Count.ToString() + ")";
+                        FireAlarmOtherServiceOrderText = "Прочие(пс) (" + ServiceOrdersFireAlarm.Count.ToString() + ")";
                     }
                 }
                 IndicatorVisible = false;
@@ -590,7 +618,7 @@ namespace MounterApp.ViewModel {
                         foreach(NewTest2ExtensionBase item in _serviceorders) {
                             ServiceOrderByTransferFireAlarm.Add(item);
                         }
-                        //TransferServiceOrder = "Перенесенные (" + ServiceOrderByTransferFireAlarm.Count.ToString() + ")";
+                        FireAlarmTransferServiceOrderText = "Перенесенные(пс) (" + ServiceOrderByTransferFireAlarm.Count.ToString() + ")";
                     }
                 }
                 IndicatorVisible = false;
@@ -611,6 +639,21 @@ namespace MounterApp.ViewModel {
             });
         }
 
+
+        private RelayCommand _SelectServiceOrderFireAlarmCommand;
+        public RelayCommand SelectServiceOrderFireAlarmCommand {
+            get => _SelectServiceOrderFireAlarmCommand ??= new RelayCommand(async obj => {
+                if(ServiceOrderFireAlarm != null) {
+                    Analytics.TrackEvent("Переход к заявке технику",
+                    new Dictionary<string,string> {
+                        {"ServiceOrder",ServiceOrderFireAlarm.NewTest2Id.ToString()}
+                    });
+                    ServiceOrderFireAlarmViewModel vm = new ServiceOrderFireAlarmViewModel(ServiceOrderFireAlarm,Servicemans,Mounters);
+                    App.Current.MainPage = new ServiceOrderFireAlarm(vm);
+                }
+            });
+        }
+
         private ObservableCollection<MetadataModel> _Category = new ObservableCollection<MetadataModel>();
         public ObservableCollection<MetadataModel> Category {
             get => _Category;
@@ -620,12 +663,193 @@ namespace MounterApp.ViewModel {
             }
         }
 
+        #region Управление Expander-ом для общих заявок
+        private bool _ServiceOrderExpanded;
+        public bool ServiceOrderExpanded {
+            get => _ServiceOrderExpanded;
+            set {
+                if(_ServiceOrderExpanded)
+                    ArrowCircleServiceOrder = "arrow_circle_up.png";
+                else
+                    ArrowCircleServiceOrder = "arrow_circle_down.png";
+                _ServiceOrderExpanded = value;
+                OnPropertyChanged(nameof(ServiceOrderExpanded));
+            }
+        }
+        private ImageSource _ArrowCircleServiceOrder;
+        public ImageSource ArrowCircleServiceOrder {
+            get => _ArrowCircleServiceOrder;
+            set {
+                _ArrowCircleServiceOrder = value;
+                OnPropertyChanged(nameof(ArrowCircleServiceOrder));
+            }
+        }
+        private RelayCommand _ServiceOrderExpanderCommand;
+        public RelayCommand ServiceOrderExpanderCommand {
+            get => _ServiceOrderExpanderCommand ??= new RelayCommand(async obj => {
+                ServiceOrderExpanded = !ServiceOrderExpanded;
+            });
+        }
+        #endregion
+
+        #region Управление Expander-ом для общих пожарных заявок
+        private bool _FireAlarmServiceOrderExpanded;
+        public bool FireAlarmServiceOrderExpanded {
+            get => _FireAlarmServiceOrderExpanded;
+            set {
+                if (_FireAlarmServiceOrderExpanded)
+                    ArrowCircleFireAlarmServiceOrder = "arrow_circle_up.png";
+                else
+                    ArrowCircleFireAlarmServiceOrder = "arrow_circle_down.png";
+                _FireAlarmServiceOrderExpanded = value;
+                OnPropertyChanged(nameof(FireAlarmServiceOrderExpanded));
+            }
+        }
+        private ImageSource _ArrowCircleFireAlarmServiceOrder;
+        public ImageSource ArrowCircleFireAlarmServiceOrder {
+            get => _ArrowCircleFireAlarmServiceOrder;
+            set {
+                _ArrowCircleFireAlarmServiceOrder = value;
+                OnPropertyChanged(nameof(ArrowCircleFireAlarmServiceOrder));
+            }
+        }
+        private RelayCommand _FireAlarmServiceOrderExpanderCommand;
+        public RelayCommand FireAlarmServiceOrderExpanderCommand {
+            get => _FireAlarmServiceOrderExpanderCommand ??= new RelayCommand(async obj => {
+                FireAlarmServiceOrderExpanded = !FireAlarmServiceOrderExpanded;
+            });
+        }
+        #endregion
+
+        #region Управление Expander-ом для перенесенных пожарных заявок
+        private bool _FireAlarmTransferServiceOrderExpanded;
+        public bool FireAlarmTransferServiceOrderExpanded {
+            get => _FireAlarmTransferServiceOrderExpanded;
+            set {
+                if(_FireAlarmTransferServiceOrderExpanded)
+                    ArrowCircleFireAlarmTransferServiceOrder = "arrow_circle_up.png";
+                else
+                    ArrowCircleFireAlarmTransferServiceOrder = "arrow_circle_down.png";
+                _FireAlarmTransferServiceOrderExpanded = value;
+                OnPropertyChanged(nameof(FireAlarmTransferServiceOrderExpanded));
+            }
+        }
+        private ImageSource _ArrowCircleFireAlarmTransferServiceOrder;
+        public ImageSource ArrowCircleFireAlarmTransferServiceOrder {
+            get => _ArrowCircleFireAlarmTransferServiceOrder;
+            set {
+                _ArrowCircleFireAlarmTransferServiceOrder = value;
+                OnPropertyChanged(nameof(ArrowCircleFireAlarmTransferServiceOrder));
+            }
+        }
+        private RelayCommand _FireAlarmTransferServiceOrderExpanderCommand;
+        public RelayCommand FireAlarmTransferServiceOrderExpanderCommand {
+            get => _FireAlarmTransferServiceOrderExpanderCommand ??= new RelayCommand(async obj => {
+                FireAlarmTransferServiceOrderExpanded = !FireAlarmTransferServiceOrderExpanded;
+            });
+        }
+
+        private string _FireAlarmTransferServiceOrderText;
+        public string FireAlarmTransferServiceOrderText {
+            get => _FireAlarmTransferServiceOrderText;
+            set {
+                _FireAlarmTransferServiceOrderText = value;
+                OnPropertyChanged(nameof(FireAlarmTransferServiceOrderText));
+            }
+        }
+        #endregion
+
+        #region Управление Expander-ом для временных пожарных заявок
+        private bool _FireAlarmTimeServiceOrderExpanded;
+        public bool FireAlarmTimeServiceOrderExpanded {
+            get => _FireAlarmTimeServiceOrderExpanded;
+            set {
+                if(_FireAlarmTimeServiceOrderExpanded)
+                    ArrowCircleFireAlarmTimeServiceOrder = "arrow_circle_up.png";
+                else
+                    ArrowCircleFireAlarmTimeServiceOrder = "arrow_circle_down.png";
+                _FireAlarmTimeServiceOrderExpanded = value;
+                OnPropertyChanged(nameof(FireAlarmTimeServiceOrderExpanded));
+            }
+        }
+        private ImageSource _ArrowCircleFireAlarmTimeServiceOrder;
+        public ImageSource ArrowCircleFireAlarmTimeServiceOrder {
+            get => _ArrowCircleFireAlarmTimeServiceOrder;
+            set {
+                _ArrowCircleFireAlarmTimeServiceOrder = value;
+                OnPropertyChanged(nameof(ArrowCircleFireAlarmTimeServiceOrder));
+            }
+        }
+        private RelayCommand _FireAlarmTimeServiceOrderExpanderCommand;
+        public RelayCommand FireAlarmTimeServiceOrderExpanderCommand {
+            get => _FireAlarmTimeServiceOrderExpanderCommand ??= new RelayCommand(async obj => {
+                FireAlarmTimeServiceOrderExpanded = !FireAlarmTimeServiceOrderExpanded;
+            });
+        }
+
+        private string _FireAlarmTimeServiceOrderText;
+        public string FireAlarmTimeServiceOrderText {
+            get => _FireAlarmTimeServiceOrderText;
+            set {
+                _FireAlarmTimeServiceOrderText = value;
+                OnPropertyChanged(nameof(FireAlarmTimeServiceOrderText));
+            }
+        }
+        #endregion
+
+        #region Управление Expander-ом для остальных пожарных заявок
+        private bool _FireAlarmOtherServiceOrderExpanded;
+        public bool FireAlarmOtherServiceOrderExpanded {
+            get => _FireAlarmOtherServiceOrderExpanded;
+            set {
+                if(_FireAlarmOtherServiceOrderExpanded)
+                    ArrowCircleFireAlarmOtherServiceOrder = "arrow_circle_up.png";
+                else
+                    ArrowCircleFireAlarmOtherServiceOrder = "arrow_circle_down.png";
+                _FireAlarmOtherServiceOrderExpanded = value;
+                OnPropertyChanged(nameof(FireAlarmOtherServiceOrderExpanded));
+            }
+        }
+        private ImageSource _ArrowCircleFireAlarmOtherServiceOrder;
+        public ImageSource ArrowCircleFireAlarmOtherServiceOrder {
+            get => _ArrowCircleFireAlarmOtherServiceOrder;
+            set {
+                _ArrowCircleFireAlarmOtherServiceOrder = value;
+                OnPropertyChanged(nameof(ArrowCircleFireAlarmOtherServiceOrder));
+            }
+        }
+        private RelayCommand _FireAlarmOtherServiceOrderExpanderCommand;
+        public RelayCommand FireAlarmOtherServiceOrderExpanderCommand {
+            get => _FireAlarmOtherServiceOrderExpanderCommand ??= new RelayCommand(async obj => {
+                FireAlarmOtherServiceOrderExpanded = !FireAlarmOtherServiceOrderExpanded;
+            });
+        }
+
+        private string _FireAlarmOtherServiceOrderText;
+        public string FireAlarmOtherServiceOrderText {
+            get => _FireAlarmOtherServiceOrderText;
+            set {
+                _FireAlarmOtherServiceOrderText = value;
+                OnPropertyChanged(nameof(FireAlarmOtherServiceOrderText));
+            }
+        }
+        #endregion
+
         private NewServiceorderExtensionBase _ServiceOrder;
         public NewServiceorderExtensionBase ServiceOrder {
             get => _ServiceOrder;
             set {
                 _ServiceOrder = value;
                 OnPropertyChanged(nameof(ServiceOrder));
+            }
+        }
+
+        private NewTest2ExtensionBase _ServiceOrderFireAlarm;
+        public NewTest2ExtensionBase ServiceOrderFireAlarm {
+            get => _ServiceOrderFireAlarm;
+            set {
+                _ServiceOrderFireAlarm = value;
+                OnPropertyChanged(nameof(ServiceOrderFireAlarm));
             }
         }
 
@@ -752,6 +976,8 @@ namespace MounterApp.ViewModel {
                 TimeServiceOrderExpanded = !TimeServiceOrderExpanded;
             });
         }
+
+        
 
         private string _TimeServiceOrder;
         public string TimeServiceOrder {

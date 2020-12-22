@@ -37,6 +37,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Update="Views\ServiceOrderFireAlarm.xaml.cs">
+      <DependentUpon>ServiceOrderFireAlarm.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\ServiceOrdersPage.xaml.cs">
       <DependentUpon>ServiceOrdersPage.xaml</DependentUpon>
     </Compile>

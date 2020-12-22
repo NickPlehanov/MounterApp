@@ -25,7 +25,25 @@ namespace MounterApp.ViewModel {
             IndicatorVisible = false;
             OpacityForm = 1;
         }
+        public PastOrdersPopupViewModel(NewTest2ExtensionBase _so,List<NewServicemanExtensionBase> _servicemans,List<NewMounterExtensionBase> _mounters) {
+            Mounters = _mounters;
+            Servicemans = _servicemans;
+            ServiceOrderFireAlarm = _so;
+            GetPastServiceOrders.Execute(null);
+            ArrowCirclePastServiceOrders = "arrow_circle_down.png";
+            CloseImage = "close.png";
+            IndicatorVisible = false;
+            OpacityForm = 1;
+        }
 
+        private NewTest2ExtensionBase _ServiceOrderFireAlarm;
+        public NewTest2ExtensionBase ServiceOrderFireAlarm {
+            get => _ServiceOrderFireAlarm;
+            set {
+                _ServiceOrderFireAlarm = value;
+                OnPropertyChanged(nameof(ServiceOrderFireAlarm));
+            }
+        }
         private bool _IndicatorVisible;
         public bool IndicatorVisible {
             get => _IndicatorVisible;
@@ -91,11 +109,20 @@ namespace MounterApp.ViewModel {
                 IndicatorVisible = true;
                 OpacityForm = 0.1;
                 PastServiceOrders.Clear();
-                using HttpClient client = new HttpClient(GetHttpClientHandler());
-                HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByObject?Andromeda_ID="+ServiceOrder.NewAndromedaServiceorder+"&ObjectNumber="+ServiceOrder.NewNumber);
-                var resp = response.Content.ReadAsStringAsync().Result;
                 List<NewServiceorderExtensionBase> _pso = new List<NewServiceorderExtensionBase>();
+                string resp = null;
+                HttpResponseMessage response = null;
+                using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                    if(ServiceOrder != null) {
+                        response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByObject?Andromeda_ID=" + ServiceOrder.NewAndromedaServiceorder + "&ObjectNumber=" + ServiceOrder.NewNumber);
+                    }
+                    else if(ServiceOrderFireAlarm != null) {
+                        response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByObject?Andromeda_ID=" + ServiceOrderFireAlarm.NewAndromedaServiceorder + "&ObjectNumber=" + ServiceOrder.NewNumber);
+                    }
+                    resp = response.Content.ReadAsStringAsync().Result;
+                }
                 try {
+                    //TODO: в данном методе происходит возврат различных сущностей: "заявка технику" или "заявка на пс" надо проверять внутри if
                     _pso = JsonConvert.DeserializeObject<List<NewServiceorderExtensionBase>>(resp);
                 }
                 catch { }

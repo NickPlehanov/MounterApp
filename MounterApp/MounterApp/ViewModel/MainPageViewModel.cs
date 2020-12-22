@@ -30,7 +30,7 @@ namespace MounterApp.ViewModel {
                 PhoneNumber = Application.Current.Properties["Phone"] as string;
             if(Application.Current.Properties.ContainsKey("AutoEnter")) {
                 if(bool.TryParse(Application.Current.Properties["AutoEnter"].ToString(),out bool tmp))
-                    if(tmp)
+                    if(tmp && PhoneNumber!=null)
                         AuthCommand.Execute(null);
             }
             else {

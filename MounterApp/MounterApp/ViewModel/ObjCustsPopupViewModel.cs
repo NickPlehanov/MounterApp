@@ -26,7 +26,25 @@ namespace MounterApp.ViewModel {
             CallImage = "call.png";
             Analytics.TrackEvent("Инициализация окна списка ответсвенных");
         }
+        public ObjCustsPopupViewModel(NewTest2ExtensionBase _serviceorder) {
+            ServiceOrderFireAlarm = _serviceorder;
+            GetCustomers.Execute(null);
+            ArrowCircleCustomers = "arrow_circle_down.png";
+            OpacityForm = 1;
+            IndicatorVisible = false;
+            CloseImage = "close.png";
+            CallImage = "call.png";
+            Analytics.TrackEvent("Инициализация окна списка ответсвенных");
+        }
 
+        private NewTest2ExtensionBase _ServiceOrderFireAlarm;
+        public NewTest2ExtensionBase ServiceOrderFireAlarm {
+            get => _ServiceOrderFireAlarm;
+            set {
+                _ServiceOrderFireAlarm = value;
+                OnPropertyChanged(nameof(ServiceOrderFireAlarm));
+            }
+        }
         private NewServiceorderExtensionBase _ServiceOrder;
         public NewServiceorderExtensionBase ServiceOrder {
             get => _ServiceOrder;
@@ -139,9 +157,18 @@ namespace MounterApp.ViewModel {
                 OpacityForm = 0.1;
                 IndicatorVisible = true;
                 Analytics.TrackEvent("Получение списка ответственных лиц по объекту");
-                using HttpClient client = new HttpClient(GetHttpClientHandler());
-                HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/Customer?ObjectNumber=" + ServiceOrder.NewNumber);
                 List<ObjCust> custs = new List<ObjCust>();
+
+                //using HttpClient client = new HttpClient(GetHttpClientHandler());
+                HttpResponseMessage response = null;
+                using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                    if(ServiceOrder != null) {
+                        response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/Customer?ObjectNumber=" + ServiceOrder.NewNumber);
+                    }
+                    else if(ServiceOrderFireAlarm != null) {
+                        response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/Customer?ObjectNumber=" + ServiceOrderFireAlarm.NewNumber);
+                    }
+                }                
                 if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
                     var resp = response.Content.ReadAsStringAsync().Result;
                     try {

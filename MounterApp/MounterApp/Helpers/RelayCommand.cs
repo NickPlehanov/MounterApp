@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace MounterApp.Helpers {
@@ -20,5 +21,8 @@ namespace MounterApp.Helpers {
         public void Execute(object parameter) {
             execute(parameter);
         }
+        //public override Task Execute(object parameter) {
+        //    execute(parameter);
+        //}
     }
 }

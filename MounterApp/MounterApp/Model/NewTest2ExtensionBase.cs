@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Drawing;
 using System.Text;
 
 namespace MounterApp.Model {
@@ -40,6 +42,36 @@ namespace MounterApp.Model {
         public bool? NewStartReglamentCreation { get; set; }
         public string NewAddToYear { get; set; }
         public bool? NewAddToYearBool { get; set; }
+        [NotMapped]
+        public string FullName {
+            get => NewNumber + Environment.NewLine + NewObjName + Environment.NewLine + NewAddress;
+            //set {
+            //    _FullName = value;
+            //}
+        }
+        [NotMapped]
+        public string FullInfo {
+            get {
+                if(NewDate.HasValue)
+                    return string.Format("Дата: {0} {1} Причина: {2}",NewDate.Value.ToShortDateString(),NewTime,string.IsNullOrEmpty(NewName) ? "<не указана>" : NewName);
+                //return NewDate.Value.ToShortDateString()+" " + NewName;
+                else
+                    return string.Format("Дата: <не указана>; Причина: {0}",string.IsNullOrEmpty(NewName) ? "<не указана>" : NewName);
+            }
+        }
+        [NotMapped]
+        public Color ColorOrder {
+            get {
+                if(NewIncome.HasValue) {
+                    if(NewIncome.Value != null)
+                        return Color.Red;
+                    else
+                        return Color.Black;
+                }
+                else
+                    return Color.Black;
+            }
+        }
 
         public virtual NewAndromedaBase NewAndromedaServiceorderNavigation { get; set; }
         public virtual NewServicemanBase NewNewServicemanPsNavigation { get; set; }

@@ -4,149 +4,322 @@
              x:Class="MounterApp.Views.ServiceOrdersPage">
     <ContentPage.Resources>
         <vm:ServiceOrdersPageViewModel x:Key="vm"/>
-        <ResourceDictionary>
+        <!--<ResourceDictionary>
             <helpers:FrameColorConverter x:Key="FrameColorConverter"/>
         </ResourceDictionary>
         <Style Class="LabelCollectionView" TargetType="Label">
             <Setter Property="BackgroundColor" Value="MediumVioletRed"/>
-        </Style>
+        </Style>-->
     </ContentPage.Resources>
     <ContentPage.Content>
         <StackLayout>
             <StackLayout Grid.Row="0"  Margin="5" Opacity="{Binding OpacityForm}" >
                 <DatePicker Date="{Binding Date, Mode=TwoWay}" HorizontalOptions="Center"/>
-                <Button BackgroundColor="#5E6606" ImageSource="{Binding RefreshImage}" Text="Обновить" Command="{Binding GetServiceOrders}" CornerRadius="20" CharacterSpacing="2" FontAttributes="Bold" FontSize="Large"/>
+                <Button BackgroundColor="#5E6606" ImageSource="{Binding RefreshImage}" Text="Обновить" Command="{Binding RefreshOrdersCommand}" CornerRadius="20" CharacterSpacing="2" FontAttributes="Bold" FontSize="Large"/>
             </StackLayout>
-            <Expander Opacity="{Binding OpacityForm}" IsExpanded="{Binding TransferServiceOrderExpanded}">
+            <!--<Expander Opacity="{Binding OpacityForm}" IsExpanded="{Binding ServiceOrderExpanded}">
                 <Expander.Header>
-                    <Button CharacterSpacing="2" CornerRadius="20" Command="{Binding TransferServiceOrderExpanderCommand}" HorizontalOptions="Center" Text="{Binding TransferServiceOrder}" ImageSource="{Binding ArrowCircleTransferServiceOrder}"  FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Large"/>
+                    <Button BackgroundColor="#4F70E9" CharacterSpacing="2" CornerRadius="20" Text="Заявки" Command="{Binding ServiceOrderExpanderCommand}" 
+                            ImageSource="{Binding ArrowCircleServiceOrder}" FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Large"/>
                 </Expander.Header>
-                <StackLayout>
-                    <CollectionView Margin="5" ItemsSource="{Binding ServiceOrderByTransfer}" SelectionMode="Single" 
+                <StackLayout>-->
+                <Expander Grid.Row="0" Opacity="{Binding OpacityForm}" IsExpanded="{Binding TransferServiceOrderExpanded}">
+                        <Expander.Header>
+                            <Button CharacterSpacing="2" CornerRadius="20" Command="{Binding TransferServiceOrderExpanderCommand}" HorizontalOptions="Center" Text="{Binding TransferServiceOrder}" ImageSource="{Binding ArrowCircleTransferServiceOrder}"  FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Large"/>
+                        </Expander.Header>
+                        <StackLayout>
+                            <CollectionView Margin="5" ItemsSource="{Binding ServiceOrderByTransfer}" SelectionMode="Single" 
                                 SelectionChangedCommand="{Binding SelectServiceOrderCommand, Mode=TwoWay}"
                                 SelectedItem="{Binding ServiceOrder}">
+                                <CollectionView.ItemsLayout>
+                                    <GridItemsLayout Orientation="Vertical" />
+                                </CollectionView.ItemsLayout>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <SwipeView >
+                                            <SwipeView.LeftItems>
+                                                <SwipeItems Mode="Execute">
+                                                    <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
+                                                   CommandParameter="{Binding Path=NewNumber}">
+                                                        <Grid>
+                                                            <Button Text="Навигация" BackgroundColor="OrangeRed" WidthRequest="200" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
+                                                            <!--<Label FontAttributes="Italic" Text="Открыть карту>>>" BackgroundColor="OrangeRed" FontSize="Medium" HorizontalOptions="Center" VerticalOptions="Center"/>-->
+                                                        </Grid>
+                                                    </SwipeItemView>
+                                                </SwipeItems>
+                                            </SwipeView.LeftItems>
+                                            <Frame BorderColor="Red" Padding="5" CornerRadius="20">
+                                                <Frame.Content>
+                                                    <StackLayout>
+                                                        <Label TextColor="{Binding Path=ColorOrder}" Text="{Binding Path=FullName}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                                                    </StackLayout>
+                                                </Frame.Content>
+                                            </Frame>
+                                        </SwipeView>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </StackLayout>
+                    </Expander>
+                <Expander Grid.Row="1" Opacity="{Binding OpacityForm}" IsExpanded="{Binding TimeServiceOrderExpanded}">
+                        <Expander.Header>
+                            <Button CharacterSpacing="2" CornerRadius="20" Command="{Binding TimeServiceOrderExpanderCommand}" HorizontalOptions="Center" Text="{Binding TimeServiceOrder}" ImageSource="{Binding ArrowCircleTimeServiceOrder}"  FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Large"/>
+                        </Expander.Header>
+                        <StackLayout>
+                            <CollectionView Margin="5" ItemsSource="{Binding ServiceOrdersByTime}" SelectionMode="Single" 
+                                SelectionChangedCommand="{Binding SelectServiceOrderCommand, Mode=TwoWay}"
+                                SelectedItem="{Binding ServiceOrder}">
+                                <CollectionView.ItemsLayout>
+                                    <GridItemsLayout Orientation="Vertical" />
+                                </CollectionView.ItemsLayout>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <SwipeView >
+                                            <SwipeView.LeftItems>
+                                                <SwipeItems Mode="Execute">
+                                                    <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
+                                                   CommandParameter="{Binding Path=NewNumber}">
+                                                        <Grid>
+                                                            <Button Text="Навигация" BackgroundColor="OrangeRed" WidthRequest="200" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
+                                                            <!--<Label FontAttributes="Italic" Text="Открыть карту>>>" BackgroundColor="OrangeRed" FontSize="Medium" HorizontalOptions="Center" VerticalOptions="Center"/>-->
+                                                        </Grid>
+                                                    </SwipeItemView>
+                                                </SwipeItems>
+                                            </SwipeView.LeftItems>
+                                            <Frame BorderColor="Red"  Padding="5" CornerRadius="20">
+                                                <Frame.Content>
+                                                    <StackLayout>
+                                                        <Label TextColor="{Binding Path=ColorOrder}" Text="{Binding Path=FullName}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                                                    </StackLayout>
+                                                </Frame.Content>
+                                            </Frame>
+                                        </SwipeView>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </StackLayout>
+                    </Expander>
+                <Expander  Grid.Row="2" Opacity="{Binding OpacityForm}" IsExpanded="{Binding OtherServiceOrderExpanded}">
+                        <Expander.Header>
+                            <Button CharacterSpacing="2" CornerRadius="20" Command="{Binding OtherServiceOrderExpanderCommand}" HorizontalOptions="Center" Text="{Binding OtherServiceOrder}" 
+                            ImageSource="{Binding ArrowCircleOtherServiceOrder}"  FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Large"/>
+                        </Expander.Header>
+                        <StackLayout>
+                            <CollectionView Margin="5" ItemsSource="{Binding ServiceOrders}" SelectionMode="Single" 
+                                SelectionChangedCommand="{Binding SelectServiceOrderCommand, Mode=TwoWay}"
+                                SelectedItem="{Binding ServiceOrder}">
+                                <CollectionView.ItemsLayout>
+                                    <GridItemsLayout Orientation="Vertical" />
+                                </CollectionView.ItemsLayout>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <SwipeView >
+                                            <SwipeView.LeftItems>
+                                                <SwipeItems Mode="Execute">
+                                                    <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
+                                                   CommandParameter="{Binding Path=NewNumber}">
+                                                        <Grid>
+                                                            <Button Text="Навигация" BackgroundColor="OrangeRed" WidthRequest="200" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
+                                                            <!--<Label FontAttributes="Italic" Text="Открыть карту>>>" BackgroundColor="OrangeRed" FontSize="Medium" HorizontalOptions="Center" VerticalOptions="Center"/>-->
+                                                        </Grid>
+                                                    </SwipeItemView>
+                                                </SwipeItems>
+                                            </SwipeView.LeftItems>
+                                            <Frame BorderColor="Red" Padding="5" CornerRadius="20">
+                                                <Frame.Content>
+                                                    <StackLayout>
+                                                        <Label TextColor="{Binding Path=ColorOrder}" Text="{Binding Path=FullName}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                                                    </StackLayout>
+                                                </Frame.Content>
+                                            </Frame>
+                                        </SwipeView>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </StackLayout>
+                    </Expander>
+            <Expander  Grid.Row="3" IsExpanded="{Binding FireAlarmTransferServiceOrderExpanded}">
+                <Expander.Header>
+                    <Button CharacterSpacing="2" CornerRadius="20" Command="{Binding FireAlarmTransferServiceOrderExpanderCommand}" Text="{Binding FireAlarmTransferServiceOrderText}"
+                            ImageSource="{Binding ArrowCircleFireAlarmTransferServiceOrder}" FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Large"/>
+                </Expander.Header>
+                <StackLayout>
+                    <CollectionView Margin="5" ItemsSource="{Binding ServiceOrderByTransferFireAlarm}" SelectionMode="Single" 
+                                SelectionChangedCommand="{Binding SelectServiceOrderFireAlarmCommand, Mode=TwoWay}" SelectedItem="{Binding ServiceOrderFireAlarm}">
                         <CollectionView.ItemsLayout>
                             <GridItemsLayout Orientation="Vertical" />
                         </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <SwipeView >
-                                    <SwipeView.LeftItems>
-                                        <SwipeItems Mode="Execute">
-                                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
-                                                   CommandParameter="{Binding Path=NewNumber}">
-                                                <Grid>
-                                                    <Button Text="Навигация" BackgroundColor="OrangeRed" WidthRequest="200" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
-                                                    <!--<Label FontAttributes="Italic" Text="Открыть карту>>>" BackgroundColor="OrangeRed" FontSize="Medium" HorizontalOptions="Center" VerticalOptions="Center"/>-->
-                                                </Grid>
-                                            </SwipeItemView>
-                                        </SwipeItems>
-                                    </SwipeView.LeftItems>
-                                    <Frame BorderColor="Red" Padding="5" CornerRadius="20">
-                                        <Frame.Content>
-                                            <StackLayout>
-                                                <Label TextColor="{Binding Path=ColorOrder}" Text="{Binding Path=FullName}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
-                                            </StackLayout>
-                                        </Frame.Content>
-                                    </Frame>
-                                </SwipeView>
+                                <Frame BorderColor="Red" Padding="5" CornerRadius="20">
+                                    <Frame.Content>
+                                        <StackLayout>
+                                            <Label TextColor="{Binding Path=ColorOrder}" Text="{Binding Path=FullName}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                                        </StackLayout>
+                                    </Frame.Content>
+                                </Frame>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
                 </StackLayout>
             </Expander>
-            <Expander Opacity="{Binding OpacityForm}" IsExpanded="{Binding TimeServiceOrderExpanded}">
+            <Expander  Grid.Row="4" IsExpanded="{Binding FireAlarmTimeServiceOrderExpanded}">
                 <Expander.Header>
-                    <Button CharacterSpacing="2" CornerRadius="20" Command="{Binding TimeServiceOrderExpanderCommand}" HorizontalOptions="Center" Text="{Binding TimeServiceOrder}" ImageSource="{Binding ArrowCircleTimeServiceOrder}"  FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Large"/>
+                    <Button CharacterSpacing="2" CornerRadius="20" Command="{Binding FireAlarmTimeServiceOrderExpanderCommand}" Text="{Binding FireAlarmTimeServiceOrderText}"
+                            ImageSource="{Binding ArrowCircleFireAlarmTimeServiceOrder}" FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Large"/>
                 </Expander.Header>
                 <StackLayout>
-                    <CollectionView Margin="5" ItemsSource="{Binding ServiceOrdersByTime}" SelectionMode="Single" 
-                                SelectionChangedCommand="{Binding SelectServiceOrderCommand, Mode=TwoWay}"
-                                SelectedItem="{Binding ServiceOrder}">
+                    <CollectionView Margin="5" ItemsSource="{Binding ServiceOrdersByTimeFireAlarm}" SelectionMode="Single" 
+                                SelectionChangedCommand="{Binding SelectServiceOrderFireAlarmCommand, Mode=TwoWay}" SelectedItem="{Binding ServiceOrderFireAlarm}">
                         <CollectionView.ItemsLayout>
                             <GridItemsLayout Orientation="Vertical" />
                         </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <SwipeView >
-                                    <SwipeView.LeftItems>
-                                        <SwipeItems Mode="Execute">
-                                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
-                                                   CommandParameter="{Binding Path=NewNumber}">
-                                                <Grid>
-                                                    <Button Text="Навигация" BackgroundColor="OrangeRed" WidthRequest="200" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
-                                                    <!--<Label FontAttributes="Italic" Text="Открыть карту>>>" BackgroundColor="OrangeRed" FontSize="Medium" HorizontalOptions="Center" VerticalOptions="Center"/>-->
-                                                </Grid>
-                                            </SwipeItemView>
-                                        </SwipeItems>
-                                    </SwipeView.LeftItems>
-                                    <Frame BorderColor="Red"  Padding="5" CornerRadius="20">
-                                        <Frame.Content>
-                                            <StackLayout>
-                                                <Label TextColor="{Binding Path=ColorOrder}" Text="{Binding Path=FullName}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
-                                            </StackLayout>
-                                        </Frame.Content>
-                                    </Frame>
-                                </SwipeView>
+                                <Frame BorderColor="Red" Padding="5" CornerRadius="20">
+                                    <Frame.Content>
+                                        <StackLayout>
+                                            <Label TextColor="{Binding Path=ColorOrder}" Text="{Binding Path=FullName}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                                        </StackLayout>
+                                    </Frame.Content>
+                                </Frame>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
                 </StackLayout>
             </Expander>
-            <Expander Opacity="{Binding OpacityForm}" IsExpanded="{Binding OtherServiceOrderExpanded}">
+            <Expander  Grid.Row="5" IsExpanded="{Binding FireAlarmOtherServiceOrderExpanded}">
                 <Expander.Header>
-                    <Button CharacterSpacing="2" CornerRadius="20" Command="{Binding OtherServiceOrderExpanderCommand}" HorizontalOptions="Center" Text="{Binding OtherServiceOrder}" ImageSource="{Binding ArrowCircleOtherServiceOrder}"  FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Large"/>
+                    <Button CharacterSpacing="2" CornerRadius="20" Command="{Binding FireAlarmOtherServiceOrderExpanderCommand}" Text="{Binding FireAlarmOtherServiceOrderText}"
+                            ImageSource="{Binding ArrowCircleFireAlarmOtherServiceOrder}" FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Large"/>
                 </Expander.Header>
                 <StackLayout>
-                    <CollectionView Margin="5" ItemsSource="{Binding ServiceOrders}" SelectionMode="Single" 
-                                SelectionChangedCommand="{Binding SelectServiceOrderCommand, Mode=TwoWay}"
-                                SelectedItem="{Binding ServiceOrder}">
+                    <CollectionView Margin="5" ItemsSource="{Binding ServiceOrdersFireAlarm}" SelectionMode="Single" 
+                                SelectionChangedCommand="{Binding SelectServiceOrderFireAlarmCommand, Mode=TwoWay}" SelectedItem="{Binding ServiceOrderFireAlarm}">
                         <CollectionView.ItemsLayout>
                             <GridItemsLayout Orientation="Vertical" />
                         </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <SwipeView >
-                                    <SwipeView.LeftItems>
-                                        <SwipeItems Mode="Execute">
-                                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
-                                                   CommandParameter="{Binding Path=NewNumber}">
-                                                <Grid>
-                                                    <Button Text="Навигация" BackgroundColor="OrangeRed" WidthRequest="200" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
-                                                    <!--<Label FontAttributes="Italic" Text="Открыть карту>>>" BackgroundColor="OrangeRed" FontSize="Medium" HorizontalOptions="Center" VerticalOptions="Center"/>-->
-                                                </Grid>
-                                            </SwipeItemView>
-                                        </SwipeItems>
-                                    </SwipeView.LeftItems>
-                                    <Frame BorderColor="Red" Padding="5" CornerRadius="20">
-                                        <Frame.Content>
-                                            <StackLayout>
-                                                <Label TextColor="{Binding Path=ColorOrder}" Text="{Binding Path=FullName}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
-                                            </StackLayout>
-                                        </Frame.Content>
-                                    </Frame>
-                                </SwipeView>
+                                <Frame BorderColor="Red" Padding="5" CornerRadius="20">
+                                    <Frame.Content>
+                                        <StackLayout>
+                                            <Label TextColor="{Binding Path=ColorOrder}" Text="{Binding Path=FullName}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                                        </StackLayout>
+                                    </Frame.Content>
+                                </Frame>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
                 </StackLayout>
             </Expander>
-            <Expander>
+
+            <!--</StackLayout>
+            </Expander>-->
+        </StackLayout>
+
+        <!--<ScrollView>
+            <Expander Opacity="{Binding OpacityForm}" IsExpanded="{Binding FireAlarmServiceOrderExpanded}">
                 <Expander.Header>
-                    <Button CharacterSpacing="2" CornerRadius="20" Text="Заявки на ПС"/>
+                    <Button BackgroundColor="#4F70E9" CharacterSpacing="2" CornerRadius="20" Text="Заявки на ПС" Command="{Binding FireAlarmServiceOrderExpanderCommand}" 
+                            ImageSource="{Binding ArrowCircleFireAlarmServiceOrder}" FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Large"/>
                 </Expander.Header>
+                <StackLayout>
+
+                    <Expander IsExpanded="{Binding FireAlarmTransferServiceOrderExpanded}">
+                        <Expander.Header>
+                            <Button CharacterSpacing="2" CornerRadius="20" Text="Перенесенные(ПС)" Command="{Binding FireAlarmTransferServiceOrderExpanderCommand}" 
+                            ImageSource="{Binding ArrowCircleFireAlarmTransferServiceOrder}" FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Large"/>
+                        </Expander.Header>
+                        <StackLayout>
+                            <CollectionView Margin="5" ItemsSource="{Binding ServiceOrderByTransferFireAlarm}" SelectionMode="Single" 
+                                SelectionChangedCommand="{Binding SelectServiceOrderCommand, Mode=TwoWay}">
+                                <CollectionView.ItemsLayout>
+                                    <GridItemsLayout Orientation="Vertical" />
+                                </CollectionView.ItemsLayout>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Frame BorderColor="Red" Padding="5" CornerRadius="20">
+                                            <Frame.Content>
+                                                <StackLayout>
+                                                    <Label TextColor="{Binding Path=ColorOrder}" Text="{Binding Path=FullName}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                                                </StackLayout>
+                                            </Frame.Content>
+                                        </Frame>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </StackLayout>
+                    </Expander>
+                    <Expander IsExpanded="{Binding FireAlarmTimeServiceOrderExpanded}">
+                        <Expander.Header>
+                            <Button CharacterSpacing="2" CornerRadius="20" Text="Временные(ПС)" Command="{Binding FireAlarmTimeServiceOrderExpanderCommand}" 
+                            ImageSource="{Binding ArrowCircleFireAlarmTimeServiceOrder}" FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Large"/>
+                        </Expander.Header>
+                        <StackLayout>
+                            <CollectionView Margin="5" ItemsSource="{Binding ServiceOrderByTimeFireAlarm}" SelectionMode="Single" 
+                                SelectionChangedCommand="{Binding SelectServiceOrderCommand, Mode=TwoWay}">
+                                <CollectionView.ItemsLayout>
+                                    <GridItemsLayout Orientation="Vertical" />
+                                </CollectionView.ItemsLayout>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Frame BorderColor="Red" Padding="5" CornerRadius="20">
+                                            <Frame.Content>
+                                                <StackLayout>
+                                                    <Label TextColor="{Binding Path=ColorOrder}" Text="{Binding Path=FullName}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                                                </StackLayout>
+                                            </Frame.Content>
+                                        </Frame>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </StackLayout>
+                    </Expander>
+                    <Expander IsExpanded="{Binding FireAlarmOtherServiceOrderExpanded}">
+                        <Expander.Header>
+                            <Button CharacterSpacing="2" CornerRadius="20" Text="Прочие(ПС)" Command="{Binding FireAlarmOtherServiceOrderExpanderCommand}" 
+                            ImageSource="{Binding ArrowCircleFireAlarmOtherServiceOrder}" FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Large"/>
+                        </Expander.Header>
+                        <StackLayout>
+                            <CollectionView Margin="5" ItemsSource="{Binding ServiceOrderByOtherFireAlarm}" SelectionMode="Single" 
+                                SelectionChangedCommand="{Binding SelectServiceOrderCommand, Mode=TwoWay}">
+                                <CollectionView.ItemsLayout>
+                                    <GridItemsLayout Orientation="Vertical" />
+                                </CollectionView.ItemsLayout>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Frame BorderColor="Red" Padding="5" CornerRadius="20">
+                                            <Frame.Content>
+                                                <StackLayout>
+                                                    <Label TextColor="{Binding Path=ColorOrder}" Text="{Binding Path=FullName}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                                                </StackLayout>
+                                            </Frame.Content>
+                                        </Frame>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </StackLayout>
+                    </Expander>
+                </StackLayout>
             </Expander>
-            <StackLayout IsVisible="{Binding IndicatorVisible}" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
+            --><!--</StackLayout>-->
+            <!--<StackLayout IsVisible="{Binding IndicatorVisible}" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
                 <ActivityIndicator IsRunning="True" Color="Red" HeightRequest="50" WidthRequest="50"  />
                 <Label FontAttributes="Bold" Text="Подождите, идет загрузка..."/>
-            </StackLayout>
-        </StackLayout>
+            </StackLayout>--><!--
+
+
+            </ScrollView>-->
+        <!--</StackLayout>-->
         <!--<Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="5*"/>
                 <RowDefinition Height="Auto"/>
-                --><!--<RowDefinition Height="*"/>--><!--
+                -->
+        <!--<RowDefinition Height="*"/>-->
+        <!--
             </Grid.RowDefinitions>
             <StackLayout Grid.Row="0"  Margin="5" Opacity="{Binding OpacityForm}" > 
                 <DatePicker Date="{Binding Date, Mode=TwoWay}" HorizontalOptions="Center"/>
@@ -160,7 +333,9 @@
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        --><!--как в гугл почте--><!--
+                        -->
+        <!--как в гугл почте-->
+        <!--
                         <SwipeView >
                             <SwipeView.LeftItems>
                                 <SwipeItems Mode="Execute">
@@ -188,7 +363,9 @@
                     <SwipeItems Mode="Execute">
                         <SwipeItemView Command="{Binding GetServiceOrders}">
                             <StackLayout Padding="30" HorizontalOptions="End" VerticalOptions="End">
-                                --><!--<ActivityIndicator IsVisible="True" IsRunning="False" Color="Purple" HeightRequest="20" WidthRequest="20"  />--><!--
+                                -->
+        <!--<ActivityIndicator IsVisible="True" IsRunning="False" Color="Purple" HeightRequest="20" WidthRequest="20"  />-->
+        <!--
                                 <Label HorizontalOptions="Center" FontAttributes="Italic" Text="Отпустите, для обновления"/>
                             </StackLayout>
                         </SwipeItemView>
@@ -198,7 +375,9 @@
                     <SwipeItems Mode="Execute">
                         <SwipeItemView Command="{Binding GetServiceOrders}">
                             <StackLayout Padding="30" HorizontalOptions="End" VerticalOptions="End">
-                                --><!--<ActivityIndicator IsVisible="True" IsRunning="False" Color="Purple" HeightRequest="20" WidthRequest="20"  />--><!--
+                                -->
+        <!--<ActivityIndicator IsVisible="True" IsRunning="False" Color="Purple" HeightRequest="20" WidthRequest="20"  />-->
+        <!--
                                 <Label HorizontalOptions="Center" FontAttributes="Italic" Text="Отпустите, для обновления"/>
                             </StackLayout>
                         </SwipeItemView>

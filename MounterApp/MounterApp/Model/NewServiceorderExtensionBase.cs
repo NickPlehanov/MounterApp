@@ -64,13 +64,13 @@ namespace MounterApp.Model {
         public DateTime? NewMovedKc { get; set; }
         public bool? NewAutoset { get; set; }
         public string NewHistoryButton { get; set; }
-        private string _FullName;
+        //private string _FullName;
         [NotMapped]
         public string FullName {
             get => NewNumber + Environment.NewLine + NewObjName + Environment.NewLine + NewAddress;
-            set {
-                _FullName = value;
-            }
+            //set {
+            //    _FullName = value;
+            //}
         }
         [NotMapped]
         public string FullInfo {

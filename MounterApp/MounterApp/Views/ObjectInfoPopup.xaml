@@ -9,17 +9,17 @@
                 <Label FontAttributes="Bold" Text="Подождите, идет загрузка..."/>
             </StackLayout>
             <Expander Opacity="{Binding OpacityForm}" IsExpanded="{Binding WiresExpandedState}">
-            <Expander.Header>
-                <Button CharacterSpacing="2" CornerRadius="20" Command="{Binding WiresExpanderCommand}" Text="Шлейфы" 
+                <Expander.Header>
+                    <Button CharacterSpacing="2" CornerRadius="20" Command="{Binding WiresExpanderCommand}" Text="Шлейфы" 
 ImageSource="{Binding ArrowCircleWires}"  FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Medium"/>
-            </Expander.Header>
-            <StackLayout>
+                </Expander.Header>
+                <StackLayout>
                 <CollectionView Margin="5" ItemsSource="{Binding WiresCollection, Mode=TwoWay}" SelectionMode="Single">
                     <CollectionView.ItemsLayout>
                         <GridItemsLayout Orientation="Vertical"/>
                     </CollectionView.ItemsLayout>
                     <CollectionView.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate >
                             <Frame BorderColor="Blue" Padding="5" CornerRadius="20">
                                 <Frame.Content>
                                     <!--<RelativeLayout>-->
