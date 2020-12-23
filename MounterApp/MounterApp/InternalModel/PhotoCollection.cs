@@ -34,5 +34,6 @@ namespace MounterApp.InternalModel {
         public MediaFile File { get; set; }
         public ImageSource ImgSrc { get; set; }
         public PhotoTypes _Types {get;set;}
+        public bool IsUse { get; set; }
     }
 }

@@ -23,6 +23,8 @@ namespace MounterApp.ViewModel {
 
         }
         public ServiceOrdersPageViewModel(List<NewServicemanExtensionBase> _servicemans,List<NewMounterExtensionBase> _mounters) {
+            if(Date == DateTime.Parse("01.01.0001 00:00:00"))
+                Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
             Servicemans = _servicemans;
             Mounters = _mounters;
             OpacityForm = 1;
@@ -35,13 +37,13 @@ namespace MounterApp.ViewModel {
             new Dictionary<string,string> {
                 {"Serviceman",Servicemans.FirstOrDefault().NewPhone }
             });
-            if(Category.Count > 0) {
-                var sm = Servicemans.First(x => x.NewCategory == Category.FirstOrDefault(x => x.Value == 6).Value);
-                if(sm != null) {
-                    GetServiceOrderByTransferFireAlarm.Execute(null);
-                    GetServiceOrdersFireAlarm.Execute(null);
-                }
-            }
+            //if(Category.Count > 0) {
+            //    var sm = Servicemans.First(x => x.NewCategory == Category.FirstOrDefault(x => x.Value == 6).Value);
+            //    if(sm != null) {
+            //        GetServiceOrderByTransferFireAlarm.Execute(null);
+            //        GetServiceOrdersFireAlarm.Execute(null);
+            //    }
+            //}
             RefreshImage = "refresh.png";
             MapImage = "map.png";
             TransferImage = "transfer.png";
@@ -60,7 +62,14 @@ namespace MounterApp.ViewModel {
             FireAlarmTimeServiceOrderText = "Временные(пс) (0)";
             OtherServiceOrder = "Прочие (0)";
             FireAlarmOtherServiceOrderText = "Прочие(пс) (0)";
-            
+
+            TransferServiceOrderVisible = false;
+            TimeServiceOrderVisible = false;
+            OtherServiceOrderVisible = false;
+            FireAlarmTransferServiceOrderVisible = false;
+            FireAlarmTimeServiceOrderVisible = false;
+            FireAlarmOtherServiceOrderVisible = false;
+
             #region Данный код прекрасно мог бы обновлять заявки в фоне, но иногда он крашится, из-за коллекции
             //Device.StartTimer(TimeSpan.FromMinutes(1),() => {
             //    Task.Run(async () => {
@@ -87,6 +96,59 @@ namespace MounterApp.ViewModel {
             #endregion
         }
 
+        private bool _TransferServiceOrderVisible;
+        public bool TransferServiceOrderVisible {
+            get => _TransferServiceOrderVisible;
+            set {
+                _TransferServiceOrderVisible = value;
+                OnPropertyChanged(nameof(TransferServiceOrderVisible));
+            }
+        }
+
+        private bool _TimeServiceOrderVisible;
+        public bool TimeServiceOrderVisible {
+            get => _TimeServiceOrderVisible;
+            set {
+                _TimeServiceOrderVisible = value;
+                OnPropertyChanged(nameof(TimeServiceOrderVisible));
+            }
+        }
+
+        private bool _OtherServiceOrderVisible;
+        public bool OtherServiceOrderVisible {
+            get => _OtherServiceOrderVisible;
+            set {
+                _OtherServiceOrderVisible = value;
+                OnPropertyChanged(nameof(OtherServiceOrderVisible));
+            }
+        }
+
+        private bool _FireAlarmTransferServiceOrderVisible;
+        public bool FireAlarmTransferServiceOrderVisible {
+            get => _FireAlarmTransferServiceOrderVisible;
+            set {
+                _FireAlarmTransferServiceOrderVisible = value;
+                OnPropertyChanged(nameof(FireAlarmTransferServiceOrderVisible));
+            }
+        }
+
+        private bool _FireAlarmTimeServiceOrderVisible;
+        public bool FireAlarmTimeServiceOrderVisible {
+            get => _FireAlarmTimeServiceOrderVisible;
+            set {
+                _FireAlarmTimeServiceOrderVisible = value;
+                OnPropertyChanged(nameof(FireAlarmTimeServiceOrderVisible));
+            }
+        }
+
+        private bool _FireAlarmOtherServiceOrderVisible;
+        public bool FireAlarmOtherServiceOrderVisible {
+            get => _FireAlarmOtherServiceOrderVisible;
+            set {
+                _FireAlarmOtherServiceOrderVisible = value;
+                OnPropertyChanged(nameof(FireAlarmOtherServiceOrderVisible));
+            }
+        }
         private ImageSource _RefreshImage;
         public ImageSource RefreshImage {
             get => _RefreshImage;
@@ -261,9 +323,9 @@ namespace MounterApp.ViewModel {
         }
 
 
-        private RelayCommand _GetCategoryTech;
-        public RelayCommand GetCategoryTech {
-            get => _GetCategoryTech ??= new RelayCommand(async obj => {
+        private AsyncCommand _GetCategoryTech;
+        public AsyncCommand GetCategoryTech {
+            get => _GetCategoryTech ??= new AsyncCommand(async () => {
                 Analytics.TrackEvent("Получение категорий техников",
                 new Dictionary<string,string> {
                     {"Query","Common/metadata?ColumnName=new_category&ObjectName=New_serviceman" }
@@ -372,21 +434,21 @@ namespace MounterApp.ViewModel {
         private RelayCommand _RefreshOrdersCommand;
         public RelayCommand RefreshOrdersCommand {
             get => _RefreshOrdersCommand ??= new RelayCommand(async obj => {
-                GetCategoryTech.Execute(Category);
-                GetServiceOrders.Execute(Servicemans);
-                GetServiceOrderByTransfer.Execute(Servicemans);
+                await GetCategoryTech.ExecuteAsync(Category);
+                await GetServiceOrders.ExecuteAsync(Servicemans);
+                await GetServiceOrderByTransfer.ExecuteAsync(Servicemans);
                 if(Category.Count > 0) {
                     var sm = Servicemans.First(x => x.NewCategory == Category.FirstOrDefault(x => x.Value == 6).Value);
                     if(sm != null) {
-                        GetServiceOrderByTransferFireAlarm.Execute(null);
-                        GetServiceOrdersFireAlarm.Execute(null);
+                        await GetServiceOrderByTransferFireAlarm.ExecuteAsync(null);
+                        await GetServiceOrdersFireAlarm.ExecuteAsync(null);
                     }
                 }
             });
         }
-        private RelayCommand _GetServiceOrders;
-        public RelayCommand GetServiceOrders {
-            get => _GetServiceOrders ??= new RelayCommand(async obj => {
+        private AsyncCommand _GetServiceOrders;
+        public AsyncCommand GetServiceOrders {
+            get => _GetServiceOrders ??= new AsyncCommand(async () => {
                 OpacityForm = 0.1;
                 IndicatorVisible = true;
                 if(Servicemans.Count > 0) {
@@ -441,15 +503,17 @@ namespace MounterApp.ViewModel {
                         }
                         TimeServiceOrder = "Временные (" + ServiceOrdersByTime.Count.ToString() + ")";
                         OtherServiceOrder = "Прочие (" + ServiceOrders.Count.ToString() + ")";
+                        TimeServiceOrderVisible = ServiceOrdersByTime.Count > 0 ? true : false;
+                        OtherServiceOrderVisible = ServiceOrders.Count > 0 ? true : false;
                     }
                 }
                 IndicatorVisible = false;
                 OpacityForm = 1;
             });
         }
-        private RelayCommand _GetServiceOrdersFireAlarm;
-        public RelayCommand GetServiceOrdersFireAlarm {
-            get => _GetServiceOrdersFireAlarm ??= new RelayCommand(async obj => {
+        private AsyncCommand _GetServiceOrdersFireAlarm;
+        public AsyncCommand GetServiceOrdersFireAlarm {
+            get => _GetServiceOrdersFireAlarm ??= new AsyncCommand(async () => {
                 OpacityForm = 0.1;
                 IndicatorVisible = true;
                 if(Servicemans.Count > 0) {
@@ -504,6 +568,8 @@ namespace MounterApp.ViewModel {
                         }
                         FireAlarmTimeServiceOrderText = "Временные(пс) (" + ServiceOrdersByTimeFireAlarm.Count.ToString() + ")";
                         FireAlarmOtherServiceOrderText = "Прочие(пс) (" + ServiceOrdersFireAlarm.Count.ToString() + ")";
+                        FireAlarmTimeServiceOrderVisible = ServiceOrdersByTimeFireAlarm.Count > 0 ? true : false;
+                        FireAlarmOtherServiceOrderVisible = ServiceOrdersFireAlarm.Count > 0 ? true : false;
                     }
                 }
                 IndicatorVisible = false;
@@ -511,9 +577,9 @@ namespace MounterApp.ViewModel {
             });
         }
 
-        private RelayCommand _GetServiceOrderByTransfer;
-        public RelayCommand GetServiceOrderByTransfer {
-            get => _GetServiceOrderByTransfer ??= new RelayCommand(async obj => {
+        private AsyncCommand _GetServiceOrderByTransfer;
+        public AsyncCommand GetServiceOrderByTransfer {
+            get => _GetServiceOrderByTransfer ??= new AsyncCommand(async () => {
                 OpacityForm = 0.1;
                 IndicatorVisible = true;
                 if(Servicemans.Count > 0) {
@@ -562,15 +628,16 @@ namespace MounterApp.ViewModel {
                             ServiceOrderByTransfer.Add(item);
                         }
                         TransferServiceOrder = "Перенесенные (" + ServiceOrderByTransfer.Count.ToString() + ")";
+                        TransferServiceOrderVisible = ServiceOrderByTransfer.Count > 0 ? true : false;
                     }
                 }
                 IndicatorVisible = false;
                 OpacityForm = 1;
             });
         }
-        private RelayCommand _GetServiceOrderByTransferFireAlarm;
-        public RelayCommand GetServiceOrderByTransferFireAlarm {
-            get => _GetServiceOrderByTransferFireAlarm ??= new RelayCommand(async obj => {
+        private AsyncCommand _GetServiceOrderByTransferFireAlarm;
+        public AsyncCommand GetServiceOrderByTransferFireAlarm {
+            get => _GetServiceOrderByTransferFireAlarm ??= new AsyncCommand(async () => {
                 OpacityForm = 0.1;
                 IndicatorVisible = true;
                 if(Servicemans.Count > 0) {
@@ -619,15 +686,16 @@ namespace MounterApp.ViewModel {
                             ServiceOrderByTransferFireAlarm.Add(item);
                         }
                         FireAlarmTransferServiceOrderText = "Перенесенные(пс) (" + ServiceOrderByTransferFireAlarm.Count.ToString() + ")";
+                        FireAlarmTransferServiceOrderVisible = ServiceOrderByTransferFireAlarm.Count > 0 ? true : false;
                     }
                 }
                 IndicatorVisible = false;
                 OpacityForm = 1;
             });
         }
-        private RelayCommand _SelectServiceOrderCommand;
-        public RelayCommand SelectServiceOrderCommand {
-            get => _SelectServiceOrderCommand ??= new RelayCommand(async obj => {
+        private AsyncCommand _SelectServiceOrderCommand;
+        public AsyncCommand SelectServiceOrderCommand {
+            get => _SelectServiceOrderCommand ??= new AsyncCommand(async () => {
                 if(ServiceOrder != null) {
                     Analytics.TrackEvent("Переход к заявке технику",
                     new Dictionary<string,string> {

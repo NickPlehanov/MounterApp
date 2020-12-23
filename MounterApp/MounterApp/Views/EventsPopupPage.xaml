@@ -1,20 +1,19 @@
 ﻿<popup:PopupPage  xmlns:popup="http://rotorgames.com" xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
-                  xmlns:dg="clr-namespace:Xamarin.Forms.DataGrid;assembly=Xamarin.Forms.DataGrid"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                   x:Class="MounterApp.Views.EventsPopupPage" >
     <popup:PopupPage.Content>
         <!--<ScrollView>-->
-        <StackLayout Padding="10" BackgroundColor="GhostWhite" Margin="10" VerticalOptions="Center">
+        <StackLayout Style="{StaticResource PopupStackLayoutStyle}">
             <FlexLayout>
                 <DatePicker Margin="2" Date="{Binding StartDate}"/>
                 <DatePicker Margin="2" Date="{Binding EndDate}"/>
-                <Button ImageSource="{Binding GetImage}" Margin="5" Text="Получить" Command="{Binding GetEventsCommands}" CornerRadius="20"/>
+                <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding GetImage}" FontSize="Default" Text="Получить" Command="{Binding GetEventsCommands}"/>
             </FlexLayout>
-            <StackLayout  IsVisible="{Binding IndicatorVisible}" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
-                <ActivityIndicator IsRunning="True" Color="Red" HeightRequest="50" WidthRequest="50"  />
-                <Label FontAttributes="Bold" Text="Подождите, идет загрузка..."/>
+            <StackLayout Style="{StaticResource ActivityIndicatorStackLayoutStyle}" IsVisible="{Binding IndicatorVisible}">
+                <ActivityIndicator Style="{StaticResource ActivityIndicatorStyle}"/>
+                <Label Style="{StaticResource ActivityIndicatorLabelStyle}"/>
             </StackLayout>
-            <ScrollView>                
+            <ScrollView>
                 <StackLayout Opacity="{Binding OpacityForm}">
                     <CollectionView Margin="5" ItemsSource="{Binding Events, Mode=TwoWay}" SelectionMode="Single">
                         <CollectionView.ItemsLayout>
@@ -22,10 +21,10 @@
                         </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <Frame BorderColor="Blue" Padding="5" CornerRadius="20">
+                                <Frame Style="{StaticResource FrameInfoStyle}">
                                     <Frame.Content>
                                         <StackLayout>
-                                            <Label Text="{Binding Path=REDateTime}" Margin="5"/>
+                                            <Label Text="{Binding Path=REDateTime}" Margin="5" FontAttributes="Bold"/>
                                             <FlexLayout>
                                                 <Label Text="{Binding Path=RChannelNameText}" Margin="5" />
                                                 <Label Text="{Binding Path=EventCodeText}" Margin="5" />
@@ -45,43 +44,7 @@
                     </CollectionView>
                 </StackLayout>
             </ScrollView>
-            <Button ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding ExitCommand}" CornerRadius="20" Padding="5"/>
-            <!--<Grid Margin="5" Padding="5">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto "/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <DatePicker Grid.Row="0" Grid.Column="0" Date="{Binding StartDate}"/>
-                <DatePicker Grid.Row="0" Grid.Column="1" Date="{Binding EndDate}"/>
-                <Button Grid.Row="1" Grid.ColumnSpan="2" Text="Запросить данные" Command="{Binding GetEventsCommands}"/>
-                <ScrollView Grid.Row="2" Grid.ColumnSpan="2" Orientation="Both">
-                    <dg:DataGrid SortedColumnIndex="0" BorderColor="#620000" ItemsSource="{Binding Events, Mode=TwoWay,UpdateSourceEventName=PropertyChanged}">
-                        <dg:DataGrid.Columns>
-                            <dg:DataGridColumn Width="*" Title="Время" PropertyName="REDateTime"/>
-                            <dg:DataGridColumn Width="*" Title="Канал" PropertyName="RChannelName"/>
-                            <dg:DataGridColumn Width="*" Title="Код" PropertyName="EventCode"/>
-                            <dg:DataGridColumn Width="*" Title="Имя" PropertyName="EventClassName"/>
-                            <dg:DataGridColumn Width="0.7*" Title="Зона" PropertyName="ZoneUser"/>
-                            <dg:DataGridColumn Width="0.7*" Title="Раздел" PropertyName="PartNumber"/>
-                            <dg:DataGridColumn Width="2*" Title="Описание" PropertyName="EventDesc"/>
-                        </dg:DataGrid.Columns>
-                            <dg:DataGrid.RowsBackgroundColorPalette>
-                                <dg:PaletteCollection>
-                                    <Color>#F2F2F2</Color>
-                                    <Color>#FFFFFF</Color>
-                                </dg:PaletteCollection>
-                            </dg:DataGrid.RowsBackgroundColorPalette>
-                        </dg:DataGrid>
-                </ScrollView>
-                <Button Grid.Row="3" Grid.ColumnSpan="2" Text="Закрыть" Command="{Binding ExitCommand}"/>
-            </Grid>-->
+            <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding ExitCommand}"/>
         </StackLayout>
-        <!--</ScrollView>-->
     </popup:PopupPage.Content>
 </popup:PopupPage>

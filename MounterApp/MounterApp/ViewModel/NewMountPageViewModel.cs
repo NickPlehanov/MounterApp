@@ -56,7 +56,7 @@ namespace MounterApp.ViewModel {
         //                });
         //    //IsChanged = false;
         //}
-        public NewMountPageViewModel(List<NewMounterExtensionBase> mounters, List<NewServicemanExtensionBase> servicemans) {
+        public NewMountPageViewModel(List<NewMounterExtensionBase> mounters,List<NewServicemanExtensionBase> servicemans) {
             Servicemans = servicemans;
             Mounters = mounters;
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Карточка объекта" });
@@ -78,7 +78,7 @@ namespace MounterApp.ViewModel {
                         });
             //var mainDisplayInfo = DeviceDisplay.MainDisplayInfo.Height;
             //var height = mainDisplayInfo.Height;
-            App.Current.MainPage.HeightRequest= DeviceDisplay.MainDisplayInfo.Height;
+            App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
         }
         public NewMountPageViewModel(Mounts mount,List<NewMounterExtensionBase> mounters,bool _IsChanged,List<NewServicemanExtensionBase> servicemans) {
             Servicemans = servicemans;
@@ -125,6 +125,26 @@ namespace MounterApp.ViewModel {
                 Photos.Add(
                 new PhotoCollection(Guid.NewGuid(),Mount.ObjectSignboard,null,
                 ImageSource.FromStream(() => { return new MemoryStream(Convert.FromBase64String(Mount.ObjectSignboard)); }),PhotoNames.FirstOrDefault(x => x.PhotoTypeName == "Вывеска объекта")));
+            if(!string.IsNullOrEmpty(Mount.ObjectExtra1))
+                Photos.Add(
+                new PhotoCollection(Guid.NewGuid(),Mount.ObjectExtra1,null,
+                ImageSource.FromStream(() => { return new MemoryStream(Convert.FromBase64String(Mount.ObjectExtra1)); }),PhotoNames.FirstOrDefault(x => x.PhotoTypeName == "Доп. фото")));
+            if(!string.IsNullOrEmpty(Mount.ObjectExtra2))
+                Photos.Add(
+                new PhotoCollection(Guid.NewGuid(),Mount.ObjectExtra2,null,
+                ImageSource.FromStream(() => { return new MemoryStream(Convert.FromBase64String(Mount.ObjectExtra2)); }),PhotoNames.FirstOrDefault(x => x.PhotoTypeName == "Доп. фото")));
+            if(!string.IsNullOrEmpty(Mount.ObjectExtra3))
+                Photos.Add(
+                new PhotoCollection(Guid.NewGuid(),Mount.ObjectExtra3,null,
+                ImageSource.FromStream(() => { return new MemoryStream(Convert.FromBase64String(Mount.ObjectExtra3)); }),PhotoNames.FirstOrDefault(x => x.PhotoTypeName == "Доп. фото")));
+            if(!string.IsNullOrEmpty(Mount.ObjectExtra4))
+                Photos.Add(
+                new PhotoCollection(Guid.NewGuid(),Mount.ObjectExtra4,null,
+                ImageSource.FromStream(() => { return new MemoryStream(Convert.FromBase64String(Mount.ObjectExtra4)); }),PhotoNames.FirstOrDefault(x => x.PhotoTypeName == "Доп. фото")));
+            if(!string.IsNullOrEmpty(Mount.ObjectExtra5))
+                Photos.Add(
+                new PhotoCollection(Guid.NewGuid(),Mount.ObjectExtra5,null,
+                ImageSource.FromStream(() => { return new MemoryStream(Convert.FromBase64String(Mount.ObjectExtra5)); }),PhotoNames.FirstOrDefault(x => x.PhotoTypeName == "Доп. фото")));
             Opacity = 1;
             IndicatorVisible = false;
             Analytics.TrackEvent("Инициализация страницы заполнения нового монтажа",
@@ -295,18 +315,35 @@ namespace MounterApp.ViewModel {
                                 IndicatorText = "Подождите, идет загрузка...";
                                 bool error = false;
                                 ProgressValue = 0.1;
-                                    Mount.ObjectNumber = ObjectNumber;
-                                    Mount.ObjectName = ObjectName;
-                                    Mount.AddressName = ObjectAddress;
-                                    Mount.MounterID = Mounters.FirstOrDefault().NewMounterId;
-                                    Mount.Driveways = ObjectDriveways;
-                                    Mount.State = 0;
-                                    Mount.ObjectCard = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Карточка объекта").Data;
-                                    Mount.ObjectScheme = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Схема объекта").Data;
-                                    Mount.ObjectWiring = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Расшлейфовка объекта").Data;
-                                    Mount.ObjectListResponsible = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Ответственные объекта").Data;
-                                    Mount.ObjectSignboard = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Вывеска объекта").Data;
-                                    App.Database.SaveUpdateMount(Mount);
+                                Mount.ObjectNumber = ObjectNumber;
+                                Mount.ObjectName = ObjectName;
+                                Mount.AddressName = ObjectAddress;
+                                Mount.MounterID = Mounters.FirstOrDefault().NewMounterId;
+                                Mount.Driveways = ObjectDriveways;
+                                Mount.State = 0;
+                                Mount.ObjectCard = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Карточка объекта").Data;
+                                Mount.ObjectScheme = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Схема объекта").Data;
+                                Mount.ObjectWiring = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Расшлейфовка объекта").Data;
+                                Mount.ObjectListResponsible = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Ответственные объекта").Data;
+                                Mount.ObjectSignboard = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Вывеска объекта").Data;
+                                //Mount.ObjectExtra1 = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Доп. фото" && x.IsUse == false).Data;
+
+                                Guid? _id = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Доп. фото" && x.IsUse == false).ID;
+                                if(_id != null) {
+                                    if (Mount.ObjectExtra1==null)
+                                        Mount.ObjectExtra1 = Photos.FirstOrDefault(x => x.ID == _id).Data;
+                                    else if(Mount.ObjectExtra2 == null)
+                                        Mount.ObjectExtra2 = Photos.FirstOrDefault(x => x.ID == _id).Data;
+                                    else if(Mount.ObjectExtra3 == null)
+                                        Mount.ObjectExtra3 = Photos.FirstOrDefault(x => x.ID == _id).Data;
+                                    else if(Mount.ObjectExtra4 == null)
+                                        Mount.ObjectExtra4 = Photos.FirstOrDefault(x => x.ID == _id).Data;
+                                    else if(Mount.ObjectExtra5 == null)
+                                        Mount.ObjectExtra5 = Photos.FirstOrDefault(x => x.ID == _id).Data;
+                                    Photos.FirstOrDefault(x => x.ID == _id).IsUse = true;
+                                }
+
+                                App.Database.SaveUpdateMount(Mount);
                                 Analytics.TrackEvent("Сохранение монтажа перед отправкой на сервер в локальной базе",
                                     new Dictionary<string,string> {
                                         {"ObjectNumber",ObjectNumber }
@@ -328,14 +365,14 @@ namespace MounterApp.ViewModel {
                                     using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
                                         MultipartFormDataContent form = new MultipartFormDataContent();
                                         form.Add(new StreamContent(new MemoryStream(Convert.FromBase64String(ph.Data)))
-                                            ,String.Format("file"),String.Format(ObjectNumber + "_" + ph._Types.PhotoTypeName + ".jpeg"));
+                                            ,String.Format("file"),String.Format(ObjectNumber + "_" + ph._Types.PhotoTypeName+"_"+ph.ID.ToString() + ".jpeg"));
                                         //form.Add(new StreamContent(ph.File.GetStream()),String.Format("file"),String.Format(ObjectNumber + "_" + ph._Types.PhotoTypeName + ".jpeg"));
                                         //HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress + "/api/Common"                                        
                                         //HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress + "/api/Common?ObjectInfo=" + sb.ToString() + "",form);                                        
-                                        HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress + "/api/Common?NumberObject=" + ObjectNumber + 
-                                            "&NameObject="+ObjectName+
-                                            "&AddressObject=" + ObjectAddress+
-                                            "&MounterName=" + Mounters.FirstOrDefault().NewName+
+                                        HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress + "/api/Common?NumberObject=" + ObjectNumber +
+                                            "&NameObject=" + ObjectName +
+                                            "&AddressObject=" + ObjectAddress +
+                                            "&MounterName=" + Mounters.FirstOrDefault().NewName +
                                             "&Driveways=" + ObjectDriveways
                                             ,form);
                                         IndicatorText = "Подождите, идет загрузка..." + Environment.NewLine + "Загружено " + cnt.ToString() + " фото из " + Photos.Count.ToString();
@@ -456,20 +493,34 @@ namespace MounterApp.ViewModel {
                 if(IsChanged) {
                     if(Photos.Count >= 5) {
                         if(Mount == null) {
-                            Mounts mount = new Mounts() {
-                                ObjectNumber = ObjectNumber,
-                                ObjectName = ObjectName,
-                                AddressName = ObjectAddress,
-                                ID = App.Database.GetCurrentID(),
-                                MounterID = Mounters.FirstOrDefault().NewMounterId,
-                                Driveways = ObjectDriveways,
-                                State = 0,
-                                ObjectCard = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Карточка объекта").Data,
-                                ObjectScheme = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Схема объекта").Data,
-                                ObjectWiring = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Расшлейфовка объекта").Data,
-                                ObjectListResponsible = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Ответственные объекта").Data,
-                                ObjectSignboard = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Вывеска объекта").Data
-                            };
+                            Mounts mount = new Mounts();
+                            mount.ObjectNumber = ObjectNumber;
+                                mount.ObjectName = ObjectName;
+                                mount.AddressName = ObjectAddress;
+                                mount.ID = App.Database.GetCurrentID();
+                                mount.MounterID = Mounters.FirstOrDefault().NewMounterId;
+                               mount.Driveways = ObjectDriveways;
+                                mount.State = 0;
+                                mount.ObjectCard = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Карточка объекта").Data;
+                                mount.ObjectScheme = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Схема объекта").Data;
+                                mount.ObjectWiring = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Расшлейфовка объекта").Data;
+                                mount.ObjectListResponsible = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Ответственные объекта").Data;
+                                mount.ObjectSignboard = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Вывеска объекта").Data;
+                            Guid? _id = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Доп. фото" && x.IsUse == false).ID;
+                            if(_id != null) {
+                                if(mount.ObjectExtra1 == null)
+                                    mount.ObjectExtra1 = Photos.FirstOrDefault(x => x.ID == _id).Data;
+                                else if(mount.ObjectExtra2 == null)
+                                    mount.ObjectExtra2 = Photos.FirstOrDefault(x => x.ID == _id).Data;
+                                else if(mount.ObjectExtra3 == null)
+                                    mount.ObjectExtra3 = Photos.FirstOrDefault(x => x.ID == _id).Data;
+                                else if(mount.ObjectExtra4 == null)
+                                    mount.ObjectExtra4 = Photos.FirstOrDefault(x => x.ID == _id).Data;
+                                else if(mount.ObjectExtra5 == null)
+                                    mount.ObjectExtra5 = Photos.FirstOrDefault(x => x.ID == _id).Data;
+                                Photos.FirstOrDefault(x => x.ID == _id).IsUse = true;
+                            }
+                            //};
                             App.Database.SaveMount(mount);
                             Analytics.TrackEvent("Монтаж сохранен в локальной базе");
                             Toast.MakeText(Android.App.Application.Context,"Данные сохранены",ToastLength.Long).Show();
@@ -486,6 +537,20 @@ namespace MounterApp.ViewModel {
                             Mount.ObjectWiring = Photos.Any(x => x._Types.PhotoTypeName == "Расшлейфовка объекта") ? Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Расшлейфовка объекта").Data : "";
                             Mount.ObjectListResponsible = Photos.Any(x => x._Types.PhotoTypeName == "Ответственные объекта") ? Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Ответственные объекта").Data : "";
                             Mount.ObjectSignboard = Photos.Any(x => x._Types.PhotoTypeName == "Вывеска объекта") ? Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Вывеска объекта").Data : "";
+                            Guid? _id = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Доп. фото" && x.IsUse == false).ID;
+                            if(_id != null) {
+                                if(Mount.ObjectExtra1 == null)
+                                    Mount.ObjectExtra1 = Photos.FirstOrDefault(x => x.ID == _id).Data;
+                                else if(Mount.ObjectExtra2 == null)
+                                    Mount.ObjectExtra2 = Photos.FirstOrDefault(x => x.ID == _id).Data;
+                                else if(Mount.ObjectExtra3 == null)
+                                    Mount.ObjectExtra3 = Photos.FirstOrDefault(x => x.ID == _id).Data;
+                                else if(Mount.ObjectExtra4 == null)
+                                    Mount.ObjectExtra4 = Photos.FirstOrDefault(x => x.ID == _id).Data;
+                                else if(Mount.ObjectExtra5 == null)
+                                    Mount.ObjectExtra5 = Photos.FirstOrDefault(x => x.ID == _id).Data;
+                                Photos.FirstOrDefault(x => x.ID == _id).IsUse = true;
+                            }
                             //Mount.MounterID = Mounters.FirstOrDefault().NewMounterId;
                             //App.Database.UpdateMount(Mount);
                             App.Database.SaveUpdateMount(Mount);
@@ -496,20 +561,34 @@ namespace MounterApp.ViewModel {
                     else {
                         bool result = await Application.Current.MainPage.DisplayAlert("Ошибка","Не все обязательные фото были сделаны. Продолжить сохранение?","Да","Нет");
                         if(result) {
-                            Mounts mount = new Mounts() {
-                                ObjectNumber = ObjectNumber,
-                                ObjectName = ObjectName,
-                                AddressName = ObjectAddress,
-                                ID = App.Database.GetCurrentID(),
-                                MounterID = Mounters.FirstOrDefault().NewMounterId,
-                                Driveways = ObjectDriveways,
-                                State = 0,
-                                ObjectCard = Photos.Any(x => x._Types.PhotoTypeName == "Карточка объекта") ? Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Карточка объекта").Data : "",
-                                ObjectScheme = Photos.Any(x => x._Types.PhotoTypeName == "Схема объекта") ? Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Схема объекта").Data : "",
-                                ObjectWiring = Photos.Any(x => x._Types.PhotoTypeName == "Расшлейфовка объекта") ? Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Расшлейфовка объекта").Data : "",
-                                ObjectListResponsible = Photos.Any(x => x._Types.PhotoTypeName == "Ответственные объекта") ? Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Ответственные объекта").Data : "",
-                                ObjectSignboard = Photos.Any(x => x._Types.PhotoTypeName == "Вывеска объекта") ? Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Вывеска объекта").Data : ""
-                            };
+                            Mounts mount = new Mounts();
+                            mount.ObjectNumber = ObjectNumber;
+                                mount.ObjectName = ObjectName;
+                                mount.AddressName = ObjectAddress;
+                                mount.ID = App.Database.GetCurrentID();
+                                mount.MounterID = Mounters.FirstOrDefault().NewMounterId;
+                                mount.Driveways = ObjectDriveways;
+                                mount.State = 0;
+                                mount.ObjectCard = Photos.Any(x => x._Types.PhotoTypeName == "Карточка объекта") ? Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Карточка объекта").Data : "";
+                                mount.ObjectScheme = Photos.Any(x => x._Types.PhotoTypeName == "Схема объекта") ? Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Схема объекта").Data : "";
+                                mount.ObjectWiring = Photos.Any(x => x._Types.PhotoTypeName == "Расшлейфовка объекта") ? Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Расшлейфовка объекта").Data : "";
+                                mount.ObjectListResponsible = Photos.Any(x => x._Types.PhotoTypeName == "Ответственные объекта") ? Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Ответственные объекта").Data : "";
+                                mount.ObjectSignboard = Photos.Any(x => x._Types.PhotoTypeName == "Вывеска объекта") ? Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Вывеска объекта").Data : "";
+                            Guid? _id = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Доп. фото" && x.IsUse == false).ID;
+                            if(_id != null) {
+                                if(mount.ObjectExtra1 == null)
+                                    mount.ObjectExtra1 = Photos.FirstOrDefault(x => x.ID == _id).Data;
+                                else if(mount.ObjectExtra2 == null)
+                                    mount.ObjectExtra2 = Photos.FirstOrDefault(x => x.ID == _id).Data;
+                                else if(mount.ObjectExtra3 == null)
+                                    mount.ObjectExtra3 = Photos.FirstOrDefault(x => x.ID == _id).Data;
+                                else if(mount.ObjectExtra4 == null)
+                                    mount.ObjectExtra4 = Photos.FirstOrDefault(x => x.ID == _id).Data;
+                                else if(mount.ObjectExtra5 == null)
+                                    mount.ObjectExtra5 = Photos.FirstOrDefault(x => x.ID == _id).Data;
+                                Photos.FirstOrDefault(x => x.ID == _id).IsUse = true;
+                            }
+                            //};
                             App.Database.SaveMount(mount);
                             Analytics.TrackEvent("Монтаж сохранен в локальной базе");
                             Toast.MakeText(Android.App.Application.Context,"Данные сохранены",ToastLength.Long).Show();
@@ -522,7 +601,7 @@ namespace MounterApp.ViewModel {
             }/*,obj => Photos.Count >= 5*/);
         }
 
-        
+
         //private RelayCommand _AddNewPhotoCommand;
         //public RelayCommand AddNewPhotoCommand {
         //    get => _AddNewPhotoCommand ??= new RelayCommand(async obj => {

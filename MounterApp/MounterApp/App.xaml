@@ -3,6 +3,94 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MounterApp.App">
     <Application.Resources>
-
+        <ResourceDictionary>
+            <Style x:Key="CommonButtonStyle" TargetType="Button">
+                <Setter Property="CornerRadius" Value="20"/>
+                <Setter Property="CharacterSpacing" Value="2"/>
+                <!--<Setter Property="FontAttributes" Value="Bold"/>-->
+                <Setter Property="FontSize" Value="Default"/>
+                <Setter Property="Visual" Value="Material"/>
+                <Setter Property="Margin" Value="5"/>
+            </Style>
+            <Style x:Key="ServiceOrderHeaderStyle" TargetType="Button" BasedOn="{StaticResource CommonButtonStyle}">
+                <Setter Property="BackgroundColor" Value="#5E6606"/>
+            </Style>
+            <Style x:Key="MainMenuButtonStyle" TargetType="Button" BasedOn="{StaticResource CommonButtonStyle}">
+                <Setter Property="WidthRequest" Value="200"/>
+                <Setter Property="HeightRequest" Value="200"/>
+                <Setter Property="TextColor" Value="DarkGoldenrod"/>
+                <Setter Property="BorderWidth" Value="2"/>
+                <Setter Property="BorderColor" Value="PaleGoldenrod"/>
+                <Setter Property="Margin" Value="5,0"/>
+                 <!--TextColor="DarkGoldenrod" BorderRadius="20" BorderWidth="2" BorderColor="PaleGoldenrod" Margin="5,0" Visual="Material"-->
+            </Style>
+            <Style x:Key="SwipeNavigationButton" TargetType="Button">
+                <Setter Property="Text" Value="Навигация"/>
+                <Setter Property="BackgroundColor" Value="OrangeRed"/>
+                <Setter Property="WidthRequest" Value="200"/>
+            </Style>
+            <Style x:Key="ActivityIndicatorStyle" TargetType="ActivityIndicator">
+                <Setter Property="IsRunning" Value="True"/>
+                <Setter Property="Color" Value="Red"/>
+                <Setter Property="HeightRequest" Value="50"/>
+                <Setter Property="WidthRequest" Value="50"/>
+            </Style>
+            <Style x:Key="ActivityIndicatorLabelStyle" TargetType="Label">
+                <Setter Property="FontAttributes" Value="Bold"/>
+                <Setter Property="Text" Value="Подождите, идет загрузка..."/>
+                <Setter Property="TextColor" Value="DarkRed"/>
+                <Setter Property="HorizontalOptions" Value="Center"/>
+                <Setter Property="VerticalOptions" Value="Center"/>
+                <Setter Property="FontSize" Value="Title"/>
+            </Style>
+            <Style x:Key="ErrorLabelStyle" TargetType="Label">
+                <Setter Property="FontAttributes" Value="Italic"/>
+                <Setter Property="TextColor" Value="Red"/>
+                <Setter Property="HorizontalOptions" Value="Center"/>
+                <Setter Property="VerticalOptions" Value="Center"/>
+            </Style>
+            <Style x:Key="MountersLabelStyle" TargetType="Label">
+                <Setter Property="HorizontalOptions" Value="Center"/>
+                <Setter Property="VerticalOptions" Value="Center"/>
+                <Setter Property="HorizontalTextAlignment" Value="Center"/>
+                <Setter Property="VerticalTextAlignment" Value="Center"/>
+                <Setter Property="Margin" Value="5,0"/>
+                <Setter Property="CharacterSpacing" Value="2"/>
+                <Setter Property="FontSize" Value="Body"/>
+                <Setter Property="FontAttributes" Value="Bold"/>
+            </Style>
+            <Style x:Key="HeaderLabelStyle" TargetType="Label">
+                <Setter Property="HorizontalOptions" Value="Center"/>
+                <Setter Property="VerticalOptions" Value="Center"/>
+                <Setter Property="HorizontalTextAlignment" Value="Center"/>
+                <Setter Property="VerticalTextAlignment" Value="Center"/>
+                <Setter Property="Margin" Value="10"/>
+                <Setter Property="CharacterSpacing" Value="2"/>
+                <Setter Property="FontSize" Value="Large"/>
+                <Setter Property="FontAttributes" Value="Bold"/>
+                <Setter Property="Visual" Value="Material"/>
+            </Style>
+            <Style x:Key="ActivityIndicatorStackLayoutStyle" TargetType="StackLayout">
+                <Setter Property="Padding" Value="30"/>
+                <Setter Property="HorizontalOptions" Value="Center"/>
+                <Setter Property="VerticalOptions" Value="Center"/>
+            </Style>
+            <Style x:Key="PopupStackLayoutStyle" TargetType="StackLayout">
+                <Setter Property="Padding" Value="10"/>
+                <Setter Property="BackgroundColor" Value="GhostWhite"/>
+                <Setter Property="Margin" Value="10"/>
+                <Setter Property="VerticalOptions" Value="Center"/>
+            </Style>
+            <Style x:Key="FrameServiceOrderStyle" TargetType="Frame">
+                <Setter Property="BorderColor" Value="Red"/>
+                <Setter Property="Padding" Value="5"/>
+                <Setter Property="CornerRadius" Value="20"/>
+            </Style>
+            <Style x:Key="FrameInfoStyle" TargetType="Frame">
+                <Setter Property="BorderColor" Value="Blue"/>
+                <Setter Property="Padding" Value="5"/>
+                <Setter Property="CornerRadius" Value="20"/>
+            </Style>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

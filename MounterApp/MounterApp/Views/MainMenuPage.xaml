@@ -1,48 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
-             xmlns:viewmodel="clr-namespace:MounterApp.ViewModel" 
-             xmlns:dg="clr-namespace:Xamarin.Forms.DataGrid;assembly=Xamarin.Forms.DataGrid" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MounterApp.Views.MainMenuPage">
-    <!--<ContentPage.Resources>
-        <viewmodel:MainMenuPageViewModel x:Key="viewmodel"/>
-    </ContentPage.Resources>-->
     <ContentPage.Content>
-        <!--<StackLayout BindingContext="{StaticResource viewmodel}">
-            <Expander HorizontalOptions="Center" Margin="5">
-                <Expander.Header>
-                    <Label Text="Монтажи" FontSize="Title" FontAttributes="Bold"/>
-                </Expander.Header>
-                <StackLayout>
-                    --><!--<dg:DataGrid ItemsSource="{Binding Mounters}">
-                        --><!--<dg:DataGrid.Columns>
-                            <dg:DataGridColumn Width=""
-                        </dg:DataGrid.Columns>--><!--
-                    </dg:DataGrid>--><!--
-                    <xforms:SfDataGrid ItemsSource="{Binding MountWorks}" AutoGenerateColumns="False" GroupingMode="Multiple" AutoExpandGroups="True" 
-                                       PullToRefreshCommand="{Binding GetMountworksCommand}">
-                        <xforms:SfDataGrid.GroupColumnDescriptions>
-                            <xforms:GroupColumnDescription ColumnName="TypeWork"/>
-                        </xforms:SfDataGrid.GroupColumnDescriptions>
-                        <xforms:SfDataGrid.SortColumnDescriptions>
-                            <xforms:SortColumnDescription ColumnName="Date"/>
-                        </xforms:SfDataGrid.SortColumnDescriptions>
-                        <xforms:SfDataGrid.Columns>
-                            <xforms:GridTextColumn HeaderText="Дата" MappingName="Date"/>
-                            <xforms:GridTextColumn HeaderText="Адрес" MappingName="Address"/>
-                        </xforms:SfDataGrid.Columns>
-                    </xforms:SfDataGrid>
-                </StackLayout>
-            </Expander>
-            <Expander HorizontalOptions="Center" Margin="5">
-                <Expander.Header>
-                    <Label Text="Заявки техникам" FontSize="Title" FontAttributes="Bold"/>
-                </Expander.Header>
-                <StackLayout>
-                    <dg:DataGrid ItemsSource="{Binding ServiceOrder}"/>
-                </StackLayout>
-            </Expander>
-        </StackLayout>-->
         <Grid VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand" Visual="Material">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -54,15 +14,15 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
         <StackLayout Grid.Row="1" Grid.Column="0">
-            <Button Text="Монтажи" Command="{Binding GetMountworksCommand}" WidthRequest="200" HeightRequest="200" FontSize="Large" FontAttributes="Bold" TextColor="DarkGoldenrod" BorderRadius="20" BorderWidth="2" BorderColor="PaleGoldenrod" Margin="5,0" Visual="Material"/>
+            <Button Text="Монтажи" Command="{Binding GetMountworksCommand}" Style="{StaticResource MainMenuButtonStyle}"/>
         </StackLayout>
         <StackLayout Grid.Row="1" Grid.Column="1">
-                <Button Text="Заявки техникам" Command="{Binding GetServiceordersCommand}" WidthRequest="200" HeightRequest="200" FontSize="Large" FontAttributes="Bold" TextColor="DarkGoldenrod" BorderRadius="20" BorderWidth="2" BorderColor="PaleGoldenrod" Margin="5,0"/>
+                <Button Text="Заявки техникам" Command="{Binding GetServiceordersCommand}" Style="{StaticResource MainMenuButtonStyle}"/>
         </StackLayout>
             <StackLayout Grid.Row="2" Grid.ColumnSpan="2" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
                 <Label Text="{Binding Message}"/>
                 <!--<Button Text="Очистить базу данных" Command="{Binding ClearDatabaseCommand}"/>-->
-                <Button CornerRadius="20" BorderColor="Red" BorderWidth="1" ImageSource="{Binding SettingsImage}" Text="Настройки приложения" Command="{Binding OpenSettingsCommand}" Margin="5"/>
+                <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding SettingsImage}" Text="Настройки" Command="{Binding OpenSettingsCommand}"/>
             </StackLayout>
         </Grid>
     </ContentPage.Content>

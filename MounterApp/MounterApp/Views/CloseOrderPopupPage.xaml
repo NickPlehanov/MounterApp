@@ -7,10 +7,6 @@
                  BackgroundClicked="PopupPage_BackgroundClicked">
     <popup:PopupPage.Content>
         <StackLayout Padding="5" BackgroundColor="GhostWhite" Margin="5" VerticalOptions="Center">
-            <!--<StackLayout>
-                <Picker SelectedItem="{Binding SelectedResult}" ItemsSource="{Binding Results}" ItemDisplayBinding="{Binding Label}" Title="Выберите результат"/>
-                <CheckBox IsChecked="{Binding NecesseryRead}"/>
-            </StackLayout>-->
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>

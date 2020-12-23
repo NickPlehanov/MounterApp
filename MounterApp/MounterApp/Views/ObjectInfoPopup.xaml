@@ -3,15 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:dg="clr-namespace:Xamarin.Forms.DataGrid;assembly=Xamarin.Forms.DataGrid"
                   x:Class="MounterApp.Views.ObjectInfoPopup">
     <popup:PopupPage.Content>
-        <StackLayout Padding="15" BackgroundColor="GhostWhite" Margin="30" VerticalOptions="Center">
-            <StackLayout  IsVisible="{Binding IndicatorVisible}" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
-                <ActivityIndicator IsRunning="True" Color="Red" HeightRequest="50" WidthRequest="50"  />
-                <Label FontAttributes="Bold" Text="Подождите, идет загрузка..."/>
+        <StackLayout Style="{StaticResource PopupStackLayoutStyle}">
+            <StackLayout IsVisible="{Binding IndicatorVisible}" Style="{StaticResource ActivityIndicatorStackLayoutStyle}">
+                <ActivityIndicator Style="{StaticResource ActivityIndicatorStyle}"/>
+                <Label Style="{StaticResource ActivityIndicatorLabelStyle}"/>
             </StackLayout>
             <Expander Opacity="{Binding OpacityForm}" IsExpanded="{Binding WiresExpandedState}">
                 <Expander.Header>
-                    <Button CharacterSpacing="2" CornerRadius="20" Command="{Binding WiresExpanderCommand}" Text="Шлейфы" 
-ImageSource="{Binding ArrowCircleWires}"  FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Medium"/>
+                    <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding WiresExpanderCommand}" Text="Шлейфы" ImageSource="{Binding ArrowCircleWires}"/>
                 </Expander.Header>
                 <StackLayout>
                 <CollectionView Margin="5" ItemsSource="{Binding WiresCollection, Mode=TwoWay}" SelectionMode="Single">
@@ -20,13 +19,10 @@ ImageSource="{Binding ArrowCircleWires}"  FontAttributes="Bold" Visual="Material
                     </CollectionView.ItemsLayout>
                     <CollectionView.ItemTemplate>
                         <DataTemplate >
-                            <Frame BorderColor="Blue" Padding="5" CornerRadius="20">
-                                <Frame.Content>
-                                    <!--<RelativeLayout>-->
-                                    <Label Text="{Binding Path=FullInfo}" Margin="5" 
-                                       HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
-                                    <!--</RelativeLayout>-->
-                                </Frame.Content>
+                            <Frame BorderColor="Blue" Style="{StaticResource FrameInfoStyle}">
+                                    <Frame.Content>
+                                        <Label Text="{Binding Path=FullInfo}" Margin="5" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                    </Frame.Content>
                             </Frame>
                             <!--</Grid>-->
                         </DataTemplate>
@@ -37,8 +33,7 @@ ImageSource="{Binding ArrowCircleWires}"  FontAttributes="Bold" Visual="Material
 
             <Expander Opacity="{Binding OpacityForm}" IsExpanded="{Binding ExtFieldsExpandedState}">
                 <Expander.Header>
-                    <Button CharacterSpacing="2" CornerRadius="20" Command="{Binding ExtFieldsExpanderCommand}" Text="Доп. информация" 
-ImageSource="{Binding ArrowCircleExtFields}" FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Medium"/>
+                    <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding ExtFieldsExpanderCommand}" Text="Доп. информация" ImageSource="{Binding ArrowCircleExtFields}"/>
                 </Expander.Header>
                 <StackLayout >
                     <CollectionView Margin="5" ItemsSource="{Binding ExtFields, Mode=TwoWay}" SelectionMode="Single">
@@ -47,66 +42,17 @@ ImageSource="{Binding ArrowCircleExtFields}" FontAttributes="Bold" Visual="Mater
                         </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <Frame BorderColor="Blue" Padding="5" CornerRadius="20">
+                                <Frame BorderColor="Blue" Style="{StaticResource FrameInfoStyle}">
                                     <Frame.Content>
-                                        <!--<RelativeLayout>-->
-                                        <Label Text="{Binding Path=FullInfo}" Margin="5" 
-                                       HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
-                                        <!--</RelativeLayout>-->
+                                        <Label Text="{Binding Path=FullInfo}" Margin="5"  HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
                                     </Frame.Content>
                                 </Frame>
-                                <!--</Grid>-->
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
                 </StackLayout>
             </Expander>
-            <Button Opacity="{Binding OpacityForm}" ImageSource="{Binding CloseImage}" Grid.Row="2" CornerRadius="20" FontAttributes="Bold" Visual="Material" Margin="5" FontSize="Medium" Text="Закрыть" Command="{Binding CloseCommand}"/>
+            <Button Style="{StaticResource CommonButtonStyle}" Opacity="{Binding OpacityForm}" ImageSource="{Binding CloseImage}" Grid.Row="2" Text="Закрыть" Command="{Binding CloseCommand}"/>
         </StackLayout>
-
-
-
-
-
-        <!--<ScrollView>-->
-        <!--<StackLayout Padding="5" BackgroundColor="GhostWhite" Margin="5" VerticalOptions="Center">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="2*"/>
-                    <RowDefinition Height="2*"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <ScrollView Grid.Row="0"  Orientation="Both">
-                    <dg:DataGrid BorderColor="#620000" SortedColumnIndex="0" ItemsSource="{Binding WiresCollection, Mode=TwoWay, UpdateSourceEventName=PropertyChanged}">
-                        <dg:DataGrid.Columns>
-                            <dg:DataGridColumn Width="*" Title="Номер" PropertyName="ID"/>
-                            <dg:DataGridColumn Width="*" Title="Описание" PropertyName="Desc"/>
-                        </dg:DataGrid.Columns>
-                        <dg:DataGrid.RowsBackgroundColorPalette>
-                            <dg:PaletteCollection>
-                                <Color>#F2F2F2</Color>
-                                <Color>#FFFFFF</Color>
-                            </dg:PaletteCollection>
-                        </dg:DataGrid.RowsBackgroundColorPalette>
-                    </dg:DataGrid>
-                </ScrollView>
-                <ScrollView Grid.Row="1"  Orientation="Both">
-                    <dg:DataGrid BorderColor="#620000" SortedColumnIndex="0" ItemsSource="{Binding ExtFields, Mode=TwoWay, UpdateSourceEventName=PropertyChanged}">
-                        <dg:DataGrid.Columns>
-                            <dg:DataGridColumn Width="*" Title="Номер" PropertyName="FieldName"/>
-                            <dg:DataGridColumn Width="*" Title="Значение" PropertyName="FieldValue"/>
-                        </dg:DataGrid.Columns>
-                        <dg:DataGrid.RowsBackgroundColorPalette>
-                            <dg:PaletteCollection>
-                                <Color>#F2F2F2</Color>
-                                <Color>#FFFFFF</Color>
-                            </dg:PaletteCollection>
-                        </dg:DataGrid.RowsBackgroundColorPalette>
-                    </dg:DataGrid>
-                </ScrollView>
-                <Button Grid.Row="2" Text="Закрыть" Command="{Binding CloseCommand}"/>
-            </Grid>
-        </StackLayout>-->
-        <!--</ScrollView>-->
     </popup:PopupPage.Content>
 </popup:PopupPage>

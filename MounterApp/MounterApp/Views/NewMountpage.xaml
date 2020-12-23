@@ -14,22 +14,21 @@
         </Grid.RowDefinitions>
         <Expander Opacity="{Binding Opacity}" Grid.Row="0" IsExpanded="True">
             <Expander.Header>
-                <Label Text="Информация об объекте" FontAttributes="Bold" HorizontalTextAlignment="Center" Margin="10" FontSize="24" />
+                <Label Style="{StaticResource HeaderLabelStyle}" Text="Информация об объекте"/>
             </Expander.Header>
             <StackLayout>
                 <Label Text="{Binding GoogleComment, Mode=TwoWay}" IsVisible="{Binding VisibleGoogleComment}" FontAttributes="Italic"/>
-                <Label Text="№ объекта" HorizontalOptions="Center" FontAttributes="Bold"/>
+                <Label Text="№ объекта" HorizontalOptions="Center" Style="{StaticResource MountersLabelStyle}"/>
                 <Entry Keyboard="Numeric" Text="{Binding ObjectNumber, Mode=TwoWay}"/>
-                <Label Text="Название объекта" HorizontalOptions="Center" FontAttributes="Bold"/>
+                <Label Text="Название объекта" HorizontalOptions="Center" Style="{StaticResource MountersLabelStyle}"/>
                 <Entry Keyboard="Text" Text="{Binding ObjectName, Mode=TwoWay}"/>
-                <Label Text="Адрес объекта" HorizontalOptions="Center" FontAttributes="Bold"/>
+                <Label Text="Адрес объекта" HorizontalOptions="Center" Style="{StaticResource MountersLabelStyle}"/>
                 <Entry Keyboard="Text" Text="{Binding ObjectAddress}"/>
-                <Label Text="Подъездные пути" HorizontalOptions="Center" FontAttributes="Bold"/>
+                <Label Text="Подъездные пути" HorizontalOptions="Center" Style="{StaticResource MountersLabelStyle}"/>
                 <Entry Keyboard="Text" Text="{Binding ObjectDriveways}" />
             </StackLayout>
         </Expander>
-        <Button Padding="10" Margin="10" CornerRadius="20" ImageSource="{Binding PhotoImage}" Opacity="{Binding Opacity}" Grid.Row="1" Text="Фото объекта" Command="{Binding TakePhotoCommand}">
-        </Button>
+        <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding PhotoImage}" Opacity="{Binding Opacity}" Grid.Row="1" Text="Фото объекта" Command="{Binding TakePhotoCommand}"/>
         <CollectionView Opacity="{Binding Opacity}" Grid.Row="2" Margin="5"
                                 ItemsSource="{Binding Photos}" SelectionMode="Single" 
                                 SelectionChangedCommand="{Binding DeleteCommand, Mode=TwoWay}"
@@ -47,12 +46,12 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
         <StackLayout Opacity="{Binding Opacity}" Grid.Row="3">
-            <Button Padding="10" Margin="10,0" CornerRadius="20" ImageSource="{Binding SaveImage}" Text="Сохранить данные" Command="{Binding SaveToDB, Mode=TwoWay}"/>
-            <Button Padding="10" Margin="10" CornerRadius="20" ImageSource="{Binding SendImage}" Text="Отправить данные" Command="{Binding SendToServer, Mode=TwoWay}"/>
+            <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding SaveImage}" Text="Сохранить данные" Command="{Binding SaveToDB, Mode=TwoWay}"/>
+            <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding SendImage}" Text="Отправить данные" Command="{Binding SendToServer, Mode=TwoWay}"/>
         </StackLayout>
-        <StackLayout Opacity="1" Grid.Row="3" IsVisible="{Binding IndicatorVisible}" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
-            <ActivityIndicator IsRunning="True" Color="Red" HeightRequest="50" WidthRequest="50"  />
-            <Label FontAttributes="Bold" Text="{Binding IndicatorText}"/>
+        <StackLayout Style="{StaticResource ActivityIndicatorStackLayoutStyle}" Opacity="1" Grid.Row="3" IsVisible="{Binding IndicatorVisible}">
+            <ActivityIndicator Style="{StaticResource ActivityIndicatorStyle}"/>
+            <Label Style="{StaticResource ActivityIndicatorLabelStyle}" Text="{Binding IndicatorText}"/>
         </StackLayout>
     </Grid>
 

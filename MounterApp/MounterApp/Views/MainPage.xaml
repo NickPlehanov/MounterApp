@@ -18,11 +18,10 @@
             <!--<Editor Keyboard="Telephone" x:Name="PhoneNumber" Text="{Binding PhoneNumber, Mode=TwoWay}"/>-->
             <!--<Button Text="ОК" Command="{Binding AuthCommand}" CommandParameter="{Binding Source=PhoneNumber, Path=Text}" BorderColor="Bisque" BorderWidth="2" WidthRequest="20" VerticalOptions="CenterAndExpand" FontAttributes="Bold"/>-->
             <Label Text="{Binding Message, Mode=TwoWay}" FontAttributes="Italic" TextColor="Red"/>
-            <!--<ProgressBar Progress="{Binding ProgressValue}" ProgressColor="Red" Scale="5"/>-->
         </StackLayout>
-        <StackLayout  BindingContext="{StaticResource viewModel}" IsVisible="{Binding IndicatorVisible}" Grid.Row="2" Padding="30" HorizontalOptions="Center" VerticalOptions="Center">
-            <ActivityIndicator IsRunning="True" Color="Red" HeightRequest="50" WidthRequest="50"  />
-            <Label FontAttributes="Bold" Text="Подождите, идет загрузка..." />
+        <StackLayout Style="{StaticResource ActivityIndicatorStackLayoutStyle}" BindingContext="{StaticResource viewModel}" IsVisible="{Binding IndicatorVisible}" Grid.Row="2">
+            <ActivityIndicator Style="{StaticResource ActivityIndicatorStyle}"/>
+            <Label Style="{StaticResource ActivityIndicatorLabelStyle}"/>
         </StackLayout>
         
         <!--<StackLayout Grid.Row="1" Margin="5" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">

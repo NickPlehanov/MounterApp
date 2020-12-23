@@ -19,20 +19,20 @@
                 </Grid.RowDefinitions>
 
                 <CheckBox Grid.Column="0" Grid.Row="0" IsChecked="{Binding AutoEnter}" HorizontalOptions="CenterAndExpand"/>
-                <Label Grid.Column="1" Grid.Row="0" Text="Автоматический вход" VerticalOptions="CenterAndExpand"/>
+                <Label Grid.Column="1" Grid.Row="0" Text="Автоматический вход" Style="{StaticResource MountersLabelStyle}"/>
 
                 <Entry Grid.Column="0" Grid.Row="1" Keyboard="Numeric" Text="{Binding Quality}"/>
-                <Label Grid.Column="1" Grid.Row="1" Text="Качество фото" VerticalOptions="CenterAndExpand"/>
+                <Label Grid.Column="1" Grid.Row="1" Text="Качество фото" Style="{StaticResource MountersLabelStyle}"/>
 
                 <Entry Grid.Column="0" Grid.Row="2" Keyboard="Numeric" Text="{Binding Compression}"/>
-                <Label Grid.Column="1" Grid.Row="2" Text="Степень сжатия фото" VerticalOptions="CenterAndExpand"/>
+                <Label Grid.Column="1" Grid.Row="2" Text="Степень сжатия фото" Style="{StaticResource MountersLabelStyle}"/>
 
-                <Button ImageSource="{Binding ClearImage}" Margin="5" Grid.ColumnSpan="2" Grid.Row="3" CornerRadius="20" Text="Очистить локальную базу монтажей" Command="{Binding ClearDatabaseCommand}"/>
+                <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding ClearImage}" Grid.ColumnSpan="2" Grid.Row="3" Text="Очистить локальную базу монтажей" Command="{Binding ClearDatabaseCommand}"/>
 
-                <Button ImageSource="{Binding SaveImage}" Margin="5" Grid.ColumnSpan="2" Grid.Row="4" CornerRadius="20" Text="Сохранить" Command="{Binding SaveCommand}"/>
+                <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding SaveImage}"  Grid.ColumnSpan="2" Grid.Row="4" Text="Сохранить" Command="{Binding SaveCommand}"/>
 
 
-                <Label Text="{Binding Version, Mode=TwoWay}" Grid.Row="5" Grid.ColumnSpan="2"/>
+                <Label Text="{Binding Version, Mode=TwoWay}" Grid.Row="5" Grid.ColumnSpan="2" Style="{StaticResource MountersLabelStyle}"/>
             </Grid>
         </StackLayout>
     </ContentPage.Content>

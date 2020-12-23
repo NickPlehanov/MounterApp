@@ -68,6 +68,14 @@ namespace MounterApp.InternalModel {
         /// </summary>
         public string ObjectExtra3 { get; set; }
         /// <summary>
+        /// Доп. фото 4
+        /// </summary>
+        public string ObjectExtra4 { get; set; }
+        /// <summary>
+        /// Доп. фото 5
+        /// </summary>
+        public string ObjectExtra5 { get; set; }
+        /// <summary>
         /// Отображает статус записи в базе данных. 0-не отправлен; 1-отправлен;-1-удален пользователем;
         /// </summary>
         public int State { get; set; }

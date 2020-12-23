@@ -34,7 +34,8 @@ namespace MounterApp.ViewModel {
             CollectionImage = "collections.png";
             CloseImage = "close.png";
             IsChanged = false;
-            Analytics.TrackEvent("Инициализация страницы выбора способа получения фото");            
+            Analytics.TrackEvent("Инициализация страницы выбора способа получения фото");
+            Counter = 0;
         }
 
         private List<NewServicemanExtensionBase> _Servicemans;
@@ -145,11 +146,27 @@ namespace MounterApp.ViewModel {
                                 case "Вывеска объекта":
                                     Mount.ObjectSignboard = Convert.ToBase64String(System.IO.File.ReadAllBytes(File.Path));
                                     break;
+                                case "Доп. фото":
+                                    Counter++;
+                                    if (Mount.ObjectExtra1==null)
+                                        Mount.ObjectExtra1 = Convert.ToBase64String(System.IO.File.ReadAllBytes(File.Path));
+                                    else if(Mount.ObjectExtra2 == null)
+                                        Mount.ObjectExtra2 = Convert.ToBase64String(System.IO.File.ReadAllBytes(File.Path));
+                                    else if(Mount.ObjectExtra3 == null)
+                                        Mount.ObjectExtra3 = Convert.ToBase64String(System.IO.File.ReadAllBytes(File.Path));
+                                    else if(Mount.ObjectExtra4 == null)
+                                        Mount.ObjectExtra4 = Convert.ToBase64String(System.IO.File.ReadAllBytes(File.Path));
+                                    else if(Mount.ObjectExtra5 == null)
+                                        Mount.ObjectExtra5 = Convert.ToBase64String(System.IO.File.ReadAllBytes(File.Path));
+                                    break;
                             }
                             //ImgSrc = "EmptyPhoto.png";
                             ImgSrc =null;
                             SelectedPhoto = null;
-                            PhotoNames.Remove(PhotoName);
+                            if (!PhotoName.PhotoTypeName.Equals("Доп. фото"))
+                                PhotoNames.Remove(PhotoName);
+                            if (Counter==5)
+                                PhotoNames.Remove(PhotoName);
                             Toast.MakeText(Android.App.Application.Context,"Фото добавлено",ToastLength.Short).Show();
                         }
                         else
@@ -159,6 +176,15 @@ namespace MounterApp.ViewModel {
                 else
                     await Application.Current.MainPage.DisplayAlert("Ошибка","Выберите тип фотографии","OK");
             });
+        }
+
+        private int _Counter;
+        public int Counter {
+            get => _Counter;
+            set {
+                _Counter = value;
+                OnPropertyChanged(nameof(Counter));
+            }
         }
         private PhotoCollection _SelectedPhoto;
         public PhotoCollection SelectedPhoto {

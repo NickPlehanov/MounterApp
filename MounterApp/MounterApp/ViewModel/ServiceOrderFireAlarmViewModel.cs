@@ -511,15 +511,15 @@ namespace MounterApp.ViewModel {
                     {"ServiceOrderID",ServiceOrderFireAlarm.NewTest2Id.ToString() }
                 });
                 using HttpClient client = new HttpClient(GetHttpClientHandler());
-                HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/id?id=" + ServiceOrderFireAlarm.NewTest2Id);                
-                NewServiceorderExtensionBase soeb = null;
+                HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceOrderForFireAlarmExtensionBase/id?id=" + ServiceOrderFireAlarm.NewTest2Id);                
+                NewTest2ExtensionBase soeb = null;
                 if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
                     var resp = response.Content.ReadAsStringAsync().Result;
                     try {
-                        soeb = JsonConvert.DeserializeObject<NewServiceorderExtensionBase>(resp);
+                        soeb = JsonConvert.DeserializeObject<NewTest2ExtensionBase>(resp);
                     }
                     catch(Exception ex) {
-                        Crashes.TrackError(new Exception("Ошибка десериализации объекта заявка технику"),
+                        Crashes.TrackError(new Exception("Ошибка десериализации объекта заявка технику(пс)"),
                         new Dictionary<string,string> {
                         {"ServerResponse",response.Content.ReadAsStringAsync().Result },
                         {"ErrorMessage",ex.Message },
@@ -528,7 +528,7 @@ namespace MounterApp.ViewModel {
                     }
                 }
                 else {
-                    Crashes.TrackError(new Exception("Ошибка получения данных об объекте заявка технику с сервера"),
+                    Crashes.TrackError(new Exception("Ошибка получения данных об объекте заявка технику(пс) с сервера"),
                     new Dictionary<string,string> {
                     {"ServerResponse",response.Content.ReadAsStringAsync().Result },
                     {"StatusCode",response.StatusCode.ToString() },
@@ -539,14 +539,14 @@ namespace MounterApp.ViewModel {
                             ,"OK");
                 }
                 if(soeb != null) {
-                    Analytics.TrackEvent("Попытка записи данных на сервер по объекту заявка технику, заполняем поле Пришел",
+                    Analytics.TrackEvent("Попытка записи данных на сервер по объекту заявка технику(пс), заполняем поле Пришел",
                     new Dictionary<string,string> {
                         {"ServiceOrderID",ServiceOrderFireAlarm.NewTest2Id.ToString() }
                     });
                     soeb.NewIncome = DateTime.Now.AddHours(-5);
                     using HttpClient clientPut = new HttpClient(GetHttpClientHandler());
                     var httpContent = new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json");
-                    HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases",httpContent);
+                    HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/NewServiceOrderForFireAlarmExtensionBase",httpContent);
                     if(!responsePut.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
                         Crashes.TrackError(new Exception("Ошибка при сохранении объекта Заявка технику"),
                         new Dictionary<string,string> {
@@ -612,12 +612,12 @@ namespace MounterApp.ViewModel {
         private RelayCommand _CloseOrderCommand;
         public RelayCommand CloseOrderCommand {
             get => _CloseOrderCommand ??= new RelayCommand(async obj => {
-                //Analytics.TrackEvent("Переход на страницу закрытия заявки",
-                //    new Dictionary<string,string> {
-                //        {"ServiceOrderID",ServiceOrderFireAlarm.NewTest2Id.ToString() }
-                //    });
-                //CloseOrderPopupPageViewModel vm = new CloseOrderPopupPageViewModel(ServiceOrderFireAlarm,Servicemans,Mounters);
-                //await App.Current.MainPage.Navigation.PushPopupAsync(new CloseOrderPopupPage(vm));
+                Analytics.TrackEvent("Переход на страницу закрытия заявки",
+                    new Dictionary<string,string> {
+                        {"ServiceOrderID",ServiceOrderFireAlarm.NewTest2Id.ToString() }
+                    });
+                CloseOrderPopupPageViewModel vm = new CloseOrderPopupPageViewModel(ServiceOrderFireAlarm,Servicemans,Mounters);
+                await App.Current.MainPage.Navigation.PushPopupAsync(new CloseOrderPopupPage(vm));
             });
         }
         private RelayCommand _GetObjectInfoCommand;

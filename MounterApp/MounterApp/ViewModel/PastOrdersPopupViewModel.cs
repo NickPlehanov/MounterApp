@@ -1,4 +1,5 @@
-﻿using MounterApp.Helpers;
+﻿using Microsoft.AppCenter.Crashes;
+using MounterApp.Helpers;
 using MounterApp.Model;
 using MounterApp.Properties;
 using MounterApp.Views;
@@ -110,27 +111,64 @@ namespace MounterApp.ViewModel {
                 OpacityForm = 0.1;
                 PastServiceOrders.Clear();
                 List<NewServiceorderExtensionBase> _pso = new List<NewServiceorderExtensionBase>();
+                List<NewTest2ExtensionBase> _pso_fa = new List<NewTest2ExtensionBase>();
                 string resp = null;
                 HttpResponseMessage response = null;
                 using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
                     if(ServiceOrder != null) {
                         response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByObject?Andromeda_ID=" + ServiceOrder.NewAndromedaServiceorder + "&ObjectNumber=" + ServiceOrder.NewNumber);
+                        resp = response.Content.ReadAsStringAsync().Result;
+                        try {
+                            _pso = JsonConvert.DeserializeObject<List<NewServiceorderExtensionBase>>(resp);
+                        }
+                        catch (Exception ex) {
+                            _pso = null;
+                            Crashes.TrackError(new Exception("Ошибка десериализации запроса по старым заявкам на объект"),
+                            new Dictionary<string,string> {
+                            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                            {"ErrorMessage",ex.Message },
+                            {"StatusCode",response.StatusCode.ToString() },
+                            {"Response",response.ToString() },
+                            {"Query","NewServiceorderExtensionBases/ServiceOrderByObject?Andromeda_ID=" + ServiceOrder.NewAndromedaServiceorder + "&ObjectNumber=" + ServiceOrder.NewNumber }
+                            });
+                        }
+                        if(_pso.Count() > 0) {
+                            foreach(var item in _pso.OrderByDescending(o => o.NewDate)) {
+                                NewServiceorderExtensionBase _item = item;
+                                _item.NewDate = _item.NewDate.Value.AddHours(5).Date;
+                                PastServiceOrders.Add(_item);
+                            }
+                        }
                     }
                     else if(ServiceOrderFireAlarm != null) {
-                        response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByObject?Andromeda_ID=" + ServiceOrderFireAlarm.NewAndromedaServiceorder + "&ObjectNumber=" + ServiceOrder.NewNumber);
-                    }
-                    resp = response.Content.ReadAsStringAsync().Result;
-                }
-                try {
-                    //TODO: в данном методе происходит возврат различных сущностей: "заявка технику" или "заявка на пс" надо проверять внутри if
-                    _pso = JsonConvert.DeserializeObject<List<NewServiceorderExtensionBase>>(resp);
-                }
-                catch { }
-                if(_pso.Count() > 0) {
-                    foreach(var item in _pso.OrderByDescending(o => o.NewDate)) {
-                        NewServiceorderExtensionBase _item = item;
-                        _item.NewDate = _item.NewDate.Value.AddHours(5).Date;
-                        PastServiceOrders.Add(_item);
+                        response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByObject?Andromeda_ID=" + ServiceOrderFireAlarm.NewAndromedaServiceorder + "&ObjectNumber=" + ServiceOrderFireAlarm.NewNumber);
+                        resp = response.Content.ReadAsStringAsync().Result;
+                        try {
+                            _pso_fa = JsonConvert.DeserializeObject<List<NewTest2ExtensionBase>>(resp);
+                        }
+                        catch(Exception ex) {
+                            _pso = null;
+                            Crashes.TrackError(new Exception("Ошибка десериализации запроса по старым заявкам на объект"),
+                            new Dictionary<string,string> {
+                            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                            {"ErrorMessage",ex.Message },
+                            {"StatusCode",response.StatusCode.ToString() },
+                            {"Response",response.ToString() },
+                            {"Query","NewServiceorderExtensionBases/ServiceOrderByObject?Andromeda_ID=" + ServiceOrder.NewAndromedaServiceorder + "&ObjectNumber=" + ServiceOrder.NewNumber }
+                            });
+                        }
+                        if(_pso_fa.Count() > 0) {
+                            foreach(var item in _pso_fa.OrderByDescending(o => o.NewDate)) {
+                                NewTest2ExtensionBase _item = item;
+                                _item.NewDate = _item.NewDate.Value.AddHours(5).Date;
+                                PastServiceOrders.Add(new NewServiceorderExtensionBase() {
+                                    NewServiceorderId = _item.NewTest2Id,
+                                    NewDate=_item.NewDate,
+                                    NewTime=_item.NewTime,
+                                    NewResult=_item.NewResult
+                                });
+                            }
+                        }
                     }
                 }
                 IndicatorVisible = false;
