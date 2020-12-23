@@ -36,12 +36,15 @@
                 <Setter Property="WidthRequest" Value="50"/>
             </Style>
             <Style x:Key="ActivityIndicatorLabelStyle" TargetType="Label">
-                <Setter Property="FontAttributes" Value="Bold"/>
+                <!--<Setter Property="FontAttributes" Value="Bold"/>-->
                 <Setter Property="Text" Value="Подождите, идет загрузка..."/>
                 <Setter Property="TextColor" Value="DarkRed"/>
                 <Setter Property="HorizontalOptions" Value="Center"/>
                 <Setter Property="VerticalOptions" Value="Center"/>
                 <Setter Property="FontSize" Value="Title"/>
+                <Setter Property="CharacterSpacing" Value="2"/>
+                <Setter Property="HorizontalTextAlignment" Value="Center"/>
+                <Setter Property="VerticalTextAlignment" Value="Center"/>
             </Style>
             <Style x:Key="ErrorLabelStyle" TargetType="Label">
                 <Setter Property="FontAttributes" Value="Italic"/>
