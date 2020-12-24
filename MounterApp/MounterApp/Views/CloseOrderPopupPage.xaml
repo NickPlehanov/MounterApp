@@ -6,8 +6,8 @@
                  CloseWhenBackgroundIsClicked="True"
                  BackgroundClicked="PopupPage_BackgroundClicked">
     <popup:PopupPage.Content>
-        <StackLayout Padding="5" BackgroundColor="GhostWhite" Margin="5" VerticalOptions="Center">
-            <Grid>
+        <StackLayout Style="{StaticResource PopupStackLayoutStyle}">
+            <Grid Opacity="{Binding OpacityForm}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -28,7 +28,11 @@
                 <Label Grid.ColumnSpan="2" Grid.Row="2" Text="Напишите заключение"/>
                 <Editor Grid.Row="3" Grid.ColumnSpan="2" Text="{Binding ConclusionByOrder}" VerticalOptions="FillAndExpand"/>
             </Grid>
-            <StackLayout IsVisible="{Binding ReasonVisibility}">
+            <StackLayout Opacity="1"  Style="{StaticResource ActivityIndicatorStackLayoutStyle}" IsVisible="{Binding IndicatorVisible}">
+                <ActivityIndicator Style="{StaticResource ActivityIndicatorStyle}"/>
+                <Label Style="{StaticResource ActivityIndicatorLabelStyle}"/>
+            </StackLayout>
+            <StackLayout Opacity="{Binding OpacityForm}" IsVisible="{Binding ReasonVisibility}">
                 <Picker Title="Укажите причину" ItemsSource="{Binding Reasons}" ItemDisplayBinding="{Binding Label}" SelectedItem="{Binding SelectedReason}"/>
                 <Label Text="Комментарий"/>
                 <Entry Text="{Binding ReasonComment}"/>
@@ -54,7 +58,7 @@
                     <TimePicker Time="{Binding TransferTime, Mode=TwoWay}" Format="t"/>
                 </FlexLayout>
             </StackLayout>
-            <Button ImageSource="{Binding SaveImage}" Text="OK" Command="{Binding CloseServiceOrderCommand}"/>
+            <Button ImageSource="{Binding SaveImage}" Text="OK" Command="{Binding CloseServiceOrderCommand}"/>            
         </StackLayout>
     </popup:PopupPage.Content>
 </popup:PopupPage>

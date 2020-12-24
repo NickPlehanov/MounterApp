@@ -36,6 +36,8 @@ namespace MounterApp.ViewModel {
             GetResults.ExecuteAsync(null);
             NecesseryRead = false;
             SaveImage = "save.png";
+            IndicatorVisible = false;
+            OpacityForm = 1;
         }
         /// <summary>
         /// Конструктор для закрытия заявки на ПС
@@ -50,6 +52,30 @@ namespace MounterApp.ViewModel {
             GetResults.ExecuteAsync(null);
             NecesseryRead = false;
             SaveImage = "save.png";
+            IndicatorVisible = false;
+            OpacityForm = 1;
+        }
+        /// <summary>
+        /// Устанавливает параметр прозрачности формы
+        /// </summary>
+        private double _OpacityForm;
+        public double OpacityForm {
+            get => _OpacityForm;
+            set {
+                _OpacityForm = value;
+                OnPropertyChanged(nameof(OpacityForm));
+            }
+        }
+        /// <summary>
+        /// Видимость индикатора загрузки
+        /// </summary>
+        private bool _IndicatorVisible;
+        public bool IndicatorVisible {
+            get => _IndicatorVisible;
+            set {
+                _IndicatorVisible = value;
+                OnPropertyChanged(nameof(IndicatorVisible));
+            }
         }
         /// <summary>
         /// Объект для хранения заявки на ПС, заполянется в конструкторе
@@ -76,9 +102,9 @@ namespace MounterApp.ViewModel {
         /// <summary>
         /// По нажатию на флажок "Обязательно для прочтения оператором" меняет его значение на противоположное от исходного
         /// </summary>
-        private RelayCommand _SetValueNecesseryReadCommand;
-        public RelayCommand SetValueNecesseryReadCommand {
-            get => _SetValueNecesseryReadCommand ??= new RelayCommand(async obj => {
+        private AsyncCommand _SetValueNecesseryReadCommand;
+        public AsyncCommand SetValueNecesseryReadCommand {
+            get => _SetValueNecesseryReadCommand ??= new AsyncCommand(async () => {
                 NecesseryRead = !NecesseryRead;
             });
         }
@@ -316,42 +342,45 @@ namespace MounterApp.ViewModel {
                 new Dictionary<string,string> {
                     {"Query","Common/metadata?ColumnName=New_resultid&ObjectName=New_serviceorder" }
                 });
-                using HttpClient client = new HttpClient(GetHttpClientHandler());
-                HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/metadata?ColumnName=New_resultid&ObjectName=New_serviceorder");
                 List<MetadataModel> mm = new List<MetadataModel>();
-                if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                    var resp = response.Content.ReadAsStringAsync().Result;
-                    try {
-                        mm = JsonConvert.DeserializeObject<List<MetadataModel>>(resp);
-                    }
-                    catch(Exception ex) {
-                        mm = null;
-                        Crashes.TrackError(new Exception("Форма закрытия заявок. Ошибка десереализации причин для переноса заявки"),
-                        new Dictionary<string,string> {
+                HttpResponseMessage response = null;
+                using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                    response = await client.GetAsync(Resources.BaseAddress + "/api/Common/metadata?ColumnName=New_resultid&ObjectName=New_serviceorder");
+                    if(response != null)
+                        if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                            var resp = response.Content.ReadAsStringAsync().Result;
+                            try {
+                                mm = JsonConvert.DeserializeObject<List<MetadataModel>>(resp);
+                            }
+                            catch(Exception ex) {
+                                mm = null;
+                                Crashes.TrackError(new Exception("Форма закрытия заявок. Ошибка десереализации причин для переноса заявки"),
+                                new Dictionary<string,string> {
                             {"ServerResponse",response.Content.ReadAsStringAsync().Result },
                             {"ErrorMessage",ex.Message },
                             {"StatusCode",response.StatusCode.ToString() },
                             {"Response",response.ToString() },
                             {"Query","Common/metadata?ColumnName=New_resultid&ObjectName=New_serviceorder" }
-                        });
-                    }
-                    if(mm != null) {
-                        Reasons.Clear();
-                        foreach(MetadataModel item in mm)
-                            Reasons.Add(item);
-                    }
-                    else {
-                        Analytics.TrackEvent("Форма закрытия заявок. Не получен список причин. Список причин пустой");
-                    }
-                }
-                else
-                    Crashes.TrackError(new Exception("Форма закрытия заявок. От сервера не получен корректный ответ"),
-                        new Dictionary<string,string> {
+                                });
+                            }
+                            if(mm != null) {
+                                Reasons.Clear();
+                                foreach(MetadataModel item in mm)
+                                    Reasons.Add(item);
+                            }
+                            else {
+                                Analytics.TrackEvent("Форма закрытия заявок. Не получен список причин. Список причин пустой");
+                            }
+                        }
+                        else
+                            Crashes.TrackError(new Exception("Форма закрытия заявок. От сервера не получен корректный ответ"),
+                                new Dictionary<string,string> {
                             {"ServerResponse",response.Content.ReadAsStringAsync().Result },
                             {"StatusCode",response.StatusCode.ToString() },
                             {"Response",response.ToString() },
                             {"Query","Common/metadata?ColumnName=New_resultid&ObjectName=New_serviceorder" }
-                        });
+                                });
+                }
             });
         }
         /// <summary>
@@ -364,42 +393,45 @@ namespace MounterApp.ViewModel {
                 new Dictionary<string,string> {
                     {"Query","Common/metadata?ColumnName=New_result&ObjectName=New_serviceorder" }
                 });
-                using HttpClient client = new HttpClient(GetHttpClientHandler());
-                HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/metadata?ColumnName=New_result&ObjectName=New_serviceorder");
+                HttpResponseMessage response = null;
                 List<MetadataModel> mm = new List<MetadataModel>();
-                if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                    var resp = response.Content.ReadAsStringAsync().Result;
-                    try {
-                        mm = JsonConvert.DeserializeObject<List<MetadataModel>>(resp);
-                    }
-                    catch(Exception ex) {
-                        mm = null;
-                        Crashes.TrackError(new Exception("Форма закрытия заявок. Ошибка десереализации результатов по заявке"),
-                        new Dictionary<string,string> {
+                using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                    response = await client.GetAsync(Resources.BaseAddress + "/api/Common/metadata?ColumnName=New_result&ObjectName=New_serviceorder");
+                    if(response != null)
+                        if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                            var resp = response.Content.ReadAsStringAsync().Result;
+                            try {
+                                mm = JsonConvert.DeserializeObject<List<MetadataModel>>(resp);
+                            }
+                            catch(Exception ex) {
+                                mm = null;
+                                Crashes.TrackError(new Exception("Форма закрытия заявок. Ошибка десереализации результатов по заявке"),
+                                new Dictionary<string,string> {
                             {"ServerResponse",response.Content.ReadAsStringAsync().Result },
                             {"ErrorMessage",ex.Message },
                             {"StatusCode",response.StatusCode.ToString() },
                             {"Response",response.ToString() },
                             {"Query","Common/metadata?ColumnName=New_result&ObjectName=New_serviceorder" }
-                        });
-                    }
-                    if(mm != null) {
-                        Results.Clear();
-                        foreach(MetadataModel item in mm)
-                            Results.Add(item);
-                    }
-                    else {
-                        Analytics.TrackEvent("Форма закрытия заявок. Не получен список результатов. Список результатов пустой");
-                    }
-                }
-                else
-                    Crashes.TrackError(new Exception("Форма закрытия заявок. От сервера не получен корректный ответ"),
-                        new Dictionary<string,string> {
+                                });
+                            }
+                            if(mm != null) {
+                                Results.Clear();
+                                foreach(MetadataModel item in mm)
+                                    Results.Add(item);
+                            }
+                            else {
+                                Analytics.TrackEvent("Форма закрытия заявок. Не получен список результатов. Список результатов пустой");
+                            }
+                        }
+                        else
+                            Crashes.TrackError(new Exception("Форма закрытия заявок. От сервера не получен корректный ответ"),
+                                new Dictionary<string,string> {
                             {"ServerResponse",response.Content.ReadAsStringAsync().Result },
                             {"StatusCode",response.StatusCode.ToString() },
                             {"Response",response.ToString() },
                             {"Query","Common/metadata?ColumnName=New_result&ObjectName=New_serviceorder" }
-                        });
+                                });
+                }
             });
         }
         //private bool _IsTransfer;
@@ -482,7 +514,10 @@ namespace MounterApp.ViewModel {
         /// </summary>
         private RelayCommand _CloseServiceOrderCommand;
         public RelayCommand CloseServiceOrderCommand {
-            get => _CloseServiceOrderCommand ??= new RelayCommand(async obj => {                
+            get => _CloseServiceOrderCommand ??= new RelayCommand(async obj => {
+                OpacityForm = 0.1;
+                IndicatorVisible = true;
+                ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans,Mounters);
                 Analytics.TrackEvent("Начало закрытия заявки",
                     new Dictionary<string,string> {
                         {"ServiceOrder",so!=null ? so.NewServiceorderId.ToString() : sofa.NewTest2Id.ToString() },
@@ -498,7 +533,7 @@ namespace MounterApp.ViewModel {
                     return;
                 }
                 if(SelectedResult == null) {
-                    Analytics.TrackEvent("Не выбрана результат",
+                    Analytics.TrackEvent("Не выбран результат",
                     new Dictionary<string,string> {
                         {"ServiceOrder",so!=null ? so.NewServiceorderId.ToString() : sofa.NewTest2Id.ToString() },
                         {"ServicemanPhone",Servicemans.FirstOrDefault().NewPhone }
@@ -613,7 +648,6 @@ namespace MounterApp.ViewModel {
                                         }
                                     }
                                     await App.Current.MainPage.Navigation.PopPopupAsync(true);
-                                    ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans,Mounters);
                                     App.Current.MainPage = new ServiceOrdersPage(vm);
                                 }
                                 else
@@ -728,7 +762,6 @@ namespace MounterApp.ViewModel {
                                         }
                                     }
                                     await App.Current.MainPage.Navigation.PopPopupAsync(true);
-                                    ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans,Mounters);
                                     App.Current.MainPage = new ServiceOrdersPage(vm);
                                 }
                                 else
@@ -859,7 +892,6 @@ namespace MounterApp.ViewModel {
                                                 {"ErrorMessage",ex.Message }
                                                     });
                                                 }
-                                                ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans,Mounters);
                                                 App.Current.MainPage = new ServiceOrdersPage(vm);
                                             }
                                         }
@@ -908,7 +940,7 @@ namespace MounterApp.ViewModel {
                                         //}
                                         using(HttpClient clientPut = new HttpClient(GetHttpClientHandler())) {
                                             var httpContent = new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json");
-                                            HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases",httpContent);
+                                            HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/NewServiceOrderForFireAlarmExtensionBase",httpContent);
                                             if(responsePut.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
                                                 Toast.MakeText(Android.App.Application.Context,"Заявка технику сохранена",ToastLength.Long).Show();
                                             }
@@ -978,7 +1010,6 @@ namespace MounterApp.ViewModel {
                                                 {"ErrorMessage",ex.Message }
                                                     });
                                                 }
-                                                ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans,Mounters);
                                                 App.Current.MainPage = new ServiceOrdersPage(vm);
                                             }
                                         }
@@ -996,129 +1027,15 @@ namespace MounterApp.ViewModel {
                             }
                         }
 
-                    //using HttpClient client = new HttpClient(GetHttpClientHandler());
-                    //HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/id?id=" + so.NewServiceorderId);
-                    //NewServiceorderExtensionBase soeb = null;
-                    //if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                    //    var resp = response.Content.ReadAsStringAsync().Result;
-                    //    try {
-                    //        soeb = JsonConvert.DeserializeObject<NewServiceorderExtensionBase>(resp);
-                    //    }
-                    //    catch(Exception ex) {
-                    //        soeb = null;
-                    //        Crashes.TrackError(new Exception("Ошибка десериализации результата запроса для получения информации по заявке технику. Ветка(выполнено)"),
-                    //        new Dictionary<string,string> {
-                    //                {"Servicemans",Servicemans.First().NewPhone },
-                    //                {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                    //                {"ErrorMessage",ex.Message },
-                    //                {"StatusCode",response.StatusCode.ToString() },
-                    //                {"Response",response.ToString() },
-                    //                {"Query","NewServiceorderExtensionBases/id?id=" + so.NewServiceorderId.ToString() }
-                    //        });
-                    //    }
-                    //    if(soeb != null) {
-                    //        soeb.NewOutgone = DateTime.Now.AddHours(-5);
-                    //        soeb.NewNewServiceman = Servicemans.FirstOrDefault().NewServicemanId;
-                    //        soeb.NewResult = SelectedResult.Value;
-                    //        soeb.NewTechConclusion = ConclusionByOrder;
-                    //        soeb.NewMustRead = NecesseryRead;
-                    //        //soeb.NewResultId = SelectedReason.Value;
-                    //        //soeb.NewTransferReason = ReasonComment;
-                    //        //if(SelectedResult.Value == 2) {
-                    //        //    soeb.NewMoved = new DateTime(TransferDate.Year,TransferDate.Month,TransferDate.Day,TransferTime.Hours,TransferTime.Minutes,TransferTime.Seconds).AddHours(-5);
-                    //        //}
-                    //        using(HttpClient clientPut = new HttpClient(GetHttpClientHandler())) {
-                    //            var httpContent = new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json");
-                    //            HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases",httpContent);
-                    //            if(responsePut.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
-                    //                Toast.MakeText(Android.App.Application.Context,"Заявка технику сохранена",ToastLength.Long).Show();
-                    //            }
-                    //            else {
-                    //                Crashes.TrackError(new Exception("Ошибка при сохранении заявки технику"),
-                    //                new Dictionary<string,string> {
-                    //                        {"Servicemans",Servicemans.First().NewPhone },
-                    //                        {"ServiceOrder",so.NewServiceorderId.ToString() },
-                    //                        {"ServerResponse",responsePut.Content.ReadAsStringAsync().Result },
-                    //                        {"StatusCode",responsePut.StatusCode.ToString() },
-                    //                        {"Response",responsePut.ToString() }
-                    //                });
-                    //            }
-                    //        }
-                    //        //запишем координаты
-                    //        Analytics.TrackEvent("Попытка получения координат (Выполнено)");
-                    //        Location location = await Geolocation.GetLastKnownLocationAsync();
-                    //        if(location != null) {
-                    //            Latitude = location.Latitude.ToString();
-                    //            Longitude = location.Longitude.ToString();
-                    //        }
-                    //        using HttpClient clientGet = new HttpClient(GetHttpClientHandler());
-                    //        HttpResponseMessage responseGet = await clientGet.GetAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates/id?so_id=" + so.NewServiceorderId);
-                    //        ServiceOrderCoordinates soc = null;
-                    //        if(responseGet.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                    //            var respGet = responseGet.Content.ReadAsStringAsync().Result;
-                    //            try {
-                    //                soc = JsonConvert.DeserializeObject<ServiceOrderCoordinates>(respGet);
-                    //            }
-                    //            catch(Exception ex) {
-                    //                Crashes.TrackError(new Exception("Ошибка десериализации результата запросакоординат по заявке "),
-                    //                new Dictionary<string,string> {
-                    //                        {"Servicemans",Servicemans.First().NewPhone },
-                    //                        {"Serviceorder",so.NewServiceorderId.ToString() },
-                    //                        {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                    //                        {"ErrorMessage",ex.Message },
-                    //                        {"StatusCode",response.StatusCode.ToString() },
-                    //                        {"Response",response.ToString() }
-                    //                });
-                    //                soc = null;
-                    //            }
-                    //            if(soc != null) {
-                    //                soc.SocOutcomeLatitide = Latitude;
-                    //                soc.SocOutcomeLongitude = Longitude;
-                    //                using HttpClient clientPut = new HttpClient(GetHttpClientHandler());
-                    //                var httpContent = new StringContent(JsonConvert.SerializeObject(soc),Encoding.UTF8,"application/json");
-                    //                HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates",httpContent);
-                    //                if(!responsePut.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
-                    //                    Crashes.TrackError(new Exception("Ошибка при записи координат в базу"),
-                    //                    new Dictionary<string,string> {
-                    //                            {"Servicemans",Servicemans.First().NewPhone },
-                    //                            {"Serviceorder",so.NewServiceorderId.ToString() },
-                    //                            {"ServerResponse",responsePut.Content.ReadAsStringAsync().Result },
-                    //                            //{"ErrorMessage",ex.Message },
-                    //                            {"StatusCode",responsePut.StatusCode.ToString() },
-                    //                            {"Response",responsePut.ToString() }
-                    //                    });
-                    //                }
-                    //                try {
-                    //                    await App.Current.MainPage.Navigation.PopPopupAsync(true);
-                    //                }
-                    //                catch(Exception ex) {
-                    //                    Crashes.TrackError(new Exception("Ошибка при закрытии текущей страницы CloseOrderPopupPage при установлении статуса заявки выполнено"),
-                    //                    new Dictionary<string,string> {
-                    //                            {"Servicemans",Servicemans.First().NewPhone },
-                    //                            {"Serviceorder",so.NewServiceorderId.ToString() },
-                    //                            {"ErrorMessage",ex.Message }
-                    //                    });
-                    //                }
-                    //                ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans,Mounters);
-                    //                App.Current.MainPage = new ServiceOrdersPage(vm);
-                    //            }
-                    //        }
-                    //        else
-                    //            Crashes.TrackError(new Exception("При попытке получения записи с координатами по текущей заявке, сервер вернул ошибку"),
-                    //            new Dictionary<string,string> {
-                    //                    {"Servicemans",Servicemans.First().NewPhone },
-                    //                    {"ServerResponse",responseGet.Content.ReadAsStringAsync().Result },
-                    //                    //{"ErrorMessage",ex.Message },
-                    //                    {"StatusCode",responseGet.StatusCode.ToString() },
-                    //                    {"Response",responseGet.ToString() }
-                    //            });
-                    //    }
-                    //}
-                }
+                        
+                    }
                     else
-                    await Application.Current.MainPage.DisplayAlert("Ошибка","Заключение по заявке не может быть пустым!","OK");
-            }
+                        await Application.Current.MainPage.DisplayAlert("Ошибка","Заключение по заявке не может быть пустым!","OK");
+                }
+                App.Current.MainPage = new ServiceOrdersPage(vm);
+                OpacityForm = 1;
+                IndicatorVisible = false;
             });
         }
-}
+    }
 }

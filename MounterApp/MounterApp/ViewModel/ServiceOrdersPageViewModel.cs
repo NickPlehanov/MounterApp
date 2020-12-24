@@ -73,20 +73,33 @@ namespace MounterApp.ViewModel {
             #region Данный код прекрасно мог бы обновлять заявки в фоне, но иногда он крашится, из-за коллекции
             //Device.StartTimer(TimeSpan.FromMinutes(1),() => {
             //    Task.Run(async () => {
-            //        if(ServiceOrdersByTime != null)
-            //            if(ServiceOrdersByTime.Any()) {
-            //                int count_time = ServiceOrdersByTime.Count;
-            //            }
-            //        if(ServiceOrders != null)
-            //            if(ServiceOrders.Any()) {
-            //                int count_ordr = ServiceOrders.Count;
-            //            }
-            //        if(ServiceOrderByTransfer != null)
-            //            if(ServiceOrderByTransfer.Any()) {
-            //                int count_transfer = ServiceOrderByTransfer.Count;
-            //            }
-            //        GetServiceOrders.Execute(Servicemans);
-            //        GetServiceOrderByTransfer.Execute(Servicemans);
+            //        try {
+            //            if(ServiceOrdersByTime != null)
+            //                if(ServiceOrdersByTime.Any()) {
+            //                    int count_time = ServiceOrdersByTime.Count;
+            //                }
+            //            if(ServiceOrders != null)
+            //                if(ServiceOrders.Any()) {
+            //                    int count_ordr = ServiceOrders.Count;
+            //                }
+            //            if(ServiceOrderByTransfer != null)
+            //                if(ServiceOrderByTransfer.Any()) {
+            //                    int count_transfer = ServiceOrderByTransfer.Count;
+            //                }
+            //            FireAlarmOtherServiceOrderExpanded = true;
+            //            FireAlarmServiceOrderExpanded = true;
+            //            FireAlarmTimeServiceOrderExpanded = true;
+            //            FireAlarmTransferServiceOrderExpanded = true;
+            //            OtherServiceOrderExpanded = true;
+            //            ServiceOrderExpanded = true;
+            //            TimeServiceOrderExpanded = true;
+            //            TransferServiceOrderExpanded = true;
+            //            await GetServiceOrders.ExecuteAsync(Servicemans);
+            //            await GetServiceOrderByTransfer.ExecuteAsync(Servicemans);
+            //            await GetServiceOrdersFireAlarm.ExecuteAsync(Servicemans);
+            //            await GetServiceOrderByTransferFireAlarm.ExecuteAsync(Servicemans);
+            //        }
+            //        catch { }
             //        //if (count_time< ServiceOrdersByTime.Count || count_ordr< ServiceOrders.Count || count_transfer< ServiceOrderByTransfer.Count) { }
             //    });
             //    return true; //use this to run continuously 
@@ -437,13 +450,24 @@ namespace MounterApp.ViewModel {
                 await GetCategoryTech.ExecuteAsync(Category);
                 await GetServiceOrders.ExecuteAsync(Servicemans);
                 await GetServiceOrderByTransfer.ExecuteAsync(Servicemans);
-                if(Category.Count > 0) {
-                    var sm = Servicemans.First(x => x.NewCategory == Category.FirstOrDefault(x => x.Value == 6).Value);
-                    if(sm != null) {
-                        await GetServiceOrderByTransferFireAlarm.ExecuteAsync(null);
-                        await GetServiceOrdersFireAlarm.ExecuteAsync(null);
+                NewServicemanExtensionBase sm = null;
+                if(Category != null)
+                    if(Category.Count > 0) {
+                        try {
+                            sm = Servicemans.First(x => x.NewCategory == Category.FirstOrDefault(x => x.Value == 6).Value);
+                        }
+                        catch(Exception ex) {
+                            sm = null;
+                            Analytics.TrackEvent("Не удалось найти техника с необходимой категорией для техников по ПС",
+                            new Dictionary<string,string> {
+                                {"ErrorMessage",ex.Message }
+                            });
+                        }
+                        if(sm != null) {
+                            await GetServiceOrderByTransferFireAlarm.ExecuteAsync(null);
+                            await GetServiceOrdersFireAlarm.ExecuteAsync(null);
+                        }
                     }
-                }
             });
         }
         private AsyncCommand _GetServiceOrders;
@@ -491,7 +515,7 @@ namespace MounterApp.ViewModel {
                         });
                     }
                     if(_serviceorders != null) {
-                        if (ServiceOrders!=null)
+                        if(ServiceOrders != null)
                             ServiceOrders.Clear();
                         if(ServiceOrdersByTime != null)
                             ServiceOrdersByTime.Clear();
@@ -622,7 +646,7 @@ namespace MounterApp.ViewModel {
                         });
                     }
                     if(_serviceorders != null) {
-                        if(ServiceOrderByTransfer!=null)
+                        if(ServiceOrderByTransfer != null)
                             ServiceOrderByTransfer.Clear();
                         foreach(NewServiceorderExtensionBase item in _serviceorders) {
                             ServiceOrderByTransfer.Add(item);
@@ -765,7 +789,7 @@ namespace MounterApp.ViewModel {
         public bool FireAlarmServiceOrderExpanded {
             get => _FireAlarmServiceOrderExpanded;
             set {
-                if (_FireAlarmServiceOrderExpanded)
+                if(_FireAlarmServiceOrderExpanded)
                     ArrowCircleFireAlarmServiceOrder = "arrow_circle_up.png";
                 else
                     ArrowCircleFireAlarmServiceOrder = "arrow_circle_down.png";
@@ -947,7 +971,7 @@ namespace MounterApp.ViewModel {
             }
         }
 
-        private ObservableCollection<NewTest2ExtensionBase> _ServiceOrdersByTimeFireAlarm=new ObservableCollection<NewTest2ExtensionBase>();
+        private ObservableCollection<NewTest2ExtensionBase> _ServiceOrdersByTimeFireAlarm = new ObservableCollection<NewTest2ExtensionBase>();
         public ObservableCollection<NewTest2ExtensionBase> ServiceOrdersByTimeFireAlarm {
             get => _ServiceOrdersByTimeFireAlarm;
             set {
@@ -956,7 +980,7 @@ namespace MounterApp.ViewModel {
             }
         }
 
-        private ObservableCollection<NewTest2ExtensionBase> _ServiceOrdersFireAlarm=new ObservableCollection<NewTest2ExtensionBase>();
+        private ObservableCollection<NewTest2ExtensionBase> _ServiceOrdersFireAlarm = new ObservableCollection<NewTest2ExtensionBase>();
         public ObservableCollection<NewTest2ExtensionBase> ServiceOrdersFireAlarm {
             get => _ServiceOrdersFireAlarm;
             set {
@@ -965,7 +989,7 @@ namespace MounterApp.ViewModel {
             }
         }
 
-        private ObservableCollection<NewTest2ExtensionBase> _ServiceOrderByTransferFireAlarm=new ObservableCollection<NewTest2ExtensionBase>();
+        private ObservableCollection<NewTest2ExtensionBase> _ServiceOrderByTransferFireAlarm = new ObservableCollection<NewTest2ExtensionBase>();
         public ObservableCollection<NewTest2ExtensionBase> ServiceOrderByTransferFireAlarm {
             get => _ServiceOrderByTransferFireAlarm;
             set {
@@ -1045,7 +1069,7 @@ namespace MounterApp.ViewModel {
             });
         }
 
-        
+
 
         private string _TimeServiceOrder;
         public string TimeServiceOrder {

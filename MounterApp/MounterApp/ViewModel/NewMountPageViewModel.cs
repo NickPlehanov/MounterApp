@@ -328,20 +328,37 @@ namespace MounterApp.ViewModel {
                                 Mount.ObjectSignboard = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Вывеска объекта").Data;
                                 //Mount.ObjectExtra1 = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Доп. фото" && x.IsUse == false).Data;
 
-                                Guid? _id = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Доп. фото" && x.IsUse == false).ID;
-                                if(_id != null) {
-                                    if (Mount.ObjectExtra1==null)
-                                        Mount.ObjectExtra1 = Photos.FirstOrDefault(x => x.ID == _id).Data;
-                                    else if(Mount.ObjectExtra2 == null)
-                                        Mount.ObjectExtra2 = Photos.FirstOrDefault(x => x.ID == _id).Data;
-                                    else if(Mount.ObjectExtra3 == null)
-                                        Mount.ObjectExtra3 = Photos.FirstOrDefault(x => x.ID == _id).Data;
-                                    else if(Mount.ObjectExtra4 == null)
-                                        Mount.ObjectExtra4 = Photos.FirstOrDefault(x => x.ID == _id).Data;
-                                    else if(Mount.ObjectExtra5 == null)
-                                        Mount.ObjectExtra5 = Photos.FirstOrDefault(x => x.ID == _id).Data;
-                                    Photos.FirstOrDefault(x => x.ID == _id).IsUse = true;
-                                }
+                                foreach(var item in Photos.Where(x => x._Types.PhotoTypeName == "Доп. фото" && x.IsUse == false)) {
+                                    //if(Photos.Any(x => x._Types.PhotoTypeName == "Доп. фото" && x.IsUse == false)) {
+                                    //Guid? _id = Photos.First(x => x._Types.PhotoTypeName == "Доп. фото" && x.IsUse == false).ID;
+                                    //if(_id != null) {
+                                    //    if(Mount.ObjectExtra1 == null)
+                                    //        Mount.ObjectExtra1 = Photos.FirstOrDefault(x => x.ID == _id).Data;
+                                    //    else if(Mount.ObjectExtra2 == null)
+                                    //        Mount.ObjectExtra2 = Photos.FirstOrDefault(x => x.ID == _id).Data;
+                                    //    else if(Mount.ObjectExtra3 == null)
+                                    //        Mount.ObjectExtra3 = Photos.FirstOrDefault(x => x.ID == _id).Data;
+                                    //    else if(Mount.ObjectExtra4 == null)
+                                    //        Mount.ObjectExtra4 = Photos.FirstOrDefault(x => x.ID == _id).Data;
+                                    //    else if(Mount.ObjectExtra5 == null)
+                                    //        Mount.ObjectExtra5 = Photos.FirstOrDefault(x => x.ID == _id).Data;
+                                    //    Photos.FirstOrDefault(x => x.ID == _id).IsUse = true;
+                                    //}
+                                    //Guid? _id = item.ID;
+                                    //if(_id != null) {
+                                        if(Mount.ObjectExtra1 == null)
+                                            Mount.ObjectExtra1 = Photos.FirstOrDefault(x => x.ID == item.ID).Data;
+                                        else if(Mount.ObjectExtra2 == null)
+                                            Mount.ObjectExtra2 = Photos.FirstOrDefault(x => x.ID == item.ID).Data;
+                                        else if(Mount.ObjectExtra3 == null)
+                                            Mount.ObjectExtra3 = Photos.FirstOrDefault(x => x.ID == item.ID).Data;
+                                        else if(Mount.ObjectExtra4 == null)
+                                            Mount.ObjectExtra4 = Photos.FirstOrDefault(x => x.ID == item.ID).Data;
+                                        else if(Mount.ObjectExtra5 == null)
+                                            Mount.ObjectExtra5 = Photos.FirstOrDefault(x => x.ID == item.ID).Data;
+                                        Photos.FirstOrDefault(x => x.ID == item.ID).IsUse = true;
+                                    //}
+                            }
 
                                 App.Database.SaveUpdateMount(Mount);
                                 Analytics.TrackEvent("Сохранение монтажа перед отправкой на сервер в локальной базе",

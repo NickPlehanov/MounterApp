@@ -6,7 +6,7 @@
         <Grid VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand" Visual="Material">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="6*"/>
+                <RowDefinition Height="5*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
@@ -17,7 +17,13 @@
             <Button Text="Монтажи" Command="{Binding GetMountworksCommand}" Style="{StaticResource MainMenuButtonStyle}"/>
         </StackLayout>
         <StackLayout Grid.Row="1" Grid.Column="1">
-                <Button Text="Заявки техникам" Command="{Binding GetServiceordersCommand}" Style="{StaticResource MainMenuButtonStyle}"/>
+                <Button Text="Заявки техникам" Command="{Binding GetServiceordersCommand}" Style="{StaticResource MainMenuButtonStyle}">
+                    <Button.BackgroundColor>
+                        <LinearGradientBrush EndPoint="1,0">
+                            
+                        </LinearGradientBrush>
+                    </Button.BackgroundColor>
+                </Button>
         </StackLayout>
             <StackLayout Grid.Row="2" Grid.ColumnSpan="2" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
                 <Label Text="{Binding Message}"/>
