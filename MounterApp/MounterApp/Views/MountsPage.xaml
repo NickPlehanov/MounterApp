@@ -33,7 +33,7 @@
                     </CollectionView.ItemsLayout>
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Frame Style="{StaticResource FrameServiceOrderStyle}" BorderColor="Blue">
+                            <Frame Style="{StaticResource FrameServiceOrderStyle}" BorderColor="Blue" HasShadow="True">
                                 <Frame.Content>
                                     <Label Text="{Binding Path=FullInfo}" Style="{StaticResource MountersLabelStyle}"/>
                                 </Frame.Content>
@@ -65,7 +65,7 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <StackLayout>
-                                <Frame Style="{StaticResource FrameServiceOrderStyle}" BorderColor="Red">
+                                <Frame Style="{StaticResource FrameServiceOrderStyle}" BorderColor="Red" HasShadow="True">
                                     <Frame.Content>
                                         <Label Text="{Binding Path=ObjectNumber}" Style="{StaticResource MountersLabelStyle}">
                                     <Label.GestureRecognizers>
@@ -102,7 +102,7 @@
                     </CollectionView.ItemsLayout>
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Frame Style="{StaticResource FrameServiceOrderStyle}" BorderColor="ForestGreen" >
+                            <Frame Style="{StaticResource FrameServiceOrderStyle}" BorderColor="ForestGreen" HasShadow="True">
                                 <Frame.Content>
                                     <Label Style="{StaticResource MountersLabelStyle}" Text="{Binding Path=CompositeName}"/>
                                 </Frame.Content>
