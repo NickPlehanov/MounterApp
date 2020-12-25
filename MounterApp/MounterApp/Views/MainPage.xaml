@@ -6,6 +6,12 @@
         <viewmodel:MainPageViewModel x:Key="viewModel"/>
     </ContentPage.Resources>
     <Grid>
+        <Grid.Background>
+                <LinearGradientBrush EndPoint="0,1">
+                <GradientStop Color="{StaticResource StackLayoutFirstColor}" Offset="0.1" />
+                <GradientStop Color="{StaticResource StackLayoutSecondColor}" Offset="1.0" />
+            </LinearGradientBrush>
+        </Grid.Background>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="5*"/>
@@ -13,7 +19,7 @@
         </Grid.RowDefinitions>
         <StackLayout Visual="Material" Opacity="{Binding OpacityForm}" BindingContext="{StaticResource viewModel}" Grid.Row="1" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Margin="5">
             <Label Text="Введите номер телефона"/>
-            <SearchBar x:Name="PhoneNumber" Keyboard="Telephone" Text="{Binding PhoneNumber, Mode=TwoWay}" SearchCommand="{Binding AuthCommand}" SearchCommandParameter="{Binding Source=PhoneNumber,Path=Text}"/>
+            <SearchBar Placeholder="Введите номер телефона (11 цифр)" x:Name="PhoneNumber" Keyboard="Telephone" Text="{Binding PhoneNumber, Mode=TwoWay}" SearchCommand="{Binding AuthCommand}" SearchCommandParameter="{Binding Source=PhoneNumber,Path=Text}"/>
             <!--<ui:MaterialTextField Placeholder="Укажите номер телефон" Text="{Binding PhoneNumber, Mode=TwoWay}" ChoiceSelectedCommand="{Binding AuthCommand}"/>-->
             <!--<Editor Keyboard="Telephone" x:Name="PhoneNumber" Text="{Binding PhoneNumber, Mode=TwoWay}"/>-->
             <!--<Button Text="ОК" Command="{Binding AuthCommand}" CommandParameter="{Binding Source=PhoneNumber, Path=Text}" BorderColor="Bisque" BorderWidth="2" WidthRequest="20" VerticalOptions="CenterAndExpand" FontAttributes="Bold"/>-->

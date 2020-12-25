@@ -95,6 +95,8 @@ namespace MounterApp.Model {
                     return Color.Black;
             }
         }
+        [NotMapped]
+        public string ControlTime { get; set; }
 
         public virtual NewAndromedaBase NewAndromedaServiceorderNavigation { get; set; }
         public virtual NewServicemanBase NewNewServicemanNavigation { get; set; }

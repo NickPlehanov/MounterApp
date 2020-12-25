@@ -1,6 +1,4 @@
-﻿using Android.Content;
-using Android.OS;
-using Android.Widget;
+﻿using Android.Widget;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using MounterApp.Helpers;
@@ -22,14 +20,6 @@ using Xamarin.Forms;
 namespace MounterApp.ViewModel {
     public class ServiceOrderViewModel : BaseViewModel {
         public ServiceOrderViewModel() { }
-        //public ServiceOrderViewModel(NewServiceorderExtensionBase _so) {
-        //    ServiceOrderID = _so;
-        //    App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
-        //    Analytics.TrackEvent("Инициализация окна заявки технику",
-        //    new Dictionary<string,string> {
-        //        {"ServiceOrderID",_so.NewServiceorderId.ToString() }
-        //    });
-        //}
         public ServiceOrderViewModel(NewServiceorderExtensionBase _so,List<NewServicemanExtensionBase> _servicemans,List<NewMounterExtensionBase> _mounters) {
             Analytics.TrackEvent("Инициализация окна заявки технику",
             new Dictionary<string,string> {
@@ -47,6 +37,7 @@ namespace MounterApp.ViewModel {
             EventsVisible = false;
             GetInfoByGuardObject.Execute(null);
             GetCategory.Execute(null);
+            GetObjectNameCommand.Execute(null);
             App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
             InfoImage = "info.png";
             ReorderImage = "reorder.png";
@@ -343,7 +334,7 @@ namespace MounterApp.ViewModel {
                     new Dictionary<string,string> {
                         {"Servicemans",Servicemans.First().NewPhone } });
                 using HttpClient client = new HttpClient(GetHttpClientHandler());
-                HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/metadata?ColumnName=new_category&ObjectName=New_serviceorder");                
+                HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/metadata?ColumnName=new_category&ObjectName=New_serviceorder");
                 List<MetadataModel> mm = new List<MetadataModel>();
                 if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
                     var resp = response.Content.ReadAsStringAsync().Result;
@@ -351,7 +342,7 @@ namespace MounterApp.ViewModel {
                         Analytics.TrackEvent("Попытка десериализации ответа от сервера с категориями техников");
                         mm = JsonConvert.DeserializeObject<List<MetadataModel>>(resp);
                     }
-                    catch (Exception ex) {
+                    catch(Exception ex) {
                         Crashes.TrackError(new Exception("Ошибка получения списка категорий заявок технику"),
                         new Dictionary<string,string> {
                         {"Servicemans",Servicemans.First().NewPhone },
@@ -384,7 +375,7 @@ namespace MounterApp.ViewModel {
                     Analytics.TrackEvent("Выполнение запроса(Охр.объекты) для получения информации по объекту",
                     new Dictionary<string,string> {
                         {"Servicemans",Servicemans.First().NewPhone },
-                        {"ObjectNumber",ServiceOrderID.NewNumber.ToString() } 
+                        {"ObjectNumber",ServiceOrderID.NewNumber.ToString() }
                     });
                     HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewGuardObjectExtensionBases/GetInfoByNumber?number=" + ServiceOrderID.NewNumber);
                     List<NewGuardObjectExtensionBase> goeb = new List<NewGuardObjectExtensionBase>();
@@ -398,7 +389,7 @@ namespace MounterApp.ViewModel {
                             });
                             goeb = JsonConvert.DeserializeObject<List<NewGuardObjectExtensionBase>>(resp);
                         }
-                        catch (Exception ex) {
+                        catch(Exception ex) {
                             Crashes.TrackError(new Exception("Ошибка десериализации результата запроса(Охр.объекты) для получения информации по объекту"),
                             new Dictionary<string,string> {
                                 {"Servicemans",Servicemans.First().NewPhone },
@@ -428,7 +419,7 @@ namespace MounterApp.ViewModel {
                     HttpResponseMessage responseA28 = await clientA28.GetAsync(Resources.BaseAddress + "/api/NewAndromedaExtensionBases/id?id=" + ServiceOrderID.NewAndromedaServiceorder);
                     NewAndromedaExtensionBase andromeda = new NewAndromedaExtensionBase();
                     if(responseA28.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                        var respA28 = responseA28.Content.ReadAsStringAsync().Result;                        
+                        var respA28 = responseA28.Content.ReadAsStringAsync().Result;
                         try {
                             Analytics.TrackEvent("Попытка десериализации результата запросы из базы(объект: Андромеда)",
                             new Dictionary<string,string> {
@@ -437,7 +428,7 @@ namespace MounterApp.ViewModel {
                             });
                             andromeda = JsonConvert.DeserializeObject<NewAndromedaExtensionBase>(respA28);
                         }
-                        catch (Exception ex) {
+                        catch(Exception ex) {
                             Crashes.TrackError(new Exception("Ошибка десериализации результата запроса(Андромеда) для получения номера объекта"),
                             new Dictionary<string,string> {
                                 {"Servicemans",Servicemans.First().NewPhone },
@@ -454,7 +445,7 @@ namespace MounterApp.ViewModel {
                                     {"Servicemans",Servicemans.First().NewPhone },
                                     {"ObjectNumber",ServiceOrderID.NewNumber.ToString() }
                                 });
-                        HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewGuardObjectExtensionBases/GetInfoByNumber?number=" + andromeda.NewNumber);                        
+                        HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewGuardObjectExtensionBases/GetInfoByNumber?number=" + andromeda.NewNumber);
                         List<NewGuardObjectExtensionBase> goeb = new List<NewGuardObjectExtensionBase>();
                         if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
                             var resp = response.Content.ReadAsStringAsync().Result;
@@ -466,7 +457,7 @@ namespace MounterApp.ViewModel {
                                 });
                                 goeb = JsonConvert.DeserializeObject<List<NewGuardObjectExtensionBase>>(resp);
                             }
-                            catch (Exception ex) {
+                            catch(Exception ex) {
                                 Crashes.TrackError(new Exception("Ошибка десериализации результата запроса(Охр.объекты) для получения информации по объекту"),
                                 new Dictionary<string,string> {
                                     {"Servicemans",Servicemans.First().NewPhone },
@@ -511,7 +502,7 @@ namespace MounterApp.ViewModel {
                     {"ServiceOrderID",ServiceOrderID.NewServiceorderId.ToString() }
                 });
                 using HttpClient client = new HttpClient(GetHttpClientHandler());
-                HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/id?id=" + ServiceOrderID.NewServiceorderId);                
+                HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/id?id=" + ServiceOrderID.NewServiceorderId);
                 NewServiceorderExtensionBase soeb = null;
                 if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
                     var resp = response.Content.ReadAsStringAsync().Result;
@@ -586,7 +577,9 @@ namespace MounterApp.ViewModel {
                 }
                 Opacity = 1;
                 IndicatorVisible = false;
-            },obj=> ServiceOrderID.NewIncome==null);
+                ServiceOrderID.NewIncome = DateTime.Now.AddHours(-5);
+                IncomeCommand.ChangeCanExecute();
+            },obj => ServiceOrderID.NewIncome == null);
         }
 
         private ImageSource _PeopleImage;
@@ -605,8 +598,60 @@ namespace MounterApp.ViewModel {
                         {"ServiceOrderID",ServiceOrderID.NewServiceorderId.ToString() },
                         {"PhoneNumber",obj.ToString() }
                     });
-                Uri uri = new Uri("tel:" + obj);
-                await Launcher.OpenAsync(uri);
+                string phone = null;
+                foreach(char c in obj.ToString().ToCharArray())
+                    if(char.IsDigit(c))
+                        phone += c;
+                if(phone != null) {
+                    Uri uri = new Uri("tel:" + phone);
+                    await Launcher.OpenAsync(uri);
+                }
+            });
+        }
+        private RelayCommand _GetObjectNameCommand;
+        public RelayCommand GetObjectNameCommand {
+            get => _GetObjectNameCommand ??= new RelayCommand(async obj => {
+                using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/GetObjectInfo?ObjectNumber=" + ServiceOrderID.NewNumber.ToString() + "");
+                    A28Object a28Object = new A28Object();
+                    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                        var resp = response.Content.ReadAsStringAsync().Result;
+                        try {
+                            a28Object = JsonConvert.DeserializeObject<A28Object>(resp);
+                        }
+                        catch {
+                            a28Object = null;
+                        }
+                        if(a28Object != null) {
+                            ObjectName = a28Object.Name;
+                            ControlTime = a28Object.ControlTime.ToString();
+                        }
+                    }
+                }
+            });
+        }
+
+        private string _ControlTime;
+        public string ControlTime {
+            get => _ControlTime;
+            set {
+                _ControlTime = value;
+                OnPropertyChanged(nameof(ControlTime));
+            }
+        }
+
+        private string _ObjectName;
+        public string ObjectName {
+            get => _ObjectName;
+            set {
+                _ObjectName = value;
+                OnPropertyChanged(nameof(ObjectName));
+            }
+        }
+        private RelayCommand _ShowInfoCommand;
+        public RelayCommand ShowInfoCommand {
+            get => _ShowInfoCommand ??= new RelayCommand(async obj => {
+                await Application.Current.MainPage.DisplayAlert("Информация",obj.ToString(),"OK");
             });
         }
         private RelayCommand _CloseOrderCommand;

@@ -6,9 +6,22 @@
         <vm:MountsViewModel x:Key="vm"/>
     </ContentPage.Resources>
     <StackLayout Opacity="{Binding Opacity}">
+        <StackLayout.Background>
+            <LinearGradientBrush EndPoint="0,1">
+                <GradientStop Color="{StaticResource StackLayoutFirstColor}" Offset="0.1" />
+                <GradientStop Color="{StaticResource StackLayoutSecondColor}" Offset="1.0" />
+            </LinearGradientBrush>
+        </StackLayout.Background>
         <Expander Grid.Row="0" IsExpanded="{Binding GoogleMountsExpander}">
             <Expander.Header>
-                <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding GoogleMountsExpanderCommand}" Text="{Binding HeaderGoogle}" ImageSource="{Binding ArrowCircleGoogle}"/>
+                <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding GoogleMountsExpanderCommand}" Text="{Binding HeaderGoogle}" ImageSource="{Binding ArrowCircleGoogle}">
+                    <Button.Background>
+                        <LinearGradientBrush EndPoint="1,1">
+                            <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
+                            <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
             </Expander.Header>
             <StackLayout >
                 <CollectionView Margin="5" 
@@ -32,7 +45,14 @@
         </Expander>
         <Expander Grid.Row="1" IsExpanded="{Binding NotSendedMountsExpander}">
             <Expander.Header>
-                <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding NotSendedMountsExpanderCommand}" ImageSource="{Binding ArrowCircleNotSended}" Text="{Binding HeaderNotSended}"/>
+                <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding NotSendedMountsExpanderCommand}" ImageSource="{Binding ArrowCircleNotSended}" Text="{Binding HeaderNotSended}">
+                    <Button.Background>
+                        <LinearGradientBrush EndPoint="1,1">
+                            <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
+                            <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
             </Expander.Header>
             <StackLayout >
                 <CollectionView Margin="5" 
@@ -64,7 +84,14 @@
         </Expander>
         <Expander IsExpanded="{Binding HistoryMountsExpander}">
             <Expander.Header>
-                <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding HistoryMountsExpanderCommand}" ImageSource="{Binding ArrowCircleHistory}" Text="{Binding HeaderHistory}"/>
+                <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding HistoryMountsExpanderCommand}" ImageSource="{Binding ArrowCircleHistory}" Text="{Binding HeaderHistory}">
+                    <Button.Background>
+                        <LinearGradientBrush EndPoint="1,1">
+                            <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
+                            <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
             </Expander.Header>
             <StackLayout>
                 <CollectionView Margin="5"

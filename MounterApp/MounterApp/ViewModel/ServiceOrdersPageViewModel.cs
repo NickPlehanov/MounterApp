@@ -454,7 +454,7 @@ namespace MounterApp.ViewModel {
                 if(Category != null)
                     if(Category.Count > 0) {
                         try {
-                            sm = Servicemans.First(x => x.NewCategory == Category.FirstOrDefault(x => x.Value == 6).Value);
+                            sm = Servicemans.FirstOrDefault(x => x.NewCategory == Category.FirstOrDefault(x => x.Value == 6).Value);
                         }
                         catch(Exception ex) {
                             sm = null;

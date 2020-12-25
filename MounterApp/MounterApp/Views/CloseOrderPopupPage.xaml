@@ -7,6 +7,12 @@
                  BackgroundClicked="PopupPage_BackgroundClicked">
     <popup:PopupPage.Content>
         <StackLayout Style="{StaticResource PopupStackLayoutStyle}">
+            <StackLayout.Background>
+                <LinearGradientBrush EndPoint="0,1">
+                    <GradientStop Color="{StaticResource StackLayoutFirstColor}"  Offset="0.1" />
+                    <GradientStop Color="{StaticResource StackLayoutSecondColor}" Offset="1.0" />
+                </LinearGradientBrush>
+            </StackLayout.Background>
             <Grid Opacity="{Binding OpacityForm}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -58,7 +64,14 @@
                     <TimePicker Time="{Binding TransferTime, Mode=TwoWay}" Format="t"/>
                 </FlexLayout>
             </StackLayout>
-            <Button ImageSource="{Binding SaveImage}" Text="OK" Command="{Binding CloseServiceOrderCommand}"/>            
+            <Button ImageSource="{Binding SaveImage}" Text="OK" Command="{Binding CloseServiceOrderCommand}">
+                <Button.Background>
+                    <LinearGradientBrush EndPoint="1,1">
+                        <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
+                        <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
         </StackLayout>
     </popup:PopupPage.Content>
 </popup:PopupPage>

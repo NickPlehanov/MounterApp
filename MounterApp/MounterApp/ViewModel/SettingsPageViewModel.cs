@@ -71,7 +71,6 @@ namespace MounterApp.ViewModel {
             }
         }
 
-
         private RelayCommand _ClearDatabaseCommand;
         public RelayCommand ClearDatabaseCommand {
             get => _ClearDatabaseCommand ??= new RelayCommand(async obj => {
@@ -80,7 +79,8 @@ namespace MounterApp.ViewModel {
                     Toast.MakeText(Android.App.Application.Context,"Очищено объектов: " + App.Database.ClearDatabase().ToString(),ToastLength.Long).Show();
                     Analytics.TrackEvent("Очистка локальной базы данных объектов");
                 }
-            });
+                ClearDatabaseCommand.ChangeCanExecute();
+            },obj=>App.Database.GetCount()>0);
         }
         private int _Quality;
         public int Quality {

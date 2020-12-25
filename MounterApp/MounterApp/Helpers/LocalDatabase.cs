@@ -18,6 +18,9 @@ namespace MounterApp.Helpers {
             //return _database.Table<Mounts>().Where(x => x.MounterID == _mounter).ToList();
             return _database.Table<Mounts>().ToList();
         }
+        public int GetCount() {
+            return _database.Table<Mounts>().Count();
+        }
         public List<Mounts> GetMounts(int _id) {
             return _database.Table<Mounts>().Where(x => x.ID == _id).ToList();
         }

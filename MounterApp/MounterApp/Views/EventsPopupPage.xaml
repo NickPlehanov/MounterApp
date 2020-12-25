@@ -4,10 +4,23 @@
     <popup:PopupPage.Content>
         <!--<ScrollView>-->
         <StackLayout Style="{StaticResource PopupStackLayoutStyle}">
+            <StackLayout.Background>
+                <LinearGradientBrush EndPoint="0,1">
+                    <GradientStop Color="{StaticResource StackLayoutFirstColor}" Offset="0.1" />
+                    <GradientStop Color="{StaticResource StackLayoutSecondColor}" Offset="1.0" />
+                </LinearGradientBrush>
+            </StackLayout.Background>
             <FlexLayout>
                 <DatePicker Margin="2" Date="{Binding StartDate}"/>
                 <DatePicker Margin="2" Date="{Binding EndDate}"/>
-                <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding GetImage}" FontSize="Default" Text="Получить" Command="{Binding GetEventsCommands}"/>
+                <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding GetImage}" FontSize="Default" Text="Получить" Command="{Binding GetEventsCommands}">
+                    <Button.Background>
+                        <LinearGradientBrush EndPoint="1,1">
+                            <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
+                            <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
             </FlexLayout>
             <StackLayout Style="{StaticResource ActivityIndicatorStackLayoutStyle}" IsVisible="{Binding IndicatorVisible}">
                 <ActivityIndicator Style="{StaticResource ActivityIndicatorStyle}"/>
@@ -44,7 +57,14 @@
                     </CollectionView>
                 </StackLayout>
             </ScrollView>
-            <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding ExitCommand}"/>
+            <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding ExitCommand}">
+                <Button.Background>
+                    <LinearGradientBrush EndPoint="1,1">
+                        <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
+                        <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
         </StackLayout>
     </popup:PopupPage.Content>
 </popup:PopupPage>

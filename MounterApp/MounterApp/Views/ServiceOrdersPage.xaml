@@ -7,9 +7,22 @@
     </ContentPage.Resources>
     <ContentPage.Content>
         <StackLayout>
+            <StackLayout.Background>
+                <LinearGradientBrush EndPoint="0,1">
+                    <GradientStop Color="{StaticResource StackLayoutFirstColor}" Offset="0.1" />
+                    <GradientStop Color="{StaticResource StackLayoutSecondColor}" Offset="1.0" />
+                </LinearGradientBrush>
+            </StackLayout.Background>
             <StackLayout Grid.Row="0"  Margin="5" Opacity="{Binding OpacityForm}" >
                 <DatePicker Date="{Binding Date, Mode=TwoWay}" HorizontalOptions="Center"/>
-                <Button Style="{StaticResource ServiceOrderHeaderStyle}" ImageSource="{Binding RefreshImage}" Text="Обновить" Command="{Binding RefreshOrdersCommand}"/>
+                <Button Style="{StaticResource ServiceOrderHeaderStyle}" ImageSource="{Binding RefreshImage}" Text="Обновить" Command="{Binding RefreshOrdersCommand}">
+                    <Button.Background>
+                        <LinearGradientBrush EndPoint="1,1">
+                            <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
+                            <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
             </StackLayout>
                 <Expander IsVisible="{Binding TransferServiceOrderVisible}" Grid.Row="0" Opacity="{Binding OpacityForm}" IsExpanded="{Binding TransferServiceOrderExpanded}">
                         <Expander.Header>
@@ -88,7 +101,14 @@
             <Expander IsVisible="{Binding OtherServiceOrderVisible}" Grid.Row="2" Opacity="{Binding OpacityForm}" IsExpanded="{Binding OtherServiceOrderExpanded}">
                         <Expander.Header>
                     <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding OtherServiceOrderExpanderCommand}" HorizontalOptions="Center" Text="{Binding OtherServiceOrder}" 
-                            ImageSource="{Binding ArrowCircleOtherServiceOrder}"/>
+                            ImageSource="{Binding ArrowCircleOtherServiceOrder}">
+                        <Button.Background>
+                            <LinearGradientBrush EndPoint="1,1">
+                                <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
+                                <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
                         </Expander.Header>
                         <StackLayout>
                             <CollectionView Margin="5" ItemsSource="{Binding ServiceOrders}" SelectionMode="Single" 
@@ -110,10 +130,10 @@
                                                     </SwipeItemView>
                                                 </SwipeItems>
                                             </SwipeView.LeftItems>
-                                    <Frame Style="{StaticResource FrameServiceOrderStyle}">
+                                    <Frame Style="{StaticResource FrameServiceOrderStyle}" HasShadow="False" Margin="3,6,3,0"> 
                                                 <Frame.Content>
                                                     <StackLayout>
-                                                        <Label TextColor="{Binding Path=ColorOrder}" Text="{Binding Path=FullName}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                                                <Label  TextColor="{Binding Path=ColorOrder}" Text="{Binding Path=FullName}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
                                                     </StackLayout>
                                                 </Frame.Content>
                                             </Frame>
@@ -126,7 +146,14 @@
             <Expander IsVisible="{Binding FireAlarmTransferServiceOrderVisible}" Grid.Row="3" Opacity="{Binding OpacityForm}" IsExpanded="{Binding FireAlarmTransferServiceOrderExpanded}">
                 <Expander.Header>
                     <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding FireAlarmTransferServiceOrderExpanderCommand}" Text="{Binding FireAlarmTransferServiceOrderText}"
-                            ImageSource="{Binding ArrowCircleFireAlarmTransferServiceOrder}"/>
+                            ImageSource="{Binding ArrowCircleFireAlarmTransferServiceOrder}">
+                        <Button.Background>
+                            <LinearGradientBrush EndPoint="1,1">
+                                <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
+                                <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
                 </Expander.Header>
                 <StackLayout>
                     <CollectionView Margin="5" ItemsSource="{Binding ServiceOrderByTransferFireAlarm}" SelectionMode="Single" 
@@ -163,7 +190,14 @@
             <Expander IsVisible="{Binding FireAlarmTimeServiceOrderVisible}" Grid.Row="4" Opacity="{Binding OpacityForm}" IsExpanded="{Binding FireAlarmTimeServiceOrderExpanded}">
                 <Expander.Header>
                     <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding FireAlarmTimeServiceOrderExpanderCommand}" Text="{Binding FireAlarmTimeServiceOrderText}"
-                            ImageSource="{Binding ArrowCircleFireAlarmTimeServiceOrder}"/>
+                            ImageSource="{Binding ArrowCircleFireAlarmTimeServiceOrder}">
+                        <Button.Background>
+                            <LinearGradientBrush EndPoint="1,1">
+                                <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
+                                <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
                 </Expander.Header>
                 <StackLayout>
                     <CollectionView Margin="5" ItemsSource="{Binding ServiceOrdersByTimeFireAlarm}" SelectionMode="Single" 
@@ -200,7 +234,14 @@
             <Expander IsVisible="{Binding FireAlarmOtherServiceOrderVisible}" Grid.Row="5" Opacity="{Binding OpacityForm}" IsExpanded="{Binding FireAlarmOtherServiceOrderExpanded}">
                 <Expander.Header>
                     <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding FireAlarmOtherServiceOrderExpanderCommand}" Text="{Binding FireAlarmOtherServiceOrderText}"
-                            ImageSource="{Binding ArrowCircleFireAlarmOtherServiceOrder}"/>
+                            ImageSource="{Binding ArrowCircleFireAlarmOtherServiceOrder}">
+                        <Button.Background>
+                            <LinearGradientBrush EndPoint="1,1">
+                                <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
+                                <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
                 </Expander.Header>
                 <StackLayout>
                     <CollectionView Margin="5" ItemsSource="{Binding ServiceOrdersFireAlarm}" SelectionMode="Single" 

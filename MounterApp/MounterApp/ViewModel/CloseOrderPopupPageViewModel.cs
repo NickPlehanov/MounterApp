@@ -542,7 +542,7 @@ namespace MounterApp.ViewModel {
                     return;
                 }
                 if(SelectedResult.Value != 1) {
-                    if(SelectedReason != null && !string.IsNullOrEmpty(ReasonComment) && !string.IsNullOrEmpty(ConclusionByOrder)) {
+                    if(SelectedReason != null && /*!string.IsNullOrEmpty(ReasonComment) &&*/ !string.IsNullOrEmpty(ConclusionByOrder)) {
                         HttpResponseMessage response = null;
                         using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
                             if(so != null) {
@@ -570,7 +570,7 @@ namespace MounterApp.ViewModel {
                                         //soeb.NewNewServiceman = Servicemans.FirstOrDefault().NewServicemanId;
                                         soeb.NewResult = SelectedResult.Value;
                                         soeb.NewResultId = SelectedReason.Value;
-                                        soeb.NewTransferReason = ReasonComment;
+                                        soeb.NewTransferReason = string.IsNullOrEmpty(ReasonComment) ? "" : ReasonComment;
                                         soeb.NewTechConclusion = ConclusionByOrder;
                                         soeb.NewMustRead = NecesseryRead;
                                         if(SelectedResult.Value == 2) {

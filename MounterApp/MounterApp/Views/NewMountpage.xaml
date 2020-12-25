@@ -5,6 +5,12 @@
              xmlns:helpers="clr-namespace:MounterApp.Helpers"
              x:Class="MounterApp.Views.NewMountpage">
     <Grid>
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0,1">
+                <GradientStop Color="{StaticResource StackLayoutFirstColor}" Offset="0.1" />
+                <GradientStop Color="{StaticResource StackLayoutSecondColor}" Offset="1.0" />
+            </LinearGradientBrush>
+        </Grid.Background>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -28,7 +34,14 @@
                 <Entry Keyboard="Text" Text="{Binding ObjectDriveways}" />
             </StackLayout>
         </Expander>
-        <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding PhotoImage}" Opacity="{Binding Opacity}" Grid.Row="1" Text="Фото объекта" Command="{Binding TakePhotoCommand}"/>
+        <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding PhotoImage}" Opacity="{Binding Opacity}" Grid.Row="1" Text="Фото объекта" Command="{Binding TakePhotoCommand}">
+            <Button.Background>
+                <LinearGradientBrush EndPoint="1,1">
+                    <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
+                    <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
+                </LinearGradientBrush>
+            </Button.Background>
+        </Button>
         <CollectionView Opacity="{Binding Opacity}" Grid.Row="2" Margin="5"
                                 ItemsSource="{Binding Photos}" SelectionMode="Single" 
                                 SelectionChangedCommand="{Binding DeleteCommand, Mode=TwoWay}"
@@ -46,8 +59,22 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
         <StackLayout Opacity="{Binding Opacity}" Grid.Row="3">
-            <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding SaveImage}" Text="Сохранить данные" Command="{Binding SaveToDB, Mode=TwoWay}"/>
-            <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding SendImage}" Text="Отправить данные" Command="{Binding SendToServer, Mode=TwoWay}"/>
+            <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding SaveImage}" Text="Сохранить данные" Command="{Binding SaveToDB, Mode=TwoWay}">
+                <Button.Background>
+                    <LinearGradientBrush EndPoint="1,1">
+                        <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
+                        <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
+            <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding SendImage}" Text="Отправить данные" Command="{Binding SendToServer, Mode=TwoWay}">
+                <Button.Background>
+                    <LinearGradientBrush EndPoint="1,1">
+                        <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
+                        <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
         </StackLayout>
         <StackLayout Style="{StaticResource ActivityIndicatorStackLayoutStyle}" Opacity="1" Grid.Row="3" IsVisible="{Binding IndicatorVisible}">
             <ActivityIndicator Style="{StaticResource ActivityIndicatorStyle}"/>

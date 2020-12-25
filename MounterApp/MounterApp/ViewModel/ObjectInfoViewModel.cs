@@ -154,20 +154,8 @@ namespace MounterApp.ViewModel {
                 ExtFields.Clear();
                 List<ExtFields> _ext = new List<ExtFields>();
                 string resp = "";
-                //using(HttpClient httpClient = new HttpClient(GetHttpClientHandler())) {
-                //    if(ServiceOrder != null) {
-                //        HttpResponseMessage response = await httpClient.GetAsync(Resources.BaseAddress + "/api/Andromeda/ext?objNumber=" + ServiceOrder.NewNumber);
-                //        resp = response.Content.ReadAsStringAsync().Result;
-                //    }
-                //    else if(ServiceOrderFireAlarm != null) {
-                //        HttpResponseMessage response = await httpClient.GetAsync(Resources.BaseAddress + "/api/Andromeda/ext?objNumber=" + ServiceOrder.NewNumber) ;
-                //        resp = response.Content.ReadAsStringAsync().Result;
-                //    }
-                //}
 
                 using HttpClient client = new HttpClient(GetHttpClientHandler());
-                //List<ExtFields> _ext = new List<ExtFields>();
-                //string resp = "";
                 if(ServiceOrder != null) {
                     HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/ext?objNumber=" + ServiceOrder.NewNumber);
                     resp = response.Content.ReadAsStringAsync().Result;

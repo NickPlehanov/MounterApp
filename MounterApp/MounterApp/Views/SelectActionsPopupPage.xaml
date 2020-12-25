@@ -6,6 +6,12 @@
              x:Class="MounterApp.Views.SelectActionsPopupPage">
     <popup:PopupPage.Content>
         <StackLayout Style="{StaticResource PopupStackLayoutStyle}">
+            <StackLayout.Background>
+                <LinearGradientBrush EndPoint="0,1">
+                    <GradientStop Color="{StaticResource StackLayoutFirstColor}" Offset="0.1" />
+                    <GradientStop Color="{StaticResource StackLayoutSecondColor}" Offset="1.0" />
+                </LinearGradientBrush>
+            </StackLayout.Background>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -22,14 +28,42 @@
                     <Entry Text="{Binding PhotoComment}"/>
                 </StackLayout>
                 <StackLayout Grid.Row="0" Grid.Column="1" Margin="5">
-                    <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding CollectionImage}" Grid.Row="1" Grid.Column="0" Text="Галерея" Command="{Binding PickPhotoCommand}"/>
-                    <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding CameraImage}" Grid.Row="1" Grid.Column="1" Text="Камера" Command="{Binding TakePhotoCommand}"/>
+                    <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding CollectionImage}" Grid.Row="1" Grid.Column="0" Text="Галерея" Command="{Binding PickPhotoCommand}">
+                        <Button.Background>
+                            <LinearGradientBrush EndPoint="1,1">
+                                <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
+                                <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
+                    <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding CameraImage}" Grid.Row="1" Grid.Column="1" Text="Камера" Command="{Binding TakePhotoCommand}">
+                        <Button.Background>
+                            <LinearGradientBrush EndPoint="1,1">
+                                <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
+                                <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
                 </StackLayout>
                 <StackLayout Grid.Row="2" Grid.ColumnSpan="2" IsVisible="{Binding VisibleAcceptedLayout}">
                     <Image x:Name="img" Source="{Binding ImgSrc}" Margin="5" Aspect="AspectFit" HeightRequest="120" WidthRequest="120"/>
-                    <Button Style="{StaticResource CommonButtonStyle}" Text="Подтвердить" Command="{Binding AddNewPhotoCommand}"/>
+                    <Button Style="{StaticResource CommonButtonStyle}" Text="Подтвердить" Command="{Binding AddNewPhotoCommand}">
+                        <Button.Background>
+                            <LinearGradientBrush EndPoint="1,1">
+                                <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
+                                <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
                 </StackLayout>
-                <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding CloseImage}" Grid.Row="3" Grid.ColumnSpan="2" Text="Закрыть" Command="{Binding BackPressedCommand}"/>
+                <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding CloseImage}" Grid.Row="3" Grid.ColumnSpan="2" Text="Закрыть" Command="{Binding BackPressedCommand}">
+                    <Button.Background>
+                        <LinearGradientBrush EndPoint="1,1">
+                            <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
+                            <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
             </Grid>
         </StackLayout>
     </popup:PopupPage.Content>

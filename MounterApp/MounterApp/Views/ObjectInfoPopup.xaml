@@ -4,13 +4,26 @@
                   x:Class="MounterApp.Views.ObjectInfoPopup">
     <popup:PopupPage.Content>
         <StackLayout Style="{StaticResource PopupStackLayoutStyle}">
+            <StackLayout.Background>
+                <LinearGradientBrush EndPoint="0,1">
+                    <GradientStop Color="{StaticResource StackLayoutFirstColor}" Offset="0.1" />
+                    <GradientStop Color="{StaticResource StackLayoutSecondColor}" Offset="1.0" />
+                </LinearGradientBrush>
+            </StackLayout.Background>
             <StackLayout IsVisible="{Binding IndicatorVisible}" Style="{StaticResource ActivityIndicatorStackLayoutStyle}">
                 <ActivityIndicator Style="{StaticResource ActivityIndicatorStyle}"/>
                 <Label Style="{StaticResource ActivityIndicatorLabelStyle}"/>
             </StackLayout>
             <Expander Opacity="{Binding OpacityForm}" IsExpanded="{Binding WiresExpandedState}">
                 <Expander.Header>
-                    <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding WiresExpanderCommand}" Text="Шлейфы" ImageSource="{Binding ArrowCircleWires}"/>
+                    <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding WiresExpanderCommand}" Text="Шлейфы" ImageSource="{Binding ArrowCircleWires}">
+                        <Button.Background>
+                            <LinearGradientBrush EndPoint="1,1">
+                                <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
+                                <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
                 </Expander.Header>
                 <StackLayout>
                 <CollectionView Margin="5" ItemsSource="{Binding WiresCollection, Mode=TwoWay}" SelectionMode="Single">
@@ -24,7 +37,6 @@
                                         <Label Text="{Binding Path=FullInfo}" Margin="5" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
                                     </Frame.Content>
                             </Frame>
-                            <!--</Grid>-->
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
@@ -33,7 +45,14 @@
 
             <Expander Opacity="{Binding OpacityForm}" IsExpanded="{Binding ExtFieldsExpandedState}">
                 <Expander.Header>
-                    <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding ExtFieldsExpanderCommand}" Text="Доп. информация" ImageSource="{Binding ArrowCircleExtFields}"/>
+                    <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding ExtFieldsExpanderCommand}" Text="Доп. информация" ImageSource="{Binding ArrowCircleExtFields}">
+                        <Button.Background>
+                            <LinearGradientBrush EndPoint="1,1">
+                                <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
+                                <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
                 </Expander.Header>
                 <StackLayout >
                     <CollectionView Margin="5" ItemsSource="{Binding ExtFields, Mode=TwoWay}" SelectionMode="Single">
@@ -52,7 +71,14 @@
                     </CollectionView>
                 </StackLayout>
             </Expander>
-            <Button Style="{StaticResource CommonButtonStyle}" Opacity="{Binding OpacityForm}" ImageSource="{Binding CloseImage}" Grid.Row="2" Text="Закрыть" Command="{Binding CloseCommand}"/>
+            <Button Style="{StaticResource CommonButtonStyle}" Opacity="{Binding OpacityForm}" ImageSource="{Binding CloseImage}" Grid.Row="2" Text="Закрыть" Command="{Binding CloseCommand}">
+                <Button.Background>
+                    <LinearGradientBrush EndPoint="1,1">
+                        <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
+                        <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
         </StackLayout>
     </popup:PopupPage.Content>
 </popup:PopupPage>

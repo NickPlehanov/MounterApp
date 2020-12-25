@@ -73,6 +73,7 @@ namespace MounterApp.ViewModel {
             EventsVisible = false;
             GetInfoByGuardObject.Execute(null);
             GetCategory.Execute(null);
+            GetObjectNameCommand.Execute(null);
             App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
             InfoImage = "info.png";
             ReorderImage = "reorder.png";
@@ -81,7 +82,51 @@ namespace MounterApp.ViewModel {
             TransferImage = "transfer.png";
             PeopleImage = "people.png";
         }
+        private RelayCommand _GetObjectNameCommand;
+        public RelayCommand GetObjectNameCommand {
+            get => _GetObjectNameCommand ??= new RelayCommand(async obj => {
+                using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/GetObjectInfo?ObjectNumber=" + ServiceOrderFireAlarm.NewNumber.ToString() + "");
+                    A28Object a28Object = new A28Object();
+                    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                        var resp = response.Content.ReadAsStringAsync().Result;
+                        try {
+                            a28Object = JsonConvert.DeserializeObject<A28Object>(resp);
+                        }
+                        catch {
+                            a28Object = null;
+                        }
+                        if(a28Object != null) {
+                            ObjectName = a28Object.Name;
+                            ControlTime = a28Object.ControlTime.ToString();
+                        }
+                    }
+                }
+            });
+        }
+        private string _ControlTime;
+        public string ControlTime {
+            get => _ControlTime;
+            set {
+                _ControlTime = value;
+                OnPropertyChanged(nameof(ControlTime));
+            }
+        }
 
+        private string _ObjectName;
+        public string ObjectName {
+            get => _ObjectName;
+            set {
+                _ObjectName = value;
+                OnPropertyChanged(nameof(ObjectName));
+            }
+        }
+        private RelayCommand _ShowInfoCommand;
+        public RelayCommand ShowInfoCommand {
+            get => _ShowInfoCommand ??= new RelayCommand(async obj => {
+                await Application.Current.MainPage.DisplayAlert("Информация",obj.ToString(),"OK");
+            });
+        }
 
         private RelayCommand _NotifyCommand;
         public RelayCommand NotifyCommand {

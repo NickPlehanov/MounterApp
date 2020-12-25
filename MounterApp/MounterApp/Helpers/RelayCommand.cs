@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Xamarin.Forms;
 
 namespace MounterApp.Helpers {
 	public class RelayCommand : ICommand {
@@ -15,8 +16,12 @@ namespace MounterApp.Helpers {
             this.execute = execute;
             this.canExecute = canExecute;
         }
+
         public bool CanExecute(object parameter) {
             return canExecute == null || canExecute(parameter);
+        }
+        public void ChangeCanExecute() {
+            CanExecuteChanged?.Invoke(this,EventArgs.Empty);
         }
         public void Execute(object parameter) {
             execute(parameter);

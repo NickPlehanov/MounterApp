@@ -1,9 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:android="clr-namespace:Xamarin.Forms.PlatformConfiguration.AndroidSpecific;assembly=Xamarin.Forms.Core"
              x:Class="MounterApp.Views.MainMenuPage">
     <ContentPage.Content>
-        <Grid VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand" Visual="Material">
+        <StackLayout>
+            <StackLayout.Background>
+                <LinearGradientBrush EndPoint="0,1">
+                    <GradientStop Color="{StaticResource StackLayoutFirstColor}" Offset="0.1" />
+                    <GradientStop Color="{StaticResource StackLayoutSecondColor}" Offset="1.0" />
+                </LinearGradientBrush>
+            </StackLayout.Background>
+    <Grid VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand" Visual="Material">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="5*"/>
@@ -14,22 +22,38 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
         <StackLayout Grid.Row="1" Grid.Column="0">
-            <Button Text="Монтажи" Command="{Binding GetMountworksCommand}" Style="{StaticResource MainMenuButtonStyle}"/>
-        </StackLayout>
+                    <Button android:Button.UseDefaultShadow="true" Text="Монтажи" Command="{Binding GetMountworksCommand}" Style="{StaticResource MainMenuButtonStyle}">
+                    <Button.Background>
+                        <LinearGradientBrush EndPoint="1,1">
+                                <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
+                                <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
+                            </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
+            </StackLayout>
         <StackLayout Grid.Row="1" Grid.Column="1">
-                <Button Text="Заявки техникам" Command="{Binding GetServiceordersCommand}" Style="{StaticResource MainMenuButtonStyle}">
-                    <Button.BackgroundColor>
-                        <LinearGradientBrush EndPoint="1,0">
-                            
-                        </LinearGradientBrush>
-                    </Button.BackgroundColor>
+                    <Button android:Button.UseDefaultShadow="true" Text="Заявки техникам" Command="{Binding GetServiceordersCommand}" Style="{StaticResource MainMenuButtonStyle}">
+                    <Button.Background>
+                        <LinearGradientBrush EndPoint="1,1">
+                                <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
+                                <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
+                            </LinearGradientBrush>
+                    </Button.Background>
                 </Button>
         </StackLayout>
             <StackLayout Grid.Row="2" Grid.ColumnSpan="2" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
                 <Label Text="{Binding Message}"/>
                 <!--<Button Text="Очистить базу данных" Command="{Binding ClearDatabaseCommand}"/>-->
-                <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding SettingsImage}" Text="Настройки" Command="{Binding OpenSettingsCommand}"/>
+                <Button android:Button.UseDefaultShadow="true" android:Button.UseDefaultPadding="False" Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding SettingsImage}" Text="Настройки" Command="{Binding OpenSettingsCommand}">
+                    <Button.Background>
+                        <LinearGradientBrush EndPoint="1,1">
+                                <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
+                                <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
+                            </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
             </StackLayout>
         </Grid>
+        </StackLayout>
     </ContentPage.Content>
 </ContentPage>
