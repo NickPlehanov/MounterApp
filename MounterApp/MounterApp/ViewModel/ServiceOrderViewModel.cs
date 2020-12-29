@@ -606,7 +606,7 @@ namespace MounterApp.ViewModel {
                     Uri uri = new Uri("tel:" + phone);
                     await Launcher.OpenAsync(uri);
                 }
-            });
+            }, obj=> obj!=null);
         }
         private RelayCommand _GetObjectNameCommand;
         public RelayCommand GetObjectNameCommand {

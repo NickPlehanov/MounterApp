@@ -46,7 +46,6 @@ namespace MounterApp.ViewModel {
                 Application.Current.SavePropertiesAsync();
             }
             CheckAndRequestPermissions.Execute(null);
-            //clientHandler.ServerCertificateCustomValidationCallback = (sender,cert,chain,sslPolicyErrors) => { return true; };
         }
 
         private RelayCommand _CheckAndRequestPermissions;
@@ -59,15 +58,15 @@ namespace MounterApp.ViewModel {
                 await CheckAndRequestPermissionAsync(new StorageWrite());
             });
         }
-        public async Task<PermissionStatus> CheckAndRequestPermissionAsync<T>(T permission)
-            where T : BasePermission {
-            var status = await permission.CheckStatusAsync();
-            if(status != PermissionStatus.Granted) {
-                status = await permission.RequestAsync();
-            }
+        //public async Task<PermissionStatus> CheckAndRequestPermissionAsync<T>(T permission)
+        //    where T : BasePermission {
+        //    var status = await permission.CheckStatusAsync();
+        //    if(status != PermissionStatus.Granted) {
+        //        status = await permission.RequestAsync();
+        //    }
 
-            return status;
-        }
+        //    return status;
+        //}
         private RelayCommand _AuthCommand;
         public RelayCommand AuthCommand {
             get => _AuthCommand ??= new RelayCommand(async obj => {

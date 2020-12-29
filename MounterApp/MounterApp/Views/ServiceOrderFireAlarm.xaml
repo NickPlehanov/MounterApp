@@ -48,6 +48,7 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -105,22 +106,25 @@
                             <Label Grid.Row="11" Grid.Column="0" Text="Категория заявки" FontAttributes="Bold"/>
                             <Label Grid.Row="11" Grid.Column="1" Text="{Binding Category}"/>
 
-                            <Label Grid.Row="12" Grid.Column="0" Text="Причина посещения" FontAttributes="Bold"/>
-                            <Label Grid.Row="12" Grid.Column="1" Text="{Binding ServiceOrderFireAlarm.NewName}">
+                            <Label Grid.Row="12" Grid.Column="0" Text="Кто дал заявку" FontAttributes="Bold"/>
+                            <Label Grid.Row="12" Grid.Column="1" Text="{Binding ServiceOrderFireAlarm.NewWhoInit}"/>
+
+                            <Label Grid.Row="13" Grid.Column="0" Text="Причина посещения" FontAttributes="Bold"/>
+                            <Label Grid.Row="13" Grid.Column="1" Text="{Binding ServiceOrderFireAlarm.NewName}">
                                 <Label.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding ShowInfoCommand}" CommandParameter="{Binding ServiceOrderFireAlarm.NewName}"/>
                                 </Label.GestureRecognizers>
                             </Label>
 
-                            <Label Grid.Row="13" Grid.Column="0" Text="Примечание" FontAttributes="Bold"/>
-                            <Label Grid.Row="13" Grid.Column="1" Text="{Binding ServiceOrderFireAlarm.NewCommentNew}">
+                            <Label Grid.Row="14" Grid.Column="0" Text="Примечание" FontAttributes="Bold"/>
+                            <Label Grid.Row="14" Grid.Column="1" Text="{Binding ServiceOrderFireAlarm.NewCommentNew}">
                                 <Label.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding ShowInfoCommand}" CommandParameter="{Binding ServiceOrderFireAlarm.NewCommentNew}"/>
                                 </Label.GestureRecognizers>
                             </Label>
 
-                            <Label Grid.Row="14" Grid.Column="0" Text="Контрольное время" FontAttributes="Bold"/>
-                            <Label Grid.Row="14" Grid.Column="1" Text="{Binding ServiceOrderID.ControlTime}"/>
+                            <Label Grid.Row="15" Grid.Column="0" Text="Контрольное время" FontAttributes="Bold"/>
+                            <Label Grid.Row="15" Grid.Column="1" Text="{Binding ServiceOrderID.ControlTime}"/>
                         </Grid>
                     </Expander>
                 </StackLayout>

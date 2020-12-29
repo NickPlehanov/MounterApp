@@ -13,11 +13,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using Xamarin.Essentials;
 using Xamarin.Forms;
+using static Xamarin.Essentials.Permissions;
 
 namespace MounterApp.ViewModel {
     public class SelectActionsPopupPageViewModel : BaseViewModel {
-        public SelectActionsPopupPageViewModel(Mounts _mount,List<NewMounterExtensionBase> _mounters, List<NewServicemanExtensionBase> _servicemans) {
+        public SelectActionsPopupPageViewModel(Mounts _mount,List<NewMounterExtensionBase> _mounters,List<NewServicemanExtensionBase> _servicemans) {
             Mount = _mount;
             Mounters = _mounters;
             Servicemans = _servicemans;
@@ -148,7 +150,7 @@ namespace MounterApp.ViewModel {
                                     break;
                                 case "Доп. фото":
                                     Counter++;
-                                    if (Mount.ObjectExtra1==null)
+                                    if(Mount.ObjectExtra1 == null)
                                         Mount.ObjectExtra1 = Convert.ToBase64String(System.IO.File.ReadAllBytes(File.Path));
                                     else if(Mount.ObjectExtra2 == null)
                                         Mount.ObjectExtra2 = Convert.ToBase64String(System.IO.File.ReadAllBytes(File.Path));
@@ -161,11 +163,11 @@ namespace MounterApp.ViewModel {
                                     break;
                             }
                             //ImgSrc = "EmptyPhoto.png";
-                            ImgSrc =null;
+                            ImgSrc = null;
                             SelectedPhoto = null;
-                            if (!PhotoName.PhotoTypeName.Equals("Доп. фото"))
+                            if(!PhotoName.PhotoTypeName.Equals("Доп. фото"))
                                 PhotoNames.Remove(PhotoName);
-                            if (Counter==5)
+                            if(Counter == 5)
                                 PhotoNames.Remove(PhotoName);
                             Toast.MakeText(Android.App.Application.Context,"Фото добавлено",ToastLength.Short).Show();
                         }
@@ -301,14 +303,18 @@ namespace MounterApp.ViewModel {
                 if(IsPickPhoto.HasValue) {
                     await CrossMedia.Current.Initialize();
                     if(!CrossMedia.Current.IsCameraAvailable || !CrossMedia.Current.IsTakePhotoSupported) {
-                        Crashes.TrackError(new Exception("Камера недоступна"),
-                        new Dictionary<string,string> {
+                        var perm = await CheckAndRequestPermissionAsync(new Permissions.Camera());
+                        if(perm == PermissionStatus.Denied) {
+                            Crashes.TrackError(new Exception("Камера недоступна"),
+                            new Dictionary<string,string> {
                             {"Error","Камера недоступна" }
-                        });
-                        await Application.Current.MainPage.DisplayAlert("No Camera",":( No camera available.","OK");
-                        return;
+                            });
+                            await Application.Current.MainPage.DisplayAlert("No Camera",":( No camera available.","OK");
+                            return;
+                        }
                     }
                     if(IsPickPhoto.Value == true) {
+                        //await CheckAndRequestPermissionAsync(new StorageRead());
                         File = await CrossMedia.Current.PickPhotoAsync(new Plugin.Media.Abstractions.PickMediaOptions {
                             //Directory = "Sample",
                             //Name = "test.jpg",
