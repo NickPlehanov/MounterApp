@@ -44,18 +44,18 @@ namespace MounterApp.ViewModel {
             //        GetServiceOrdersFireAlarm.Execute(null);
             //    }
             //}
-            RefreshImage = "refresh.png";
-            MapImage = "map.png";
-            TransferImage = "transfer.png";
+            RefreshImage = IconName("refresh");
+            MapImage = IconName("map");
+            TransferImage = IconName("transfer");
             FrameColor = Color.Red;
-            ArrowCircleServiceOrder = "arrow_circle_down.png";
-            ArrowCircleTransferServiceOrder = "arrow_circle_down.png";
-            ArrowCircleTimeServiceOrder = "arrow_circle_down.png";
-            ArrowCircleOtherServiceOrder = "arrow_circle_down.png";
-            ArrowCircleFireAlarmServiceOrder = "arrow_circle_down.png";
-            ArrowCircleFireAlarmTransferServiceOrder = "arrow_circle_down.png";
-            ArrowCircleFireAlarmTimeServiceOrder = "arrow_circle_down.png";
-            ArrowCircleFireAlarmOtherServiceOrder = "arrow_circle_down.png";
+            ArrowCircleServiceOrder = IconName("arrow_circle_down");
+            ArrowCircleTransferServiceOrder = IconName("arrow_circle_down");
+            ArrowCircleTimeServiceOrder = IconName("arrow_circle_down");
+            ArrowCircleOtherServiceOrder = IconName("arrow_circle_down");
+            ArrowCircleFireAlarmServiceOrder = IconName("arrow_circle_down");
+            ArrowCircleFireAlarmTransferServiceOrder = IconName("arrow_circle_down");
+            ArrowCircleFireAlarmTimeServiceOrder = IconName("arrow_circle_down");
+            ArrowCircleFireAlarmOtherServiceOrder = IconName("arrow_circle_down");
             TransferServiceOrder = "Перенесенные (0)";
             FireAlarmTransferServiceOrderText = "Перенесенные(пс) (0)";
             TimeServiceOrder = "Временные (0)";
@@ -761,9 +761,9 @@ namespace MounterApp.ViewModel {
             get => _ServiceOrderExpanded;
             set {
                 if(_ServiceOrderExpanded)
-                    ArrowCircleServiceOrder = "arrow_circle_up.png";
+                    ArrowCircleServiceOrder = IconName("arrow_circle_up");
                 else
-                    ArrowCircleServiceOrder = "arrow_circle_down.png";
+                    ArrowCircleServiceOrder = IconName("arrow_circle_down");
                 _ServiceOrderExpanded = value;
                 OnPropertyChanged(nameof(ServiceOrderExpanded));
             }
@@ -790,9 +790,9 @@ namespace MounterApp.ViewModel {
             get => _FireAlarmServiceOrderExpanded;
             set {
                 if(_FireAlarmServiceOrderExpanded)
-                    ArrowCircleFireAlarmServiceOrder = "arrow_circle_up.png";
+                    ArrowCircleFireAlarmServiceOrder = IconName("arrow_circle_up");
                 else
-                    ArrowCircleFireAlarmServiceOrder = "arrow_circle_down.png";
+                    ArrowCircleFireAlarmServiceOrder = IconName("arrow_circle_down");
                 _FireAlarmServiceOrderExpanded = value;
                 OnPropertyChanged(nameof(FireAlarmServiceOrderExpanded));
             }
@@ -819,9 +819,9 @@ namespace MounterApp.ViewModel {
             get => _FireAlarmTransferServiceOrderExpanded;
             set {
                 if(_FireAlarmTransferServiceOrderExpanded)
-                    ArrowCircleFireAlarmTransferServiceOrder = "arrow_circle_up.png";
+                    ArrowCircleFireAlarmTransferServiceOrder = IconName("arrow_circle_up");
                 else
-                    ArrowCircleFireAlarmTransferServiceOrder = "arrow_circle_down.png";
+                    ArrowCircleFireAlarmTransferServiceOrder = IconName("arrow_circle_down");
                 _FireAlarmTransferServiceOrderExpanded = value;
                 OnPropertyChanged(nameof(FireAlarmTransferServiceOrderExpanded));
             }
@@ -857,9 +857,9 @@ namespace MounterApp.ViewModel {
             get => _FireAlarmTimeServiceOrderExpanded;
             set {
                 if(_FireAlarmTimeServiceOrderExpanded)
-                    ArrowCircleFireAlarmTimeServiceOrder = "arrow_circle_up.png";
+                    ArrowCircleFireAlarmTimeServiceOrder = IconName("arrow_circle_up");
                 else
-                    ArrowCircleFireAlarmTimeServiceOrder = "arrow_circle_down.png";
+                    ArrowCircleFireAlarmTimeServiceOrder = IconName("arrow_circle_down");
                 _FireAlarmTimeServiceOrderExpanded = value;
                 OnPropertyChanged(nameof(FireAlarmTimeServiceOrderExpanded));
             }
@@ -895,9 +895,9 @@ namespace MounterApp.ViewModel {
             get => _FireAlarmOtherServiceOrderExpanded;
             set {
                 if(_FireAlarmOtherServiceOrderExpanded)
-                    ArrowCircleFireAlarmOtherServiceOrder = "arrow_circle_up.png";
+                    ArrowCircleFireAlarmOtherServiceOrder = IconName("arrow_circle_up");
                 else
-                    ArrowCircleFireAlarmOtherServiceOrder = "arrow_circle_down.png";
+                    ArrowCircleFireAlarmOtherServiceOrder = IconName("arrow_circle_down");
                 _FireAlarmOtherServiceOrderExpanded = value;
                 OnPropertyChanged(nameof(FireAlarmOtherServiceOrderExpanded));
             }
@@ -1004,9 +1004,9 @@ namespace MounterApp.ViewModel {
             set {
                 _TransferServiceOrderExpanded = value;
                 if(_TransferServiceOrderExpanded)
-                    ArrowCircleTransferServiceOrder = "arrow_circle_up.png";
+                    ArrowCircleTransferServiceOrder = IconName("arrow_circle_up");
                 else
-                    ArrowCircleTransferServiceOrder = "arrow_circle_down.png";
+                    ArrowCircleTransferServiceOrder = IconName("arrow_circle_down");
                 OnPropertyChanged(nameof(TransferServiceOrderExpanded));
             }
         }
@@ -1017,9 +1017,9 @@ namespace MounterApp.ViewModel {
             set {
                 _TimeServiceOrderExpanded = value;
                 if(_TimeServiceOrderExpanded)
-                    ArrowCircleTimeServiceOrder = "arrow_circle_up.png";
+                    ArrowCircleTimeServiceOrder = IconName("arrow_circle_up");
                 else
-                    ArrowCircleTimeServiceOrder = "arrow_circle_down.png";
+                    ArrowCircleTimeServiceOrder = IconName("arrow_circle_down");
                 OnPropertyChanged(nameof(TimeServiceOrderExpanded));
             }
         }
@@ -1030,9 +1030,9 @@ namespace MounterApp.ViewModel {
             set {
                 _OtherServiceOrderExpanded = value;
                 if(_OtherServiceOrderExpanded)
-                    ArrowCircleOtherServiceOrder = "arrow_circle_up.png";
+                    ArrowCircleOtherServiceOrder = IconName("arrow_circle_up");
                 else
-                    ArrowCircleOtherServiceOrder = "arrow_circle_down.png";
+                    ArrowCircleOtherServiceOrder = IconName("arrow_circle_down");
                 OnPropertyChanged(nameof(OtherServiceOrderExpanded));
             }
         }

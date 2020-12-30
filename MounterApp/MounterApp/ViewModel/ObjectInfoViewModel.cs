@@ -21,9 +21,9 @@ namespace MounterApp.ViewModel {
             ServiceOrder = _so;
             GetWires.Execute(null);
             GetExtFields.Execute(null);
-            ArrowCircleWires= "arrow_circle_down.png";
-            ArrowCircleExtFields = "arrow_circle_down.png";
-            CloseImage = "close.png";
+            ArrowCircleWires= IconName("arrow_circle_down");
+            ArrowCircleExtFields = IconName("arrow_circle_down");
+            CloseImage = IconName("close");
             OpacityForm = 1;
             IndicatorVisible = false;
         }
@@ -33,9 +33,9 @@ namespace MounterApp.ViewModel {
             ServiceOrderFireAlarm = _so;            
             GetWires.ExecuteAsync(null);
             GetExtFields.ExecuteAsync(null);
-            ArrowCircleWires = "arrow_circle_down.png";
-            ArrowCircleExtFields = "arrow_circle_down.png";
-            CloseImage = "close.png";
+            ArrowCircleWires = IconName("arrow_circle_down");
+            ArrowCircleExtFields = IconName("arrow_circle_down");
+            CloseImage = IconName("close");
             OpacityForm = 1;
             IndicatorVisible = false;
         }
@@ -253,9 +253,9 @@ namespace MounterApp.ViewModel {
             set {
                 _WiresExpandedState = value;
                 if(_WiresExpandedState)
-                    ArrowCircleWires = "arrow_circle_up.png";
+                    ArrowCircleWires = IconName("arrow_circle_up");
                 else
-                    ArrowCircleWires = "arrow_circle_down.png";
+                    ArrowCircleWires = IconName("arrow_circle_down");
                 OnPropertyChanged(nameof(WiresExpandedState));
             }
         }
@@ -265,9 +265,9 @@ namespace MounterApp.ViewModel {
             get => _ExtFieldsExpandedState;
             set {
                 if(_ExtFieldsExpandedState)
-                    ArrowCircleExtFields = "arrow_circle_up.png";
+                    ArrowCircleExtFields = IconName("arrow_circle_up");
                 else
-                    ArrowCircleExtFields = "arrow_circle_down.png";
+                    ArrowCircleExtFields = IconName("arrow_circle_down");
                 _ExtFieldsExpandedState = value;
                 OnPropertyChanged(nameof(ExtFieldsExpandedState));
             }

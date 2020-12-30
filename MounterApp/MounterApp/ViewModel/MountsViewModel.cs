@@ -90,9 +90,9 @@ namespace MounterApp.ViewModel {
 
             Opacity = 1;
             IndicatorVisible = false;
-            ArrowCircleGoogle = "arrow_circle_down.png";
-            ArrowCircleNotSended = "arrow_circle_down.png";
-            ArrowCircleHistory = "arrow_circle_down.png";
+            ArrowCircleGoogle = IconName("arrow_circle_down");
+            ArrowCircleNotSended = IconName("arrow_circle_down");
+            ArrowCircleHistory = IconName("arrow_circle_down");
 
             Analytics.TrackEvent("Страница монтажей",
             new Dictionary<string,string> {
@@ -180,9 +180,9 @@ namespace MounterApp.ViewModel {
             set {
                 _GoogleMountsExpander = value;
                 if(_GoogleMountsExpander)
-                    ArrowCircleGoogle = "arrow_circle_up.png";
+                    ArrowCircleGoogle = IconName("arrow_circle_up");
                 else
-                    ArrowCircleGoogle = "arrow_circle_down.png";
+                    ArrowCircleGoogle = IconName("arrow_circle_down");
                 OnPropertyChanged(nameof(GoogleMountsExpander));
             }
         }
@@ -193,9 +193,9 @@ namespace MounterApp.ViewModel {
             set {
                 _HistoryMountsExpander = value;
                 if(_HistoryMountsExpander)
-                    ArrowCircleHistory = "arrow_circle_up.png";
+                    ArrowCircleHistory = IconName("arrow_circle_up");
                 else
-                    ArrowCircleHistory = "arrow_circle_down.png";
+                    ArrowCircleHistory = IconName("arrow_circle_down");
                 OnPropertyChanged(nameof(HistoryMountsExpander));
             }
         }
@@ -205,9 +205,9 @@ namespace MounterApp.ViewModel {
             set {
                 _NotSendedMountsExpander = value;
                 if(_NotSendedMountsExpander)
-                    ArrowCircleNotSended = "arrow_circle_up.png";
+                    ArrowCircleNotSended = IconName("arrow_circle_up");
                 else
-                    ArrowCircleNotSended = "arrow_circle_down.png";
+                    ArrowCircleNotSended = IconName("arrow_circle_down");
                 OnPropertyChanged(nameof(NotSendedMountsExpander));
             }
         }

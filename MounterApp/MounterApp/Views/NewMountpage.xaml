@@ -23,15 +23,15 @@
                 <Label Style="{StaticResource HeaderLabelStyle}" Text="Информация об объекте"/>
             </Expander.Header>
             <StackLayout>
-                <Label Text="{Binding GoogleComment, Mode=TwoWay}" IsVisible="{Binding VisibleGoogleComment}" FontAttributes="Italic"/>
+                <Label Style="{StaticResource CommonLabelStyle}" Text="{Binding GoogleComment, Mode=TwoWay}" IsVisible="{Binding VisibleGoogleComment}" FontAttributes="Italic"/>
                 <Label Text="№ объекта" HorizontalOptions="Center" Style="{StaticResource MountersLabelStyle}"/>
-                <Entry Keyboard="Numeric" Text="{Binding ObjectNumber, Mode=TwoWay}"/>
+                <Entry Style="{StaticResource EntryStyle}" Keyboard="Numeric" Text="{Binding ObjectNumber, Mode=TwoWay}"/>
                 <Label Text="Название объекта" HorizontalOptions="Center" Style="{StaticResource MountersLabelStyle}"/>
-                <Entry Keyboard="Text" Text="{Binding ObjectName, Mode=TwoWay}"/>
+                <Entry Style="{StaticResource EntryStyle}" Keyboard="Text" Text="{Binding ObjectName, Mode=TwoWay}"/>
                 <Label Text="Адрес объекта" HorizontalOptions="Center" Style="{StaticResource MountersLabelStyle}"/>
-                <Entry Keyboard="Text" Text="{Binding ObjectAddress}"/>
+                <Entry Style="{StaticResource EntryStyle}" Keyboard="Text" Text="{Binding ObjectAddress}"/>
                 <Label Text="Подъездные пути" HorizontalOptions="Center" Style="{StaticResource MountersLabelStyle}"/>
-                <Entry Keyboard="Text" Text="{Binding ObjectDriveways}" />
+                <Entry Style="{StaticResource EntryStyle}" Keyboard="Text" Text="{Binding ObjectDriveways}" />
             </StackLayout>
         </Expander>
         <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding PhotoImage}" Opacity="{Binding Opacity}" Grid.Row="1" Text="Фото объекта" Command="{Binding TakePhotoCommand}">
@@ -53,7 +53,7 @@
                 <DataTemplate>
                     <RelativeLayout Opacity="{Binding Opacity}">
                         <Image Source="{Binding Path=ImgSrc}" Margin="5"/>
-                        <Label Text="{Binding Path=_Types.PhotoTypeName}" VerticalTextAlignment="Center"/>
+                        <Label Style="{StaticResource CommonLabelStyle}" Text="{Binding Path=_Types.PhotoTypeName}" VerticalTextAlignment="Center"/>
                     </RelativeLayout>
                 </DataTemplate>
             </CollectionView.ItemTemplate>

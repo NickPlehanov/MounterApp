@@ -54,77 +54,77 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="2*"/>
                             </Grid.ColumnDefinitions>
-                            <Label Grid.Row="0" Grid.Column="0" Text="№ объекта" FontAttributes="Bold"/>
-                            <Label Grid.Row="0" Grid.Column="1" Text="{Binding ServiceOrderID.NewNumber}" />
+                            <Label Style="{StaticResource CommonLabelStyle}" Grid.Row="0" Grid.Column="0" Text="№ объекта" FontAttributes="Bold"/>
+                            <Label Style="{StaticResource CommonLabelStyle}" Grid.Row="0" Grid.Column="1" Text="{Binding ServiceOrderID.NewNumber}" />
 
-                            <Label Grid.Row="1" Grid.Column="0" Text="Название объект" FontAttributes="Bold"/>
-                            <Label Grid.Row="1" Grid.Column="1" Text="{Binding ObjectName}">
+                            <Label Style="{StaticResource CommonLabelStyle}" Grid.Row="1" Grid.Column="0" Text="Название объекта" FontAttributes="Bold"/>
+                            <Label Style="{StaticResource CommonLabelStyle}" Grid.Row="1" Grid.Column="1" Text="{Binding ObjectName}">
                                 <Label.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding ShowInfoCommand}" CommandParameter="{Binding ServiceOrderID.NewObjName}"/>
                                 </Label.GestureRecognizers>
                             </Label>
 
-                            <Label Grid.Row="2" Grid.Column="0" Text="Адрес объекта" FontAttributes="Bold"/>
-                            <Label Grid.Row="2" Grid.Column="1" Text="{Binding ServiceOrderID.NewAddress}">
+                            <Label Style="{StaticResource CommonLabelStyle}" Grid.Row="2" Grid.Column="0" Text="Адрес объекта" FontAttributes="Bold"/>
+                            <Label Style="{StaticResource CommonLabelStyle}" Grid.Row="2" Grid.Column="1" Text="{Binding ServiceOrderID.NewAddress}">
                                 <Label.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding ShowInfoCommand}" CommandParameter="{Binding ServiceOrderID.NewAddress}"/>
                                 </Label.GestureRecognizers>
                             </Label>
 
-                            <Label Grid.Row="3" Grid.Column="0" Text="Контактные данные" FontAttributes="Bold"/>
-                            <Label Grid.Row="3" Grid.Column="1" Text="{Binding Contact}" TextDecorations="Underline" TextColor="Blue">
+                            <Label Style="{StaticResource CommonLabelStyle}" Grid.Row="3" Grid.Column="0" Text="Контактные данные" FontAttributes="Bold"/>
+                            <Label Style="{StaticResource CommonLabelStyle}" Grid.Row="3" Grid.Column="1" Text="{Binding Contact}" TextDecorations="Underline" TextColor="Blue">
                                 <Label.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding CallClientCommand}" CommandParameter="{Binding Contact}"/>
                                 </Label.GestureRecognizers>
                             </Label>
 
-                            <Label Grid.Row="4" Grid.Column="0" Text="Подъездные пути" FontAttributes="Bold"/>
-                            <Label Grid.Row="4" Grid.Column="1" Text="{Binding Siding}" VerticalOptions="FillAndExpand">
+                            <Label Style="{StaticResource CommonLabelStyle}" Grid.Row="4" Grid.Column="0" Text="Подъездные пути" FontAttributes="Bold"/>
+                            <Label Style="{StaticResource CommonLabelStyle}" Grid.Row="4" Grid.Column="1" Text="{Binding Siding}" VerticalOptions="FillAndExpand">
                                 <Label.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding ShowInfoCommand}" CommandParameter="{Binding Siding}"/>
                                 </Label.GestureRecognizers>
                             </Label>
 
-                            <Label Grid.Row="5" Grid.Column="0" Text="ТО ОС" FontAttributes="Bold" VerticalOptions="Center"/>
+                            <Label Style="{StaticResource CommonLabelStyle}" Grid.Row="5" Grid.Column="0" Text="ТО ОС" FontAttributes="Bold" VerticalOptions="Center"/>
                             <CheckBox Grid.Row="5" Grid.Column="1" IsEnabled="False" IsChecked="{Binding rrOS}"/>
-                                
-                            <Label Grid.Row="6" Grid.Column="0" Text="ТО ПС" FontAttributes="Bold" VerticalOptions="Center"/>
+
+                            <Label Style="{StaticResource CommonLabelStyle}" Grid.Row="6" Grid.Column="0" Text="ТО ПС" FontAttributes="Bold" VerticalOptions="Center"/>
                             <CheckBox Grid.Row="6" Grid.Column="1" IsEnabled="False" IsChecked="{Binding rrPS}"/>
 
-                            <Label Grid.Row="7" Grid.Column="0" Text="ТО Видео" FontAttributes="Bold" VerticalOptions="Center"/>
+                            <Label Style="{StaticResource CommonLabelStyle}" Grid.Row="7" Grid.Column="0" Text="ТО Видео" FontAttributes="Bold" VerticalOptions="Center"/>
                             <CheckBox Grid.Row="7" Grid.Column="1" IsEnabled="False" IsChecked="{Binding rrVideo}"/>
 
-                            <Label Grid.Row="8" Grid.Column="0" Text="ТО СКУД" FontAttributes="Bold" VerticalOptions="Center"/>
+                            <Label Style="{StaticResource CommonLabelStyle}" Grid.Row="8" Grid.Column="0" Text="ТО СКУД" FontAttributes="Bold" VerticalOptions="Center"/>
                             <CheckBox Grid.Row="8" Grid.Column="1" IsEnabled="False" IsChecked="{Binding rrAccess}"/>
-                            
-                            <Label Grid.Row="9" Grid.Column="0" Text="Дата заявки" FontAttributes="Bold"/>
-                            <Label Grid.Row="9" Grid.Column="1" Text="{Binding ServiceOrderID.NewDate, StringFormat='{0:dd.MM.yyyy}'}"/>
 
-                            <Label Grid.Row="10" Grid.Column="0" Text="Время заявки" FontAttributes="Bold"/>
-                            <Label Grid.Row="10" Grid.Column="1" Text="{Binding ServiceOrderID.NewTime, StringFormat='{}{0:hh\\:mm}'}"/>
+                            <Label Style="{StaticResource CommonLabelStyle}" Grid.Row="9" Grid.Column="0" Text="Дата заявки" FontAttributes="Bold"/>
+                            <Label Style="{StaticResource CommonLabelStyle}" Grid.Row="9" Grid.Column="1" Text="{Binding ServiceOrderID.NewDate, StringFormat='{0:dd.MM.yyyy}'}"/>
 
-                            <Label Grid.Row="11" Grid.Column="0" Text="Категория заявки" FontAttributes="Bold"/>
-                            <Label Grid.Row="11" Grid.Column="1" Text="{Binding Category}"/>
-                            
-                            <Label Grid.Row="12" Grid.Column="0" Text="Кто дал заявку" FontAttributes="Bold"/>
-                            <Label Grid.Row="12" Grid.Column="1" Text="{Binding ServiceOrderID.NewWhoInit}"/>
+                            <Label Style="{StaticResource CommonLabelStyle}" Grid.Row="10" Grid.Column="0" Text="Время заявки" FontAttributes="Bold"/>
+                            <Label Style="{StaticResource CommonLabelStyle}" Grid.Row="10" Grid.Column="1" Text="{Binding ServiceOrderID.NewTime, StringFormat='{}{0:hh\\:mm}'}"/>
 
-                            <Label Grid.Row="13" Grid.Column="0" Text="Причина посещения" FontAttributes="Bold"/>
-                            <Label Grid.Row="13" Grid.Column="1" Text="{Binding ServiceOrderID.NewName}">
+                            <Label Style="{StaticResource CommonLabelStyle}" Grid.Row="11" Grid.Column="0" Text="Категория заявки" FontAttributes="Bold"/>
+                            <Label Style="{StaticResource CommonLabelStyle}" Grid.Row="11" Grid.Column="1" Text="{Binding Category}"/>
+
+                            <Label Style="{StaticResource CommonLabelStyle}" Grid.Row="12" Grid.Column="0" Text="Кто дал заявку" FontAttributes="Bold"/>
+                            <Label Style="{StaticResource CommonLabelStyle}" Grid.Row="12" Grid.Column="1" Text="{Binding ServiceOrderID.NewWhoInit}"/>
+
+                            <Label Style="{StaticResource CommonLabelStyle}" Grid.Row="13" Grid.Column="0" Text="Причина посещения" FontAttributes="Bold"/>
+                            <Label Style="{StaticResource CommonLabelStyle}" Grid.Row="13" Grid.Column="1" Text="{Binding ServiceOrderID.NewName}">
                                 <Label.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding ShowInfoCommand}" CommandParameter="{Binding ServiceOrderID.NewName}"/>
                                 </Label.GestureRecognizers>
                             </Label>
 
-                            <Label Grid.Row="14" Grid.Column="0" Text="Примечание" FontAttributes="Bold"/>
-                            <Label Grid.Row="14" Grid.Column="1" Text="{Binding ServiceOrderID.NewCommentNew}">
+                            <Label Style="{StaticResource CommonLabelStyle}" Grid.Row="14" Grid.Column="0" Text="Примечание" FontAttributes="Bold"/>
+                            <Label Style="{StaticResource CommonLabelStyle}" Grid.Row="14" Grid.Column="1" Text="{Binding ServiceOrderID.NewCommentNew}">
                                 <Label.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding ShowInfoCommand}" CommandParameter="{Binding ServiceOrderID.NewCommentNew}"/>
                                 </Label.GestureRecognizers>
                             </Label>
 
-                            <Label Grid.Row="15" Grid.Column="0" Text="Контрольное время" FontAttributes="Bold"/>
-                            <Label Grid.Row="15" Grid.Column="1" Text="{Binding ControlTime}"/>
+                            <Label Style="{StaticResource CommonLabelStyle}" Grid.Row="15" Grid.Column="0" Text="Контрольное время" FontAttributes="Bold"/>
+                            <Label Style="{StaticResource CommonLabelStyle}" Grid.Row="15" Grid.Column="1" Text="{Binding ControlTime}"/>
                         </Grid>
                     </Expander>
                 </StackLayout>

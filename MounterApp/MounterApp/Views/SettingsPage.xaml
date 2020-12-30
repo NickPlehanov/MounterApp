@@ -33,10 +33,10 @@
                 <CheckBox Grid.Column="0" Grid.Row="0" IsChecked="{Binding AutoEnter}" HorizontalOptions="CenterAndExpand"/>
                 <Label Grid.Column="1" Grid.Row="0" Text="Автоматический вход" Style="{StaticResource MountersLabelStyle}"/>
 
-                <Entry Grid.Column="0" Grid.Row="1" Keyboard="Numeric" Text="{Binding Quality}"/>
+                <Entry Grid.Column="0" Grid.Row="1" Keyboard="Numeric" Text="{Binding Quality}" Style="{StaticResource EntryStyle}"/>
                 <Label Grid.Column="1" Grid.Row="1" Text="Качество фото" Style="{StaticResource MountersLabelStyle}"/>
 
-                <Entry Grid.Column="0" Grid.Row="2" Keyboard="Numeric" Text="{Binding Compression}"/>
+                <Entry Grid.Column="0" Grid.Row="2" Keyboard="Numeric" Text="{Binding Compression}" Style="{StaticResource EntryStyle}"/>
                 <Label Grid.Column="1" Grid.Row="2" Text="Степень сжатия фото" Style="{StaticResource MountersLabelStyle}"/>
 
                 <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding ClearImage}" Grid.ColumnSpan="2" Grid.Row="3" Text="Очистить локальную базу монтажей" Command="{Binding ClearDatabaseCommand}">

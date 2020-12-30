@@ -8,6 +8,16 @@ using static Xamarin.Essentials.Permissions;
 namespace MounterApp.ViewModel {
     public class BaseViewModel : INotifyPropertyChanged {
 
+        public string IconName(string name) {
+            AppTheme appTheme = AppInfo.RequestedTheme;
+            if(appTheme == AppTheme.Light)
+                return name+"_white.png";
+            else if(appTheme == AppTheme.Dark)
+                return name+ ".png";
+            else
+                return name + ".png";
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void NotifyPropertyChanged(string propertyName) {

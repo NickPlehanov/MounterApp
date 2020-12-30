@@ -24,27 +24,27 @@
                     <ColumnDefinition Width="0.2*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Picker Grid.ColumnSpan="2" Grid.Row="0" SelectedItem="{Binding SelectedResult}" ItemsSource="{Binding Results}" ItemDisplayBinding="{Binding Label}" Title="Выберите результат"/>
+                <Picker Style="{StaticResource PickerStyle}" Grid.ColumnSpan="2" Grid.Row="0" SelectedItem="{Binding SelectedResult}" ItemsSource="{Binding Results}" ItemDisplayBinding="{Binding Label}" Title="Выберите результат"/>
                 <CheckBox Grid.Column="0" Grid.Row="1" IsChecked="{Binding NecesseryRead}" VerticalOptions="Center" HorizontalOptions="Center"/>
-                <Label Grid.Column="1" Grid.Row="1" Text="Обязательно для прочтения оператором" VerticalOptions="Center" HorizontalOptions="Center">
+                <Label Style="{StaticResource CommonLabelStyle}" Grid.Column="1" Grid.Row="1" Text="Обязательно для прочтения оператором" VerticalOptions="Center" HorizontalOptions="Center">
                     <Label.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding SetValueNecesseryReadCommand}"/>
                     </Label.GestureRecognizers>
                 </Label>
-                <Label Grid.ColumnSpan="2" Grid.Row="2" Text="Напишите заключение"/>
-                <Editor Grid.Row="3" Grid.ColumnSpan="2" Text="{Binding ConclusionByOrder}" VerticalOptions="FillAndExpand"/>
+                <Label Style="{StaticResource CommonLabelStyle}" Grid.ColumnSpan="2" Grid.Row="2" Text="Напишите заключение"/>
+                <Editor Style="{StaticResource EditorStyle}" Grid.Row="3" Grid.ColumnSpan="2" Text="{Binding ConclusionByOrder}" VerticalOptions="FillAndExpand"/>
             </Grid>
             <StackLayout Opacity="1"  Style="{StaticResource ActivityIndicatorStackLayoutStyle}" IsVisible="{Binding IndicatorVisible}">
                 <ActivityIndicator Style="{StaticResource ActivityIndicatorStyle}"/>
                 <Label Style="{StaticResource ActivityIndicatorLabelStyle}"/>
             </StackLayout>
             <StackLayout Opacity="{Binding OpacityForm}" IsVisible="{Binding ReasonVisibility}">
-                <Picker Title="Укажите причину" ItemsSource="{Binding Reasons}" ItemDisplayBinding="{Binding Label}" SelectedItem="{Binding SelectedReason}"/>
-                <Label Text="Комментарий"/>
-                <Entry Text="{Binding ReasonComment}"/>
+                <Picker Style="{StaticResource PickerStyle}" Title="Укажите причину" ItemsSource="{Binding Reasons}" ItemDisplayBinding="{Binding Label}" SelectedItem="{Binding SelectedReason}"/>
+                <Label  Style="{StaticResource CommonLabelStyle}" Text="Комментарий"/>
+                <Entry Style="{StaticResource EntryStyle}" Text="{Binding ReasonComment}"/>
                 <FlexLayout IsVisible="{Binding TransferLayoutVisibility}">
-                    <Label Text="Укажите дату и время переноса"/>
-                    <DatePicker Date="{Binding TransferDate}">
+                    <Label  Style="{StaticResource CommonLabelStyle}" Text="Укажите дату и время переноса"/>
+                    <DatePicker Style="{StaticResource DatePickerStyle}" Date="{Binding TransferDate}">
                         <DatePicker.Format>d</DatePicker.Format>
                         <DatePicker.MinimumDate>
                             <sys:DateTime x:FactoryMethod="Parse">
@@ -64,7 +64,7 @@
                     <TimePicker Time="{Binding TransferTime, Mode=TwoWay}" Format="t"/>
                 </FlexLayout>
             </StackLayout>
-            <Button ImageSource="{Binding SaveImage}" Text="OK" Command="{Binding CloseServiceOrderCommand}">
+            <Button ImageSource="{Binding SaveImage}" Text="OK" Command="{Binding CloseServiceOrderCommand}" Style="{StaticResource CommonButtonStyle}">
                 <Button.Background>
                     <LinearGradientBrush EndPoint="1,1">
                         <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />

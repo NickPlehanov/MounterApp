@@ -21,8 +21,8 @@ namespace MounterApp.ViewModel {
             Servicemans = _servicemans;
             ServiceOrder = _so;
             GetPastServiceOrders.Execute(null);
-            ArrowCirclePastServiceOrders = "arrow_circle_down.png";
-            CloseImage = "close.png";
+            ArrowCirclePastServiceOrders = IconName("arrow_circle_down");
+            CloseImage = IconName("close");
             IndicatorVisible = false;
             OpacityForm = 1;
         }
@@ -31,8 +31,8 @@ namespace MounterApp.ViewModel {
             Servicemans = _servicemans;
             ServiceOrderFireAlarm = _so;
             GetPastServiceOrders.Execute(null);
-            ArrowCirclePastServiceOrders = "arrow_circle_down.png";
-            CloseImage = "close.png";
+            ArrowCirclePastServiceOrders = IconName("arrow_circle_down");
+            CloseImage = IconName("close");
             IndicatorVisible = false;
             OpacityForm = 1;
         }
@@ -190,9 +190,9 @@ namespace MounterApp.ViewModel {
             get => _PastServiceOrdersExpandedState;
             set {
                 if(_PastServiceOrdersExpandedState)
-                    ArrowCirclePastServiceOrders = "arrow_circle_up.png";
+                    ArrowCirclePastServiceOrders = IconName("arrow_circle_up");
                 else
-                    ArrowCirclePastServiceOrders = "arrow_circle_down.png";
+                    ArrowCirclePastServiceOrders = IconName("arrow_circle_down");
                 _PastServiceOrdersExpandedState = value;
                 OnPropertyChanged(nameof(PastServiceOrdersExpandedState));
             }

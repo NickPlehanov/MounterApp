@@ -48,9 +48,9 @@ namespace MounterApp.ViewModel {
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Вывеска объекта" });
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Доп. фото" });
             ImgSrc = "EmptyPhoto.png";
-            PhotoImage = "media.png";
-            SaveImage = "save.png";
-            SendImage = "send.png";
+            PhotoImage = IconName("media");
+            SaveImage = IconName("save");
+            SendImage = IconName("send");
             Opacity = 1;
             IndicatorVisible = false;
             IsPickPhoto = null;
@@ -71,9 +71,9 @@ namespace MounterApp.ViewModel {
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Вывеска объекта" });
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Доп. фото" });
             ImgSrc = "EmptyPhoto.png";
-            PhotoImage = "media.png";
-            SaveImage = "save.png";
-            SendImage = "send.png";
+            PhotoImage = IconName("media");
+            SaveImage = IconName("save");
+            SendImage = IconName("send");
             IsPickPhoto = null;
             if(!string.IsNullOrEmpty(mount.GoogleComment)) {
                 GoogleComment = mount.GoogleComment;

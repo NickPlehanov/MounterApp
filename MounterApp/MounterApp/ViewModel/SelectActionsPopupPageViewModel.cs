@@ -32,9 +32,9 @@ namespace MounterApp.ViewModel {
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Доп. фото" });
             //ImgSrc = "EmptyPhoto.png";
             VisibleAcceptedLayout = false;
-            CameraImage = "camera.png";
-            CollectionImage = "collections.png";
-            CloseImage = "close.png";
+            CameraImage = IconName("camera");
+            CollectionImage = IconName("collections");
+            CloseImage = IconName("close");
             IsChanged = false;
             Analytics.TrackEvent("Инициализация страницы выбора способа получения фото");
             Counter = 0;

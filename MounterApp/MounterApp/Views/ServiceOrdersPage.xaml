@@ -14,7 +14,7 @@
                 </LinearGradientBrush>
             </StackLayout.Background>
             <StackLayout Grid.Row="0"  Margin="5" Opacity="{Binding OpacityForm}" >
-                <DatePicker Date="{Binding Date, Mode=TwoWay}" HorizontalOptions="Center"/>
+                <DatePicker Date="{Binding Date, Mode=TwoWay}" HorizontalOptions="Center" Style="{StaticResource DatePickerStyle}"/>
                 <Button Style="{StaticResource ServiceOrderHeaderStyle}" ImageSource="{Binding RefreshImage}" Text="Обновить" Command="{Binding RefreshOrdersCommand}">
                     <Button.Background>
                         <LinearGradientBrush EndPoint="1,1">

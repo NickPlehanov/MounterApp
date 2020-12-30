@@ -24,8 +24,8 @@ namespace MounterApp.ViewModel {
             ServiceOrder = _so;
             Servicemans = _servicemans;
             Mounters = _mounters;
-            CloseImage = "close.png";
-            GetImage = "get.png";
+            CloseImage = IconName("close");
+            GetImage = IconName("get");
             IndicatorVisible = false;
             OpacityForm = 1;
         }
@@ -39,8 +39,8 @@ namespace MounterApp.ViewModel {
             ServiceOrderFireAlarm = _so;
             Servicemans = _servicemans;
             Mounters = _mounters;
-            CloseImage = "close.png";
-            GetImage = "get.png";
+            CloseImage = IconName("close");
+            GetImage = IconName("get");
             IndicatorVisible = false;
             OpacityForm = 1;
         }
@@ -186,11 +186,7 @@ namespace MounterApp.ViewModel {
                                 {"ServicemanPhone",Servicemans.First().NewPhone },
                                 {"StartDate",StartDate.ToShortDateString() },
                                 {"EndDate",EndDate.ToShortDateString() },
-                                {"ObjectNumber",obj_number },
-                                {"Query","Andromeda/events?objNumber=" + ServiceOrder.NewNumber +
-                                                "&startDate=" + StartDate +
-                                                "&endDate=" + EndDate +
-                                                "&testFiltered=0&doubleFiltered=0" }
+                                {"ObjectNumber",obj_number }
                         });
                         response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/events?objNumber=" + obj_number +
                                             "&startDate=" + StartDate +

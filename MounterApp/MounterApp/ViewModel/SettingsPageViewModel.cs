@@ -26,8 +26,8 @@ namespace MounterApp.ViewModel {
                 Quality = int.Parse(Application.Current.Properties["Quality"].ToString());
             if(Application.Current.Properties.ContainsKey("Compression"))
                 Compression = int.Parse(Application.Current.Properties["Compression"].ToString());
-            SaveImage = "save.png";
-            ClearImage = "clear.png";
+            SaveImage = IconName("save");
+            ClearImage = IconName("clear");
             Analytics.TrackEvent("Инициализация окна настроек приложения");
             AppVersions av = new AppVersions();
             Version = null;

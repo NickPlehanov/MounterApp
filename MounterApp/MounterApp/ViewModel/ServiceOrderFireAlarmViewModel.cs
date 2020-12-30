@@ -48,12 +48,12 @@ namespace MounterApp.ViewModel {
         //    GetInfoByGuardObject.Execute(null);
         //    GetCategory.Execute(null);
         //    App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
-        //    InfoImage = "info.png";
-        //    ReorderImage = "reorder.png";
-        //    EventImage = "event.png";
-        //    CloseImage = "close.png";
-        //    TransferImage = "transfer.png";
-        //    PeopleImage = "people.png";
+        //    InfoImage = "info");
+        //    ReorderImage = "reorder");
+        //    EventImage = "event");
+        //    CloseImage = "close");
+        //    TransferImage = "transfer");
+        //    PeopleImage = "people");
         //}
 
         public ServiceOrderFireAlarmViewModel(NewTest2ExtensionBase _so,List<NewServicemanExtensionBase> _servicemans,List<NewMounterExtensionBase> _mounters) {
@@ -75,12 +75,12 @@ namespace MounterApp.ViewModel {
             GetCategory.Execute(null);
             GetObjectNameCommand.Execute(null);
             App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
-            InfoImage = "info.png";
-            ReorderImage = "reorder.png";
-            EventImage = "event.png";
-            CloseImage = "close.png";
-            TransferImage = "transfer.png";
-            PeopleImage = "people.png";
+            InfoImage = IconName("info");
+            ReorderImage = IconName("reorder");
+            EventImage = IconName("event");
+            CloseImage = IconName("close");
+            TransferImage = IconName("transfer");
+            PeopleImage = IconName("people");
         }
         private RelayCommand _GetObjectNameCommand;
         public RelayCommand GetObjectNameCommand {
@@ -631,6 +631,8 @@ namespace MounterApp.ViewModel {
                 }
                 Opacity = 1;
                 IndicatorVisible = false;
+                ServiceOrderFireAlarm.NewIncome = DateTime.Now.AddHours(-5);
+                IncomeCommand.ChangeCanExecute();
             },obj=> ServiceOrderFireAlarm.NewIncome==null);
         }
 

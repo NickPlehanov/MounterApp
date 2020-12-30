@@ -45,6 +45,12 @@
                                     <Frame BorderColor="Blue" Style="{StaticResource FrameInfoStyle}">
                                         <Frame.Content>
                                             <StackLayout>
+                                                <StackLayout.Background>
+                                                    <LinearGradientBrush EndPoint="1,1">
+                                                        <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
+                                                        <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
+                                                    </LinearGradientBrush>
+                                                </StackLayout.Background>
                                                 <Label Text="{Binding Path=UserNumberText}" Style="{StaticResource MountersLabelStyle}" FontAttributes="None"/>
                                                 <Label Text="{Binding Path=ObjCustTitleText}" Style="{StaticResource MountersLabelStyle}" FontAttributes="None"/>
                                                 <Label Text="{Binding Path=ObjCustNameText}" Style="{StaticResource MountersLabelStyle}"/>

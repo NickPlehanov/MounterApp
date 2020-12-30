@@ -35,7 +35,7 @@ namespace MounterApp.ViewModel {
             Mounters = _mounters;
             GetResults.ExecuteAsync(null);
             NecesseryRead = false;
-            SaveImage = "save.png";
+            SaveImage = IconName("save");
             IndicatorVisible = false;
             OpacityForm = 1;
         }
@@ -51,7 +51,7 @@ namespace MounterApp.ViewModel {
             Mounters = _mounters;
             GetResults.ExecuteAsync(null);
             NecesseryRead = false;
-            SaveImage = "save.png";
+            SaveImage = IconName("save");
             IndicatorVisible = false;
             OpacityForm = 1;
         }

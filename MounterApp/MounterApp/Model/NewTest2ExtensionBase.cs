@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Drawing;
 using System.Text;
+using Xamarin.Essentials;
 
 namespace MounterApp.Model {
     public partial class NewTest2ExtensionBase {
@@ -65,11 +66,21 @@ namespace MounterApp.Model {
                 if(NewIncome.HasValue) {
                     if(NewIncome.Value != null)
                         return Color.Red;
+                    else {
+                        AppTheme appTheme = AppInfo.RequestedTheme;
+                        if(appTheme == AppTheme.Light)
+                            return Color.White;
+                        else
+                            return Color.Black;
+                    }
+                }
+                else {
+                    AppTheme appTheme = AppInfo.RequestedTheme;
+                    if(appTheme == AppTheme.Light)
+                        return Color.White;
                     else
                         return Color.Black;
                 }
-                else
-                    return Color.Black;
             }
         }
         [NotMapped]

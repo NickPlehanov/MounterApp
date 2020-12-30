@@ -17,7 +17,7 @@ namespace MounterApp.ViewModel {
         public MainMenuPageViewModel(List<NewMounterExtensionBase> mounters,List<NewServicemanExtensionBase> servicemans) {
             Mounters = mounters;
             Serviceman = servicemans;
-            SettingsImage = "settings.png";
+            SettingsImage = IconName("settings");
             Analytics.TrackEvent("Инициализация окна главного меню приложения");
             App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
         }

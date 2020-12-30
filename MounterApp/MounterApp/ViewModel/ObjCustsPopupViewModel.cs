@@ -19,21 +19,21 @@ namespace MounterApp.ViewModel {
         public ObjCustsPopupViewModel(NewServiceorderExtensionBase _serviceorder) {
             ServiceOrder = _serviceorder;
             GetCustomers.Execute(null);
-            ArrowCircleCustomers = "arrow_circle_down.png";
+            ArrowCircleCustomers = IconName("arrow_circle_down");
             OpacityForm = 1;
             IndicatorVisible = false;
-            CloseImage = "close.png";
-            CallImage = "call.png";
+            CloseImage = IconName("close");
+            CallImage = IconName("call");
             Analytics.TrackEvent("Инициализация окна списка ответсвенных");
         }
         public ObjCustsPopupViewModel(NewTest2ExtensionBase _serviceorder) {
             ServiceOrderFireAlarm = _serviceorder;
             GetCustomers.Execute(null);
-            ArrowCircleCustomers = "arrow_circle_down.png";
+            ArrowCircleCustomers = IconName("arrow_circle_down");
             OpacityForm = 1;
             IndicatorVisible = false;
-            CloseImage = "close.png";
-            CallImage = "call.png";
+            CloseImage = IconName("close");
+            CallImage = IconName("call");
             Analytics.TrackEvent("Инициализация окна списка ответсвенных");
         }
 
@@ -77,9 +77,9 @@ namespace MounterApp.ViewModel {
             get => _CustomersExpandedState;
             set {
                 if(_CustomersExpandedState)
-                    ArrowCircleCustomers = "arrow_circle_up.png";
+                    ArrowCircleCustomers = IconName("arrow_circle_up");
                 else
-                    ArrowCircleCustomers = "arrow_circle_down.png";
+                    ArrowCircleCustomers = IconName("arrow_circle_down");
                 _CustomersExpandedState = value;
                 OnPropertyChanged(nameof(CustomersExpandedState));
             }
@@ -140,7 +140,7 @@ namespace MounterApp.ViewModel {
                 if(!string.IsNullOrEmpty(obj.ToString())) {
                     Analytics.TrackEvent("Звонок клиенту",
                         new Dictionary<string,string> {
-                        {"ServiceOrderID",ServiceOrder.NewServiceorderId.ToString() },
+                        //{"ServiceOrderID",ServiceOrder.NewServiceorderId.ToString() },
                         {"PhoneNumber",obj.ToString() }
                         });
                     Uri uri = new Uri("tel:" + obj);

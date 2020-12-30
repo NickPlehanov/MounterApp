@@ -18,8 +18,8 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <StackLayout Visual="Material" Opacity="{Binding OpacityForm}" BindingContext="{StaticResource viewModel}" Grid.Row="1" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Margin="5">
-            <Label Text="Введите номер телефона"/>
-            <SearchBar Placeholder="Введите номер телефона (11 цифр)" x:Name="PhoneNumber" Keyboard="Telephone" Text="{Binding PhoneNumber, Mode=TwoWay}" SearchCommand="{Binding AuthCommand}" SearchCommandParameter="{Binding Source=PhoneNumber,Path=Text}"/>
+            <Label Style="{StaticResource CommonLabelStyle}" Text="Введите номер телефона"/>
+            <SearchBar Style="{StaticResource SearchBarStyle}" Placeholder="Введите номер телефона (11 цифр)" x:Name="PhoneNumber" Keyboard="Telephone" Text="{Binding PhoneNumber, Mode=TwoWay}" SearchCommand="{Binding AuthCommand}" SearchCommandParameter="{Binding Source=PhoneNumber,Path=Text}"/>
             <!--<ui:MaterialTextField Placeholder="Укажите номер телефон" Text="{Binding PhoneNumber, Mode=TwoWay}" ChoiceSelectedCommand="{Binding AuthCommand}"/>-->
             <!--<Editor Keyboard="Telephone" x:Name="PhoneNumber" Text="{Binding PhoneNumber, Mode=TwoWay}"/>-->
             <!--<Button Text="ОК" Command="{Binding AuthCommand}" CommandParameter="{Binding Source=PhoneNumber, Path=Text}" BorderColor="Bisque" BorderWidth="2" WidthRequest="20" VerticalOptions="CenterAndExpand" FontAttributes="Bold"/>-->

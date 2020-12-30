@@ -24,6 +24,7 @@ namespace MounterApp.ViewModel {
 
         //HttpClientHandler clientHandler = new HttpClientHandler();
         public MainPageViewModel() {
+            
             IndicatorVisible = false;
             OpacityForm = 1;
             if(Application.Current.Properties.ContainsKey("Phone"))
