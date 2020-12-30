@@ -28,6 +28,7 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
                 <CheckBox Grid.Column="0" Grid.Row="0" IsChecked="{Binding AutoEnter}" HorizontalOptions="CenterAndExpand"/>
@@ -58,7 +59,16 @@
                 </Button>
 
 
-                <Label Text="{Binding Version, Mode=TwoWay}" Grid.Row="5" Grid.ColumnSpan="2" Style="{StaticResource MountersLabelStyle}"/>
+                <Label Text="{Binding Version, Mode=TwoWay}" Grid.Row="5" Grid.ColumnSpan="2" Style="{StaticResource MountersLabelStyle}">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer NumberOfTapsRequired="2" Command="{Binding GetEventsObjectInfo}"/>
+                    </Label.GestureRecognizers>
+                </Label>
+                <!--<Label Text="{Binding BuildNumber, Mode=TwoWay}" Grid.Row="6" Grid.ColumnSpan="2" Style="{StaticResource MountersLabelStyle}">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer NumberOfTapsRequired="2" Command="{Binding FixWebLinkCommand}"/>
+                    </Label.GestureRecognizers>
+                </Label>-->
             </Grid>
         </StackLayout>
     </ContentPage.Content>

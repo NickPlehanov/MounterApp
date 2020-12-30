@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MounterApp.Views.EventsExternalPage">
+    <ContentPage.Content>
+        <StackLayout Style="{StaticResource PopupStackLayoutStyle}">
+            <StackLayout.Background>
+                <LinearGradientBrush EndPoint="0,1">
+                    <GradientStop Color="{StaticResource StackLayoutFirstColor}" Offset="0.1" />
+                    <GradientStop Color="{StaticResource StackLayoutSecondColor}" Offset="1.0" />
+                </LinearGradientBrush>
+            </StackLayout.Background>
+            <FlexLayout>
+                <DatePicker Style="{StaticResource DatePickerStyle}" Margin="2" Date="{Binding StartDate}"/>
+                <DatePicker Style="{StaticResource DatePickerStyle}" Margin="2" Date="{Binding EndDate}"/>
+                <Entry Style="{StaticResource EntryStyle}" Margin="2" Text="{Binding ObjectNumber}" Keyboard="Numeric" WidthRequest="100"/>
+            </FlexLayout>
+                <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding GetImage}" FontSize="Default" Text="Получить" Command="{Binding GetEventsCommands}">
+                    <Button.Background>
+                        <LinearGradientBrush EndPoint="1,1">
+                            <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
+                            <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
+            <StackLayout Style="{StaticResource ActivityIndicatorStackLayoutStyle}" IsVisible="{Binding IndicatorVisible}">
+                <ActivityIndicator Style="{StaticResource ActivityIndicatorStyle}"/>
+                <Label Style="{StaticResource ActivityIndicatorLabelStyle}"/>
+            </StackLayout>
+            <ScrollView>
+                <StackLayout Opacity="{Binding OpacityForm}">
+                    <CollectionView Margin="5" ItemsSource="{Binding Events, Mode=TwoWay}" SelectionMode="Single">
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Vertical"/>
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Frame Style="{StaticResource FrameInfoStyle}">
+                                    <Frame.Content>
+                                        <StackLayout>
+                                            <Label Text="{Binding Path=REDateTime}" Margin="5" FontAttributes="Bold"/>
+                                            <FlexLayout>
+                                                <Label Text="{Binding Path=RChannelNameText}" Margin="5" />
+                                                <Label Text="{Binding Path=EventCodeText}" Margin="5" />
+                                                <Label Text="{Binding Path=EventClassNameText}" Margin="5" />
+                                            </FlexLayout>
+                                            <FlexLayout>
+                                                <Label Text="{Binding Path=ZoneUserText}" Margin="5" />
+                                                <Label Text="{Binding Path=PartNumberText}" Margin="5" />
+                                            </FlexLayout>
+                                            <Label Text="{Binding Path=EventDesc}" Margin="5" />
+                                        </StackLayout>
+                                    </Frame.Content>
+                                </Frame>
+                                <!--</Grid>-->
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </StackLayout>
+            </ScrollView>
+            <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding ExitCommand}">
+                <Button.Background>
+                    <LinearGradientBrush EndPoint="1,1">
+                        <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
+                        <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

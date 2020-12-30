@@ -1,11 +1,16 @@
 ﻿using Android.Widget;
 using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using MounterApp.Helpers;
 using MounterApp.Model;
+using MounterApp.Properties;
 using MounterApp.Views;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -32,6 +37,7 @@ namespace MounterApp.ViewModel {
             AppVersions av = new AppVersions();
             Version = null;
             Version = "Версия приложения: "+av.GetVersionAndBuildNumber().VersionNumber;
+            BuildNumber = "Сборка приложения: "+av.GetVersionAndBuildNumber().BuildNumber;
             App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
         }
 
@@ -59,6 +65,15 @@ namespace MounterApp.ViewModel {
             set {
                 _Version = value;
                 OnPropertyChanged(nameof(Version));
+            }
+        }
+
+        private string _BuildNumber;
+        public string BuildNumber {
+            get => _BuildNumber;
+            set {
+                _BuildNumber = value;
+                OnPropertyChanged(nameof(BuildNumber));
             }
         }
 
@@ -145,6 +160,63 @@ namespace MounterApp.ViewModel {
                 _SaveImage = value;
                 OnPropertyChanged(nameof(SaveImage));
             }
+        }
+
+        private ObservableCollection<string> _ObjectsNumbers;
+        public ObservableCollection<string> ObjectsNumbers {
+            get => _ObjectsNumbers;
+            set {
+                _ObjectsNumbers = value;
+                OnPropertyChanged(nameof(ObjectsNumbers));
+            }
+        }
+
+        private RelayCommand _FixWebLinkCommand;
+        public RelayCommand FixWebLinkCommand {
+            get => _FixWebLinkCommand ??= new RelayCommand(async obj => {
+                using HttpClient client1 = new HttpClient(GetHttpClientHandler());
+                //string obj_number = ServiceOrder != null ? ServiceOrder.NewNumber.ToString() : ServiceOrderFireAlarm.NewNumber.ToString();
+                HttpResponseMessage response = null;
+                string resp = null;
+                List<string> objs = new List<string>();
+                response = await client1.GetAsync(Resources.BaseAddress + "/api/Andromeda/FixWebLink");
+                if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                    resp = response.Content.ReadAsStringAsync().Result;
+                    try {
+                        objs = JsonConvert.DeserializeObject<List<string>>(resp);
+                    }
+                    catch(Exception ex) {
+                        Crashes.TrackError(new Exception("Ошибка десериализации результата запроса события по объекту(расширенный)"),
+                        new Dictionary<string,string> {
+                                //{"Servicemans",Servicemans.First().NewPhone },
+                                {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                                {"ErrorMessage",ex.Message },
+                                {"StatusCode",response.StatusCode.ToString() },
+                                {"Response",response.ToString() }
+                        });
+                    }
+                    if(objs.Count > 0) {
+                        string msg = null;
+                        ObjectsNumbers.Clear();
+                        foreach(string item in objs) {
+                            msg += item + Environment.NewLine;
+                            ObjectsNumbers.Add(item);
+                        }
+                        await Application.Current.MainPage.DisplayAlert("Информация",msg,"OK");
+                    }
+                }
+                else {
+                    resp = null;
+                }
+            });
+        }
+
+        private RelayCommand _GetEventsObjectInfo;
+        public RelayCommand GetEventsObjectInfo {
+            get => _GetEventsObjectInfo ??= new RelayCommand(async obj => {
+                EventsExternalPageViewModel vm = new EventsExternalPageViewModel(Mounters,Servicemans);
+                App.Current.MainPage = new EventsExternalPage(vm);
+            });
         }
     }
 }
