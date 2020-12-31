@@ -427,13 +427,13 @@ namespace MounterApp.ViewModel {
                         ,"OK");
                 }
                 else if(responseEvents.StatusCode.ToString() == "Accepted") {
-                    responseEvents = await clientEvents.GetAsync(Resources.BaseAddress + "/api/Andromeda/weblink?ObjectNumber=" + ObjectNumber + "&path=" + Path + "");
-                    if(responseEvents.StatusCode.ToString() != "Accepted") {
+                    HttpResponseMessage responseweblink = await clientEvents.GetAsync(Resources.BaseAddress + "/api/Andromeda/weblink?ObjectNumber=" + ObjectNumber + "&path=" + Path + "");
+                    if(responseweblink.StatusCode.ToString() != "Accepted") {
                         Crashes.TrackError(new Exception("Не удачная попытка записи Web-ссылки в андромеду"),
                         new Dictionary<string,string> {
-                        {"ResponseStatusCode",responseEvents.StatusCode.ToString() },
-                        {"ResponseError",responseEvents.Content.ReadAsStringAsync().Result },
-                        {"Response",responseEvents.ToString() },
+                        {"ResponseStatusCode",responseweblink.StatusCode.ToString() },
+                        {"ResponseError",responseweblink.Content.ReadAsStringAsync().Result },
+                        {"Response",responseweblink.ToString() },
                         {"ObjectNumber",ObjectNumber },
                         {"Path",Path }
                         });
@@ -451,7 +451,7 @@ namespace MounterApp.ViewModel {
                     //            {"Response",response.ToString() }
                     //        });
                     //}
-                    else if(responseEvents.StatusCode.ToString() == "Accepted") {
+                    else if(responseweblink.StatusCode.ToString() == "Accepted") {
                         Toast.MakeText(Android.App.Application.Context,"Монтаж отправлен, данные получены оператором",ToastLength.Long).Show();
                         Analytics.TrackEvent("Монтаж отправлен, данные получены оператором");
                     }
