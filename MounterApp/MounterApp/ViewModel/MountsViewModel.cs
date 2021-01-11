@@ -263,6 +263,7 @@ namespace MounterApp.ViewModel {
                     });
                     //Phone = Application.Current.Properties["Phone"].ToString();
                     HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common?phone=7" + Mounters.FirstOrDefault().NewPhone + "&date=" + DateTime.Now.Date + "");
+                    //HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common?phone=" + Application.Current.Properties["Phone"].ToString() + "&date=" + DateTime.Now.ToShortDateString() + "");
                     var resp = response.Content.ReadAsStringAsync().Result;
                     List<GoogleMountModel> googleMounts = new List<GoogleMountModel>();
                     try {
@@ -346,16 +347,30 @@ namespace MounterApp.ViewModel {
             get => _SelectMountCommand ??= new RelayCommand(async obj => {
                 if(obj != null) {
                     int _id = -1;
-                    int.TryParse(obj.ToString(),out _id);
-                    NotSendedMount = NotSendedMounts.FirstOrDefault(x => x.ID == _id);
-                    if(NotSendedMount != null) {
-                        Analytics.TrackEvent("Переход к раннее заполненному монтажу",
-                            new Dictionary<string,string> {
+                    if(int.TryParse(obj.ToString(),out _id)) {
+                        NotSendedMount = NotSendedMounts.FirstOrDefault(x => x.ID == _id);
+                        if(NotSendedMount != null) {
+                            Analytics.TrackEvent("Переход к раннее заполненному монтажу",
+                                new Dictionary<string,string> {
                             {"MounterPhone",Mounters.FirstOrDefault().NewPhone },
                             {"ObjectNumber",NotSendedMount.ObjectNumber }
-                            });
-                        NewMountPageViewModel vm = new NewMountPageViewModel(NotSendedMount,Mounters,false,Servicemans);
-                        App.Current.MainPage = new NewMountpage(vm);
+                                });
+                            NewMountPageViewModel vm = new NewMountPageViewModel(NotSendedMount,Mounters,false,Servicemans);
+                            App.Current.MainPage = new NewMountpage(vm);
+                        }
+                    }
+                    Guid guid = Guid.Empty;
+                    if (Guid.TryParse(obj.ToString(),out guid)) {
+                        GoogleMount = GoogleMounts.First(x => x.id == guid);
+                        if(GoogleMount != null) {
+                            Analytics.TrackEvent("Переход к запланированному монтажу",
+                                new Dictionary<string,string> {
+                                    {"MounterPhone",Mounters.FirstOrDefault().NewPhone }
+                                });
+                            NotSendedMount = GoogleMount;
+                            NewMountPageViewModel vm = new NewMountPageViewModel(NotSendedMount,Mounters,false,Servicemans);
+                            App.Current.MainPage = new NewMountpage(vm);
+                        }
                     }
                 }
             });

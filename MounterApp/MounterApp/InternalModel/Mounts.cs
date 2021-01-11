@@ -97,5 +97,11 @@ namespace MounterApp.InternalModel {
             }
             //get => "№: " + ObjectNumber + "(" +DateSended.Value.ToString()+ ")";
         }
+
+        public static implicit operator Mounts(GoogleMountModel v) {
+            Mounts mounts = new Mounts();
+            mounts.GoogleComment = v.Info;
+            return mounts;
+        }
     }
 }

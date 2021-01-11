@@ -313,21 +313,25 @@ namespace MounterApp.ViewModel {
                             return;
                         }
                     }
+                    int q = 50;
+                    if(Application.Current.Properties.ContainsKey("Quality")) {
+                        q = int.Parse(Application.Current.Properties["Quality"].ToString());
+                    }
                     if(IsPickPhoto.Value == true) {
                         //await CheckAndRequestPermissionAsync(new StorageRead());
                         File = await CrossMedia.Current.PickPhotoAsync(new Plugin.Media.Abstractions.PickMediaOptions {
                             //Directory = "Sample",
                             //Name = "test.jpg",
-                            PhotoSize = PhotoSize.Small,
-                            CompressionQuality = 50
+                            PhotoSize = PhotoSize.Full,
+                            CompressionQuality = q
                         });
                     }
                     else {
                         File = await CrossMedia.Current.TakePhotoAsync(new Plugin.Media.Abstractions.StoreCameraMediaOptions {
                             Directory = "Sample",
                             Name = "test.jpg",
-                            PhotoSize = PhotoSize.Small,
-                            CompressionQuality = 50
+                            PhotoSize = PhotoSize.Full,
+                            CompressionQuality = q
                         });
                     }
                     if(File == null)
