@@ -69,16 +69,38 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <StackLayout>
-                                <Frame Style="{StaticResource FrameServiceOrderStyle}" BorderColor="Red">
-                                    <Frame.Content>
-                                        <Label Text="{Binding Path=ObjectNumber}" Style="{StaticResource MountersLabelStyle}">
-                                        <Label.GestureRecognizers>
-                                            <TapGestureRecognizer NumberOfTapsRequired="1" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MountsViewModel}}, Path=SelectMountCommand}" CommandParameter="{Binding Path=ID}"/>
-                                            <TapGestureRecognizer NumberOfTapsRequired="2" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MountsViewModel}}, Path=DeleteNotSendedMountCommand}" CommandParameter="{Binding Path=ID}"/>
-                                        </Label.GestureRecognizers>
-                                </Label>
-                                    </Frame.Content>
-                                </Frame>
+                                <SwipeView >
+                                    <SwipeView.LeftItems>
+                                        <SwipeItems Mode="Execute">
+                                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MountsViewModel}}, Path=DeleteNotSendedMountCommand}"
+                                                   CommandParameter="{Binding Path=ID}">
+                                                <Grid>
+                                                    <Button Style="{StaticResource SwipeDeleteButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:MountsViewModel}}, Path=DeleteImage}"/>
+                                                </Grid>
+                                            </SwipeItemView>
+                                        </SwipeItems>
+                                    </SwipeView.LeftItems>
+                                    <SwipeView.RightItems>
+                                        <SwipeItems Mode="Execute">
+                                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MountsViewModel}}, Path=SelectMountCommand}"
+                                                   CommandParameter="{Binding Path=ID}">
+                                                <Grid>
+                                                    <Button Style="{StaticResource SwipeOpenButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:MountsViewModel}}, Path=SelectMountCommand}"/>
+                                                </Grid>
+                                            </SwipeItemView>
+                                        </SwipeItems>
+                                    </SwipeView.RightItems>
+                                    <Frame Style="{StaticResource FrameServiceOrderStyle}" BorderColor="Red">
+                                        <Frame.Content>
+                                            <Label Text="{Binding Path=NotSendedCompositeName}" Style="{StaticResource MountersLabelStyle}">
+                                                <Label.GestureRecognizers>
+                                                    <TapGestureRecognizer NumberOfTapsRequired="1" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MountsViewModel}}, Path=SelectMountCommand}" CommandParameter="{Binding Path=ID}"/>
+                                                    <TapGestureRecognizer NumberOfTapsRequired="2" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MountsViewModel}}, Path=DeleteNotSendedMountCommand}" CommandParameter="{Binding Path=ID}"/>
+                                                </Label.GestureRecognizers>
+                                            </Label>
+                                        </Frame.Content>
+                                    </Frame>
+                                </SwipeView>
                             </StackLayout>
 
                         </DataTemplate>

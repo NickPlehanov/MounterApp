@@ -49,6 +49,19 @@
                 <Setter Property="WidthRequest" Value="200"/>
                 <Setter Property="TextColor" Value="{StaticResource ButtonTextColor}"/>
             </Style>
+            <Style x:Key="SwipeDeleteButton" TargetType="Button">
+                <Setter Property="Text" Value="Удаление"/>
+                <Setter Property="BackgroundColor" Value="Red"/>
+                <Setter Property="WidthRequest" Value="200"/>
+                <Setter Property="TextColor" Value="{StaticResource ButtonTextColor}"/>
+            </Style>
+            <Style x:Key="SwipeOpenButton" TargetType="Button">
+                <Setter Property="Text" Value="Открыть"/>
+                <Setter Property="BackgroundColor" Value="#1E90FA"/>
+                <Setter Property="WidthRequest" Value="200"/>
+                <Setter Property="TextColor" Value="{StaticResource ButtonTextColor}"/>
+                <Setter Property="VerticalOptions" Value="End"/>
+            </Style>
             <Style x:Key="ActivityIndicatorStyle" TargetType="ActivityIndicator">
                 <Setter Property="IsRunning" Value="True"/>
                 <Setter Property="Color" Value="Red"/>

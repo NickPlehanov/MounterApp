@@ -91,11 +91,21 @@ namespace MounterApp.InternalModel {
         public string CompositeName {
             get {
                 if (DateSended.HasValue)
-                    return "№: " + ObjectNumber + "(" + DateSended.Value.ToString() + ")";
+                    return "№: " + ObjectNumber + Environment.NewLine + "Отправлено: " + DateSended.Value.ToString();
                 else
                     return "№: " + ObjectNumber;
             }
             //get => "№: " + ObjectNumber + "(" +DateSended.Value.ToString()+ ")";
+        }
+        public DateTime? DateTimeCreated { get; set; }
+
+        public string NotSendedCompositeName {
+            get {
+                if (DateTimeCreated.HasValue)
+                    return "№: " + ObjectNumber+Environment.NewLine + "Создано: " + DateTimeCreated.Value.ToString();
+                else
+                    return "№: " + ObjectNumber;
+            }
         }
 
         public static implicit operator Mounts(GoogleMountModel v) {

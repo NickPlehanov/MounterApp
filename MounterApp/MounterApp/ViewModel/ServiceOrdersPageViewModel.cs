@@ -103,11 +103,11 @@ namespace MounterApp.ViewModel {
             //        //if (count_time< ServiceOrdersByTime.Count || count_ordr< ServiceOrders.Count || count_transfer< ServiceOrderByTransfer.Count) { }
             //    });
             //    return true; //use this to run continuously 
-            //    //return false; //to stop running continuously 
+            //                 //return false; //to stop running continuously 
 
-            //});
-            #endregion
-        }
+            //    });
+                #endregion
+            }
 
         private bool _TransferServiceOrderVisible;
         public bool TransferServiceOrderVisible {

@@ -93,6 +93,7 @@ namespace MounterApp.ViewModel {
             ArrowCircleGoogle = IconName("arrow_circle_down");
             ArrowCircleNotSended = IconName("arrow_circle_down");
             ArrowCircleHistory = IconName("arrow_circle_down");
+            DeleteImage = IconName("clear");
 
             Analytics.TrackEvent("Страница монтажей",
             new Dictionary<string,string> {
@@ -166,6 +167,14 @@ namespace MounterApp.ViewModel {
             });
         }
 
+        private ImageSource _DeleteImage;
+        public ImageSource DeleteImage {
+            get => _DeleteImage;
+            set {
+                _DeleteImage = value;
+                OnPropertyChanged(nameof(DeleteImage));
+            }
+        }
         private string _HeaderGoogle;
         public string HeaderGoogle {
             get => _HeaderGoogle;
@@ -387,6 +396,7 @@ namespace MounterApp.ViewModel {
                         bool result = await Application.Current.MainPage.DisplayAlert("Удаление","Подтвердите удаление","Удалить","Отмена");
                         if(result) {
                             NotSendedMounts.Remove(NotSendedMount);
+                            App.Database.DeleteMount(_id);
                             Toast.MakeText(Android.App.Application.Context,"Монтаж удален из локальной базы",ToastLength.Long).Show();
                         }
                     }
