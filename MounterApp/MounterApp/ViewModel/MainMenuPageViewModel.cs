@@ -2,6 +2,7 @@
 using MounterApp.Helpers;
 using MounterApp.Model;
 using MounterApp.Views;
+using Rg.Plugins.Popup.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using Xamarin.Essentials;
@@ -20,7 +21,7 @@ namespace MounterApp.ViewModel {
             SettingsImage = IconName("settings");
             Analytics.TrackEvent("Инициализация окна главного меню приложения");
             App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
-        }
+        }        
         /// <summary>
         /// Команда перехода к странице монтажей
         /// </summary>

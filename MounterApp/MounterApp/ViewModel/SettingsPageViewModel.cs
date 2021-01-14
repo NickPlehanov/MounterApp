@@ -6,6 +6,7 @@ using MounterApp.Model;
 using MounterApp.Properties;
 using MounterApp.Views;
 using Newtonsoft.Json;
+using Rg.Plugins.Popup.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -39,6 +40,15 @@ namespace MounterApp.ViewModel {
             Version = "Версия приложения: "+av.GetVersionAndBuildNumber().VersionNumber;
             BuildNumber = "Сборка приложения: "+av.GetVersionAndBuildNumber().BuildNumber;
             App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
+            ReportImage = IconName("report");
+        }
+        private ImageSource _ReportImage;
+        public ImageSource ReportImage {
+            get => _ReportImage;
+            set {
+                _ReportImage = value;
+                OnPropertyChanged(nameof(ReportImage));
+            }
         }
 
         private List<NewMounterExtensionBase> _Mounters;
@@ -84,6 +94,17 @@ namespace MounterApp.ViewModel {
                 _ClearImage = value;
                 OnPropertyChanged(nameof(ClearImage));
             }
+        }
+
+        /// <summary>
+        /// Команда открытия popup-окна для записи обращения в ИТ
+        /// </summary>
+        private RelayCommand _OpenOrdersForItPageCommand;
+        public RelayCommand OpenOrdersForItPageCommand {
+            get => _OpenOrdersForItPageCommand ??= new RelayCommand(async obj => {
+                OrdersForITViewModel vm = new OrdersForITViewModel(Mounters,Servicemans);
+                await App.Current.MainPage.Navigation.PushPopupAsync(new OrdersForITPopupPage(vm));
+            });
         }
 
         private RelayCommand _ClearDatabaseCommand;

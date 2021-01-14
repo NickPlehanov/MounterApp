@@ -89,10 +89,10 @@ namespace MounterApp.Model {
                     if(NewIncome.Value!=null)
                         return Color.Red;
                     else
-                        return Color.Black;
+                        return Color.White;
                 }
                 else
-                    return Color.Black;
+                    return Color.White;
             }
         }
         [NotMapped]

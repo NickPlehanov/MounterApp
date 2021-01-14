@@ -23,6 +23,9 @@
                 </Button>
             </Expander.Header>
             <StackLayout >
+                <StackLayout.GestureRecognizers>
+                    <SwipeGestureRecognizer Direction="Up" Command="{Binding OpenOrdersForItPageCommand}"/>
+                </StackLayout.GestureRecognizers>
                 <CollectionView Margin="5" 
                                 ItemsSource="{Binding GoogleMounts}" SelectionMode="Single" 
                                     SelectedItem="{Binding GoogleMount}"
@@ -58,7 +61,7 @@
                     </Button.Background>
                 </Button>
             </Expander.Header>
-            <StackLayout >
+            <StackLayout>
                 <CollectionView Margin="5" 
                                 ItemsSource="{Binding NotSendedMounts}" SelectionMode="Single" 
                                     SelectedItem="{Binding NotSendedMount}"

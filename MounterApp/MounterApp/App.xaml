@@ -23,7 +23,6 @@
             <Style x:Key="CommonButtonStyle" TargetType="Button">
                 <Setter Property="CornerRadius" Value="20"/>
                 <Setter Property="CharacterSpacing" Value="2"/>
-                <!--<Setter Property="FontAttributes" Value="Bold"/>-->
                 <Setter Property="FontSize" Value="Default"/>
                 <Setter Property="Visual" Value="Material"/>
                 <Setter Property="Margin" Value="5"/>
@@ -126,19 +125,26 @@
                 <Setter Property="VerticalOptions" Value="Center"/>
             </Style>
             <Style x:Key="PopupFrameStyle" TargetType="Frame">
-                <Setter Property="Padding" Value="10"/>
+                <Setter Property="Padding" Value="5"/>
                 <Setter Property="BackgroundColor" Value="GhostWhite"/>
-                <Setter Property="Margin" Value="10"/>
+                <Setter Property="Margin" Value="5"/>
                 <Setter Property="VerticalOptions" Value="Center"/>
                 <Setter Property="BorderColor" Value="White"/>
                 <Setter Property="CornerRadius" Value="10"/>
             </Style>
             <Style x:Key="FrameServiceOrderStyle" TargetType="Frame">
-                <Setter Property="BorderColor" Value="Red"/>
+                <!--<Setter Property="BorderColor" Value="Red"/>
                 <Setter Property="Padding" Value="5"/>
                 <Setter Property="CornerRadius" Value="20"/>
                 <Setter Property="HasShadow" Value="True"/>
-                <Setter Property="BackgroundColor" Value="{StaticResource  StackLayoutSecondColor}"/>
+                <Setter Property="BackgroundColor" Value="{StaticResource  StackLayoutSecondColor}"/>-->
+                <Setter Property="BackgroundColor" Value="GhostWhite"/>
+                <Setter Property="BorderColor" Value="White"/>
+                <Setter Property="Padding" Value="5"/>
+                <Setter Property="CornerRadius" Value="10"/>
+                <Setter Property="HasShadow" Value="True"/>
+                <Setter Property="Margin" Value="5"/>
+                <Setter Property="VerticalOptions" Value="Center"/>
             </Style>
             <Style x:Key="FrameInfoStyle" TargetType="Frame">
                 <Setter Property="BorderColor" Value="Blue"/>
@@ -147,6 +153,7 @@
             </Style>
             <Style x:Key="EntryStyle" TargetType="Entry">
                 <Setter Property="TextColor" Value="{StaticResource ButtonTextColor}"/>
+                <Setter Property="IsTextPredictionEnabled" Value="True"/>
             </Style>
             <Style x:Key="SearchBarStyle" TargetType="SearchBar">
                 <Setter Property="TextColor" Value="{StaticResource ButtonTextColor}"/>

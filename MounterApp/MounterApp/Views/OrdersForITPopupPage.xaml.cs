@@ -6,17 +6,16 @@ using Xamarin.Forms.Xaml;
 
 namespace MounterApp.Views {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class EventsPopupPage : PopupPage {
-        public EventsPopupViewModel VM { get; private set; }
-        public EventsPopupPage() {
+    public partial class OrdersForITPopupPage : PopupPage {
+        public OrdersForITViewModel VM  { get; private set; }
+        public OrdersForITPopupPage() {
             InitializeComponent();
         }
-        public EventsPopupPage(EventsPopupViewModel vm) {
+        public OrdersForITPopupPage(OrdersForITViewModel vm) {
             InitializeComponent();
             VM = vm;
             this.BindingContext = VM;
         }
-
         private void PopupPage_BackgroundClicked(object sender,EventArgs e) {
             App.Current.MainPage.Navigation.PopPopupAsync();
         }

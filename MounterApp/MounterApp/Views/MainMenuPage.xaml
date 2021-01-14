@@ -4,6 +4,9 @@
              x:Class="MounterApp.Views.MainMenuPage">
     <ContentPage.Content>
         <StackLayout>
+            <StackLayout.GestureRecognizers>
+                <SwipeGestureRecognizer Direction="Up" Command="{Binding OpenOrdersForItPageCommand}"/>
+            </StackLayout.GestureRecognizers>
             <StackLayout.Background>
                 <LinearGradientBrush EndPoint="0,1">
                     <GradientStop Color="{StaticResource StackLayoutFirstColor}" Offset="0.1" />
