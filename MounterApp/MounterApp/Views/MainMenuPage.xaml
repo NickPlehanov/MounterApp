@@ -1,18 +1,11 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+﻿<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MounterApp.Views.MainMenuPage">
     <ContentPage.Content>
-        <StackLayout>
+        <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
             <StackLayout.GestureRecognizers>
                 <SwipeGestureRecognizer Direction="Up" Command="{Binding OpenOrdersForItPageCommand}"/>
             </StackLayout.GestureRecognizers>
-            <StackLayout.Background>
-                <LinearGradientBrush EndPoint="0,1">
-                    <GradientStop Color="{StaticResource StackLayoutFirstColor}" Offset="0.1" />
-                    <GradientStop Color="{StaticResource StackLayoutSecondColor}" Offset="1.0" />
-                </LinearGradientBrush>
-            </StackLayout.Background>
             <Grid VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand" Visual="Material">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -24,35 +17,14 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
         <StackLayout Grid.Row="1" Grid.Column="0">
-                    <Button Text="Монтажи" Command="{Binding GetMountworksCommand}" Style="{StaticResource MainMenuButtonStyle}">
-                    <Button.Background>
-                        <LinearGradientBrush EndPoint="1,1">
-                                <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
-                                <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
-                            </LinearGradientBrush>
-                    </Button.Background>
-                </Button>
-            </StackLayout>
+                    <Button Text="Монтажи" Command="{Binding GetMountworksCommand}" Style="{StaticResource MainMenuButtonStyle}"/>
+                </StackLayout>
         <StackLayout Grid.Row="1" Grid.Column="1">
-                    <Button Text="Заявки техникам" Command="{Binding GetServiceordersCommand}" Style="{StaticResource MainMenuButtonStyle}">
-                    <Button.Background>
-                        <LinearGradientBrush EndPoint="1,1">
-                                <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
-                                <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
-                            </LinearGradientBrush>
-                    </Button.Background>
-                </Button>
-        </StackLayout>
+                    <Button Text="Заявки техникам" Command="{Binding GetServiceordersCommand}" Style="{StaticResource MainMenuButtonStyle}"/>
+                </StackLayout>
             <StackLayout Grid.Row="2" Grid.ColumnSpan="2" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
                     <Label Text="{Binding Message}"/>
-                    <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding SettingsImage}" Text="Настройки" Command="{Binding OpenSettingsCommand}">
-                    <Button.Background>
-                        <LinearGradientBrush EndPoint="1,1">
-                                <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
-                                <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
-                            </LinearGradientBrush>
-                    </Button.Background>
-                </Button>
+                    <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding SettingsImage}" Text="Настройки" Command="{Binding OpenSettingsCommand}"/>
                 </StackLayout>
         </Grid>
         </StackLayout>

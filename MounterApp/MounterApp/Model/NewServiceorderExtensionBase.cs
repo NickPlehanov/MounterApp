@@ -76,10 +76,10 @@ namespace MounterApp.Model {
         public string FullInfo {
             get {
                 if(NewDate.HasValue)
-                    return string.Format("Дата: {0} {1} Причина: {2}",NewDate.Value.ToShortDateString(),NewTime,string.IsNullOrEmpty(NewName) ? "<не указана>" : NewName);
+                    return string.Format("Дата: {0} {1} "+Environment.NewLine+"Причина: {2}",NewDate.Value.ToShortDateString(),NewTime,string.IsNullOrEmpty(NewName) ? "<не указана>" : NewName);
                 //return NewDate.Value.ToShortDateString()+" " + NewName;
                 else
-                    return string.Format("Дата: <не указана>; Причина: {0}",string.IsNullOrEmpty(NewName) ? "<не указана>" : NewName);
+                    return string.Format("Дата: <не указана>" + Environment.NewLine + " Причина: {0}",string.IsNullOrEmpty(NewName) ? "<не указана>" : NewName);
             }
         }
         [NotMapped]

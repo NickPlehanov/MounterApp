@@ -16,8 +16,8 @@ namespace MounterApp.Views {
             VM = vm;
             this.BindingContext = VM;
         }
-        private void PopupPage_BackgroundClicked(object sender,EventArgs e) {
-            App.Current.MainPage.Navigation.PopPopupAsync();
+        private async void PopupPage_BackgroundClicked(object sender,EventArgs e) {
+            await App.Current.MainPage.Navigation.PopPopupAsync(true);
         }
     }
 }

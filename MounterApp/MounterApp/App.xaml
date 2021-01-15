@@ -4,47 +4,71 @@
              x:Class="MounterApp.App">
     <Application.Resources>
         <ResourceDictionary>
-            <!--<Color x:Key="StackLayoutFirstColor">DodgerBlue</Color>
-            <Color x:Key="StackLayoutSecondColor">GreenYellow</Color>
-            <Color x:Key="ButtonFirstColor">Green</Color>
-            <Color x:Key="ButtonSecondColor">DarkBlue</Color>-->
-            
-            <!--<Color x:Key="StackLayoutFirstColor">#221f3b</Color>
-            <Color x:Key="StackLayoutSecondColor">#4B543B</Color> 
-            <Color x:Key="ButtonFirstColor">#1b2a41</Color>
-            <Color x:Key="ButtonSecondColor">#1b2a41</Color>-->
 
-            <Color x:Key="StackLayoutFirstColor">#002426</Color>
+            <!--<Color x:Key="StackLayoutFirstColor">#002426</Color>
             <Color x:Key="StackLayoutSecondColor">#002426</Color>
             <Color x:Key="ButtonFirstColor">#370014</Color>
             <Color x:Key="ButtonSecondColor">#370014</Color>
-            <Color x:Key="ButtonTextColor">#FFFFFF</Color>
+            <Color x:Key="ButtonTextColor">#FFFFFF</Color>-->
+
+           <!--ПРИОРИТЕТНЫЙ-->
+            <!--<Color x:Key="StackLayoutFirstColor">#f9f7f7</Color>
+            <Color x:Key="StackLayoutSecondColor">#f9f7f7</Color>
+            <Color x:Key="ButtonFirstColor">#dbe2ef</Color>
+            <Color x:Key="ButtonSecondColor">#dbe2ef</Color>
+            <Color x:Key="ButtonTextColor">#3f72af</Color>
+            <Color x:Key="BorderColor">#112d4e</Color>-->
+
+            <!--ПРИОРИТЕТНЫЙ2-->
+            <!--<Color x:Key="StackLayoutFirstColor">#07689f</Color>
+            <Color x:Key="StackLayoutSecondColor">#07689f</Color>
+            <Color x:Key="ButtonFirstColor">#ff7e67</Color>
+            <Color x:Key="ButtonSecondColor">#ff7e67</Color>
+            <Color x:Key="ButtonTextColor">#fafafa</Color>
+            <Color x:Key="BorderColor">#a2d5f2</Color>-->
+
+
+            <Color x:Key="StackLayoutFirstColor">#5d8aa8</Color>
+            <Color x:Key="StackLayoutSecondColor">#5d8aa8</Color>
+            <!--<Color x:Key="StackLayoutSecondColor">#1b8399</Color>-->
+            <!--<Color x:Key="StackLayoutSecondColor">#16697a</Color>-->
+            <!--<Color x:Key="StackLayoutSecondColor">#07689f</Color>-->
+            <!--<Color x:Key="StackLayoutSecondColor">#235182</Color>-->
+            <Color x:Key="ButtonFirstColor">#f5b461</Color>
+            <Color x:Key="ButtonSecondColor">#f5b461</Color>
+            <Color x:Key="ButtonTextColor">#f8f1f1</Color>
+            <Color x:Key="BorderColor">#214252</Color>
+
 
             <Style x:Key="CommonButtonStyle" TargetType="Button">
                 <Setter Property="CornerRadius" Value="20"/>
                 <Setter Property="CharacterSpacing" Value="2"/>
                 <Setter Property="FontSize" Value="Default"/>
                 <Setter Property="Visual" Value="Material"/>
-                <Setter Property="Margin" Value="5"/>
+                <Setter Property="Margin" Value="10,5"/>
                 <Setter Property="BorderWidth" Value="2"/>
-                <Setter Property="BorderColor" Value="#796C1B"/>
+                <Setter Property="BorderColor" Value="{StaticResource BorderColor}"/>
                 <Setter Property="TextColor" Value="{StaticResource ButtonTextColor}"/>
+                <Setter Property="BackgroundColor" Value="{StaticResource ButtonFirstColor}"/>
             </Style>
             <Style x:Key="ServiceOrderHeaderStyle" TargetType="Button" BasedOn="{StaticResource CommonButtonStyle}">
                 <Setter Property="BorderWidth" Value="2"/>
-                <Setter Property="BorderColor" Value="#796C1B"/>
+                <Setter Property="BorderColor" Value="{StaticResource BorderColor}"/>
+                <Setter Property="FontAttributes" Value="Bold"/>
+                <Setter Property="CharacterSpacing" Value="3"/>
+                <Setter Property="FontSize" Value="Default"/>
             </Style>
             <Style x:Key="MainMenuButtonStyle" TargetType="Button" BasedOn="{StaticResource CommonButtonStyle}">
                 <Setter Property="WidthRequest" Value="200"/>
                 <Setter Property="HeightRequest" Value="200"/>
                 <Setter Property="BorderWidth" Value="2"/>
-                <Setter Property="BorderColor" Value="#796C1B"/>
+                <Setter Property="BorderColor" Value="{StaticResource BorderColor}"/>
                 <Setter Property="Margin" Value="5,0"/>
                 <Setter Property="FontAttributes" Value="Bold"/>
             </Style>
             <Style x:Key="SwipeNavigationButton" TargetType="Button">
                 <Setter Property="Text" Value="Навигация"/>
-                <Setter Property="BackgroundColor" Value="OrangeRed"/>
+                <Setter Property="BackgroundColor" Value="Red"/>
                 <Setter Property="WidthRequest" Value="200"/>
                 <Setter Property="TextColor" Value="{StaticResource ButtonTextColor}"/>
             </Style>
@@ -59,7 +83,6 @@
                 <Setter Property="BackgroundColor" Value="#1E90FA"/>
                 <Setter Property="WidthRequest" Value="200"/>
                 <Setter Property="TextColor" Value="{StaticResource ButtonTextColor}"/>
-                <Setter Property="VerticalOptions" Value="End"/>
             </Style>
             <Style x:Key="ActivityIndicatorStyle" TargetType="ActivityIndicator">
                 <Setter Property="IsRunning" Value="True"/>
@@ -118,38 +141,44 @@
                 <Setter Property="HorizontalOptions" Value="Center"/>
                 <Setter Property="VerticalOptions" Value="Center"/>
             </Style>
-            <Style x:Key="PopupStackLayoutStyle" TargetType="StackLayout">
-                <Setter Property="Padding" Value="10"/>
-                <Setter Property="BackgroundColor" Value="GhostWhite"/>
-                <Setter Property="Margin" Value="10"/>
-                <Setter Property="VerticalOptions" Value="Center"/>
+            <Style x:Key="CommonStackLayoutStyle" TargetType="StackLayout">
+                <Setter Property="BackgroundColor" Value="{StaticResource StackLayoutFirstColor}"/>
             </Style>
+            <Style x:Key="CommonGridStyle" TargetType="Grid">
+                <Setter Property="BackgroundColor" Value="{StaticResource StackLayoutFirstColor}"/>
+            </Style>
+            <Style x:Key="PopupStackLayoutStyle" TargetType="StackLayout" BasedOn="{StaticResource CommonStackLayoutStyle}">
+                <Setter Property="Margin" Value="10"/>
+                <Setter Property="VerticalOptions" Value="CenterAndExpand"/>
+                <Setter Property="HorizontalOptions" Value="CenterAndExpand"/>                
+            </Style>
+            <Style x:Key="SwipeViewStyle" TargetType="SwipeView">
+                <Setter Property="BackgroundColor" Value="{StaticResource StackLayoutFirstColor}"/>
+                <Setter Property="VerticalOptions" Value="CenterAndExpand"/>
+                <Setter Property="HorizontalOptions" Value="CenterAndExpand"/>
+                <!--<Setter Property="Margin" Value="10,0"/>-->
+            </Style>
+
             <Style x:Key="PopupFrameStyle" TargetType="Frame">
-                <Setter Property="Padding" Value="5"/>
-                <Setter Property="BackgroundColor" Value="GhostWhite"/>
-                <Setter Property="Margin" Value="5"/>
+                <Setter Property="BackgroundColor" Value="{StaticResource StackLayoutFirstColor}"/>
                 <Setter Property="VerticalOptions" Value="Center"/>
-                <Setter Property="BorderColor" Value="White"/>
+                <Setter Property="BorderColor" Value="{StaticResource BorderColor}"/>
+                <Setter Property="HasShadow" Value="True"/>
                 <Setter Property="CornerRadius" Value="10"/>
             </Style>
             <Style x:Key="FrameServiceOrderStyle" TargetType="Frame">
-                <!--<Setter Property="BorderColor" Value="Red"/>
-                <Setter Property="Padding" Value="5"/>
-                <Setter Property="CornerRadius" Value="20"/>
-                <Setter Property="HasShadow" Value="True"/>
-                <Setter Property="BackgroundColor" Value="{StaticResource  StackLayoutSecondColor}"/>-->
-                <Setter Property="BackgroundColor" Value="GhostWhite"/>
-                <Setter Property="BorderColor" Value="White"/>
-                <Setter Property="Padding" Value="5"/>
+                <Setter Property="BackgroundColor" Value="{StaticResource  StackLayoutSecondColor}"/>
+                <Setter Property="BorderColor" Value="{StaticResource BorderColor}"/>
                 <Setter Property="CornerRadius" Value="10"/>
                 <Setter Property="HasShadow" Value="True"/>
-                <Setter Property="Margin" Value="5"/>
                 <Setter Property="VerticalOptions" Value="Center"/>
+                <!--<Setter Property="Margin" Value="10,0"/>-->
             </Style>
             <Style x:Key="FrameInfoStyle" TargetType="Frame">
-                <Setter Property="BorderColor" Value="Blue"/>
-                <Setter Property="Padding" Value="5"/>
+                <Setter Property="BorderColor" Value="{StaticResource BorderColor}"/>
                 <Setter Property="CornerRadius" Value="20"/>
+                <Setter Property="HasShadow" Value="True"/>
+                <Setter Property="BackgroundColor" Value="{StaticResource  StackLayoutSecondColor}"/>
             </Style>
             <Style x:Key="EntryStyle" TargetType="Entry">
                 <Setter Property="TextColor" Value="{StaticResource ButtonTextColor}"/>
@@ -157,17 +186,24 @@
             </Style>
             <Style x:Key="SearchBarStyle" TargetType="SearchBar">
                 <Setter Property="TextColor" Value="{StaticResource ButtonTextColor}"/>
-                <Setter Property="PlaceholderColor" Value="{StaticResource ButtonTextColor}"/>
+                <Setter Property="PlaceholderColor" Value="Gray"/>
+                <Setter Property="CancelButtonColor" Value="{StaticResource ButtonFirstColor}"/>
+                <Setter Property="CancelButtonColor" Value="{StaticResource ButtonFirstColor}"/>
             </Style>
             <Style x:Key="DatePickerStyle" TargetType="DatePicker">
                 <Setter Property="TextColor" Value="{StaticResource ButtonTextColor}"/>
             </Style>
             <Style x:Key="PickerStyle" TargetType="Picker">
                 <Setter Property="TextColor" Value="{StaticResource ButtonTextColor}"/>
-                <Setter Property="TitleColor" Value="{StaticResource ButtonTextColor}"/>
+                <Setter Property="TitleColor" Value="{StaticResource ButtonFirstColor}"/>
             </Style>
             <Style x:Key="EditorStyle" TargetType="Editor">
                 <Setter Property="TextColor" Value="{StaticResource ButtonTextColor}"/>
+            </Style>
+            <Style x:Key="CheckBoxStyle" TargetType="CheckBox">
+                <Setter Property="Color" Value="{StaticResource ButtonFirstColor}"/>
+                <Setter Property="HorizontalOptions" Value="CenterAndExpand"/>
+                <Setter Property="VerticalOptions" Value="CenterAndExpand"/>
             </Style>
         </ResourceDictionary>
     </Application.Resources>

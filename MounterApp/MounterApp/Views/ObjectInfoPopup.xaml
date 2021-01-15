@@ -1,69 +1,29 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<popup:PopupPage  xmlns:popup="http://rotorgames.com" xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:dg="clr-namespace:Xamarin.Forms.DataGrid;assembly=Xamarin.Forms.DataGrid"
-                  x:Class="MounterApp.Views.ObjectInfoPopup">
+﻿<popup:PopupPage  xmlns:popup="http://rotorgames.com" xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+                  x:Class="MounterApp.Views.ObjectInfoPopup"
+                  CloseWhenBackgroundIsClicked="True"
+                 BackgroundClicked="PopupPage_BackgroundClicked">
     <popup:PopupPage.Content>
-        <StackLayout Style="{StaticResource PopupStackLayoutStyle}">
-            <StackLayout.Background>
-                <LinearGradientBrush EndPoint="0,1">
-                    <GradientStop Color="{StaticResource StackLayoutFirstColor}" Offset="0.1" />
-                    <GradientStop Color="{StaticResource StackLayoutSecondColor}" Offset="1.0" />
-                </LinearGradientBrush>
-            </StackLayout.Background>
-            <StackLayout IsVisible="{Binding IndicatorVisible}" Style="{StaticResource ActivityIndicatorStackLayoutStyle}">
+        <Frame Style="{StaticResource PopupFrameStyle}">
+            <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
+                <StackLayout IsVisible="{Binding IndicatorVisible}" Style="{StaticResource ActivityIndicatorStackLayoutStyle}">
                 <ActivityIndicator Style="{StaticResource ActivityIndicatorStyle}"/>
                 <Label Style="{StaticResource ActivityIndicatorLabelStyle}"/>
             </StackLayout>
             <Expander Opacity="{Binding OpacityForm}" IsExpanded="{Binding WiresExpandedState}">
                 <Expander.Header>
-                    <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding WiresExpanderCommand}" Text="Шлейфы" ImageSource="{Binding ArrowCircleWires}">
-                        <Button.Background>
-                            <LinearGradientBrush EndPoint="1,1">
-                                <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
-                                <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
-                            </LinearGradientBrush>
-                        </Button.Background>
-                    </Button>
-                </Expander.Header>
-                <StackLayout>
-                <CollectionView Margin="5" ItemsSource="{Binding WiresCollection, Mode=TwoWay}" SelectionMode="Single">
-                    <CollectionView.ItemsLayout>
-                        <GridItemsLayout Orientation="Vertical"/>
-                    </CollectionView.ItemsLayout>
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate >
-                            <Frame BorderColor="Blue" Style="{StaticResource FrameInfoStyle}">
-                                    <Frame.Content>
-                                        <Label Text="{Binding Path=FullInfo}" Margin="5" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
-                                    </Frame.Content>
-                            </Frame>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </StackLayout>
-        </Expander>
-
-            <Expander Opacity="{Binding OpacityForm}" IsExpanded="{Binding ExtFieldsExpandedState}">
-                <Expander.Header>
-                    <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding ExtFieldsExpanderCommand}" Text="Доп. информация" ImageSource="{Binding ArrowCircleExtFields}">
-                        <Button.Background>
-                            <LinearGradientBrush EndPoint="1,1">
-                                <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
-                                <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
-                            </LinearGradientBrush>
-                        </Button.Background>
-                    </Button>
-                </Expander.Header>
-                <StackLayout >
-                    <CollectionView Margin="5" ItemsSource="{Binding ExtFields, Mode=TwoWay}" SelectionMode="Single">
+                        <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding WiresExpanderCommand}" Text="Шлейфы" ImageSource="{Binding ArrowCircleWires}"/>
+                    </Expander.Header>
+                <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
+                    <CollectionView Margin="5" ItemsSource="{Binding WiresCollection, Mode=TwoWay}" SelectionMode="Single">
                         <CollectionView.ItemsLayout>
                             <GridItemsLayout Orientation="Vertical"/>
                         </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <Frame BorderColor="Blue" Style="{StaticResource FrameInfoStyle}">
+                            <DataTemplate >
+                                <Frame Style="{StaticResource FrameInfoStyle}">
                                     <Frame.Content>
-                                        <Label Text="{Binding Path=FullInfo}" Margin="5"  HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                        <Label Style="{StaticResource CommonLabelStyle}" Text="{Binding Path=FullInfo}" Margin="5" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
                                     </Frame.Content>
                                 </Frame>
                             </DataTemplate>
@@ -71,14 +31,30 @@
                     </CollectionView>
                 </StackLayout>
             </Expander>
-            <Button Style="{StaticResource CommonButtonStyle}" Opacity="{Binding OpacityForm}" ImageSource="{Binding CloseImage}" Grid.Row="2" Text="Закрыть" Command="{Binding CloseCommand}">
-                <Button.Background>
-                    <LinearGradientBrush EndPoint="1,1">
-                        <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
-                        <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
-                    </LinearGradientBrush>
-                </Button.Background>
-            </Button>
-        </StackLayout>
+
+            <Expander Opacity="{Binding OpacityForm}" IsExpanded="{Binding ExtFieldsExpandedState}">
+                <Expander.Header>
+                        <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding ExtFieldsExpanderCommand}" Text="Доп. информация" ImageSource="{Binding ArrowCircleExtFields}"/>
+                    </Expander.Header>
+                <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
+                    <CollectionView Margin="5" ItemsSource="{Binding ExtFields, Mode=TwoWay}" SelectionMode="Single">
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Vertical"/>
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Frame Style="{StaticResource FrameInfoStyle}">
+                                    <Frame.Content>
+                                        <Label Style="{StaticResource CommonLabelStyle}" Text="{Binding Path=FullInfo}" Margin="5"  HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                    </Frame.Content>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </StackLayout>
+            </Expander>
+                <Button Style="{StaticResource CommonButtonStyle}" Opacity="{Binding OpacityForm}" ImageSource="{Binding CloseImage}" Grid.Row="2" Text="Закрыть" Command="{Binding CloseCommand}"/>
+            </StackLayout>
+        </Frame>
     </popup:PopupPage.Content>
 </popup:PopupPage>

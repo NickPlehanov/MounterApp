@@ -1,26 +1,17 @@
 ﻿<popup:PopupPage  xmlns:popup="http://rotorgames.com" xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                 CloseWhenBackgroundIsClicked="True"
+                 BackgroundClicked="PopupPage_BackgroundClicked"
                   x:Class="MounterApp.Views.PastOrdersPopupPage">
     <popup:PopupPage.Content>
-        <StackLayout Style="{StaticResource PopupStackLayoutStyle}">
-            <StackLayout.Background>
-                <LinearGradientBrush EndPoint="0,1">
-                    <GradientStop Color="{StaticResource StackLayoutFirstColor}" Offset="0.1" />
-                    <GradientStop Color="{StaticResource StackLayoutSecondColor}" Offset="1.0" />
-                </LinearGradientBrush>
-            </StackLayout.Background>
-            <Expander IsExpanded="{Binding PastServiceOrdersExpandedState}">
+        <Frame Style="{StaticResource PopupFrameStyle}">
+            <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
+                <Expander IsExpanded="{Binding PastServiceOrdersExpandedState}">
                     <Expander.Header>
-                    <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding PastServiceOrdersExpanderCommand}" Text="Заявки по объекту" ImageSource="{Binding ArrowCirclePastServiceOrders}">
-                        <Button.Background>
-                            <LinearGradientBrush EndPoint="1,1">
-                                <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
-                                <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
-                            </LinearGradientBrush>
-                        </Button.Background>
-                    </Button>
+                        <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding PastServiceOrdersExpanderCommand}" Text="Заявки по объекту" ImageSource="{Binding ArrowCirclePastServiceOrders}">
+                        </Button>
                     </Expander.Header>
-                    <StackLayout>
+                    <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
                         <StackLayout IsVisible="{Binding IndicatorVisible}" Style="{StaticResource ActivityIndicatorStackLayoutStyle}">
                             <ActivityIndicator Style="{StaticResource ActivityIndicatorStyle}"/>
                             <Label Style="{StaticResource ActivityIndicatorLabelStyle}"/>
@@ -31,24 +22,18 @@
                             </CollectionView.ItemsLayout>
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
-                                <Frame BorderColor="Blue" Style="{StaticResource FrameInfoStyle}">
-                                    <Frame.Content>
-                                        <Label Text="{Binding Path=FullInfo}" Margin="5" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
-                                    </Frame.Content>
-                                </Frame>
-                            </DataTemplate>
+                                    <Frame Style="{StaticResource FrameInfoStyle}">
+                                        <Frame.Content>
+                                            <Label Style="{StaticResource CommonLabelStyle}" Text="{Binding Path=FullInfo}" Margin="5" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                        </Frame.Content>
+                                    </Frame>
+                                </DataTemplate>
                             </CollectionView.ItemTemplate>
                         </CollectionView>
-                </StackLayout>
+                    </StackLayout>
                 </Expander>
-            <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding CloseCommand}">
-                <Button.Background>
-                    <LinearGradientBrush EndPoint="1,1">
-                        <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
-                        <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
-                    </LinearGradientBrush>
-                </Button.Background>
-            </Button>
-        </StackLayout>
+                <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding CloseCommand}"/>
+            </StackLayout>
+        </Frame>
     </popup:PopupPage.Content>
 </popup:PopupPage>

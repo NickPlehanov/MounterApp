@@ -1,77 +1,56 @@
 ﻿<popup:PopupPage xmlns:popup="http://rotorgames.com" xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-                 x:Class="MounterApp.Views.ObjCustsPopupPage" xmlns:vm="clr-namespace:MounterApp.ViewModel">
+                 x:Class="MounterApp.Views.ObjCustsPopupPage" 
+                 CloseWhenBackgroundIsClicked="True"
+                 BackgroundClicked="PopupPage_BackgroundClicked"
+                 xmlns:vm="clr-namespace:MounterApp.ViewModel">
     <popup:PopupPage.Content>
-        <StackLayout Style="{StaticResource PopupStackLayoutStyle}">
-            <StackLayout.Background>
-                <LinearGradientBrush EndPoint="0,1">
-                    <GradientStop Color="{StaticResource StackLayoutFirstColor}" Offset="0.1" />
-                    <GradientStop Color="{StaticResource StackLayoutSecondColor}" Offset="1.0" />
-                </LinearGradientBrush>
-            </StackLayout.Background>
-            <Expander IsExpanded="{Binding CustomersExpandedState}">
-                <Expander.Header>
-                    <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding CustomersExpanderCommand}" Text="Ответственные лица" ImageSource="{Binding ArrowCircleCustomers}">
-                        <Button.Background>
-                            <LinearGradientBrush EndPoint="1,1">
-                                <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
-                                <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
-                            </LinearGradientBrush>
-                        </Button.Background>
-                    </Button>
-                </Expander.Header>
-                <StackLayout>
-                    <StackLayout Style="{StaticResource ActivityIndicatorStackLayoutStyle}" IsVisible="{Binding IndicatorVisible}">
-                        <ActivityIndicator Style="{StaticResource ActivityIndicatorStyle}"/>
-                        <Label Style="{StaticResource ActivityIndicatorLabelStyle}" />
-                    </StackLayout>
-                    <CollectionView Opacity="{Binding OpacityForm}" Margin="5" ItemsSource="{Binding Path=CutomersCollection}" SelectionMode="Single">
-                        <CollectionView.ItemsLayout>
-                            <GridItemsLayout Orientation="Vertical"/>
-                        </CollectionView.ItemsLayout>
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <SwipeView>
-                                    <SwipeView.LeftItems>
-                                        <SwipeItems Mode="Execute">
-                                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ObjCustsPopupViewModel}}, Path=CallCustomer}"
+        <Frame Style="{StaticResource PopupFrameStyle}">
+            <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
+                <Expander IsExpanded="{Binding CustomersExpandedState}">
+                    <Expander.Header>
+                        <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding CustomersExpanderCommand}" Text="Ответственные лица" ImageSource="{Binding ArrowCircleCustomers}"/>
+                    </Expander.Header>
+                    <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
+                        <StackLayout Style="{StaticResource ActivityIndicatorStackLayoutStyle}" IsVisible="{Binding IndicatorVisible}">
+                            <ActivityIndicator Style="{StaticResource ActivityIndicatorStyle}"/>
+                            <Label Style="{StaticResource ActivityIndicatorLabelStyle}" />
+                        </StackLayout>
+                        <CollectionView Opacity="{Binding OpacityForm}" Margin="5" ItemsSource="{Binding Path=CutomersCollection}" SelectionMode="Single">
+                            <CollectionView.ItemsLayout>
+                                <GridItemsLayout Orientation="Vertical"/>
+                            </CollectionView.ItemsLayout>
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <SwipeView Style="{StaticResource SwipeViewStyle}">
+                                        <SwipeView.LeftItems>
+                                            <SwipeItems Mode="Execute">
+                                                <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ObjCustsPopupViewModel}}, Path=CallCustomer}"
                                                    CommandParameter="{Binding Path=ObjCustPhone1}">
-                                                <Grid>
-                                                    <Button Style="{StaticResource SwipeNavigationButton}" Text="Вызов" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ObjCustsPopupViewModel}}, Path=CallImage}"/>
-                                                </Grid>
-                                            </SwipeItemView>
-                                        </SwipeItems>
-                                    </SwipeView.LeftItems>
-                                    <Frame BorderColor="Blue" Style="{StaticResource FrameInfoStyle}">
-                                        <Frame.Content>
-                                            <StackLayout>
-                                                <StackLayout.Background>
-                                                    <LinearGradientBrush EndPoint="1,1">
-                                                        <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
-                                                        <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
-                                                    </LinearGradientBrush>
-                                                </StackLayout.Background>
-                                                <Label Text="{Binding Path=UserNumberText}" Style="{StaticResource MountersLabelStyle}" FontAttributes="None"/>
-                                                <Label Text="{Binding Path=ObjCustTitleText}" Style="{StaticResource MountersLabelStyle}" FontAttributes="None"/>
-                                                <Label Text="{Binding Path=ObjCustNameText}" Style="{StaticResource MountersLabelStyle}"/>
-                                                <Label Text="{Binding Path=ObjCustPhone1Text}" Style="{StaticResource MountersLabelStyle}" FontAttributes="None"/>
-                                            </StackLayout>
-                                        </Frame.Content>
-                                    </Frame>
-                                </SwipeView>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
-                </StackLayout>
-            </Expander>
-            <Button Style="{StaticResource CommonButtonStyle}" Opacity="{Binding OpacityForm}" ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding CloseCommand}">
-                <Button.Background>
-                    <LinearGradientBrush EndPoint="1,1">
-                        <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
-                        <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
-                    </LinearGradientBrush>
-                </Button.Background>
-            </Button>
-        </StackLayout>
+                                                    <Grid>
+                                                        <Button Style="{StaticResource SwipeNavigationButton}" Text="Вызов" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ObjCustsPopupViewModel}}, Path=CallImage}"/>
+                                                    </Grid>
+                                                </SwipeItemView>
+                                            </SwipeItems>
+                                        </SwipeView.LeftItems>
+                                        <Frame Style="{StaticResource FrameInfoStyle}">
+                                            <Frame.Content>
+                                                <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
+                                                    <Label Text="{Binding Path=UserNumberText}" Style="{StaticResource MountersLabelStyle}" FontAttributes="None"/>
+                                                    <Label Text="{Binding Path=ObjCustTitleText}" Style="{StaticResource MountersLabelStyle}" FontAttributes="None"/>
+                                                    <Label Text="{Binding Path=ObjCustNameText}" Style="{StaticResource MountersLabelStyle}"/>
+                                                    <Label Text="{Binding Path=ObjCustPhone1Text}" Style="{StaticResource MountersLabelStyle}" FontAttributes="None"/>
+                                                </StackLayout>
+                                            </Frame.Content>
+                                        </Frame>
+                                    </SwipeView>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </StackLayout>
+                </Expander>
+                <Button Style="{StaticResource CommonButtonStyle}" Opacity="{Binding OpacityForm}" ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding CloseCommand}"/>
+            </StackLayout>
+        </Frame>
     </popup:PopupPage.Content>
 </popup:PopupPage>

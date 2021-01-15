@@ -297,33 +297,6 @@ namespace MounterApp.ViewModel {
                                 IndicatorText = "Подождите, идет загрузка...";
                                 bool error = false;
                                 ProgressValue = 0.1;
-                                //Mount.ObjectNumber = ObjectNumber;
-                                //Mount.ObjectName = ObjectName;
-                                //Mount.AddressName = ObjectAddress;
-                                //Mount.MounterID = Mounters.FirstOrDefault().NewMounterId;
-                                //Mount.Driveways = ObjectDriveways;
-                                //Mount.State = 0;
-                                //Mount.ObjectCard = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Карточка объекта").Data;
-                                //Mount.ObjectScheme = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Схема объекта").Data;
-                                //Mount.ObjectWiring = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Расшлейфовка объекта").Data;
-                                //Mount.ObjectListResponsible = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Ответственные объекта").Data;
-                                //Mount.ObjectSignboard = Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Вывеска объекта").Data;
-
-                                //foreach(var item in Photos.Where(x => x._Types.PhotoTypeName == "Доп. фото" && x.IsUse == false)) {
-                                //    if(Mount.ObjectExtra1 == null)
-                                //        Mount.ObjectExtra1 = Photos.FirstOrDefault(x => x.ID == item.ID).Data;
-                                //    else if(Mount.ObjectExtra2 == null)
-                                //        Mount.ObjectExtra2 = Photos.FirstOrDefault(x => x.ID == item.ID).Data;
-                                //    else if(Mount.ObjectExtra3 == null)
-                                //        Mount.ObjectExtra3 = Photos.FirstOrDefault(x => x.ID == item.ID).Data;
-                                //    else if(Mount.ObjectExtra4 == null)
-                                //        Mount.ObjectExtra4 = Photos.FirstOrDefault(x => x.ID == item.ID).Data;
-                                //    else if(Mount.ObjectExtra5 == null)
-                                //        Mount.ObjectExtra5 = Photos.FirstOrDefault(x => x.ID == item.ID).Data;
-                                //    Photos.FirstOrDefault(x => x.ID == item.ID).IsUse = true;
-                                //}
-
-                                //App.Database.SaveUpdateMount(Mount);
                                 Analytics.TrackEvent("Сохранение монтажа перед отправкой на сервер в локальной базе",
                                     new Dictionary<string,string> {
                                         {"ObjectNumber",ObjectNumber }
@@ -391,6 +364,16 @@ namespace MounterApp.ViewModel {
                                         WriteDriveways.Execute(null);
                                         if(IsSuccessSendEvents && IsSuccessWriteWebLink)
                                             Toast.MakeText(Android.App.Application.Context,"Монтаж отправлен, данные получены оператором",ToastLength.Long).Show();
+                                        else {
+                                            Toast.MakeText(Android.App.Application.Context,"Монтаж отправлен, данные получены оператором",ToastLength.Long).Show();
+                                            Analytics.TrackEvent("Ошибка при отправке монтажа, не получилось записать ссылку, координаты, маршрут или отправить событие",
+                                            new Dictionary<string,string> {
+                                                {"IsSuccessSendEvents",IsSuccessSendEvents.ToString() },
+                                                {"IsSuccessWriteWebLink",IsSuccessWriteWebLink.ToString() },
+                                                {"ObjectNumber",ObjectNumber.ToString() },
+                                                {"MounterPhone",Mounters.FirstOrDefault().NewPhone }
+                                            });
+                                        }
                                         MountsViewModel vm = new MountsViewModel(Mounters,Servicemans);
                                         App.Current.MainPage = new MountsPage(vm);
                                     }

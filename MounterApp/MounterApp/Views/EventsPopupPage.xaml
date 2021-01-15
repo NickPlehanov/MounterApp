@@ -1,26 +1,15 @@
 ﻿<popup:PopupPage  xmlns:popup="http://rotorgames.com" xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                 CloseWhenBackgroundIsClicked="True"
+                 BackgroundClicked="PopupPage_BackgroundClicked"
                   x:Class="MounterApp.Views.EventsPopupPage" >
     <popup:PopupPage.Content>
-        <!--<ScrollView>-->
-        <StackLayout Style="{StaticResource PopupStackLayoutStyle}">
-            <StackLayout.Background>
-                <LinearGradientBrush EndPoint="0,1">
-                    <GradientStop Color="{StaticResource StackLayoutFirstColor}" Offset="0.1" />
-                    <GradientStop Color="{StaticResource StackLayoutSecondColor}" Offset="1.0" />
-                </LinearGradientBrush>
-            </StackLayout.Background>
-            <FlexLayout>
+        <Frame Style="{StaticResource PopupFrameStyle}">
+            <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
+                <FlexLayout>
                     <DatePicker Style="{StaticResource DatePickerStyle}" Margin="2" Date="{Binding StartDate}"/>
-                <DatePicker Style="{StaticResource DatePickerStyle}" Margin="2" Date="{Binding EndDate}"/>
-                    <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding GetImage}" FontSize="Default" Text="Получить" Command="{Binding GetEventsCommands}">
-                        <Button.Background>
-                            <LinearGradientBrush EndPoint="1,1">
-                                <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
-                                <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
-                            </LinearGradientBrush>
-                        </Button.Background>
-                    </Button>
+                    <DatePicker Style="{StaticResource DatePickerStyle}" Margin="2" Date="{Binding EndDate}"/>
+                    <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding GetImage}" FontSize="Default" Text="Получить" Command="{Binding GetEventsCommands}"/>
                 </FlexLayout>
                 <StackLayout Style="{StaticResource ActivityIndicatorStackLayoutStyle}" IsVisible="{Binding IndicatorVisible}">
                     <ActivityIndicator Style="{StaticResource ActivityIndicatorStyle}"/>
@@ -37,34 +26,23 @@
                                     <Frame Style="{StaticResource FrameInfoStyle}">
                                         <Frame.Content>
                                             <StackLayout>
-                                                <Label Text="{Binding Path=REDateTime}" Margin="5" FontAttributes="Bold"/>
-                                                <FlexLayout>
-                                                    <Label Text="{Binding Path=RChannelNameText}" Margin="5" />
-                                                    <Label Text="{Binding Path=EventCodeText}" Margin="5" />
-                                                    <Label Text="{Binding Path=EventClassNameText}" Margin="5" />
-                                                </FlexLayout>
-                                                <FlexLayout>
-                                                    <Label Text="{Binding Path=ZoneUserText}" Margin="5" />
-                                                    <Label Text="{Binding Path=PartNumberText}" Margin="5" />
-                                                </FlexLayout>
-                                                <Label Text="{Binding Path=EventDesc}" Margin="5" />
+                                                <Label Style="{StaticResource CommonLabelStyle}"  Text="{Binding Path=REDateTime}" FontAttributes="Bold"/>
+                                                <Label Style="{StaticResource CommonLabelStyle}"  Text="{Binding Path=RChannelNameText}"/>
+                                                <Label Style="{StaticResource CommonLabelStyle}"  Text="{Binding Path=EventCodeText}"/>
+                                                <Label Style="{StaticResource CommonLabelStyle}"  Text="{Binding Path=EventClassNameText}"/>
+                                                <Label Style="{StaticResource CommonLabelStyle}"  Text="{Binding Path=ZoneUserText}" />
+                                                <Label Style="{StaticResource CommonLabelStyle}"  Text="{Binding Path=PartNumberText}"/>
+                                                <Label Style="{StaticResource CommonLabelStyle}" Text="{Binding Path=EventDesc}"/>
                                             </StackLayout>
                                         </Frame.Content>
                                     </Frame>
-                                    <!--</Grid>-->
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
                         </CollectionView>
                     </StackLayout>
                 </ScrollView>
-                    <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding ExitCommand}">
-                        <Button.Background>
-                            <LinearGradientBrush EndPoint="1,1">
-                                <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
-                                <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
-                            </LinearGradientBrush>
-                        </Button.Background>
-                    </Button>
-        </StackLayout>
+                <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding ExitCommand}"/>
+            </StackLayout>
+        </Frame>
     </popup:PopupPage.Content>
 </popup:PopupPage>

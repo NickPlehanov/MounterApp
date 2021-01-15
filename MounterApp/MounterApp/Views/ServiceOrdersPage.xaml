@@ -6,32 +6,19 @@
         <vm:ServiceOrdersPageViewModel x:Key="vm"/>        
     </ContentPage.Resources>
     <ContentPage.Content>
-        <StackLayout>
+        <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
             <StackLayout.GestureRecognizers>
                 <SwipeGestureRecognizer Direction="Up" Command="{Binding RefreshOrdersCommand}" />
             </StackLayout.GestureRecognizers>
-            <StackLayout.Background>
-                <LinearGradientBrush EndPoint="0,1">
-                    <GradientStop Color="{StaticResource StackLayoutFirstColor}" Offset="0.1" />
-                    <GradientStop Color="{StaticResource StackLayoutSecondColor}" Offset="1.0" />
-                </LinearGradientBrush>
-            </StackLayout.Background>
             <StackLayout Grid.Row="0"  Margin="5" Opacity="{Binding OpacityForm}" >
                 <DatePicker Date="{Binding Date, Mode=TwoWay}" HorizontalOptions="Center" Style="{StaticResource DatePickerStyle}"/>
-                <Button Style="{StaticResource ServiceOrderHeaderStyle}" ImageSource="{Binding RefreshImage}" Text="Обновить" Command="{Binding RefreshOrdersCommand}">
-                    <Button.Background>
-                        <LinearGradientBrush EndPoint="1,1">
-                            <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
-                            <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
-                        </LinearGradientBrush>
-                    </Button.Background>
-                </Button>
+                <Button Style="{StaticResource ServiceOrderHeaderStyle}" ImageSource="{Binding RefreshImage}" Text="Обновить" Command="{Binding RefreshOrdersCommand}"/>
             </StackLayout>
                 <Expander IsVisible="{Binding TransferServiceOrderVisible}" Grid.Row="0" Opacity="{Binding OpacityForm}" IsExpanded="{Binding TransferServiceOrderExpanded}">
                         <Expander.Header>
                             <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding TransferServiceOrderExpanderCommand}" Text="{Binding TransferServiceOrder}" ImageSource="{Binding ArrowCircleTransferServiceOrder}" />
                         </Expander.Header>
-                        <StackLayout>
+                        <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
                             <CollectionView Margin="5" ItemsSource="{Binding ServiceOrderByTransfer}" SelectionMode="Single" 
                                 SelectionChangedCommand="{Binding SelectServiceOrderCommand, Mode=TwoWay}"
                                 SelectedItem="{Binding ServiceOrder}">
@@ -40,7 +27,7 @@
                                 </CollectionView.ItemsLayout>
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>
-                                        <SwipeView >
+                                <SwipeView Style="{StaticResource SwipeViewStyle}">
                                             <SwipeView.LeftItems>
                                                 <SwipeItems Mode="Execute">
                                                     <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
@@ -68,7 +55,7 @@
                         <Expander.Header>
                             <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding TimeServiceOrderExpanderCommand}" Text="{Binding TimeServiceOrder}" ImageSource="{Binding ArrowCircleTimeServiceOrder}"/>
                         </Expander.Header>
-                        <StackLayout>
+                <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
                             <CollectionView Margin="5" ItemsSource="{Binding ServiceOrdersByTime}" SelectionMode="Single" 
                                 SelectionChangedCommand="{Binding SelectServiceOrderCommand, Mode=TwoWay}"
                                 SelectedItem="{Binding ServiceOrder}">
@@ -77,7 +64,7 @@
                                 </CollectionView.ItemsLayout>
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>
-                                        <SwipeView >
+                                <SwipeView Style="{StaticResource SwipeViewStyle}">
                                             <SwipeView.LeftItems>
                                                 <SwipeItems Mode="Execute">
                                                     <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
@@ -103,18 +90,11 @@
                     </Expander>
             <Expander IsVisible="{Binding OtherServiceOrderVisible}" Grid.Row="2" Opacity="{Binding OpacityForm}" IsExpanded="{Binding OtherServiceOrderExpanded}">
                         <Expander.Header>
-                    <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding OtherServiceOrderExpanderCommand}" HorizontalOptions="Center" Text="{Binding OtherServiceOrder}" 
-                            ImageSource="{Binding ArrowCircleOtherServiceOrder}">
-                        <Button.Background>
-                            <LinearGradientBrush EndPoint="1,1">
-                                <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
-                                <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
-                            </LinearGradientBrush>
-                        </Button.Background>
-                    </Button>
-                        </Expander.Header>
-                        <StackLayout>
-                            <CollectionView Margin="5" ItemsSource="{Binding ServiceOrders}" SelectionMode="Single" 
+                    <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding OtherServiceOrderExpanderCommand}" Text="{Binding OtherServiceOrder}" 
+                            ImageSource="{Binding ArrowCircleOtherServiceOrder}"/>
+                </Expander.Header>
+                <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
+                            <CollectionView ItemsSource="{Binding ServiceOrders}" SelectionMode="Single" 
                                 SelectionChangedCommand="{Binding SelectServiceOrderCommand, Mode=TwoWay}"
                                 SelectedItem="{Binding ServiceOrder}">
                                 <CollectionView.ItemsLayout>
@@ -122,24 +102,24 @@
                                 </CollectionView.ItemsLayout>
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>
-                                        <SwipeView >
+                                <SwipeView Style="{StaticResource SwipeViewStyle}">
                                             <SwipeView.LeftItems>
                                                 <SwipeItems Mode="Execute">
                                                     <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
                                                    CommandParameter="{Binding Path=NewNumber}">
-                                                        <Grid>
-                                                    <Button Style="{StaticResource SwipeNavigationButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
-                                                        </Grid>
+                                                        <!--<Grid>-->
+                                                            <Button Style="{StaticResource SwipeNavigationButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
+                                                        <!--</Grid>-->
                                                     </SwipeItemView>
                                                 </SwipeItems>
                                             </SwipeView.LeftItems>
-                                    <Frame Style="{StaticResource FrameServiceOrderStyle}" HasShadow="False" Margin="3,6,3,0"> 
-                                                <Frame.Content>
-                                                    <StackLayout>
-                                                <Label  TextColor="{Binding Path=ColorOrder}" Text="{Binding Path=FullName}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
-                                                    </StackLayout>
-                                                </Frame.Content>
-                                            </Frame>
+                                                <Frame Style="{StaticResource FrameServiceOrderStyle}"> 
+                                                    <Frame.Content>
+                                                        <StackLayout>
+                                                <Label TextColor="{Binding Path=ColorOrder}" Text="{Binding Path=FullName}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                                        </StackLayout>
+                                                    </Frame.Content>
+                                                </Frame>
                                         </SwipeView>
                                     </DataTemplate>
                                 </CollectionView.ItemTemplate>
@@ -149,16 +129,9 @@
             <Expander IsVisible="{Binding FireAlarmTransferServiceOrderVisible}" Grid.Row="3" Opacity="{Binding OpacityForm}" IsExpanded="{Binding FireAlarmTransferServiceOrderExpanded}">
                 <Expander.Header>
                     <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding FireAlarmTransferServiceOrderExpanderCommand}" Text="{Binding FireAlarmTransferServiceOrderText}"
-                            ImageSource="{Binding ArrowCircleFireAlarmTransferServiceOrder}">
-                        <Button.Background>
-                            <LinearGradientBrush EndPoint="1,1">
-                                <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
-                                <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
-                            </LinearGradientBrush>
-                        </Button.Background>
-                    </Button>
+                            ImageSource="{Binding ArrowCircleFireAlarmTransferServiceOrder}"/>
                 </Expander.Header>
-                <StackLayout>
+                <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
                     <CollectionView Margin="5" ItemsSource="{Binding ServiceOrderByTransferFireAlarm}" SelectionMode="Single" 
                                 SelectionChangedCommand="{Binding SelectServiceOrderFireAlarmCommand, Mode=TwoWay}" SelectedItem="{Binding ServiceOrderFireAlarm}">
                         <CollectionView.ItemsLayout>
@@ -166,7 +139,7 @@
                         </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <SwipeView>
+                                <SwipeView Style="{StaticResource SwipeViewStyle}">
                                     <SwipeView.LeftItems>
                                         <SwipeItems Mode="Execute">
                                             <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
@@ -193,16 +166,9 @@
             <Expander IsVisible="{Binding FireAlarmTimeServiceOrderVisible}" Grid.Row="4" Opacity="{Binding OpacityForm}" IsExpanded="{Binding FireAlarmTimeServiceOrderExpanded}">
                 <Expander.Header>
                     <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding FireAlarmTimeServiceOrderExpanderCommand}" Text="{Binding FireAlarmTimeServiceOrderText}"
-                            ImageSource="{Binding ArrowCircleFireAlarmTimeServiceOrder}">
-                        <Button.Background>
-                            <LinearGradientBrush EndPoint="1,1">
-                                <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
-                                <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
-                            </LinearGradientBrush>
-                        </Button.Background>
-                    </Button>
+                            ImageSource="{Binding ArrowCircleFireAlarmTimeServiceOrder}"/>
                 </Expander.Header>
-                <StackLayout>
+                <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
                     <CollectionView Margin="5" ItemsSource="{Binding ServiceOrdersByTimeFireAlarm}" SelectionMode="Single" 
                                 SelectionChangedCommand="{Binding SelectServiceOrderFireAlarmCommand, Mode=TwoWay}" SelectedItem="{Binding ServiceOrderFireAlarm}">
                         <CollectionView.ItemsLayout>
@@ -210,7 +176,7 @@
                         </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <SwipeView>
+                                <SwipeView Style="{StaticResource SwipeViewStyle}">
                                     <SwipeView.LeftItems>
                                         <SwipeItems Mode="Execute">
                                             <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
@@ -237,16 +203,9 @@
             <Expander IsVisible="{Binding FireAlarmOtherServiceOrderVisible}" Grid.Row="5" Opacity="{Binding OpacityForm}" IsExpanded="{Binding FireAlarmOtherServiceOrderExpanded}">
                 <Expander.Header>
                     <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding FireAlarmOtherServiceOrderExpanderCommand}" Text="{Binding FireAlarmOtherServiceOrderText}"
-                            ImageSource="{Binding ArrowCircleFireAlarmOtherServiceOrder}">
-                        <Button.Background>
-                            <LinearGradientBrush EndPoint="1,1">
-                                <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
-                                <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
-                            </LinearGradientBrush>
-                        </Button.Background>
-                    </Button>
+                            ImageSource="{Binding ArrowCircleFireAlarmOtherServiceOrder}"/>
                 </Expander.Header>
-                <StackLayout>
+                <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
                     <CollectionView Margin="5" ItemsSource="{Binding ServiceOrdersFireAlarm}" SelectionMode="Single" 
                                 SelectionChangedCommand="{Binding SelectServiceOrderFireAlarmCommand, Mode=TwoWay}" SelectedItem="{Binding ServiceOrderFireAlarm}">
                         <CollectionView.ItemsLayout>
@@ -254,7 +213,7 @@
                         </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <SwipeView>
+                                <SwipeView Style="{StaticResource SwipeViewStyle}">
                                     <SwipeView.LeftItems>
                                         <SwipeItems Mode="Execute">
                                             <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"

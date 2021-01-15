@@ -44,6 +44,8 @@ namespace MounterApp.ViewModel {
             //        GetServiceOrdersFireAlarm.Execute(null);
             //    }
             //}
+            Width = DeviceDisplay.MainDisplayInfo.Width-10;
+            App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
             RefreshImage = IconName("refresh");
             MapImage = IconName("map");
             TransferImage = IconName("transfer");
@@ -109,6 +111,14 @@ namespace MounterApp.ViewModel {
                 #endregion
             }
 
+        private double _Width;
+        public double Width {
+            get => _Width;
+            set {
+                _Width = value;
+                OnPropertyChanged(nameof(Width));
+            }
+        }
         private bool _TransferServiceOrderVisible;
         public bool TransferServiceOrderVisible {
             get => _TransferServiceOrderVisible;

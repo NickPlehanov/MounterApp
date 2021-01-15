@@ -1,17 +1,11 @@
 ﻿<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewmodel="clr-namespace:MounterApp.ViewModel" xmlns:ui="clr-namespace:XF.Material.Forms.UI;assembly=XF.Material"
+             xmlns:viewmodel="clr-namespace:MounterApp.ViewModel"
              x:Class="MounterApp.MainPage">
     <ContentPage.Resources>
         <viewmodel:MainPageViewModel x:Key="viewModel"/>
     </ContentPage.Resources>
-    <Grid>
-        <Grid.Background>
-                <LinearGradientBrush EndPoint="0,1">
-                <GradientStop Color="{StaticResource StackLayoutFirstColor}" Offset="0.1" />
-                <GradientStop Color="{StaticResource StackLayoutSecondColor}" Offset="1.0" />
-            </LinearGradientBrush>
-        </Grid.Background>
+    <Grid Style="{StaticResource CommonGridStyle}">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="5*"/>

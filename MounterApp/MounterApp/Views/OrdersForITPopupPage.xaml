@@ -5,30 +5,11 @@
                  BackgroundClicked="PopupPage_BackgroundClicked">
     <popup:PopupPage.Content>
         <Frame Style="{StaticResource PopupFrameStyle}">
-            <Frame.Background>
-                <LinearGradientBrush EndPoint="0,1">
-                    <GradientStop Color="{StaticResource StackLayoutFirstColor}" Offset="0.1" />
-                    <GradientStop Color="{StaticResource StackLayoutSecondColor}" Offset="1.0" />
-                </LinearGradientBrush>
-            </Frame.Background>
-            <StackLayout Style="{StaticResource PopupStackLayoutStyle}">
-            <StackLayout.Background>
-                <LinearGradientBrush EndPoint="0,1">
-                    <GradientStop Color="{StaticResource StackLayoutFirstColor}" Offset="0.1" />
-                    <GradientStop Color="{StaticResource StackLayoutSecondColor}" Offset="1.0" />
-                </LinearGradientBrush>
-            </StackLayout.Background>
-            <Label Style="{StaticResource CommonLabelStyle}" Text="Опишите проблему(пожелание) точнее"/>
+            <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
+                <Label Style="{StaticResource CommonLabelStyle}" Text="Опишите проблему(пожелание) точнее"/>
                 <Entry Text="{Binding DescriptionProblem}" Style="{StaticResource EntryStyle}"/>
-                <Button ImageSource="{Binding CloseOrSendImage}" Style="{StaticResource CommonButtonStyle}" Text="{Binding TextButton,Mode=TwoWay}" Command="{Binding ChooseCommand}">
-                <Button.Background>
-                    <LinearGradientBrush EndPoint="1,1">
-                        <GradientStop Color="{StaticResource ButtonFirstColor}" Offset="0.1" />
-                        <GradientStop Color="{StaticResource ButtonSecondColor}" Offset="1.0" />
-                    </LinearGradientBrush>
-                </Button.Background>
-            </Button>
-        </StackLayout>
+                <Button ImageSource="{Binding CloseOrSendImage}" Style="{StaticResource CommonButtonStyle}" Text="{Binding TextButton,Mode=TwoWay}" Command="{Binding ChooseCommand}"/>
+            </StackLayout>
         </Frame>
     </popup:PopupPage.Content>
 </popup:PopupPage>
