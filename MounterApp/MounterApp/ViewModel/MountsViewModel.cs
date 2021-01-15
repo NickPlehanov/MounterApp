@@ -398,6 +398,9 @@ namespace MounterApp.ViewModel {
                         if(result) {
                             NotSendedMounts.Remove(NotSendedMount);
                             App.Database.DeleteMount(_id);
+                            List<Mounts> _ntMounts = new List<Mounts>();
+                            _ntMounts = App.Database.GetMounts().Where(x => x.State == 0 && x.MounterID == Mounters.FirstOrDefault().NewMounterId).ToList();
+                            HeaderNotSended = "Неотправленные (" + _ntMounts.Count.ToString() + ")";
                             Toast.MakeText(Android.App.Application.Context,"Монтаж удален из локальной базы",ToastLength.Long).Show();
                         }
                     }

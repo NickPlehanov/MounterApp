@@ -530,6 +530,8 @@ namespace MounterApp.ViewModel {
                         {"ServicemanPhone",Servicemans.FirstOrDefault().NewPhone }
                     });
                     await Application.Current.MainPage.DisplayAlert("Ошибка","Не указано заключение по заявке","OK");
+                    OpacityForm = 1;
+                    IndicatorVisible = false;
                     return;
                 }
                 if(SelectedResult == null) {
