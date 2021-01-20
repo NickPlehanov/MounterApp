@@ -34,6 +34,7 @@ namespace MounterApp.ViewModel {
                 Compression = int.Parse(Application.Current.Properties["Compression"].ToString());
             SaveImage = IconName("save");
             ClearImage = IconName("clear");
+            HelpImage = IconName("help");
             Analytics.TrackEvent("Инициализация окна настроек приложения");
             AppVersions av = new AppVersions();
             Version = null;
@@ -96,6 +97,15 @@ namespace MounterApp.ViewModel {
             }
         }
 
+
+        private ImageSource _HelpImage;
+        public ImageSource HelpImage {
+            get => _HelpImage;
+            set {
+                _HelpImage = value;
+                OnPropertyChanged(nameof(HelpImage));
+            }
+        }
         /// <summary>
         /// Команда открытия popup-окна для записи обращения в ИТ
         /// </summary>
@@ -104,6 +114,17 @@ namespace MounterApp.ViewModel {
             get => _OpenOrdersForItPageCommand ??= new RelayCommand(async obj => {
                 OrdersForITViewModel vm = new OrdersForITViewModel(Mounters,Servicemans);
                 await App.Current.MainPage.Navigation.PushPopupAsync(new OrdersForITPopupPage(vm));
+            });
+        }
+        private RelayCommand _HelpCommand;
+        public RelayCommand HelpCommand {
+            get => _HelpCommand ??= new RelayCommand(async obj => {
+                string msg = " - Автоматический вход, позволяет автоматически заходить на главную страницу, с последним введенным номером" + Environment.NewLine + Environment.NewLine +
+                " - Качество фото - от 0 до 100 - повышает или понижает качество отправляемых фото при монтаже" + Environment.NewLine + Environment.NewLine +
+                " - Очистить локальную базу монтажей - удаляет из внутренней базы данных историю монтажей" + Environment.NewLine + Environment.NewLine +
+                " - Оставить отзыв - позволяет написать в ИТ-отдел пожелание или заявку";
+                HelpPopupViewModel vm = new HelpPopupViewModel(msg);
+                await App.Current.MainPage.Navigation.PushPopupAsync(new HelpPopupPage(vm));
             });
         }
 

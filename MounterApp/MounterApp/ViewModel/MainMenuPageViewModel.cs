@@ -1,10 +1,13 @@
 ﻿using Microsoft.AppCenter.Analytics;
 using MounterApp.Helpers;
 using MounterApp.Model;
+using MounterApp.Properties;
 using MounterApp.Views;
+using Newtonsoft.Json;
 using Rg.Plugins.Popup.Extensions;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -99,6 +102,21 @@ namespace MounterApp.ViewModel {
                 Analytics.TrackEvent("Переход к настройкам");
                 SettingsPageViewModel vm = new SettingsPageViewModel(Mounters,Serviceman);
                 App.Current.MainPage = new SettingsPage(vm);
+            });
+        }
+
+        private RelayCommand _CheckVersionApp;
+        public RelayCommand CheckVersionApp {
+            get => _CheckVersionApp ??= new RelayCommand(async obj => {
+                AppVersions av = new AppVersions();
+                string Version = av.GetVersionAndBuildNumber().VersionNumber;
+                using (HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/VersionNumber");
+                    if(response != null)
+                        if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                            var resp = response.Content.ReadAsStringAsync().Result;
+                        }
+                }
             });
         }
         /// <summary>

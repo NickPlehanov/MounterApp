@@ -5,16 +5,16 @@
                  BackgroundClicked="PopupPage_BackgroundClicked"
                  xmlns:vm="clr-namespace:MounterApp.ViewModel">
     <popup:PopupPage.Content>
-        <Frame Style="{StaticResource PopupFrameStyle}">
-            <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
+        <Frame Style="{DynamicResource PopupFrameStyle}">
+            <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
                 <Expander IsExpanded="{Binding CustomersExpandedState}">
                     <Expander.Header>
-                        <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding CustomersExpanderCommand}" Text="Ответственные лица" ImageSource="{Binding ArrowCircleCustomers}"/>
+                        <Button Style="{DynamicResource CommonButtonStyle}" Command="{Binding CustomersExpanderCommand}" Text="Ответственные лица" ImageSource="{Binding ArrowCircleCustomers}"/>
                     </Expander.Header>
-                    <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
-                        <StackLayout Style="{StaticResource ActivityIndicatorStackLayoutStyle}" IsVisible="{Binding IndicatorVisible}">
-                            <ActivityIndicator Style="{StaticResource ActivityIndicatorStyle}"/>
-                            <Label Style="{StaticResource ActivityIndicatorLabelStyle}" />
+                    <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
+                        <StackLayout Style="{DynamicResource ActivityIndicatorStackLayoutStyle}" IsVisible="{Binding IndicatorVisible}">
+                            <ActivityIndicator Style="{DynamicResource ActivityIndicatorStyle}"/>
+                            <Label Style="{DynamicResource ActivityIndicatorLabelStyle}" />
                         </StackLayout>
                         <CollectionView Opacity="{Binding OpacityForm}" Margin="5" ItemsSource="{Binding Path=CutomersCollection}" SelectionMode="Single">
                             <CollectionView.ItemsLayout>
@@ -22,24 +22,24 @@
                             </CollectionView.ItemsLayout>
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
-                                    <SwipeView Style="{StaticResource SwipeViewStyle}">
+                                    <SwipeView Style="{DynamicResource SwipeViewStyle}">
                                         <SwipeView.LeftItems>
                                             <SwipeItems Mode="Execute">
                                                 <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ObjCustsPopupViewModel}}, Path=CallCustomer}"
                                                    CommandParameter="{Binding Path=ObjCustPhone1}">
                                                     <Grid>
-                                                        <Button Style="{StaticResource SwipeNavigationButton}" Text="Вызов" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ObjCustsPopupViewModel}}, Path=CallImage}"/>
+                                                        <Button Style="{DynamicResource SwipeNavigationButton}" Text="Вызов" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ObjCustsPopupViewModel}}, Path=CallImage}"/>
                                                     </Grid>
                                                 </SwipeItemView>
                                             </SwipeItems>
                                         </SwipeView.LeftItems>
-                                        <Frame Style="{StaticResource FrameInfoStyle}">
+                                        <Frame Style="{DynamicResource FrameInfoStyle}">
                                             <Frame.Content>
-                                                <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
-                                                    <Label Text="{Binding Path=UserNumberText}" Style="{StaticResource MountersLabelStyle}" FontAttributes="None"/>
-                                                    <Label Text="{Binding Path=ObjCustTitleText}" Style="{StaticResource MountersLabelStyle}" FontAttributes="None"/>
-                                                    <Label Text="{Binding Path=ObjCustNameText}" Style="{StaticResource MountersLabelStyle}"/>
-                                                    <Label Text="{Binding Path=ObjCustPhone1Text}" Style="{StaticResource MountersLabelStyle}" FontAttributes="None"/>
+                                                <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
+                                                    <Label Text="{Binding Path=UserNumberText}" Style="{DynamicResource MountersLabelStyle}" FontAttributes="None"/>
+                                                    <Label Text="{Binding Path=ObjCustTitleText}" Style="{DynamicResource MountersLabelStyle}" FontAttributes="None"/>
+                                                    <Label Text="{Binding Path=ObjCustNameText}" Style="{DynamicResource MountersLabelStyle}"/>
+                                                    <Label Text="{Binding Path=ObjCustPhone1Text}" Style="{DynamicResource MountersLabelStyle}" FontAttributes="None"/>
                                                 </StackLayout>
                                             </Frame.Content>
                                         </Frame>
@@ -49,7 +49,7 @@
                         </CollectionView>
                     </StackLayout>
                 </Expander>
-                <Button Style="{StaticResource CommonButtonStyle}" Opacity="{Binding OpacityForm}" ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding CloseCommand}"/>
+                <Button Style="{DynamicResource CommonButtonStyle}" Opacity="{Binding OpacityForm}" ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding CloseCommand}"/>
             </StackLayout>
         </Frame>
     </popup:PopupPage.Content>

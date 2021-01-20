@@ -5,8 +5,8 @@
                  BackgroundClicked="PopupPage_BackgroundClicked"
              x:Class="MounterApp.Views.SelectActionsPopupPage">
         <popup:PopupPage.Content>
-        <Frame Style="{StaticResource PopupFrameStyle}">
-            <Grid Style="{StaticResource CommonGridStyle}">
+        <Frame Style="{DynamicResource PopupFrameStyle}">
+            <Grid Style="{DynamicResource CommonGridStyle}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
@@ -18,18 +18,18 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <StackLayout Grid.Row="0" Grid.Column="0" Margin="5">
-                        <Picker Style="{StaticResource PickerStyle}" Title="Выберите тип фото" ItemsSource="{Binding PhotoNames}" ItemDisplayBinding="{Binding PhotoTypeName}" SelectedItem="{Binding PhotoName}"/>
-                        <Entry Style="{StaticResource EntryStyle}" Text="{Binding PhotoComment}"/>
+                        <Picker Style="{DynamicResource PickerStyle}" Title="Выберите тип фото" ItemsSource="{Binding PhotoNames}" ItemDisplayBinding="{Binding PhotoTypeName}" SelectedItem="{Binding PhotoName}"/>
+                        <Entry Style="{DynamicResource EntryStyle}" Text="{Binding PhotoComment}"/>
                     </StackLayout>
                 <StackLayout Grid.Row="0" Grid.Column="1" Margin="5">
-                    <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding CollectionImage}" Grid.Row="1" Grid.Column="0" Text="Галерея" Command="{Binding PickPhotoCommand}"/>
-                    <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding CameraImage}" Grid.Row="1" Grid.Column="1" Text="Камера" Command="{Binding TakePhotoCommand}"/>
+                    <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding CollectionImage}" Grid.Row="1" Grid.Column="0" Text="Галерея" Command="{Binding PickPhotoCommand}"/>
+                    <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding CameraImage}" Grid.Row="1" Grid.Column="1" Text="Камера" Command="{Binding TakePhotoCommand}"/>
                 </StackLayout>
                     <StackLayout Grid.Row="2" Grid.ColumnSpan="2" IsVisible="{Binding VisibleAcceptedLayout}">
                         <Image x:Name="img" Source="{Binding ImgSrc}" Margin="5" Aspect="AspectFit" HeightRequest="100" WidthRequest="100"/>
-                    <Button Style="{StaticResource CommonButtonStyle}" Text="Подтвердить" Command="{Binding AddNewPhotoCommand}"/>
+                    <Button Style="{DynamicResource CommonButtonStyle}" Text="Подтвердить" Command="{Binding AddNewPhotoCommand}"/>
                 </StackLayout>
-                <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding CloseImage}" Grid.Row="3" Grid.ColumnSpan="2" Text="Закрыть" Command="{Binding BackPressedCommand}"/>
+                <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding CloseImage}" Grid.Row="3" Grid.ColumnSpan="2" Text="Закрыть" Command="{Binding BackPressedCommand}"/>
             </Grid>
             </Frame>
         </popup:PopupPage.Content>

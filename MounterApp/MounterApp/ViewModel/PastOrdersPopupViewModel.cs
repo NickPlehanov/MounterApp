@@ -1,4 +1,6 @@
-﻿using Microsoft.AppCenter.Crashes;
+﻿using Android.Widget;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using MounterApp.Helpers;
 using MounterApp.Model;
 using MounterApp.Properties;
@@ -12,11 +14,12 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class PastOrdersPopupViewModel : BaseViewModel {
-        public PastOrdersPopupViewModel(NewServiceorderExtensionBase _so,List<NewServicemanExtensionBase> _servicemans, List<NewMounterExtensionBase> _mounters) {
+        public PastOrdersPopupViewModel(NewServiceorderExtensionBase_ex _so,List<NewServicemanExtensionBase> _servicemans, List<NewMounterExtensionBase> _mounters) {
             Mounters = _mounters;
             Servicemans = _servicemans;
             ServiceOrder = _so;
@@ -25,8 +28,9 @@ namespace MounterApp.ViewModel {
             CloseImage = IconName("close");
             IndicatorVisible = false;
             OpacityForm = 1;
+            CallImage = IconName("call");
         }
-        public PastOrdersPopupViewModel(NewTest2ExtensionBase _so,List<NewServicemanExtensionBase> _servicemans,List<NewMounterExtensionBase> _mounters) {
+        public PastOrdersPopupViewModel(NewTest2ExtensionBase_ex _so,List<NewServicemanExtensionBase> _servicemans,List<NewMounterExtensionBase> _mounters) {
             Mounters = _mounters;
             Servicemans = _servicemans;
             ServiceOrderFireAlarm = _so;
@@ -35,10 +39,11 @@ namespace MounterApp.ViewModel {
             CloseImage = IconName("close");
             IndicatorVisible = false;
             OpacityForm = 1;
+            CallImage = IconName("call");
         }
 
-        private NewTest2ExtensionBase _ServiceOrderFireAlarm;
-        public NewTest2ExtensionBase ServiceOrderFireAlarm {
+        private NewTest2ExtensionBase_ex _ServiceOrderFireAlarm;
+        public NewTest2ExtensionBase_ex ServiceOrderFireAlarm {
             get => _ServiceOrderFireAlarm;
             set {
                 _ServiceOrderFireAlarm = value;
@@ -78,8 +83,8 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(Mounters));
             }
         }
-        private NewServiceorderExtensionBase _ServiceOrder;
-        public NewServiceorderExtensionBase ServiceOrder {
+        private NewServiceorderExtensionBase_ex _ServiceOrder;
+        public NewServiceorderExtensionBase_ex ServiceOrder {
             get => _ServiceOrder;
             set {
                 _ServiceOrder = value;
@@ -95,8 +100,8 @@ namespace MounterApp.ViewModel {
             }
         }
 
-        private ObservableCollection<NewServiceorderExtensionBase> _PastServiceOrders = new ObservableCollection<NewServiceorderExtensionBase>();
-        public ObservableCollection<NewServiceorderExtensionBase> PastServiceOrders {
+        private ObservableCollection<NewServiceorderExtensionBase_ex> _PastServiceOrders = new ObservableCollection<NewServiceorderExtensionBase_ex>();
+        public ObservableCollection<NewServiceorderExtensionBase_ex> PastServiceOrders {
             get => _PastServiceOrders;
             set {
                 _PastServiceOrders = value;
@@ -110,16 +115,16 @@ namespace MounterApp.ViewModel {
                 IndicatorVisible = true;
                 OpacityForm = 0.1;
                 PastServiceOrders.Clear();
-                List<NewServiceorderExtensionBase> _pso = new List<NewServiceorderExtensionBase>();
+                List<NewServiceorderExtensionBase_ex> _pso = new List<NewServiceorderExtensionBase_ex>();
                 List<NewTest2ExtensionBase> _pso_fa = new List<NewTest2ExtensionBase>();
                 string resp = null;
                 HttpResponseMessage response = null;
                 using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
                     if(ServiceOrder != null) {
-                        response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByObject?Andromeda_ID=" + ServiceOrder.NewAndromedaServiceorder + "&ObjectNumber=" + ServiceOrder.NewNumber);
+                        response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByObjectNew?Andromeda_ID=" + ServiceOrder.NewAndromedaServiceorder);
                         resp = response.Content.ReadAsStringAsync().Result;
                         try {
-                            _pso = JsonConvert.DeserializeObject<List<NewServiceorderExtensionBase>>(resp);
+                            _pso = JsonConvert.DeserializeObject<List<NewServiceorderExtensionBase_ex>>(resp);
                         }
                         catch (Exception ex) {
                             _pso = null;
@@ -129,22 +134,22 @@ namespace MounterApp.ViewModel {
                             {"ErrorMessage",ex.Message },
                             {"StatusCode",response.StatusCode.ToString() },
                             {"Response",response.ToString() },
-                            {"Query","NewServiceorderExtensionBases/ServiceOrderByObject?Andromeda_ID=" + ServiceOrder.NewAndromedaServiceorder + "&ObjectNumber=" + ServiceOrder.NewNumber }
+                            {"Query","NewServiceorderExtensionBases/ServiceOrderByObjectIDNew?Andromeda_ID=" + ServiceOrder.NewAndromedaServiceorder}
                             });
                         }
                         if(_pso.Count() > 0) {
                             foreach(var item in _pso.OrderByDescending(o => o.NewDate)) {
-                                NewServiceorderExtensionBase _item = item;
+                                NewServiceorderExtensionBase_ex _item = item;
                                 _item.NewDate = _item.NewDate.Value.AddHours(5).Date;
                                 PastServiceOrders.Add(_item);
                             }
                         }
                     }
                     else if(ServiceOrderFireAlarm != null) {
-                        response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByObject?Andromeda_ID=" + ServiceOrderFireAlarm.NewAndromedaServiceorder + "&ObjectNumber=" + ServiceOrderFireAlarm.NewNumber);
+                        response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByObjectNew?Andromeda_ID=" + ServiceOrderFireAlarm.NewAndromedaServiceorder);
                         resp = response.Content.ReadAsStringAsync().Result;
                         try {
-                            _pso_fa = JsonConvert.DeserializeObject<List<NewTest2ExtensionBase>>(resp);
+                            _pso = JsonConvert.DeserializeObject<List<NewServiceorderExtensionBase_ex>>(resp);
                         }
                         catch(Exception ex) {
                             _pso = null;
@@ -157,22 +162,48 @@ namespace MounterApp.ViewModel {
                             {"Query","NewServiceorderExtensionBases/ServiceOrderByObject?Andromeda_ID=" + ServiceOrder.NewAndromedaServiceorder + "&ObjectNumber=" + ServiceOrder.NewNumber }
                             });
                         }
-                        if(_pso_fa.Count() > 0) {
-                            foreach(var item in _pso_fa.OrderByDescending(o => o.NewDate)) {
-                                NewTest2ExtensionBase _item = item;
-                                _item.NewDate = _item.NewDate.Value.AddHours(5).Date;
-                                PastServiceOrders.Add(new NewServiceorderExtensionBase() {
-                                    NewServiceorderId = _item.NewTest2Id,
-                                    NewDate=_item.NewDate,
-                                    NewTime=_item.NewTime,
-                                    NewResult=_item.NewResult
-                                });
+                        if(_pso.Count() > 0) {
+                            foreach(var item in _pso.OrderByDescending(o => o.NewDate)) {
+                                PastServiceOrders.Add(item);
+                                //NewServiceorderExtensionBase_ex _item = item;
+                                //_item.NewDate = _item.NewDate.Value.AddHours(5).Date;
+                                //PastServiceOrders.Add(new NewServiceorderExtensionBase_ex() {
+                                //    NewServiceorderId = _item.NewServiceorderId,
+                                //    NewDate=_item.NewDate,
+                                //    NewTime=_item.NewTime,
+                                //    NewResult=_item.NewResult
+                                //});
                             }
                         }
                     }
                 }
                 IndicatorVisible = false;
                 OpacityForm = 1;
+            });
+        }
+
+        private ImageSource _CallImage;
+        public ImageSource CallImage {
+            get => _CallImage;
+            set {
+                _CallImage = value;
+                OnPropertyChanged(nameof(CallImage));
+            }
+        }
+        private RelayCommand _CallCustomer;
+        public RelayCommand CallCustomer {
+            get => _CallCustomer ??= new RelayCommand(async obj => {
+                if(!string.IsNullOrEmpty(obj.ToString())) {
+                    Analytics.TrackEvent("Звонок клиенту",
+                        new Dictionary<string,string> {
+                        //{"ServiceOrderID",ServiceOrder.NewServiceorderId.ToString() },
+                        {"PhoneNumber",obj.ToString() }
+                        });
+                    Uri uri = new Uri("tel:" + obj);
+                    await Launcher.OpenAsync(uri);
+                }
+                else
+                    Toast.MakeText(Android.App.Application.Context,"Номер телефона не указан",ToastLength.Long).Show();
             });
         }
 

@@ -4,26 +4,26 @@
                   CloseWhenBackgroundIsClicked="True"
                  BackgroundClicked="PopupPage_BackgroundClicked">
     <popup:PopupPage.Content>
-        <Frame Style="{StaticResource PopupFrameStyle}">
-            <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
-                <StackLayout IsVisible="{Binding IndicatorVisible}" Style="{StaticResource ActivityIndicatorStackLayoutStyle}">
-                <ActivityIndicator Style="{StaticResource ActivityIndicatorStyle}"/>
-                <Label Style="{StaticResource ActivityIndicatorLabelStyle}"/>
+        <Frame Style="{DynamicResource PopupFrameStyle}">
+            <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
+                <StackLayout IsVisible="{Binding IndicatorVisible}" Style="{DynamicResource ActivityIndicatorStackLayoutStyle}">
+                <ActivityIndicator Style="{DynamicResource ActivityIndicatorStyle}"/>
+                <Label Style="{DynamicResource ActivityIndicatorLabelStyle}"/>
             </StackLayout>
             <Expander Opacity="{Binding OpacityForm}" IsExpanded="{Binding WiresExpandedState}">
                 <Expander.Header>
-                        <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding WiresExpanderCommand}" Text="Шлейфы" ImageSource="{Binding ArrowCircleWires}"/>
+                        <Button Style="{DynamicResource CommonButtonStyle}" Command="{Binding WiresExpanderCommand}" Text="Шлейфы" ImageSource="{Binding ArrowCircleWires}"/>
                     </Expander.Header>
-                <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
+                <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
                     <CollectionView Margin="5" ItemsSource="{Binding WiresCollection, Mode=TwoWay}" SelectionMode="Single">
                         <CollectionView.ItemsLayout>
                             <GridItemsLayout Orientation="Vertical"/>
                         </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
                             <DataTemplate >
-                                <Frame Style="{StaticResource FrameInfoStyle}">
+                                <Frame Style="{DynamicResource FrameInfoStyle}">
                                     <Frame.Content>
-                                        <Label Style="{StaticResource CommonLabelStyle}" Text="{Binding Path=FullInfo}" Margin="5" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                        <Label Style="{DynamicResource CommonLabelStyle}" Text="{Binding Path=FullInfo}" Margin="5" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
                                     </Frame.Content>
                                 </Frame>
                             </DataTemplate>
@@ -34,18 +34,18 @@
 
             <Expander Opacity="{Binding OpacityForm}" IsExpanded="{Binding ExtFieldsExpandedState}">
                 <Expander.Header>
-                        <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding ExtFieldsExpanderCommand}" Text="Доп. информация" ImageSource="{Binding ArrowCircleExtFields}"/>
+                        <Button Style="{DynamicResource CommonButtonStyle}" Command="{Binding ExtFieldsExpanderCommand}" Text="Доп. информация" ImageSource="{Binding ArrowCircleExtFields}"/>
                     </Expander.Header>
-                <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
+                <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
                     <CollectionView Margin="5" ItemsSource="{Binding ExtFields, Mode=TwoWay}" SelectionMode="Single">
                         <CollectionView.ItemsLayout>
                             <GridItemsLayout Orientation="Vertical"/>
                         </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <Frame Style="{StaticResource FrameInfoStyle}">
+                                <Frame Style="{DynamicResource FrameInfoStyle}">
                                     <Frame.Content>
-                                        <Label Style="{StaticResource CommonLabelStyle}" Text="{Binding Path=FullInfo}" Margin="5"  HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                        <Label Style="{DynamicResource CommonLabelStyle}" Text="{Binding Path=FullInfo}" Margin="5"  HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
                                     </Frame.Content>
                                 </Frame>
                             </DataTemplate>
@@ -53,7 +53,7 @@
                     </CollectionView>
                 </StackLayout>
             </Expander>
-                <Button Style="{StaticResource CommonButtonStyle}" Opacity="{Binding OpacityForm}" ImageSource="{Binding CloseImage}" Grid.Row="2" Text="Закрыть" Command="{Binding CloseCommand}"/>
+                <Button Style="{DynamicResource CommonButtonStyle}" Opacity="{Binding OpacityForm}" ImageSource="{Binding CloseImage}" Grid.Row="2" Text="Закрыть" Command="{Binding CloseCommand}"/>
             </StackLayout>
         </Frame>
     </popup:PopupPage.Content>

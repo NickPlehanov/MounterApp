@@ -4,16 +4,19 @@ using Android.Content.PM;
 using Android.Runtime;
 using Android.OS;
 using Rg.Plugins.Popup.Extensions;
+using Xamarin.Forms;
 
 namespace MounterApp.Droid {
-    [Activity(Label = "MounterApp",Icon = "@drawable/icon",Theme = "@style/MainTheme",MainLauncher = true,ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize)]
+    [Activity(Label = "MounterApp",Icon = "@drawable/icon",Theme = "@style/MainTheme", MainLauncher = true,ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize)]
 	public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity {
 		protected override void OnCreate(Bundle savedInstanceState) {
-			global::Xamarin.Forms.Forms.SetFlags(new string[] { "Expander_Experimental","SwipeView_Experimental","Brush_Experimental" });
+			global::Xamarin.Forms.Forms.SetFlags(new string[] { "Expander_Experimental","SwipeView_Experimental","Brush_Experimental","AppTheme_Experimental" });
 			TabLayoutResource = Resource.Layout.Tabbar;
 			ToolbarResource = Resource.Layout.Toolbar;
+			//App.Current.UserAppTheme = OSAppTheme.Light;
 
 			base.OnCreate(savedInstanceState);
+
 			//Plugin.Iconize.Iconize.Init(Resource.Id.toolbar,Resource.Id.sliding_tabs);
 
 			Rg.Plugins.Popup.Popup.Init(this,savedInstanceState);

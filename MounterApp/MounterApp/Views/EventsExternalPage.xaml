@@ -2,18 +2,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MounterApp.Views.EventsExternalPage">
     <ContentPage.Content>
-        <Frame Style="{StaticResource PopupFrameStyle}">
-            <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
+        <Frame Style="{DynamicResource PopupFrameStyle}">
+            <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
                 <FlexLayout>
-                    <DatePicker Style="{StaticResource DatePickerStyle}" Margin="2" Date="{Binding StartDate}"/>
-                    <DatePicker Style="{StaticResource DatePickerStyle}" Margin="2" Date="{Binding EndDate}"/>
-                    <Entry Style="{StaticResource EntryStyle}" Margin="2" Text="{Binding ObjectNumber}" Keyboard="Numeric" WidthRequest="100"/>
+                    <DatePicker Style="{DynamicResource DatePickerStyle}" Margin="2" Date="{Binding StartDate}"/>
+                    <DatePicker Style="{DynamicResource DatePickerStyle}" Margin="2" Date="{Binding EndDate}"/>
+                    <Entry Style="{DynamicResource EntryStyle}" Margin="2" Text="{Binding ObjectNumber}" Keyboard="Numeric" WidthRequest="100"/>
                 </FlexLayout>
-                <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding GetImage}" FontSize="Default" Text="Получить" Command="{Binding GetEventsCommands}">
+                <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding GetImage}" FontSize="Default" Text="Получить" Command="{Binding GetEventsCommands}">
                 </Button>
-                <StackLayout Style="{StaticResource ActivityIndicatorStackLayoutStyle}" IsVisible="{Binding IndicatorVisible}">
-                    <ActivityIndicator Style="{StaticResource ActivityIndicatorStyle}"/>
-                    <Label Style="{StaticResource ActivityIndicatorLabelStyle}"/>
+                <StackLayout Style="{DynamicResource ActivityIndicatorStackLayoutStyle}" IsVisible="{Binding IndicatorVisible}">
+                    <ActivityIndicator Style="{DynamicResource ActivityIndicatorStyle}"/>
+                    <Label Style="{DynamicResource ActivityIndicatorLabelStyle}"/>
                 </StackLayout>
                 <ScrollView>
                     <StackLayout Opacity="{Binding OpacityForm}">
@@ -23,15 +23,15 @@
                             </CollectionView.ItemsLayout>
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
-                                    <Frame Style="{StaticResource FrameInfoStyle}">
+                                    <Frame Style="{DynamicResource FrameInfoStyle}">
                                         <Frame.Content>
-                                            <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
-                                                <Label Style="{StaticResource CommonLabelStyle}" Text="{Binding Path=REDateTime}" Margin="5" FontAttributes="Bold"/>
-                                                <Label Style="{StaticResource CommonLabelStyle}" Text="{Binding Path=RChannelNameText}" Margin="5" />
-                                                <Label Style="{StaticResource CommonLabelStyle}" Text="{Binding Path=EventCodeText}" Margin="5" />
-                                                <Label Style="{StaticResource CommonLabelStyle}" Text="{Binding Path=EventClassNameText}" Margin="5" />
-                                                <Label Style="{StaticResource CommonLabelStyle}" Text="{Binding Path=ZoneUserText}" Margin="5" />
-                                                <Label Style="{StaticResource CommonLabelStyle}" Text="{Binding Path=PartNumberText}" Margin="5" />
+                                            <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
+                                                <Label Style="{DynamicResource CommonLabelStyle}" Text="{Binding Path=REDateTime}" Margin="5" FontAttributes="Bold"/>
+                                                <Label Style="{DynamicResource CommonLabelStyle}" Text="{Binding Path=RChannelNameText}" Margin="5" />
+                                                <Label Style="{DynamicResource CommonLabelStyle}" Text="{Binding Path=EventCodeText}" Margin="5" />
+                                                <Label Style="{DynamicResource CommonLabelStyle}" Text="{Binding Path=EventClassNameText}" Margin="5" />
+                                                <Label Style="{DynamicResource CommonLabelStyle}" Text="{Binding Path=ZoneUserText}" Margin="5" />
+                                                <Label Style="{DynamicResource CommonLabelStyle}" Text="{Binding Path=PartNumberText}" Margin="5" />
                                                 <Label Text="{Binding Path=EventDesc}" Margin="5" />
                                             </StackLayout>
                                         </Frame.Content>
@@ -41,7 +41,7 @@
                         </CollectionView>
                     </StackLayout>
                 </ScrollView>
-                <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding ExitCommand}"/>
+                <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding ExitCommand}"/>
             </StackLayout>
         </Frame>
     </ContentPage.Content>

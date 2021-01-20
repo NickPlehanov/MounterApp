@@ -2,19 +2,20 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                  CloseWhenBackgroundIsClicked="True"
                  BackgroundClicked="PopupPage_BackgroundClicked"
-                  x:Class="MounterApp.Views.PastOrdersPopupPage">
+                  x:Class="MounterApp.Views.PastOrdersPopupPage"
+                  xmlns:vm="clr-namespace:MounterApp.ViewModel">
     <popup:PopupPage.Content>
-        <Frame Style="{StaticResource PopupFrameStyle}">
-            <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
+        <Frame Style="{DynamicResource PopupFrameStyle}">
+            <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
                 <Expander IsExpanded="{Binding PastServiceOrdersExpandedState}">
                     <Expander.Header>
-                        <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding PastServiceOrdersExpanderCommand}" Text="Заявки по объекту" ImageSource="{Binding ArrowCirclePastServiceOrders}">
+                        <Button Style="{DynamicResource CommonButtonStyle}" Command="{Binding PastServiceOrdersExpanderCommand}" Text="Заявки по объекту" ImageSource="{Binding ArrowCirclePastServiceOrders}">
                         </Button>
                     </Expander.Header>
-                    <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
-                        <StackLayout IsVisible="{Binding IndicatorVisible}" Style="{StaticResource ActivityIndicatorStackLayoutStyle}">
-                            <ActivityIndicator Style="{StaticResource ActivityIndicatorStyle}"/>
-                            <Label Style="{StaticResource ActivityIndicatorLabelStyle}"/>
+                    <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
+                        <StackLayout IsVisible="{Binding IndicatorVisible}" Style="{DynamicResource ActivityIndicatorStackLayoutStyle}">
+                            <ActivityIndicator Style="{DynamicResource ActivityIndicatorStyle}"/>
+                            <Label Style="{DynamicResource ActivityIndicatorLabelStyle}"/>
                         </StackLayout>
                         <CollectionView Opacity="{Binding OpacityForm}" Margin="5" ItemsSource="{Binding PastServiceOrders, Mode=TwoWay}" SelectionMode="Single">
                             <CollectionView.ItemsLayout>
@@ -22,17 +23,29 @@
                             </CollectionView.ItemsLayout>
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
-                                    <Frame Style="{StaticResource FrameInfoStyle}">
-                                        <Frame.Content>
-                                            <Label Style="{StaticResource CommonLabelStyle}" Text="{Binding Path=FullInfo}" Margin="5" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
-                                        </Frame.Content>
-                                    </Frame>
+                                    <SwipeView Style="{DynamicResource SwipeViewStyle}">
+                                        <SwipeView.LeftItems>
+                                            <SwipeItems Mode="Execute">
+                                                <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PastOrdersPopupViewModel}}, Path=CallCustomer}"
+                                                   CommandParameter="{Binding Path=ServicemanInfo}">
+                                                    <Grid>
+                                                        <Button Style="{DynamicResource SwipeNavigationButton}" Text="Вызов" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:PastOrdersPopupViewModel}}, Path=CallImage}"/>
+                                                    </Grid>
+                                                </SwipeItemView>
+                                            </SwipeItems>
+                                        </SwipeView.LeftItems>
+                                        <Frame Style="{DynamicResource FrameInfoStyle}">
+                                            <Frame.Content>
+                                                <Label Style="{DynamicResource CommonLabelStyle}" Text="{Binding Path=ServiceOrderInfo}" Margin="5" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                            </Frame.Content>
+                                        </Frame>
+                                    </SwipeView>
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
                         </CollectionView>
                     </StackLayout>
                 </Expander>
-                <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding CloseCommand}"/>
+                <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding CloseCommand}"/>
             </StackLayout>
         </Frame>
     </popup:PopupPage.Content>

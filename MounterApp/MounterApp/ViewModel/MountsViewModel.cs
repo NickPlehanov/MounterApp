@@ -131,6 +131,15 @@ namespace MounterApp.ViewModel {
                 });
             });
         }
+        private RelayCommand _HelpCommand;
+        public RelayCommand HelpCommand {
+            get => _HelpCommand ??= new RelayCommand(async obj => {
+                string msg = " - На вкладке неотправленные, протаскивание(свайп) монтажа влево - позволяет открыть его, так же как и простым нажатием, свайп вправо - вызывает команду удаления";
+                HelpPopupViewModel vm = new HelpPopupViewModel(msg);
+                await App.Current.MainPage.Navigation.PushPopupAsync(new HelpPopupPage(vm));
+            });
+        }
+
         private RelayCommand _ClearHistoryMounts;
         public RelayCommand ClearHistoryMounts {
             get => _ClearHistoryMounts ??= new RelayCommand(async obj => {

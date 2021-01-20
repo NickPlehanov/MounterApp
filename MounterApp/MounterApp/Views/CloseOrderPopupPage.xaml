@@ -5,8 +5,8 @@
                  CloseWhenBackgroundIsClicked="True"
                  BackgroundClicked="PopupPage_BackgroundClicked">
     <popup:PopupPage.Content>
-        <Frame Style="{StaticResource PopupFrameStyle}">
-            <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
+        <Frame Style="{DynamicResource PopupFrameStyle}">
+            <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
                 <Grid Opacity="{Binding OpacityForm}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -18,27 +18,27 @@
                         <ColumnDefinition Width="0.2*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Picker Style="{StaticResource PickerStyle}" Grid.ColumnSpan="2" Grid.Row="0" SelectedItem="{Binding SelectedResult}" ItemsSource="{Binding Results}" ItemDisplayBinding="{Binding Label}" Title="Выберите результат"/>
+                    <!--<Picker Style="{DynamicResource PickerStyle}" Grid.ColumnSpan="2" Grid.Row="0" SelectedItem="{Binding SelectedResult}" ItemsSource="{Binding Results}" ItemDisplayBinding="{Binding Label}" Title="Выберите результат"/>-->
                     <CheckBox Grid.Column="0" Grid.Row="1" IsChecked="{Binding NecesseryRead}" VerticalOptions="Center" HorizontalOptions="Center"/>
-                    <Label Style="{StaticResource CommonLabelStyle}" Grid.Column="1" Grid.Row="1" Text="Обязательно для прочтения оператором">
+                    <Label Style="{DynamicResource CommonLabelStyle}" Grid.Column="1" Grid.Row="1" Text="Обязательно для прочтения оператором">
                         <Label.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding SetValueNecesseryReadCommand}"/>
                         </Label.GestureRecognizers>
                     </Label>
-                    <Label Style="{StaticResource CommonLabelStyle}" Grid.ColumnSpan="2" Grid.Row="2" Text="Напишите заключение"/>
-                    <Editor Style="{StaticResource EditorStyle}" Grid.Row="3" Grid.ColumnSpan="2" Text="{Binding ConclusionByOrder}" VerticalOptions="FillAndExpand"/>
+                    <Label Style="{DynamicResource CommonLabelStyle}" Grid.ColumnSpan="2" Grid.Row="2" Text="Напишите заключение"/>
+                    <Editor Style="{DynamicResource EditorStyle}" Grid.Row="3" Grid.ColumnSpan="2" Text="{Binding ConclusionByOrder}" VerticalOptions="FillAndExpand"/>
                 </Grid>
-                <StackLayout Opacity="1"  Style="{StaticResource ActivityIndicatorStackLayoutStyle}" IsVisible="{Binding IndicatorVisible}">
-                    <ActivityIndicator Style="{StaticResource ActivityIndicatorStyle}"/>
-                    <Label Style="{StaticResource ActivityIndicatorLabelStyle}"/>
+                <StackLayout Opacity="1"  Style="{DynamicResource ActivityIndicatorStackLayoutStyle}" IsVisible="{Binding IndicatorVisible}">
+                    <ActivityIndicator Style="{DynamicResource ActivityIndicatorStyle}"/>
+                    <Label Style="{DynamicResource ActivityIndicatorLabelStyle}"/>
                 </StackLayout>
-                <StackLayout Opacity="{Binding OpacityForm}" IsVisible="{Binding ReasonVisibility}">
-                    <Picker Style="{StaticResource PickerStyle}" Title="Укажите причину" ItemsSource="{Binding Reasons}" ItemDisplayBinding="{Binding Label}" SelectedItem="{Binding SelectedReason}"/>
-                    <Label  Style="{StaticResource CommonLabelStyle}" Text="Комментарий"/>
-                    <Entry Style="{StaticResource EntryStyle}" Text="{Binding ReasonComment}"/>
+                <!--<StackLayout Opacity="{Binding OpacityForm}" IsVisible="{Binding ReasonVisibility}">
+                    <Picker Style="{DynamicResource PickerStyle}" Title="Укажите причину" ItemsSource="{Binding Reasons}" ItemDisplayBinding="{Binding Label}" SelectedItem="{Binding SelectedReason}"/>
+                    <Label  Style="{DynamicResource CommonLabelStyle}" Text="Комментарий"/>
+                    <Entry Style="{DynamicResource EntryStyle}" Text="{Binding ReasonComment}"/>
                     <FlexLayout IsVisible="{Binding TransferLayoutVisibility}">
-                        <Label  Style="{StaticResource CommonLabelStyle}" Text="Укажите дату и время переноса"/>
-                        <DatePicker Style="{StaticResource DatePickerStyle}" Date="{Binding TransferDate}">
+                        <Label  Style="{DynamicResource CommonLabelStyle}" Text="Укажите дату и время переноса"/>
+                        <DatePicker Style="{DynamicResource DatePickerStyle}" Date="{Binding TransferDate}">
                             <DatePicker.Format>d</DatePicker.Format>
                             <DatePicker.MinimumDate>
                                 <sys:DateTime x:FactoryMethod="Parse">
@@ -57,8 +57,8 @@
                         </DatePicker>
                         <TimePicker Time="{Binding TransferTime, Mode=TwoWay}" Format="t"/>
                     </FlexLayout>
-                </StackLayout>
-                <Button ImageSource="{Binding SaveImage}" Text="OK" Command="{Binding CloseServiceOrderCommand}" Style="{StaticResource CommonButtonStyle}"/>
+                </StackLayout>-->
+                <Button ImageSource="{Binding SaveImage}" Text="OK" Command="{Binding CloseServiceOrderCommand}" Style="{DynamicResource CommonButtonStyle}"/>
             </StackLayout>
         </Frame>
     </popup:PopupPage.Content>

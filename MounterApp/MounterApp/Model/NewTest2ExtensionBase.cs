@@ -43,23 +43,23 @@ namespace MounterApp.Model {
         public bool? NewStartReglamentCreation { get; set; }
         public string NewAddToYear { get; set; }
         public bool? NewAddToYearBool { get; set; }
-        [NotMapped]
-        public string FullName {
-            get => NewNumber + Environment.NewLine + NewObjName + Environment.NewLine + NewAddress;
-            //set {
-            //    _FullName = value;
-            //}
-        }
-        [NotMapped]
-        public string FullInfo {
-            get {
-                if(NewDate.HasValue)
-                    return string.Format("Дата: {0} {1} Причина: {2}",NewDate.Value.ToShortDateString(),NewTime,string.IsNullOrEmpty(NewName) ? "<не указана>" : NewName);
-                //return NewDate.Value.ToShortDateString()+" " + NewName;
-                else
-                    return string.Format("Дата: <не указана>; Причина: {0}",string.IsNullOrEmpty(NewName) ? "<не указана>" : NewName);
-            }
-        }
+        //[NotMapped]
+        //public string FullName {
+        //    get => NewNumber + Environment.NewLine + NewObjName + Environment.NewLine + NewAddress;
+        //    //set {
+        //    //    _FullName = value;
+        //    //}
+        //}
+        //[NotMapped]
+        //public string FullInfo {
+        //    get {
+        //        if(NewDate.HasValue)
+        //            return string.Format("Дата: {0} {1} Причина: {2}",NewDate.Value.ToShortDateString(),NewTime,string.IsNullOrEmpty(NewName) ? "<не указана>" : NewName);
+        //        //return NewDate.Value.ToShortDateString()+" " + NewName;
+        //        else
+        //            return string.Format("Дата: <не указана>; Причина: {0}",string.IsNullOrEmpty(NewName) ? "<не указана>" : NewName);
+        //    }
+        //}
         [NotMapped]
         public Color ColorOrder {
             get {
@@ -91,5 +91,10 @@ namespace MounterApp.Model {
         public virtual NewServicemanBase NewServicemanServiceorderPsNavigation { get; set; }
         public virtual NewServicemanBase NewTechniqueEndNavigation { get; set; }
         public virtual NewTest2Base NewTest2 { get; set; }
+    }
+    public class NewTest2ExtensionBase_ex : NewTest2ExtensionBase {
+        public string ServicemanInfo { get; set; }
+        public string ServiceOrderInfo { get; set; }
+        public string HeaderServiceOrder { get; set; }
     }
 }

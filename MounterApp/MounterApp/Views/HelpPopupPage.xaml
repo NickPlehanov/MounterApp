@@ -1,0 +1,14 @@
+﻿<popup:PopupPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:popup="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup" 
+                 CloseWhenBackgroundIsClicked="True" BackgroundClicked="PopupPage_BackgroundClicked"
+             x:Class="MounterApp.Views.HelpPopupPage">
+    <popup:PopupPage.Content>
+        <Frame Style="{DynamicResource PopupFrameStyle}">
+            <StackLayout Style="{StaticResource PopupStackLayoutStyle}">
+                <Label Style="{StaticResource CommonLabelStyle}" Text="{Binding Message}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" />
+                <Button Style="{StaticResource CommonButtonStyle}" Text="Закрыть" Command="{Binding CloseCommand}"/>
+            </StackLayout>
+        </Frame>
+    </popup:PopupPage.Content>
+</popup:PopupPage>

@@ -18,6 +18,7 @@ using System.Net.Http;
 using System.Text;
 using Xamarin.Essentials;
 using Xamarin.Forms;
+using static Xamarin.Essentials.Permissions;
 
 namespace MounterApp.ViewModel {
     public class ServiceOrderFireAlarmViewModel : BaseViewModel {
@@ -56,7 +57,7 @@ namespace MounterApp.ViewModel {
         //    PeopleImage = "people");
         //}
 
-        public ServiceOrderFireAlarmViewModel(NewTest2ExtensionBase _so,List<NewServicemanExtensionBase> _servicemans,List<NewMounterExtensionBase> _mounters) {
+        public ServiceOrderFireAlarmViewModel(NewTest2ExtensionBase_ex _so,List<NewServicemanExtensionBase> _servicemans,List<NewMounterExtensionBase> _mounters) {
             Analytics.TrackEvent("Инициализация окна заявки технику",
             new Dictionary<string,string> {
                 {"ServicemanPhone",_servicemans.FirstOrDefault().NewPhone },
@@ -239,8 +240,8 @@ namespace MounterApp.ViewModel {
         //    }
         //}
 
-        private NewTest2ExtensionBase _ServiceOrderFireAlarm;
-        public NewTest2ExtensionBase ServiceOrderFireAlarm {
+        private NewTest2ExtensionBase_ex _ServiceOrderFireAlarm;
+        public NewTest2ExtensionBase_ex ServiceOrderFireAlarm {
             get => _ServiceOrderFireAlarm;
             set {
                 _ServiceOrderFireAlarm = value;
@@ -407,7 +408,7 @@ namespace MounterApp.ViewModel {
                         });
                     }
                 }
-                if(mm != null)
+                if(mm != null && ServiceOrderFireAlarm.NewCategory!=null)
                     Category = mm.FirstOrDefault(x => x.Value == ServiceOrderFireAlarm.NewCategory).Label;
             });
         }
@@ -546,10 +547,21 @@ namespace MounterApp.ViewModel {
                 });
                 Opacity = 0.1;
                 IndicatorVisible = true;
-                Location location = await Geolocation.GetLastKnownLocationAsync();
-                if(location != null) {
-                    Latitude = location.Latitude.ToString();
-                    Longitude = location.Longitude.ToString();
+                PermissionStatus status= PermissionStatus.Unknown;
+                try {
+                    status = await CheckAndRequestPermissionAsync(new LocationWhenInUse());
+                    Location location = await Geolocation.GetLastKnownLocationAsync();
+                    if(location != null) {
+                        Latitude = location.Latitude.ToString();
+                        Longitude = location.Longitude.ToString();
+                    }
+                }
+                catch(Exception ex) {
+                    Crashes.TrackError(new Exception("Заявка на ПС. Ошибка получения координат.")
+                        ,new Dictionary<string,string> {
+                        {"ErrorMessage",ex.Message },
+                        {"PermissionStatus",status.ToString()}
+                    });
                 }
                 Analytics.TrackEvent("Запрос данных на сервере (могло же что-то измениться",
                 new Dictionary<string,string> {
@@ -604,30 +616,45 @@ namespace MounterApp.ViewModel {
                             ,"OK");
                     }
                     else
-                        Toast.MakeText(Android.App.Application.Context,"Время прихода записано",ToastLength.Long).Show();
+                        Toast.MakeText(Android.App.Application.Context,"ОТМЕТКА ВРЕМЕНИ ПРИХОДА СОХРАНЕНА",ToastLength.Long).Show();
                 }
                 //запишем координаты
-                Analytics.TrackEvent("Попытка записи координат на сервер по объекту заявка технику",
+                Analytics.TrackEvent("Попытка записи координат на сервер по объекту заявка технику(ПС)",
                     new Dictionary<string,string> {
                         {"ServiceOrderID",ServiceOrderFireAlarm.NewTest2Id.ToString() }
                     });
-                using(HttpClient clientPost = new HttpClient(GetHttpClientHandler())) {
-                    var data = JsonConvert.SerializeObject(new ServiceOrderCoordinates() {
-                        SocId = Guid.NewGuid(),
-                        SocServiceOrderId = ServiceOrderFireAlarm.NewTest2Id,
-                        SocIncomeLatitude = Latitude,
-                        SocIncomeLongitude = Longitude
-                    });
-                    StringContent content = new StringContent(data,Encoding.UTF8,"application/json");
-                    HttpResponseMessage responsePost = await clientPost.PostAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates",content);
-                    if(!responsePost.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
-                        Crashes.TrackError(new Exception("Ошибка при сохранении объекта Заявка технику"),
-                        new Dictionary<string,string> {
-                        {"ServerResponse",responsePost.Content.ReadAsStringAsync().Result },
-                        {"StatusCode",responsePost.StatusCode.ToString() },
-                        {"Response",responsePost.ToString() }
+                if(!string.IsNullOrEmpty(Latitude) && !string.IsNullOrEmpty(Longitude)) {
+                    using(HttpClient clientPost = new HttpClient(GetHttpClientHandler())) {
+                        var data = JsonConvert.SerializeObject(new ServiceOrderCoordinates() {
+                            SocId = Guid.NewGuid(),
+                            SocServiceOrderId = ServiceOrderFireAlarm.NewTest2Id,
+                            SocIncomeLatitude = Latitude,
+                            SocIncomeLongitude = Longitude
                         });
+                        StringContent content = new StringContent(data,Encoding.UTF8,"application/json");
+                        HttpResponseMessage responsePost = await clientPost.PostAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates",content);
+                        if(!responsePost.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
+                            Crashes.TrackError(new Exception("Ошибка при сохранении объекта Заявка технику"),
+                            new Dictionary<string,string> {
+                                {"ServerResponse",responsePost.Content.ReadAsStringAsync().Result },
+                                {"StatusCode",responsePost.StatusCode.ToString() },
+                                {"Response",responsePost.ToString() }
+                            });
+                        }
                     }
+                }
+                else {
+                    Crashes.TrackError(new Exception("Заявка на ПС. Пустые координаты"),
+                            new Dictionary<string,string> {
+                                { "PermissionStatus_StorageRead",CheckAndRequestPermissionAsync(new StorageRead()).Result.ToString() },
+                                { "PermissionStatus_LocationWhenInUse",CheckAndRequestPermissionAsync(new LocationWhenInUse()).Result.ToString() },
+                                { "PermissionStatus_NetworkState",CheckAndRequestPermissionAsync(new NetworkState()).Result.ToString() },
+                                { "PermissionStatus_Permissions.Camera",CheckAndRequestPermissionAsync(new Permissions.Camera()).Result.ToString() },
+                                { "PermissionStatus_StorageWrite",CheckAndRequestPermissionAsync(new StorageWrite()).Result.ToString() },
+                                { "Phone",Servicemans.First().NewPhone },
+                                { "Name",Servicemans.First().NewName },
+                                { "ID",ServiceOrderFireAlarm.NewTest2Id.ToString() }
+                            });
                 }
                 Opacity = 1;
                 IndicatorVisible = false;

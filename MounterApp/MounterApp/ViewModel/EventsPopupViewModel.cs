@@ -1,4 +1,5 @@
-﻿using Microsoft.AppCenter.Analytics;
+﻿using Android.Widget;
+using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using MounterApp.Helpers;
 using MounterApp.Model;
@@ -166,6 +167,8 @@ namespace MounterApp.ViewModel {
         private AsyncCommand _GetEventsCommands;
         public AsyncCommand GetEventsCommands {
             get => _GetEventsCommands ??= new AsyncCommand(async () => {
+                IndicatorVisible = true;
+                OpacityForm = 0.1;
                 Analytics.TrackEvent("Запрос событий по объекту",
                 new Dictionary<string,string> {
                     {"ServicemanPhone",Servicemans.First().NewPhone },
@@ -173,10 +176,15 @@ namespace MounterApp.ViewModel {
                     {"EndDate",EndDate.ToShortDateString() }
                 });
                 if(StartDate <= EndDate) {
-                    IndicatorVisible = true;
-                    OpacityForm = 0.1;
+                    //IndicatorVisible = true;
+                    //OpacityForm = 0.1;
                     Events.Clear();
                     string resp = null;
+                    //if(StartDate < DateTime.Now.AddHours(-7)) {
+                    if((EndDate-StartDate).TotalDays>7) {
+                        StartDate = EndDate.AddDays(-7.0);
+                        Toast.MakeText(Android.App.Application.Context,"Просмотр событий более чем за неделю, запрещен!",ToastLength.Long).Show();
+                    }
                     List<GetEventsReceivedFromObject_Result> _evnts = new List<GetEventsReceivedFromObject_Result>();
                     HttpResponseMessage response = null;
                     using(HttpClient client = new HttpClient(GetHttpClientHandler())) {

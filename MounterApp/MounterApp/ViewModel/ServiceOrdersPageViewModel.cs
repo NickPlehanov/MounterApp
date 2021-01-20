@@ -7,6 +7,8 @@ using MounterApp.Model;
 using MounterApp.Properties;
 using MounterApp.Views;
 using Newtonsoft.Json;
+using Rg.Plugins.Popup.Extensions;
+using Rg.Plugins.Popup.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -23,6 +25,14 @@ namespace MounterApp.ViewModel {
 
         }
         public ServiceOrdersPageViewModel(List<NewServicemanExtensionBase> _servicemans,List<NewMounterExtensionBase> _mounters) {
+            Category.Clear();
+            ServiceOrders.Clear();
+            ServiceOrdersByTime.Clear();
+            ServiceOrderByTransfer.Clear();
+            ServiceOrdersFireAlarm.Clear();
+            ServiceOrderByTransferFireAlarm.Clear();
+            ServiceOrdersByTimeFireAlarm.Clear();
+
             if(Date == DateTime.Parse("01.01.0001 00:00:00"))
                 Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
             Servicemans = _servicemans;
@@ -49,6 +59,7 @@ namespace MounterApp.ViewModel {
             RefreshImage = IconName("refresh");
             MapImage = IconName("map");
             TransferImage = IconName("transfer");
+            HelpImage = IconName("help");
             FrameColor = Color.Red;
             ArrowCircleServiceOrder = IconName("arrow_circle_down");
             ArrowCircleTransferServiceOrder = IconName("arrow_circle_down");
@@ -111,6 +122,14 @@ namespace MounterApp.ViewModel {
                 #endregion
             }
 
+        private ImageSource _HelpImage;
+        public ImageSource HelpImage {
+            get => _HelpImage;
+            set {
+                _HelpImage = value;
+                OnPropertyChanged(nameof(HelpImage));
+            }
+        }
         private double _Width;
         public double Width {
             get => _Width;
@@ -190,98 +209,11 @@ namespace MounterApp.ViewModel {
             }
         }
 
-        private RelayCommand _IncomeCommand;
-        public RelayCommand IncomeCommand {
-            get => _IncomeCommand ??= new RelayCommand(async obj => {
-                //if(obj != null) {
-                //    Analytics.TrackEvent("Заявка технику: вызов команды Пришел. Попытка получения координат",
-                //new Dictionary<string,string> {
-                //    {"ServiceOrderID",obj.ToString() },
-                //    {"Serviceman",Servicemans.FirstOrDefault().NewPhone}
-                //});
-                //    OpacityForm = 0.1;
-                //    IndicatorVisible = true;
-                //    Location location = await Geolocation.GetLastKnownLocationAsync();
-                //    if(location != null) {
-                //        Latitude = location.Latitude.ToString();
-                //        Longitude = location.Longitude.ToString();
-                //    }
-                //    Analytics.TrackEvent("Запрос данных на сервере (могло же что-то измениться",
-                //    new Dictionary<string,string> {
-                //    {"ServiceOrderID",obj.ToString() }
-                //    });
-                //    using HttpClient client = new HttpClient(GetHttpClientHandler());
-                //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/id?id=" + obj);
-                //    NewServiceorderExtensionBase soeb = null;
-                //    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                //        var resp = response.Content.ReadAsStringAsync().Result;
-                //        try {
-                //            soeb = JsonConvert.DeserializeObject<NewServiceorderExtensionBase>(resp);
-                //        }
-                //        catch(Exception ex) {
-                //            Crashes.TrackError(new Exception("Ошибка десериализации объекта заявка технику"),
-                //            new Dictionary<string,string> {
-                //        {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                //        {"ErrorMessage",ex.Message },
-                //        {"StatusCode",response.StatusCode.ToString() }
-                //            });
-                //        }
-                //    }
-                //    else
-                //        Crashes.TrackError(new Exception("Ошибка получения данных об объекте заявка технику с сервера"),
-                //        new Dictionary<string,string> {
-                //    {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                //    {"StatusCode",response.StatusCode.ToString() },
-                //    {"Response",response.ToString() }
-                //        });
-                //    if(soeb != null) {
-                //        Analytics.TrackEvent("Попытка записи данных на сервер по объекту заявка технику, заполняем поле Пришел",
-                //        new Dictionary<string,string> {
-                //        {"ServiceOrderID",obj.ToString() }
-                //        });
-                //        soeb.NewIncome = DateTime.Now.AddHours(-5);
-                //        using HttpClient clientPut = new HttpClient(GetHttpClientHandler());
-                //        var httpContent = new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json");
-                //        HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases",httpContent);
-                //        if(!responsePut.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
-                //            Crashes.TrackError(new Exception("Ошибка при сохранении объекта Заявка технику"),
-                //            new Dictionary<string,string> {
-                //        {"ServerResponse",responsePut.Content.ReadAsStringAsync().Result },
-                //        {"StatusCode",responsePut.StatusCode.ToString() },
-                //        {"Response",responsePut.ToString() }
-                //            });
-                //        }
-                //        else
-                //            Toast.MakeText(Android.App.Application.Context,"Время прихода записано",ToastLength.Long).Show();
-                //    }
-                //    //запишем координаты
-                //    Analytics.TrackEvent("Попытка записи координат на сервер по объекту заявка технику",
-                //        new Dictionary<string,string> {
-                //        {"ServiceOrderID",obj.ToString() }
-                //        });
-                //    using(HttpClient clientPost = new HttpClient(GetHttpClientHandler())) {
-                //        var data = JsonConvert.SerializeObject(new ServiceOrderCoordinates() {
-                //            SocId = Guid.NewGuid(),
-                //            SocServiceOrderId = Guid.Parse(obj.ToString()),
-                //            SocIncomeLatitude = Latitude,
-                //            SocIncomeLongitude = Longitude
-                //        });
-                //        StringContent content = new StringContent(data,Encoding.UTF8,"application/json");
-                //        HttpResponseMessage responsePost = await clientPost.PostAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates",content);
-                //        if(!responsePost.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
-                //            Crashes.TrackError(new Exception("Ошибка при сохранении объекта Заявка технику"),
-                //            new Dictionary<string,string> {
-                //        {"ServerResponse",responsePost.Content.ReadAsStringAsync().Result },
-                //        {"StatusCode",responsePost.StatusCode.ToString() },
-                //        {"Response",responsePost.ToString() }
-                //            });
-                //        }
-                //    }
-                //    OpacityForm = 1;
-                //    IndicatorVisible = false;
-                //}
-            });
-        }
+        //private RelayCommand _IncomeCommand;
+        //public RelayCommand IncomeCommand {
+        //    get => _IncomeCommand ??= new RelayCommand(async obj => {
+        //    });
+        //}
         private string _Latitude;
         public string Latitude {
             get => _Latitude;
@@ -346,6 +278,20 @@ namespace MounterApp.ViewModel {
         }
 
 
+        private RelayCommand _HelpCommand;
+        public RelayCommand HelpCommand {
+            get => _HelpCommand ??= new RelayCommand(async obj => {
+                string msg = " - Цвет рамки вокруг заявки, отражает от кого была получена заявка: Красный - ВИП-клиент, Желтый - клиент, Синий - сотрудник" + Environment.NewLine + Environment.NewLine +
+                " - Протаскивание заявки слева направо (свайп) позволяет построить маршрут до объекта, от Вашего местоположения" + Environment.NewLine + Environment.NewLine +
+                " - Если Вы видите только что закрытую заявку, попробуйте обновить страницу" + Environment.NewLine + Environment.NewLine +
+                " - В информации об ответсвенных лицах - свайп вправо позволяет позвонить по номеру указанному на карточке" + Environment.NewLine + Environment.NewLine +
+                " - В прошлых заявках по объекту - свайп вправо позволяет позвонить технику закрывшему заявку" + Environment.NewLine + Environment.NewLine +
+                " - В общей информации по заявкам - нажатия на такие поля как Название, Адрес, Подездные пути, Причина, Примечание - открывают дополнительное окно для просмотра информации" + Environment.NewLine + Environment.NewLine 
+                ;
+                HelpPopupViewModel vm = new HelpPopupViewModel(msg);
+                await App.Current.MainPage.Navigation.PushPopupAsync(new HelpPopupPage(vm));
+            });
+        }
         private AsyncCommand _GetCategoryTech;
         public AsyncCommand GetCategoryTech {
             get => _GetCategoryTech ??= new AsyncCommand(async () => {
@@ -457,6 +403,9 @@ namespace MounterApp.ViewModel {
         private RelayCommand _RefreshOrdersCommand;
         public RelayCommand RefreshOrdersCommand {
             get => _RefreshOrdersCommand ??= new RelayCommand(async obj => {
+                //ActivityIndicatorViewModel vm = new ActivityIndicatorViewModel(false);
+                //await App.Current.MainPage.Navigation.PushModalAsync(new ActivityIndicatorPopupPage(vm));
+
                 await GetCategoryTech.ExecuteAsync(Category);
                 await GetServiceOrders.ExecuteAsync(Servicemans);
                 await GetServiceOrderByTransfer.ExecuteAsync(Servicemans);
@@ -478,6 +427,9 @@ namespace MounterApp.ViewModel {
                             await GetServiceOrdersFireAlarm.ExecuteAsync(null);
                         }
                     }
+                //vm = new ActivityIndicatorViewModel(false);
+                //await App.Current.MainPage.Navigation.PushModalAsync(new ActivityIndicatorPopupPage(vm));
+                //await PopupNavigation.Instance.PushAsync(new ActivityIndicatorPopupPage(vm));
             });
         }
         private AsyncCommand _GetServiceOrders;
@@ -495,12 +447,12 @@ namespace MounterApp.ViewModel {
                     if(Date == DateTime.Parse("01.01.0001 00:00:00"))
                         Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
                     using HttpClient client = new HttpClient(GetHttpClientHandler());
-                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByUser?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
-                    List<NewServiceorderExtensionBase> _serviceorders = new List<NewServiceorderExtensionBase>();
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByUserNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
+                    List<NewServiceorderExtensionBase_ex> _serviceorders = new List<NewServiceorderExtensionBase_ex>();
                     if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
                         var resp = response.Content.ReadAsStringAsync().Result;
                         try {
-                            _serviceorders = JsonConvert.DeserializeObject<List<NewServiceorderExtensionBase>>(resp).ToList();
+                            _serviceorders = JsonConvert.DeserializeObject<List<NewServiceorderExtensionBase_ex>>(resp).ToList();
                         }
                         catch(Exception ex) {
                             _serviceorders = null;
@@ -529,7 +481,7 @@ namespace MounterApp.ViewModel {
                             ServiceOrders.Clear();
                         if(ServiceOrdersByTime != null)
                             ServiceOrdersByTime.Clear();
-                        foreach(NewServiceorderExtensionBase item in _serviceorders) {
+                        foreach(NewServiceorderExtensionBase_ex item in _serviceorders) {
                             if(string.IsNullOrEmpty(item.NewTime))
                                 ServiceOrders.Add(item);
                             else
@@ -560,12 +512,12 @@ namespace MounterApp.ViewModel {
                     if(Date == DateTime.Parse("01.01.0001 00:00:00"))
                         Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
                     using HttpClient client = new HttpClient(GetHttpClientHandler());
-                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceOrderForFireAlarmExtensionBase/ServiceOrderByUser?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
-                    List<NewTest2ExtensionBase> _serviceorders = new List<NewTest2ExtensionBase>();
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceOrderForFireAlarmExtensionBase/ServiceOrderByUserNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
+                    List<NewTest2ExtensionBase_ex> _serviceorders = new List<NewTest2ExtensionBase_ex>();
                     if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
                         var resp = response.Content.ReadAsStringAsync().Result;
                         try {
-                            _serviceorders = JsonConvert.DeserializeObject<List<NewTest2ExtensionBase>>(resp).ToList();
+                            _serviceorders = JsonConvert.DeserializeObject<List<NewTest2ExtensionBase_ex>>(resp).ToList();
                         }
                         catch(Exception ex) {
                             _serviceorders = null;
@@ -594,7 +546,7 @@ namespace MounterApp.ViewModel {
                             ServiceOrdersFireAlarm.Clear();
                         if(ServiceOrdersByTimeFireAlarm != null)
                             ServiceOrdersByTimeFireAlarm.Clear();
-                        foreach(NewTest2ExtensionBase item in _serviceorders) {
+                        foreach(NewTest2ExtensionBase_ex item in _serviceorders) {
                             if(string.IsNullOrEmpty(item.NewTime))
                                 ServiceOrdersFireAlarm.Add(item);
                             else
@@ -622,47 +574,48 @@ namespace MounterApp.ViewModel {
                         {"Serviceman",Servicemans.FirstOrDefault().NewPhone },
                         {"Date",Date.ToString() }
                     });
+                    List<NewServiceorderExtensionBase_ex> _serviceorders = new List<NewServiceorderExtensionBase_ex>();
                     ///api/NewServiceorderExtensionBases/ServiceOrderByUser?usr_ID=FEF46B07-8D7A-E311-920A-00155D01051D&date=18.11.2020
                     if(Date == DateTime.Parse("01.01.0001 00:00:00"))
                         Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
-                    using HttpClient client = new HttpClient(GetHttpClientHandler());
-                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByUserTransferReason?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
-                    List<NewServiceorderExtensionBase> _serviceorders = new List<NewServiceorderExtensionBase>();
-                    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                        var resp = response.Content.ReadAsStringAsync().Result;
-                        try {
-                            _serviceorders = JsonConvert.DeserializeObject<List<NewServiceorderExtensionBase>>(resp).ToList();
-                        }
-                        catch(Exception ex) {
-                            _serviceorders = null;
-                            Crashes.TrackError(new Exception("Ошибка десериализации результата запроса(Заявки технику - переносы)"),
-                            new Dictionary<string,string> {
+                    using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                        HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByUserTransferReasonNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
+                        if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                            var resp = response.Content.ReadAsStringAsync().Result;
+                            try {
+                                _serviceorders = JsonConvert.DeserializeObject<List<NewServiceorderExtensionBase_ex>>(resp).ToList();
+                            }
+                            catch(Exception ex) {
+                                _serviceorders = null;
+                                Crashes.TrackError(new Exception("Ошибка десериализации результата запроса(Заявки технику - переносы)"),
+                                new Dictionary<string,string> {
                                 {"Servicemans",Servicemans.First().NewPhone },
                                 {"ServerResponse",response.Content.ReadAsStringAsync().Result },
                                 {"ErrorMessage",ex.Message },
                                 {"StatusCode",response.StatusCode.ToString() },
                                 {"Response",response.ToString() }
-                            });
+                                });
+                            }
                         }
-                    }
-                    else {
-                        _serviceorders = null;
-                        Crashes.TrackError(new Exception("Ошибка запроса(Заявки технику - переносы)"),
-                        new Dictionary<string,string> {
+                        else {
+                            _serviceorders = null;
+                            Crashes.TrackError(new Exception("Ошибка запроса(Заявки технику - переносы)"),
+                            new Dictionary<string,string> {
                                 {"Servicemans",Servicemans.First().NewPhone },
                                 {"ServerResponse",response.Content.ReadAsStringAsync().Result },
                                 {"StatusCode",response.StatusCode.ToString() },
                                 {"Response",response.ToString() }
-                        });
+                            });
+                        }
                     }
                     if(_serviceorders != null) {
                         if(ServiceOrderByTransfer != null)
                             ServiceOrderByTransfer.Clear();
-                        foreach(NewServiceorderExtensionBase item in _serviceorders) {
+                        foreach(NewServiceorderExtensionBase_ex item in _serviceorders) {
                             ServiceOrderByTransfer.Add(item);
                         }
                         TransferServiceOrder = "Перенесенные (" + ServiceOrderByTransfer.Count.ToString() + ")";
-                        TransferServiceOrderVisible = ServiceOrderByTransfer.Count > 0 ? true : false;
+                        TransferServiceOrderVisible = ServiceOrderByTransfer.Count > 0;
                     }
                 }
                 IndicatorVisible = false;
@@ -684,12 +637,12 @@ namespace MounterApp.ViewModel {
                     if(Date == DateTime.Parse("01.01.0001 00:00:00"))
                         Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
                     using HttpClient client = new HttpClient(GetHttpClientHandler());
-                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceOrderForFireAlarmExtensionBase/ServiceOrderByUserTransferReason?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
-                    List<NewTest2ExtensionBase> _serviceorders = new List<NewTest2ExtensionBase>();
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceOrderForFireAlarmExtensionBase/ServiceOrderByUserTransferReasonNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
+                    List<NewTest2ExtensionBase_ex> _serviceorders = new List<NewTest2ExtensionBase_ex>();
                     if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
                         var resp = response.Content.ReadAsStringAsync().Result;
                         try {
-                            _serviceorders = JsonConvert.DeserializeObject<List<NewTest2ExtensionBase>>(resp).ToList();
+                            _serviceorders = JsonConvert.DeserializeObject<List<NewTest2ExtensionBase_ex>>(resp).ToList();
                         }
                         catch(Exception ex) {
                             _serviceorders = null;
@@ -716,7 +669,7 @@ namespace MounterApp.ViewModel {
                     if(_serviceorders != null) {
                         if(ServiceOrderByTransferFireAlarm != null)
                             ServiceOrderByTransferFireAlarm.Clear();
-                        foreach(NewTest2ExtensionBase item in _serviceorders) {
+                        foreach(NewTest2ExtensionBase_ex item in _serviceorders) {
                             ServiceOrderByTransferFireAlarm.Add(item);
                         }
                         FireAlarmTransferServiceOrderText = "Перенесенные(пс) (" + ServiceOrderByTransferFireAlarm.Count.ToString() + ")";
@@ -937,8 +890,8 @@ namespace MounterApp.ViewModel {
         }
         #endregion
 
-        private NewServiceorderExtensionBase _ServiceOrder;
-        public NewServiceorderExtensionBase ServiceOrder {
+        private NewServiceorderExtensionBase_ex _ServiceOrder;
+        public NewServiceorderExtensionBase_ex ServiceOrder {
             get => _ServiceOrder;
             set {
                 _ServiceOrder = value;
@@ -946,8 +899,8 @@ namespace MounterApp.ViewModel {
             }
         }
 
-        private NewTest2ExtensionBase _ServiceOrderFireAlarm;
-        public NewTest2ExtensionBase ServiceOrderFireAlarm {
+        private NewTest2ExtensionBase_ex _ServiceOrderFireAlarm;
+        public NewTest2ExtensionBase_ex ServiceOrderFireAlarm {
             get => _ServiceOrderFireAlarm;
             set {
                 _ServiceOrderFireAlarm = value;
@@ -955,8 +908,8 @@ namespace MounterApp.ViewModel {
             }
         }
 
-        private ObservableCollection<NewServiceorderExtensionBase> _ServiceOrders = new ObservableCollection<NewServiceorderExtensionBase>();
-        public ObservableCollection<NewServiceorderExtensionBase> ServiceOrders {
+        private ObservableCollection<NewServiceorderExtensionBase_ex> _ServiceOrders = new ObservableCollection<NewServiceorderExtensionBase_ex>();
+        public ObservableCollection<NewServiceorderExtensionBase_ex> ServiceOrders {
             get => _ServiceOrders;
             set {
                 _ServiceOrders = value;
@@ -964,16 +917,16 @@ namespace MounterApp.ViewModel {
             }
         }
 
-        private ObservableCollection<NewServiceorderExtensionBase> _ServiceOrderByTransfer = new ObservableCollection<NewServiceorderExtensionBase>();
-        public ObservableCollection<NewServiceorderExtensionBase> ServiceOrderByTransfer {
+        private ObservableCollection<NewServiceorderExtensionBase_ex> _ServiceOrderByTransfer = new ObservableCollection<NewServiceorderExtensionBase_ex>();
+        public ObservableCollection<NewServiceorderExtensionBase_ex> ServiceOrderByTransfer {
             get => _ServiceOrderByTransfer;
             set {
                 _ServiceOrderByTransfer = value;
                 OnPropertyChanged(nameof(ServiceOrderByTransfer));
             }
         }
-        private ObservableCollection<NewServiceorderExtensionBase> _ServiceOrdersByTime = new ObservableCollection<NewServiceorderExtensionBase>();
-        public ObservableCollection<NewServiceorderExtensionBase> ServiceOrdersByTime {
+        private ObservableCollection<NewServiceorderExtensionBase_ex> _ServiceOrdersByTime = new ObservableCollection<NewServiceorderExtensionBase_ex>();
+        public ObservableCollection<NewServiceorderExtensionBase_ex> ServiceOrdersByTime {
             get => _ServiceOrdersByTime;
             set {
                 _ServiceOrdersByTime = value;
@@ -981,8 +934,8 @@ namespace MounterApp.ViewModel {
             }
         }
 
-        private ObservableCollection<NewTest2ExtensionBase> _ServiceOrdersByTimeFireAlarm = new ObservableCollection<NewTest2ExtensionBase>();
-        public ObservableCollection<NewTest2ExtensionBase> ServiceOrdersByTimeFireAlarm {
+        private ObservableCollection<NewTest2ExtensionBase_ex> _ServiceOrdersByTimeFireAlarm = new ObservableCollection<NewTest2ExtensionBase_ex>();
+        public ObservableCollection<NewTest2ExtensionBase_ex> ServiceOrdersByTimeFireAlarm {
             get => _ServiceOrdersByTimeFireAlarm;
             set {
                 _ServiceOrdersByTimeFireAlarm = value;
@@ -990,8 +943,8 @@ namespace MounterApp.ViewModel {
             }
         }
 
-        private ObservableCollection<NewTest2ExtensionBase> _ServiceOrdersFireAlarm = new ObservableCollection<NewTest2ExtensionBase>();
-        public ObservableCollection<NewTest2ExtensionBase> ServiceOrdersFireAlarm {
+        private ObservableCollection<NewTest2ExtensionBase_ex> _ServiceOrdersFireAlarm = new ObservableCollection<NewTest2ExtensionBase_ex>();
+        public ObservableCollection<NewTest2ExtensionBase_ex> ServiceOrdersFireAlarm {
             get => _ServiceOrdersFireAlarm;
             set {
                 _ServiceOrdersFireAlarm = value;
@@ -999,8 +952,8 @@ namespace MounterApp.ViewModel {
             }
         }
 
-        private ObservableCollection<NewTest2ExtensionBase> _ServiceOrderByTransferFireAlarm = new ObservableCollection<NewTest2ExtensionBase>();
-        public ObservableCollection<NewTest2ExtensionBase> ServiceOrderByTransferFireAlarm {
+        private ObservableCollection<NewTest2ExtensionBase_ex> _ServiceOrderByTransferFireAlarm = new ObservableCollection<NewTest2ExtensionBase_ex>();
+        public ObservableCollection<NewTest2ExtensionBase_ex> ServiceOrderByTransferFireAlarm {
             get => _ServiceOrderByTransferFireAlarm;
             set {
                 _ServiceOrderByTransferFireAlarm = value;

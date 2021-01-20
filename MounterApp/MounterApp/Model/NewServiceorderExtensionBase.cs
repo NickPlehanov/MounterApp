@@ -65,23 +65,19 @@ namespace MounterApp.Model {
         public bool? NewAutoset { get; set; }
         public string NewHistoryButton { get; set; }
         //private string _FullName;
-        [NotMapped]
-        public string FullName {
-            get => NewNumber + Environment.NewLine + NewObjName + Environment.NewLine + NewAddress;
-            //set {
-            //    _FullName = value;
-            //}
-        }
-        [NotMapped]
-        public string FullInfo {
-            get {
-                if(NewDate.HasValue)
-                    return string.Format("Дата: {0} {1} "+Environment.NewLine+"Причина: {2}",NewDate.Value.ToShortDateString(),NewTime,string.IsNullOrEmpty(NewName) ? "<не указана>" : NewName);
-                //return NewDate.Value.ToShortDateString()+" " + NewName;
-                else
-                    return string.Format("Дата: <не указана>" + Environment.NewLine + " Причина: {0}",string.IsNullOrEmpty(NewName) ? "<не указана>" : NewName);
-            }
-        }
+        //[NotMapped]
+        //public string FullName {
+        //    get => NewNumber + Environment.NewLine + NewObjName + Environment.NewLine + NewAddress;
+        //}
+        //[NotMapped]
+        //public string FullInfo {
+        //    get {
+        //        if(NewDate.HasValue)
+        //            return string.Format("Дата: {0} {1} "+Environment.NewLine+"Причина: {2}",NewDate.Value.ToShortDateString(),NewTime,string.IsNullOrEmpty(NewName) ? "<не указана>" : NewName);
+        //        else
+        //            return string.Format("Дата: <не указана>" + Environment.NewLine + " Причина: {0}",string.IsNullOrEmpty(NewName) ? "<не указана>" : NewName);
+        //    }
+        //}
         [NotMapped]
         public Color ColorOrder {
             get {
@@ -96,6 +92,23 @@ namespace MounterApp.Model {
             }
         }
         [NotMapped]
+        public Color FrameColor {
+            get {
+                if(NewOrderFrom.HasValue) {
+                    if(NewOrderFrom.Value == 1)//ВИП клиент
+                        return Color.Red;
+                    else if(NewOrderFrom.Value == 2)//Клиент
+                        return Color.Yellow;
+                    else if(NewOrderFrom.Value == 3)//Сотрудник витязя
+                        return Color.Blue;
+                    else
+                        return Color.FromArgb(51,37,97);
+                }
+                else
+                    return Color.FromArgb(51,37,97);
+            }
+        }
+        [NotMapped]
         public string ControlTime { get; set; }
 
         public virtual NewAndromedaBase NewAndromedaServiceorderNavigation { get; set; }
@@ -103,5 +116,10 @@ namespace MounterApp.Model {
         public virtual NewServicemanBase NewServicemanServiceorderNavigation { get; set; }
         public virtual NewServiceorderBase NewServiceorder { get; set; }
         public virtual NewServicemanBase NewTechniqueEndNavigation { get; set; }
+    }
+    public class NewServiceorderExtensionBase_ex : NewServiceorderExtensionBase {
+        public string ServicemanInfo { get; set; }
+        public string ServiceOrderInfo { get; set; }
+        public string HeaderServiceOrder { get; set; }
     }
 }

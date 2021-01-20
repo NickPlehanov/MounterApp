@@ -4,12 +4,12 @@
     <ContentPage.Resources>
         <vm:MountsViewModel x:Key="vm"/>
     </ContentPage.Resources>
-    <StackLayout Opacity="{Binding Opacity}" Style="{StaticResource CommonStackLayoutStyle}">
+    <StackLayout Opacity="{Binding Opacity}" Style="{DynamicResource CommonStackLayoutStyle}">
         <Expander Grid.Row="0" IsExpanded="{Binding GoogleMountsExpander}">
             <Expander.Header>
-                <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding GoogleMountsExpanderCommand}" Text="{Binding HeaderGoogle}" ImageSource="{Binding ArrowCircleGoogle}"/>
+                <Button Style="{DynamicResource CommonButtonStyle}" Command="{Binding GoogleMountsExpanderCommand}" Text="{Binding HeaderGoogle}" ImageSource="{Binding ArrowCircleGoogle}"/>
             </Expander.Header>
-            <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
+            <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
                 <StackLayout.GestureRecognizers>
                     <SwipeGestureRecognizer Direction="Up" Command="{Binding OpenOrdersForItPageCommand}"/>
                 </StackLayout.GestureRecognizers>
@@ -22,9 +22,9 @@
                     </CollectionView.ItemsLayout>
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Frame Style="{StaticResource FrameServiceOrderStyle}">
+                            <Frame Style="{DynamicResource FrameServiceOrderStyle}">
                                 <Frame.Content>
-                                    <Label Text="{Binding Path=FullInfo}" Style="{StaticResource MountersLabelStyle}">
+                                    <Label Text="{Binding Path=FullInfo}" Style="{DynamicResource MountersLabelStyle}">
                                         <Label.GestureRecognizers>
                                             <TapGestureRecognizer NumberOfTapsRequired="1" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MountsViewModel}}, Path=SelectMountCommand}" CommandParameter="{Binding Path=id}"/>
                                          </Label.GestureRecognizers>
@@ -38,9 +38,9 @@
         </Expander>
         <Expander Grid.Row="1" IsExpanded="{Binding NotSendedMountsExpander}">
             <Expander.Header>
-                <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding NotSendedMountsExpanderCommand}" ImageSource="{Binding ArrowCircleNotSended}" Text="{Binding HeaderNotSended}"/>
+                <Button Style="{DynamicResource CommonButtonStyle}" Command="{Binding NotSendedMountsExpanderCommand}" ImageSource="{Binding ArrowCircleNotSended}" Text="{Binding HeaderNotSended}"/>
             </Expander.Header>
-            <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
+            <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
                 <CollectionView Margin="5" 
                                 ItemsSource="{Binding NotSendedMounts}" SelectionMode="Single" 
                                     SelectedItem="{Binding NotSendedMount}"
@@ -51,13 +51,13 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <StackLayout>
-                                <SwipeView Style="{StaticResource SwipeViewStyle}">
+                                <SwipeView Style="{DynamicResource SwipeViewStyle}">
                                     <SwipeView.LeftItems>
                                         <SwipeItems Mode="Execute">
                                             <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MountsViewModel}}, Path=DeleteNotSendedMountCommand}"
                                                    CommandParameter="{Binding Path=ID}">
                                                 <Grid>
-                                                    <Button Style="{StaticResource SwipeDeleteButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:MountsViewModel}}, Path=DeleteImage}"/>
+                                                    <Button Style="{DynamicResource SwipeDeleteButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:MountsViewModel}}, Path=DeleteImage}"/>
                                                 </Grid>
                                             </SwipeItemView>
                                         </SwipeItems>
@@ -67,14 +67,14 @@
                                             <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MountsViewModel}}, Path=SelectMountCommand}"
                                                    CommandParameter="{Binding Path=ID}">
                                                 <Grid>
-                                                    <Button Style="{StaticResource SwipeOpenButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:MountsViewModel}}, Path=SelectMountCommand}"/>
+                                                    <Button Style="{DynamicResource SwipeOpenButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:MountsViewModel}}, Path=SelectMountCommand}"/>
                                                 </Grid>
                                             </SwipeItemView>
                                         </SwipeItems>
                                     </SwipeView.RightItems>
-                                    <Frame Style="{StaticResource FrameServiceOrderStyle}">
+                                    <Frame Style="{DynamicResource FrameServiceOrderStyle}">
                                         <Frame.Content>
-                                            <Label Text="{Binding Path=NotSendedCompositeName}" Style="{StaticResource MountersLabelStyle}">
+                                            <Label Text="{Binding Path=NotSendedCompositeName}" Style="{DynamicResource MountersLabelStyle}">
                                                 <Label.GestureRecognizers>
                                                     <TapGestureRecognizer NumberOfTapsRequired="1" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MountsViewModel}}, Path=SelectMountCommand}" CommandParameter="{Binding Path=ID}"/>
                                                     </Label.GestureRecognizers>
@@ -91,9 +91,9 @@
         </Expander>
         <Expander IsExpanded="{Binding HistoryMountsExpander}">
             <Expander.Header>
-                <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding HistoryMountsExpanderCommand}" ImageSource="{Binding ArrowCircleHistory}" Text="{Binding HeaderHistory}"/>
+                <Button Style="{DynamicResource CommonButtonStyle}" Command="{Binding HistoryMountsExpanderCommand}" ImageSource="{Binding ArrowCircleHistory}" Text="{Binding HeaderHistory}"/>
             </Expander.Header>
-            <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
+            <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
                 <CollectionView Margin="5"
                              ItemsSource="{Binding HistoryMounts}" SelectionMode="Single"
                                 SelectedItem="{Binding HistoryMount}" >
@@ -102,9 +102,9 @@
                     </CollectionView.ItemsLayout>
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Frame Style="{StaticResource FrameServiceOrderStyle}">
+                            <Frame Style="{DynamicResource FrameServiceOrderStyle}">
                                 <Frame.Content>
-                                    <Label Style="{StaticResource MountersLabelStyle}" Text="{Binding Path=CompositeName}"/>
+                                    <Label Style="{DynamicResource MountersLabelStyle}" Text="{Binding Path=CompositeName}"/>
                                 </Frame.Content>
                             </Frame>
                         </DataTemplate>
@@ -112,6 +112,6 @@
                 </CollectionView>
             </StackLayout>
         </Expander>
-        <Button Style="{StaticResource CommonButtonStyle}" Margin="10" BackgroundColor="#F35429" VerticalOptions="EndAndExpand" Grid.Row="1" Text="Новый монтаж" Command="{Binding NewMountCommand}" />
+        <Button Grid.Row="1" Style="{DynamicResource CommonButtonStyle}" Margin="10" BackgroundColor="#F35429" VerticalOptions="EndAndExpand" Text="Новый монтаж" Command="{Binding NewMountCommand}" />
     </StackLayout>
 </ContentPage>

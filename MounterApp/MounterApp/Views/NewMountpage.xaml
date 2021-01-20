@@ -1,7 +1,7 @@
 ﻿<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
              x:Class="MounterApp.Views.NewMountpage">
-    <Grid Style="{StaticResource CommonGridStyle}">
+    <Grid Style="{DynamicResource CommonGridStyle}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -11,21 +11,21 @@
         </Grid.RowDefinitions>
         <Expander Opacity="{Binding Opacity}" Grid.Row="0" IsExpanded="True">
             <Expander.Header>
-                <Label Style="{StaticResource HeaderLabelStyle}" Text="Информация об объекте"/>
+                <Label Style="{DynamicResource HeaderLabelStyle}" Text="Информация об объекте"/>
             </Expander.Header>
             <StackLayout>
-                <Label Style="{StaticResource CommonLabelStyle}" Text="{Binding GoogleComment, Mode=TwoWay}" IsVisible="{Binding VisibleGoogleComment}" FontAttributes="Italic"/>
-                <Label Text="№ объекта" HorizontalOptions="Center" Style="{StaticResource MountersLabelStyle}"/>
-                <Entry Style="{StaticResource EntryStyle}" Keyboard="Numeric" Text="{Binding ObjectNumber, Mode=TwoWay}"/>
-                <Label Text="Название объекта" HorizontalOptions="Center" Style="{StaticResource MountersLabelStyle}"/>
-                <Entry Style="{StaticResource EntryStyle}" Keyboard="Text" Text="{Binding ObjectName, Mode=TwoWay}"/>
-                <Label Text="Адрес объекта" HorizontalOptions="Center" Style="{StaticResource MountersLabelStyle}"/>
-                <Entry Style="{StaticResource EntryStyle}" Keyboard="Text" Text="{Binding ObjectAddress}"/>
-                <Label Text="Подъездные пути" HorizontalOptions="Center" Style="{StaticResource MountersLabelStyle}"/>
-                <Entry Style="{StaticResource EntryStyle}" Keyboard="Text" Text="{Binding ObjectDriveways}" />
+                <Label Style="{DynamicResource CommonLabelStyle}" Text="{Binding GoogleComment, Mode=TwoWay}" IsVisible="{Binding VisibleGoogleComment}" FontAttributes="Italic"/>
+                <Label Text="№ объекта" HorizontalOptions="Center" Style="{DynamicResource MountersLabelStyle}"/>
+                <Entry Style="{DynamicResource EntryStyle}" Keyboard="Numeric" Text="{Binding ObjectNumber, Mode=TwoWay}"/>
+                <Label Text="Название объекта" HorizontalOptions="Center" Style="{DynamicResource MountersLabelStyle}"/>
+                <Entry Style="{DynamicResource EntryStyle}" Keyboard="Text" Text="{Binding ObjectName, Mode=TwoWay}"/>
+                <Label Text="Адрес объекта" HorizontalOptions="Center" Style="{DynamicResource MountersLabelStyle}"/>
+                <Entry Style="{DynamicResource EntryStyle}" Keyboard="Text" Text="{Binding ObjectAddress}"/>
+                <Label Text="Подъездные пути" HorizontalOptions="Center" Style="{DynamicResource MountersLabelStyle}"/>
+                <Entry Style="{DynamicResource EntryStyle}" Keyboard="Text" Text="{Binding ObjectDriveways}" />
             </StackLayout>
         </Expander>
-        <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding PhotoImage}" Opacity="{Binding Opacity}" Grid.Row="1" Text="Фото объекта" Command="{Binding TakePhotoCommand}"/>
+        <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding PhotoImage}" Opacity="{Binding Opacity}" Grid.Row="1" Text="Фото объекта" Command="{Binding TakePhotoCommand}"/>
         <CollectionView Opacity="{Binding Opacity}" Grid.Row="2" Margin="5"
                                 ItemsSource="{Binding Photos}" SelectionMode="Single" 
                                 SelectionChangedCommand="{Binding DeleteCommand, Mode=TwoWay}"
@@ -37,18 +37,18 @@
                 <DataTemplate>
                     <RelativeLayout Opacity="{Binding Opacity}">
                         <Image Source="{Binding Path=ImgSrc}" Margin="5"/>
-                        <Label Style="{StaticResource CommonLabelStyle}" Text="{Binding Path=_Types.PhotoTypeName}" VerticalTextAlignment="Center"/>
+                        <Label Style="{DynamicResource CommonLabelStyle}" Text="{Binding Path=_Types.PhotoTypeName}" VerticalTextAlignment="Center"/>
                     </RelativeLayout>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
         <StackLayout Opacity="{Binding Opacity}" Grid.Row="3">
-            <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding SaveImage}" Text="Сохранить данные" Command="{Binding SaveToDB, Mode=TwoWay}"/>
-            <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding SendImage}" Text="Отправить данные" Command="{Binding SendToServer, Mode=TwoWay}"/>
+            <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding SaveImage}" Text="Сохранить данные" Command="{Binding SaveToDB, Mode=TwoWay}"/>
+            <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding SendImage}" Text="Отправить данные" Command="{Binding SendToServer, Mode=TwoWay}"/>
         </StackLayout>
-        <StackLayout Style="{StaticResource ActivityIndicatorStackLayoutStyle}" Opacity="1" Grid.Row="3" IsVisible="{Binding IndicatorVisible}">
-            <ActivityIndicator Style="{StaticResource ActivityIndicatorStyle}"/>
-            <Label Style="{StaticResource ActivityIndicatorLabelStyle}" Text="{Binding IndicatorText}"/>
+        <StackLayout Style="{DynamicResource ActivityIndicatorStackLayoutStyle}" Opacity="1" Grid.Row="3" IsVisible="{Binding IndicatorVisible}">
+            <ActivityIndicator Style="{DynamicResource ActivityIndicatorStyle}"/>
+            <Label Style="{DynamicResource ActivityIndicatorLabelStyle}" Text="{Binding IndicatorText}"/>
         </StackLayout>
     </Grid>
 </ContentPage>

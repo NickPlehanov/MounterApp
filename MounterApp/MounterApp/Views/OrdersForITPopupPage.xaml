@@ -4,11 +4,11 @@
                   CloseWhenBackgroundIsClicked="True"
                  BackgroundClicked="PopupPage_BackgroundClicked">
     <popup:PopupPage.Content>
-        <Frame Style="{StaticResource PopupFrameStyle}">
-            <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
-                <Label Style="{StaticResource CommonLabelStyle}" Text="Опишите проблему(пожелание) точнее"/>
-                <Entry Text="{Binding DescriptionProblem}" Style="{StaticResource EntryStyle}"/>
-                <Button ImageSource="{Binding CloseOrSendImage}" Style="{StaticResource CommonButtonStyle}" Text="{Binding TextButton,Mode=TwoWay}" Command="{Binding ChooseCommand}"/>
+        <Frame Style="{DynamicResource PopupFrameStyle}">
+            <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
+                <Label Style="{DynamicResource CommonLabelStyle}" Text="Опишите проблему(пожелание) точнее"/>
+                <Entry Text="{Binding DescriptionProblem}" Style="{DynamicResource EntryStyle}"/>
+                <Button ImageSource="{Binding CloseOrSendImage}" Style="{DynamicResource CommonButtonStyle}" Text="{Binding TextButton,Mode=TwoWay}" Command="{Binding ChooseCommand}"/>
             </StackLayout>
         </Frame>
     </popup:PopupPage.Content>

@@ -3,135 +3,148 @@
              xmlns:vm="clr-namespace:MounterApp.ViewModel"
              x:Class="MounterApp.Views.ServiceOrdersPage">
     <ContentPage.Resources>
-        <vm:ServiceOrdersPageViewModel x:Key="vm"/>        
+        <vm:ServiceOrdersPageViewModel x:Key="vm"/>
     </ContentPage.Resources>
     <ContentPage.Content>
-        <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
+        <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
             <StackLayout.GestureRecognizers>
                 <SwipeGestureRecognizer Direction="Up" Command="{Binding RefreshOrdersCommand}" />
             </StackLayout.GestureRecognizers>
             <StackLayout Grid.Row="0"  Margin="5" Opacity="{Binding OpacityForm}" >
-                <DatePicker Date="{Binding Date, Mode=TwoWay}" HorizontalOptions="Center" Style="{StaticResource DatePickerStyle}"/>
-                <Button Style="{StaticResource ServiceOrderHeaderStyle}" ImageSource="{Binding RefreshImage}" Text="Обновить" Command="{Binding RefreshOrdersCommand}"/>
+                <Grid HorizontalOptions="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <DatePicker Grid.Column="1"  Date="{Binding Date, Mode=TwoWay}" HorizontalOptions="Center" Style="{DynamicResource DatePickerStyle}"/>
+                    <Image Grid.Column="2" Aspect="AspectFit" Source="{Binding HelpImage}">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding HelpCommand}"/>
+                        </Image.GestureRecognizers>
+                    </Image>
+                    <!--<Button ImageSource="{Binding HelpImage}"/>-->
+                </Grid>
+                <Button Style="{DynamicResource ServiceOrderHeaderStyle}" ImageSource="{Binding RefreshImage}" Text="Обновить" Command="{Binding RefreshOrdersCommand}"/>
             </StackLayout>
-                <Expander IsVisible="{Binding TransferServiceOrderVisible}" Grid.Row="0" Opacity="{Binding OpacityForm}" IsExpanded="{Binding TransferServiceOrderExpanded}">
-                        <Expander.Header>
-                            <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding TransferServiceOrderExpanderCommand}" Text="{Binding TransferServiceOrder}" ImageSource="{Binding ArrowCircleTransferServiceOrder}" />
-                        </Expander.Header>
-                        <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
-                            <CollectionView Margin="5" ItemsSource="{Binding ServiceOrderByTransfer}" SelectionMode="Single" 
+            <Expander IsVisible="{Binding TransferServiceOrderVisible}" Grid.Row="0" Opacity="{Binding OpacityForm}" IsExpanded="{Binding TransferServiceOrderExpanded}">
+                <Expander.Header>
+                    <Button Style="{DynamicResource CommonButtonStyle}" Command="{Binding TransferServiceOrderExpanderCommand}" Text="{Binding TransferServiceOrder}" ImageSource="{Binding ArrowCircleTransferServiceOrder}" />
+                </Expander.Header>
+                <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
+                    <CollectionView Margin="5" ItemsSource="{Binding ServiceOrderByTransfer}" SelectionMode="Single" 
                                 SelectionChangedCommand="{Binding SelectServiceOrderCommand, Mode=TwoWay}"
                                 SelectedItem="{Binding ServiceOrder}">
-                                <CollectionView.ItemsLayout>
-                                    <GridItemsLayout Orientation="Vertical" />
-                                </CollectionView.ItemsLayout>
-                                <CollectionView.ItemTemplate>
-                                    <DataTemplate>
-                                <SwipeView Style="{StaticResource SwipeViewStyle}">
-                                            <SwipeView.LeftItems>
-                                                <SwipeItems Mode="Execute">
-                                                    <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Vertical" />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <SwipeView Style="{DynamicResource SwipeViewStyle}">
+                                    <SwipeView.LeftItems>
+                                        <SwipeItems Mode="Execute">
+                                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
                                                    CommandParameter="{Binding Path=NewNumber}">
-                                                        <Grid>
-                                                    <Button Style="{StaticResource SwipeNavigationButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
-                                                        </Grid>
-                                                    </SwipeItemView>
-                                                </SwipeItems>
-                                            </SwipeView.LeftItems>
-                                    <Frame Style="{StaticResource FrameServiceOrderStyle}">
-                                                <Frame.Content>
-                                                    <StackLayout>
-                                                        <Label TextColor="{Binding Path=ColorOrder}" Text="{Binding Path=FullName}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
-                                                    </StackLayout>
-                                                </Frame.Content>
-                                            </Frame>
-                                        </SwipeView>
-                                    </DataTemplate>
-                                </CollectionView.ItemTemplate>
-                            </CollectionView>
-                        </StackLayout>
-                    </Expander>
+                                                <Grid>
+                                                    <Button Style="{DynamicResource SwipeNavigationButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
+                                                </Grid>
+                                            </SwipeItemView>
+                                        </SwipeItems>
+                                    </SwipeView.LeftItems>
+                                    <Frame Style="{DynamicResource FrameServiceOrderStyle}" BorderColor="{Binding Path=FrameColor}" >
+                                        <Frame.Content>
+                                            <StackLayout>
+                                                <Label TextColor="{Binding Path=ColorOrder}" Text="{Binding Path=HeaderServiceOrder}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                                            </StackLayout>
+                                        </Frame.Content>
+                                    </Frame>
+                                </SwipeView>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </StackLayout>
+            </Expander>
             <Expander IsVisible="{Binding TimeServiceOrderVisible}" Grid.Row="1" Opacity="{Binding OpacityForm}" IsExpanded="{Binding TimeServiceOrderExpanded}">
-                        <Expander.Header>
-                            <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding TimeServiceOrderExpanderCommand}" Text="{Binding TimeServiceOrder}" ImageSource="{Binding ArrowCircleTimeServiceOrder}"/>
-                        </Expander.Header>
-                <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
-                            <CollectionView Margin="5" ItemsSource="{Binding ServiceOrdersByTime}" SelectionMode="Single" 
+                <Expander.Header>
+                    <Button Style="{DynamicResource CommonButtonStyle}" Command="{Binding TimeServiceOrderExpanderCommand}" Text="{Binding TimeServiceOrder}" ImageSource="{Binding ArrowCircleTimeServiceOrder}"/>
+                </Expander.Header>
+                <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
+                    <CollectionView Margin="5" ItemsSource="{Binding ServiceOrdersByTime}" SelectionMode="Single" 
                                 SelectionChangedCommand="{Binding SelectServiceOrderCommand, Mode=TwoWay}"
                                 SelectedItem="{Binding ServiceOrder}">
-                                <CollectionView.ItemsLayout>
-                                    <GridItemsLayout Orientation="Vertical" />
-                                </CollectionView.ItemsLayout>
-                                <CollectionView.ItemTemplate>
-                                    <DataTemplate>
-                                <SwipeView Style="{StaticResource SwipeViewStyle}">
-                                            <SwipeView.LeftItems>
-                                                <SwipeItems Mode="Execute">
-                                                    <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Vertical" />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <SwipeView Style="{DynamicResource SwipeViewStyle}">
+                                    <SwipeView.LeftItems>
+                                        <SwipeItems Mode="Execute">
+                                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
                                                    CommandParameter="{Binding Path=NewNumber}">
-                                                        <Grid>
-                                                    <Button Style="{StaticResource SwipeNavigationButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
-                                                        </Grid>
-                                                    </SwipeItemView>
-                                                </SwipeItems>
-                                            </SwipeView.LeftItems>
-                                    <Frame Style="{StaticResource FrameServiceOrderStyle}">
-                                                <Frame.Content>
-                                                    <StackLayout>
-                                                        <Label TextColor="{Binding Path=ColorOrder}" Text="{Binding Path=FullName}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
-                                                    </StackLayout>
-                                                </Frame.Content>
-                                            </Frame>
-                                        </SwipeView>
-                                    </DataTemplate>
-                                </CollectionView.ItemTemplate>
-                            </CollectionView>
-                        </StackLayout>
-                    </Expander>
+                                                <Grid>
+                                                    <Button Style="{DynamicResource SwipeNavigationButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
+                                                </Grid>
+                                            </SwipeItemView>
+                                        </SwipeItems>
+                                    </SwipeView.LeftItems>
+                                    <Frame Style="{DynamicResource FrameServiceOrderStyle}" BorderColor="{Binding Path=FrameColor}">
+                                        <Frame.Content>
+                                            <StackLayout>
+                                                <Label TextColor="{Binding Path=ColorOrder}" Text="{Binding Path=HeaderServiceOrder}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                                            </StackLayout>
+                                        </Frame.Content>
+                                    </Frame>
+                                </SwipeView>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </StackLayout>
+            </Expander>
             <Expander IsVisible="{Binding OtherServiceOrderVisible}" Grid.Row="2" Opacity="{Binding OpacityForm}" IsExpanded="{Binding OtherServiceOrderExpanded}">
-                        <Expander.Header>
-                    <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding OtherServiceOrderExpanderCommand}" Text="{Binding OtherServiceOrder}" 
+                <Expander.Header>
+                    <Button Style="{DynamicResource CommonButtonStyle}" Command="{Binding OtherServiceOrderExpanderCommand}" Text="{Binding OtherServiceOrder}" 
                             ImageSource="{Binding ArrowCircleOtherServiceOrder}"/>
                 </Expander.Header>
-                <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
-                            <CollectionView ItemsSource="{Binding ServiceOrders}" SelectionMode="Single" 
+                <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
+                    <CollectionView ItemsSource="{Binding ServiceOrders}" SelectionMode="Single" 
                                 SelectionChangedCommand="{Binding SelectServiceOrderCommand, Mode=TwoWay}"
                                 SelectedItem="{Binding ServiceOrder}">
-                                <CollectionView.ItemsLayout>
-                                    <GridItemsLayout Orientation="Vertical" />
-                                </CollectionView.ItemsLayout>
-                                <CollectionView.ItemTemplate>
-                                    <DataTemplate>
-                                <SwipeView Style="{StaticResource SwipeViewStyle}">
-                                            <SwipeView.LeftItems>
-                                                <SwipeItems Mode="Execute">
-                                                    <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Vertical" />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <SwipeView Style="{DynamicResource SwipeViewStyle}">
+                                    <SwipeView.LeftItems>
+                                        <SwipeItems Mode="Execute">
+                                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
                                                    CommandParameter="{Binding Path=NewNumber}">
-                                                        <!--<Grid>-->
-                                                            <Button Style="{StaticResource SwipeNavigationButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
-                                                        <!--</Grid>-->
-                                                    </SwipeItemView>
-                                                </SwipeItems>
-                                            </SwipeView.LeftItems>
-                                                <Frame Style="{StaticResource FrameServiceOrderStyle}"> 
-                                                    <Frame.Content>
-                                                        <StackLayout>
-                                                <Label TextColor="{Binding Path=ColorOrder}" Text="{Binding Path=FullName}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
-                                                        </StackLayout>
-                                                    </Frame.Content>
-                                                </Frame>
-                                        </SwipeView>
-                                    </DataTemplate>
-                                </CollectionView.ItemTemplate>
-                            </CollectionView>
-                        </StackLayout>
-                    </Expander>
+                                                <!--<Grid>-->
+                                                <Button Style="{DynamicResource SwipeNavigationButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
+                                                <!--</Grid>-->
+                                            </SwipeItemView>
+                                        </SwipeItems>
+                                    </SwipeView.LeftItems>
+                                    <Frame Style="{DynamicResource FrameServiceOrderStyle}" BorderColor="{Binding Path=FrameColor}">
+                                        <Frame.Content>
+                                            <StackLayout>
+                                                <Label TextColor="{Binding Path=ColorOrder}" Text="{Binding Path=HeaderServiceOrder}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                            </StackLayout>
+                                        </Frame.Content>
+                                    </Frame>
+                                </SwipeView>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </StackLayout>
+            </Expander>
             <Expander IsVisible="{Binding FireAlarmTransferServiceOrderVisible}" Grid.Row="3" Opacity="{Binding OpacityForm}" IsExpanded="{Binding FireAlarmTransferServiceOrderExpanded}">
                 <Expander.Header>
-                    <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding FireAlarmTransferServiceOrderExpanderCommand}" Text="{Binding FireAlarmTransferServiceOrderText}"
+                    <Button Style="{DynamicResource CommonButtonStyle}" Command="{Binding FireAlarmTransferServiceOrderExpanderCommand}" Text="{Binding FireAlarmTransferServiceOrderText}"
                             ImageSource="{Binding ArrowCircleFireAlarmTransferServiceOrder}"/>
                 </Expander.Header>
-                <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
+                <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
                     <CollectionView Margin="5" ItemsSource="{Binding ServiceOrderByTransferFireAlarm}" SelectionMode="Single" 
                                 SelectionChangedCommand="{Binding SelectServiceOrderFireAlarmCommand, Mode=TwoWay}" SelectedItem="{Binding ServiceOrderFireAlarm}">
                         <CollectionView.ItemsLayout>
@@ -139,21 +152,21 @@
                         </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <SwipeView Style="{StaticResource SwipeViewStyle}">
+                                <SwipeView Style="{DynamicResource SwipeViewStyle}">
                                     <SwipeView.LeftItems>
                                         <SwipeItems Mode="Execute">
                                             <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
                                                    CommandParameter="{Binding Path=NewNumber}">
                                                 <Grid>
-                                                    <Button Style="{StaticResource SwipeNavigationButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
+                                                    <Button Style="{DynamicResource SwipeNavigationButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
                                                 </Grid>
                                             </SwipeItemView>
                                         </SwipeItems>
                                     </SwipeView.LeftItems>
-                                    <Frame Style="{StaticResource FrameServiceOrderStyle}">
+                                    <Frame Style="{DynamicResource FrameServiceOrderStyle}" BorderColor="{Binding Path=FrameColor}">
                                         <Frame.Content>
                                             <StackLayout>
-                                                <Label TextColor="{Binding Path=ColorOrder}" Text="{Binding Path=FullName}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                                                <Label TextColor="{Binding Path=ColorOrder}" Text="{Binding Path=HeaderServiceOrder}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
                                             </StackLayout>
                                         </Frame.Content>
                                     </Frame>
@@ -165,10 +178,10 @@
             </Expander>
             <Expander IsVisible="{Binding FireAlarmTimeServiceOrderVisible}" Grid.Row="4" Opacity="{Binding OpacityForm}" IsExpanded="{Binding FireAlarmTimeServiceOrderExpanded}">
                 <Expander.Header>
-                    <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding FireAlarmTimeServiceOrderExpanderCommand}" Text="{Binding FireAlarmTimeServiceOrderText}"
+                    <Button Style="{DynamicResource CommonButtonStyle}" Command="{Binding FireAlarmTimeServiceOrderExpanderCommand}" Text="{Binding FireAlarmTimeServiceOrderText}"
                             ImageSource="{Binding ArrowCircleFireAlarmTimeServiceOrder}"/>
                 </Expander.Header>
-                <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
+                <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
                     <CollectionView Margin="5" ItemsSource="{Binding ServiceOrdersByTimeFireAlarm}" SelectionMode="Single" 
                                 SelectionChangedCommand="{Binding SelectServiceOrderFireAlarmCommand, Mode=TwoWay}" SelectedItem="{Binding ServiceOrderFireAlarm}">
                         <CollectionView.ItemsLayout>
@@ -176,21 +189,21 @@
                         </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <SwipeView Style="{StaticResource SwipeViewStyle}">
+                                <SwipeView Style="{DynamicResource SwipeViewStyle}">
                                     <SwipeView.LeftItems>
                                         <SwipeItems Mode="Execute">
                                             <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
                                                    CommandParameter="{Binding Path=NewNumber}">
                                                 <Grid>
-                                                    <Button Style="{StaticResource SwipeNavigationButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
+                                                    <Button Style="{DynamicResource SwipeNavigationButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
                                                 </Grid>
                                             </SwipeItemView>
                                         </SwipeItems>
                                     </SwipeView.LeftItems>
-                                    <Frame Style="{StaticResource FrameServiceOrderStyle}">
+                                    <Frame Style="{DynamicResource FrameServiceOrderStyle}"  BorderColor="{Binding Path=FrameColor}">
                                         <Frame.Content>
                                             <StackLayout>
-                                                <Label TextColor="{Binding Path=ColorOrder}" Text="{Binding Path=FullName}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                                                <Label TextColor="{Binding Path=ColorOrder}" Text="{Binding Path=HeaderServiceOrder}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
                                             </StackLayout>
                                         </Frame.Content>
                                     </Frame>
@@ -202,10 +215,10 @@
             </Expander>
             <Expander IsVisible="{Binding FireAlarmOtherServiceOrderVisible}" Grid.Row="5" Opacity="{Binding OpacityForm}" IsExpanded="{Binding FireAlarmOtherServiceOrderExpanded}">
                 <Expander.Header>
-                    <Button Style="{StaticResource CommonButtonStyle}" Command="{Binding FireAlarmOtherServiceOrderExpanderCommand}" Text="{Binding FireAlarmOtherServiceOrderText}"
+                    <Button Style="{DynamicResource CommonButtonStyle}" Command="{Binding FireAlarmOtherServiceOrderExpanderCommand}" Text="{Binding FireAlarmOtherServiceOrderText}"
                             ImageSource="{Binding ArrowCircleFireAlarmOtherServiceOrder}"/>
                 </Expander.Header>
-                <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
+                <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
                     <CollectionView Margin="5" ItemsSource="{Binding ServiceOrdersFireAlarm}" SelectionMode="Single" 
                                 SelectionChangedCommand="{Binding SelectServiceOrderFireAlarmCommand, Mode=TwoWay}" SelectedItem="{Binding ServiceOrderFireAlarm}">
                         <CollectionView.ItemsLayout>
@@ -213,21 +226,21 @@
                         </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <SwipeView Style="{StaticResource SwipeViewStyle}">
+                                <SwipeView Style="{DynamicResource SwipeViewStyle}">
                                     <SwipeView.LeftItems>
                                         <SwipeItems Mode="Execute">
                                             <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
                                                    CommandParameter="{Binding Path=NewNumber}">
                                                 <Grid>
-                                                    <Button Style="{StaticResource SwipeNavigationButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
+                                                    <Button Style="{DynamicResource SwipeNavigationButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
                                                 </Grid>
                                             </SwipeItemView>
                                         </SwipeItems>
                                     </SwipeView.LeftItems>
-                                    <Frame Style="{StaticResource FrameServiceOrderStyle}">
+                                    <Frame Style="{DynamicResource FrameServiceOrderStyle}" BorderColor="{Binding Path=FrameColor}">
                                         <Frame.Content>
                                             <StackLayout>
-                                                <Label TextColor="{Binding Path=ColorOrder}" Text="{Binding Path=FullName}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                                                <Label TextColor="{Binding Path=ColorOrder}" Text="{Binding Path=HeaderServiceOrder}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
                                             </StackLayout>
                                         </Frame.Content>
                                     </Frame>
@@ -237,9 +250,9 @@
                     </CollectionView>
                 </StackLayout>
             </Expander>
-            <StackLayout Style="{StaticResource ActivityIndicatorStackLayoutStyle}" Grid.Row="3" IsVisible="{Binding IndicatorVisible}" >
-                <ActivityIndicator Style="{StaticResource ActivityIndicatorStyle}"  />
-                <Label Style="{StaticResource ActivityIndicatorLabelStyle}"/>
+            <StackLayout Style="{DynamicResource ActivityIndicatorStackLayoutStyle}" Grid.Row="3" IsVisible="{Binding IndicatorVisible}" >
+                <ActivityIndicator Style="{DynamicResource ActivityIndicatorStyle}"  />
+                <Label Style="{DynamicResource ActivityIndicatorLabelStyle}"/>
             </StackLayout>
         </StackLayout>
     </ContentPage.Content>

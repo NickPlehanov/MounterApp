@@ -4,16 +4,16 @@
                  BackgroundClicked="PopupPage_BackgroundClicked"
                   x:Class="MounterApp.Views.EventsPopupPage" >
     <popup:PopupPage.Content>
-        <Frame Style="{StaticResource PopupFrameStyle}">
-            <StackLayout Style="{StaticResource CommonStackLayoutStyle}">
+        <Frame Style="{DynamicResource PopupFrameStyle}">
+            <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
                 <FlexLayout>
-                    <DatePicker Style="{StaticResource DatePickerStyle}" Margin="2" Date="{Binding StartDate}"/>
-                    <DatePicker Style="{StaticResource DatePickerStyle}" Margin="2" Date="{Binding EndDate}"/>
-                    <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding GetImage}" FontSize="Default" Text="Получить" Command="{Binding GetEventsCommands}"/>
+                    <DatePicker Style="{DynamicResource DatePickerStyle}" Margin="2" Date="{Binding StartDate}"/>
+                    <DatePicker Style="{DynamicResource DatePickerStyle}" Margin="2" Date="{Binding EndDate}"/>
+                    <Button Margin="0" Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding GetImage}" FontSize="Default" Text="Получить" Command="{Binding GetEventsCommands}"/>
                 </FlexLayout>
-                <StackLayout Style="{StaticResource ActivityIndicatorStackLayoutStyle}" IsVisible="{Binding IndicatorVisible}">
-                    <ActivityIndicator Style="{StaticResource ActivityIndicatorStyle}"/>
-                    <Label Style="{StaticResource ActivityIndicatorLabelStyle}"/>
+                <StackLayout Style="{DynamicResource ActivityIndicatorStackLayoutStyle}" IsVisible="{Binding IndicatorVisible}">
+                    <ActivityIndicator Style="{DynamicResource ActivityIndicatorStyle}"/>
+                    <Label Style="{DynamicResource ActivityIndicatorLabelStyle}"/>
                 </StackLayout>
                 <ScrollView>
                     <StackLayout Opacity="{Binding OpacityForm}">
@@ -23,16 +23,13 @@
                             </CollectionView.ItemsLayout>
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
-                                    <Frame Style="{StaticResource FrameInfoStyle}">
+                                    <Frame Style="{DynamicResource FrameInfoStyle}">
                                         <Frame.Content>
                                             <StackLayout>
-                                                <Label Style="{StaticResource CommonLabelStyle}"  Text="{Binding Path=REDateTime}" FontAttributes="Bold"/>
-                                                <Label Style="{StaticResource CommonLabelStyle}"  Text="{Binding Path=RChannelNameText}"/>
-                                                <Label Style="{StaticResource CommonLabelStyle}"  Text="{Binding Path=EventCodeText}"/>
-                                                <Label Style="{StaticResource CommonLabelStyle}"  Text="{Binding Path=EventClassNameText}"/>
-                                                <Label Style="{StaticResource CommonLabelStyle}"  Text="{Binding Path=ZoneUserText}" />
-                                                <Label Style="{StaticResource CommonLabelStyle}"  Text="{Binding Path=PartNumberText}"/>
-                                                <Label Style="{StaticResource CommonLabelStyle}" Text="{Binding Path=EventDesc}"/>
+                                                <Label Style="{DynamicResource CommonLabelStyle}"  Text="{Binding Path=REDateTime}" FontAttributes="Bold"/>
+                                                <Label Style="{DynamicResource CommonLabelStyle}"  Text="{Binding Path=ZoneUserText}" />
+                                                <Label Style="{DynamicResource CommonLabelStyle}"  Text="{Binding Path=PartNumberText}"/>
+                                                <Label Style="{DynamicResource CommonLabelStyle}" Text="{Binding Path=EventDesc}"/>
                                             </StackLayout>
                                         </Frame.Content>
                                     </Frame>
@@ -41,7 +38,7 @@
                         </CollectionView>
                     </StackLayout>
                 </ScrollView>
-                <Button Style="{StaticResource CommonButtonStyle}" ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding ExitCommand}"/>
+                <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding ExitCommand}"/>
             </StackLayout>
         </Frame>
     </popup:PopupPage.Content>
