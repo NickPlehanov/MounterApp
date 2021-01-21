@@ -36,6 +36,7 @@
                                                 <Label Style="{DynamicResource CommonLabelStyle}"  Text="{Binding Path=REDateTime}" FontAttributes="Bold"/>
                                                 <Label Style="{DynamicResource CommonLabelStyle}"  Text="{Binding Path=ZoneUserText}" />
                                                 <Label Style="{DynamicResource CommonLabelStyle}"  Text="{Binding Path=PartNumberText}"/>
+                                                <Label Style="{DynamicResource CommonLabelStyle}"  Text="{Binding Path=EventClassNameText}"/>
                                                 <Label Style="{DynamicResource CommonLabelStyle}" Text="{Binding Path=EventDesc}"/>
                                             </StackLayout>
                                         </Frame.Content>
