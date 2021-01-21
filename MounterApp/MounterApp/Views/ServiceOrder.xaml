@@ -41,6 +41,8 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -64,7 +66,7 @@
                             </Label>
 
                             <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="3" Grid.Column="0" Text="Контактные данные" FontAttributes="Bold"/>
-                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="3" Grid.Column="1" Text="{Binding Contact}" TextDecorations="Underline" TextColor="Blue">
+                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="3" Grid.Column="1" Text="{Binding Contact}" TextDecorations="Underline" TextColor="Purple">
                                 <Label.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding CallClientCommand}" CommandParameter="{Binding Contact}"/>
                                 </Label.GestureRecognizers>
@@ -117,6 +119,12 @@
 
                             <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="15" Grid.Column="0" Text="Контрольное время" FontAttributes="Bold"/>
                             <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="15" Grid.Column="1" Text="{Binding ControlTime}"/>
+
+                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="16" Grid.Column="0" Text="Шаблон событий" FontAttributes="Bold"/>
+                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="16" Grid.Column="1" Text="{Binding EventTemplate}"/>
+
+                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="17" Grid.Column="0" Text="Прибор" FontAttributes="Bold"/>
+                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="17" Grid.Column="1" Text="{Binding DeviceName}"/>
                         </Grid>
                     </Expander>
                 </StackLayout>
@@ -140,11 +148,11 @@
                         </Grid>
                     </Expander>
                 </StackLayout>
-                <StackLayout Opacity="{Binding Opacity}" Grid.Row="3" Grid.Column="0" Margin="5">
-                    <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding TransferImage}" Text="Пришел" Command="{Binding IncomeCommand, Mode=TwoWay}" IsEnabled="False"/>
+                <StackLayout Opacity="{Binding Opacity}" Grid.Row="3" Grid.Column="0" >
+                    <Button Style="{DynamicResource CommonButtonStyle}" Margin="0" ImageSource="{Binding TransferImage}" Text="Пришел" Command="{Binding IncomeCommand, Mode=TwoWay}" IsEnabled="False"/>
                 </StackLayout>
-                <StackLayout Opacity="{Binding Opacity}" Grid.Row="3" Grid.Column="1" Margin="5">
-                    <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding CloseOrderCommand}"/>
+                <StackLayout Opacity="{Binding Opacity}" Grid.Row="3" Grid.Column="1" >
+                    <Button Style="{DynamicResource CommonButtonStyle}" Margin="0" ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding CloseOrderCommand}"/>
                 </StackLayout>
                 <StackLayout Style="{DynamicResource ActivityIndicatorStackLayoutStyle}" Grid.Row="1" Grid.ColumnSpan="2" IsVisible="{Binding IndicatorVisible}">
                     <ActivityIndicator Style="{DynamicResource ActivityIndicatorStyle}"/>

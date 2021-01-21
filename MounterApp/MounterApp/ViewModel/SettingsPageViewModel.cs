@@ -116,6 +116,25 @@ namespace MounterApp.ViewModel {
                 await App.Current.MainPage.Navigation.PushPopupAsync(new OrdersForITPopupPage(vm));
             });
         }
+
+        private RelayCommand _CheckAccessToSecret;
+        public RelayCommand CheckAccessToSecret {
+            get => _CheckAccessToSecret ??= new RelayCommand(async obj => {
+                using(HttpClient client = new HttpClient(GetHttpClientHandler())) {                    
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/AccessSecret?phone=" + Application.Current.Properties["Phone"].ToString());
+                    if(response != null) {
+                        if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                            GetEventsObjectInfo.Execute(null);
+                        }
+                        //if(response.StatusCode.Equals(System.Net.HttpStatusCode.MethodNotAllowed)) {
+                        //    await Application.Current.MainPage.DisplayAlert("Информация"
+                        //        ,"У Вас установлена не актуальная версия приложения, пожалуйста обновите её." + Environment.NewLine + Environment.NewLine + "Если Вы не получили ссылку на новую версию, то сообщите свою почту в ИТ-отдел."
+                        //        ,"OK");
+                        //}
+                    }
+                }
+            });
+        }
         private RelayCommand _HelpCommand;
         public RelayCommand HelpCommand {
             get => _HelpCommand ??= new RelayCommand(async obj => {

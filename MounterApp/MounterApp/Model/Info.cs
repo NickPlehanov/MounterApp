@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MounterApp.Model {
+﻿namespace MounterApp.Model {
     public class Info {
         public string Name { get; set; }
         public string Address { get; set; }
@@ -15,5 +11,7 @@ namespace MounterApp.Model {
         public int ControlTime { get; set; }
         public string ObjectPassword { get; set; }
         public bool RemoteProgramming { get; set; }
+        //public string EventTemplate { get; set; }
+        public string DeviceName { get; set; }
     }
 }

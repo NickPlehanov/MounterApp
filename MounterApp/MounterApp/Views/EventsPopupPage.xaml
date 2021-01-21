@@ -5,12 +5,19 @@
                   x:Class="MounterApp.Views.EventsPopupPage" >
     <popup:PopupPage.Content>
         <Frame Style="{DynamicResource PopupFrameStyle}">
-            <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
-                <FlexLayout>
-                    <DatePicker Style="{DynamicResource DatePickerStyle}" Margin="2" Date="{Binding StartDate}"/>
-                    <DatePicker Style="{DynamicResource DatePickerStyle}" Margin="2" Date="{Binding EndDate}"/>
-                    <Button Margin="0" Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding GetImage}" FontSize="Default" Text="Получить" Command="{Binding GetEventsCommands}"/>
-                </FlexLayout>
+            <StackLayout  Style="{DynamicResource CommonStackLayoutStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <DatePicker Grid.Row="0" Grid.Column="0" Style="{DynamicResource DatePickerStyle}" Date="{Binding StartDate}"/>
+                    <DatePicker Grid.Row="0" Grid.Column="1" Style="{DynamicResource DatePickerStyle}" Date="{Binding EndDate}"/>
+                </Grid>
+                <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding GetImage}" FontSize="Default" Text="Получить" Command="{Binding GetEventsCommands}"/>
                 <StackLayout Style="{DynamicResource ActivityIndicatorStackLayoutStyle}" IsVisible="{Binding IndicatorVisible}">
                     <ActivityIndicator Style="{DynamicResource ActivityIndicatorStyle}"/>
                     <Label Style="{DynamicResource ActivityIndicatorLabelStyle}"/>

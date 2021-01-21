@@ -86,24 +86,66 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetObjectNameCommand;
         public RelayCommand GetObjectNameCommand {
             get => _GetObjectNameCommand ??= new RelayCommand(async obj => {
+                //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/GetObjectInfo?ObjectNumber=" + ServiceOrderFireAlarm.NewNumber.ToString() + "");
+                //    A28Object a28Object = new A28Object();
+                //    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                //        var resp = response.Content.ReadAsStringAsync().Result;
+                //        try {
+                //            a28Object = JsonConvert.DeserializeObject<A28Object>(resp);
+                //        }
+                //        catch {
+                //            a28Object = null;
+                //        }
+                //        if(a28Object != null) {
+                //            ObjectName = a28Object.Name;
+                //            ControlTime = a28Object.ControlTime.ToString();
+                //        }
+                //    }
+                //}
                 using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/GetObjectInfo?ObjectNumber=" + ServiceOrderFireAlarm.NewNumber.ToString() + "");
-                    A28Object a28Object = new A28Object();
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/Objinfo?objNumber=" + ServiceOrderFireAlarm.NewNumber.ToString() + "");
+                    List<Info> obj_info = new List<Info>();
                     if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
                         var resp = response.Content.ReadAsStringAsync().Result;
                         try {
-                            a28Object = JsonConvert.DeserializeObject<A28Object>(resp);
+                            obj_info = JsonConvert.DeserializeObject<List<Info>>(resp);
                         }
-                        catch {
-                            a28Object = null;
+                        catch(Exception ex) {
+                            obj_info = null;
                         }
-                        if(a28Object != null) {
-                            ObjectName = a28Object.Name;
-                            ControlTime = a28Object.ControlTime.ToString();
+                        if(obj_info != null) {
+                            foreach(var item in obj_info) {
+                                ObjectName = item.Name;
+                                ControlTime = item.ControlTime.ToString();
+                                EventTemplate = item.EventTemplateName.ToString();
+                                DeviceName = item.DeviceName.ToString();
+                            }
+
+
+                            //ObjectName = a28Object.Name;
+                            //ControlTime = a28Object.ControlTime.ToString();
                         }
                     }
                 }
             });
+        }
+        private string _DeviceName;
+        public string DeviceName {
+            get => _DeviceName;
+            set {
+                _DeviceName = value;
+                OnPropertyChanged(nameof(DeviceName));
+            }
+        }
+
+        private string _EventTemplate;
+        public string EventTemplate {
+            get => _EventTemplate;
+            set {
+                _EventTemplate = value;
+                OnPropertyChanged(nameof(EventTemplate));
+            }
         }
         private string _ControlTime;
         public string ControlTime {
@@ -563,103 +605,105 @@ namespace MounterApp.ViewModel {
                         {"PermissionStatus",status.ToString()}
                     });
                 }
-                Analytics.TrackEvent("Запрос данных на сервере (могло же что-то измениться",
-                new Dictionary<string,string> {
+                if(status == PermissionStatus.Granted) {
+                    Analytics.TrackEvent("Запрос данных на сервере (могло же что-то измениться",
+                    new Dictionary<string,string> {
                     {"ServiceOrderID",ServiceOrderFireAlarm.NewTest2Id.ToString() }
-                });
-                using HttpClient client = new HttpClient(GetHttpClientHandler());
-                HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceOrderForFireAlarmExtensionBase/id?id=" + ServiceOrderFireAlarm.NewTest2Id);                
-                NewTest2ExtensionBase soeb = null;
-                if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                    var resp = response.Content.ReadAsStringAsync().Result;
-                    try {
-                        soeb = JsonConvert.DeserializeObject<NewTest2ExtensionBase>(resp);
-                    }
-                    catch(Exception ex) {
-                        Crashes.TrackError(new Exception("Ошибка десериализации объекта заявка технику(пс)"),
-                        new Dictionary<string,string> {
+                    });
+                    using HttpClient client = new HttpClient(GetHttpClientHandler());
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceOrderForFireAlarmExtensionBase/id?id=" + ServiceOrderFireAlarm.NewTest2Id);
+                    NewTest2ExtensionBase soeb = null;
+                    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                        var resp = response.Content.ReadAsStringAsync().Result;
+                        try {
+                            soeb = JsonConvert.DeserializeObject<NewTest2ExtensionBase>(resp);
+                        }
+                        catch(Exception ex) {
+                            Crashes.TrackError(new Exception("Ошибка десериализации объекта заявка технику(пс)"),
+                            new Dictionary<string,string> {
                         {"ServerResponse",response.Content.ReadAsStringAsync().Result },
                         {"ErrorMessage",ex.Message },
                         {"StatusCode",response.StatusCode.ToString() }
-                        });
-                    }
-                }
-                else {
-                    Crashes.TrackError(new Exception("Ошибка получения данных об объекте заявка технику(пс) с сервера"),
-                    new Dictionary<string,string> {
-                    {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                    {"StatusCode",response.StatusCode.ToString() },
-                    {"Response",response.ToString() }
-                    });
-                    await Application.Current.MainPage.DisplayAlert("Ошибка"
-                            ,"От сервера не получена информация о текущей заявке. Повторите попытку позже, в случае если ошибка повторяется, сообщите в IT-отдел."
-                            ,"OK");
-                }
-                if(soeb != null) {
-                    Analytics.TrackEvent("Попытка записи данных на сервер по объекту заявка технику(пс), заполняем поле Пришел",
-                    new Dictionary<string,string> {
-                        {"ServiceOrderID",ServiceOrderFireAlarm.NewTest2Id.ToString() }
-                    });
-                    soeb.NewIncome = DateTime.Now.AddHours(-5);
-                    using HttpClient clientPut = new HttpClient(GetHttpClientHandler());
-                    var httpContent = new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json");
-                    HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/NewServiceOrderForFireAlarmExtensionBase",httpContent);
-                    if(!responsePut.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
-                        Crashes.TrackError(new Exception("Ошибка при сохранении объекта Заявка технику"),
-                        new Dictionary<string,string> {
-                        {"ServerResponse",responsePut.Content.ReadAsStringAsync().Result },
-                        {"StatusCode",responsePut.StatusCode.ToString() },
-                        {"Response",responsePut.ToString() }
-                        });
-                        await Application.Current.MainPage.DisplayAlert("Ошибка"
-                            ,"При попытке сохранения данных произошла ошибка. Повторите попытку позже, в случае если ошибка повторяется, сообщите в IT-отдел."
-                            ,"OK");
-                    }
-                    else
-                        Toast.MakeText(Android.App.Application.Context,"ОТМЕТКА ВРЕМЕНИ ПРИХОДА СОХРАНЕНА",ToastLength.Long).Show();
-                }
-                //запишем координаты
-                Analytics.TrackEvent("Попытка записи координат на сервер по объекту заявка технику(ПС)",
-                    new Dictionary<string,string> {
-                        {"ServiceOrderID",ServiceOrderFireAlarm.NewTest2Id.ToString() }
-                    });
-                if(!string.IsNullOrEmpty(Latitude) && !string.IsNullOrEmpty(Longitude)) {
-                    using(HttpClient clientPost = new HttpClient(GetHttpClientHandler())) {
-                        var data = JsonConvert.SerializeObject(new ServiceOrderCoordinates() {
-                            SocId = Guid.NewGuid(),
-                            SocServiceOrderId = ServiceOrderFireAlarm.NewTest2Id,
-                            SocIncomeLatitude = Latitude,
-                            SocIncomeLongitude = Longitude
-                        });
-                        StringContent content = new StringContent(data,Encoding.UTF8,"application/json");
-                        HttpResponseMessage responsePost = await clientPost.PostAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates",content);
-                        if(!responsePost.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
-                            Crashes.TrackError(new Exception("Ошибка при сохранении объекта Заявка технику"),
-                            new Dictionary<string,string> {
-                                {"ServerResponse",responsePost.Content.ReadAsStringAsync().Result },
-                                {"StatusCode",responsePost.StatusCode.ToString() },
-                                {"Response",responsePost.ToString() }
                             });
                         }
                     }
-                }
-                else {
-                    Crashes.TrackError(new Exception("Заявка на ПС. Пустые координаты"),
+                    else {
+                        Crashes.TrackError(new Exception("Ошибка получения данных об объекте заявка технику(пс) с сервера"),
+                        new Dictionary<string,string> {
+                    {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                    {"StatusCode",response.StatusCode.ToString() },
+                    {"Response",response.ToString() }
+                        });
+                        await Application.Current.MainPage.DisplayAlert("Ошибка"
+                                ,"От сервера не получена информация о текущей заявке. Повторите попытку позже, в случае если ошибка повторяется, сообщите в IT-отдел."
+                                ,"OK");
+                    }
+                    if(soeb != null) {
+                        Analytics.TrackEvent("Попытка записи данных на сервер по объекту заявка технику(пс), заполняем поле Пришел",
+                        new Dictionary<string,string> {
+                        {"ServiceOrderID",ServiceOrderFireAlarm.NewTest2Id.ToString() }
+                        });
+                        soeb.NewIncome = DateTime.Now.AddHours(-5);
+                        using HttpClient clientPut = new HttpClient(GetHttpClientHandler());
+                        var httpContent = new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json");
+                        HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/NewServiceOrderForFireAlarmExtensionBase",httpContent);
+                        if(!responsePut.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
+                            Crashes.TrackError(new Exception("Ошибка при сохранении объекта Заявка технику"),
                             new Dictionary<string,string> {
+                        {"ServerResponse",responsePut.Content.ReadAsStringAsync().Result },
+                        {"StatusCode",responsePut.StatusCode.ToString() },
+                        {"Response",responsePut.ToString() }
+                            });
+                            await Application.Current.MainPage.DisplayAlert("Ошибка"
+                                ,"При попытке сохранения данных произошла ошибка. Повторите попытку позже, в случае если ошибка повторяется, сообщите в IT-отдел."
+                                ,"OK");
+                        }
+                        else
+                            Toast.MakeText(Android.App.Application.Context,"ОТМЕТКА ВРЕМЕНИ ПРИХОДА СОХРАНЕНА",ToastLength.Long).Show();
+                    }
+                    //запишем координаты
+                    Analytics.TrackEvent("Попытка записи координат на сервер по объекту заявка технику(ПС)",
+                        new Dictionary<string,string> {
+                        {"ServiceOrderID",ServiceOrderFireAlarm.NewTest2Id.ToString() }
+                        });
+                    if(!string.IsNullOrEmpty(Latitude) && !string.IsNullOrEmpty(Longitude)) {
+                        using(HttpClient clientPost = new HttpClient(GetHttpClientHandler())) {
+                            var data = JsonConvert.SerializeObject(new ServiceOrderCoordinates() {
+                                SocId = Guid.NewGuid(),
+                                SocServiceOrderId = ServiceOrderFireAlarm.NewTest2Id,
+                                SocIncomeLatitude = Latitude,
+                                SocIncomeLongitude = Longitude
+                            });
+                            StringContent content = new StringContent(data,Encoding.UTF8,"application/json");
+                            HttpResponseMessage responsePost = await clientPost.PostAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates",content);
+                            if(!responsePost.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
+                                Crashes.TrackError(new Exception("Ошибка при сохранении объекта Заявка технику"),
+                                new Dictionary<string,string> {
+                                {"ServerResponse",responsePost.Content.ReadAsStringAsync().Result },
+                                {"StatusCode",responsePost.StatusCode.ToString() },
+                                {"Response",responsePost.ToString() }
+                                });
+                            }
+                        }
+                    }
+                    else {
+                        Crashes.TrackError(new Exception("Заявка на ПС. Пустые координаты"),
+                                new Dictionary<string,string> {
                                 { "PermissionStatus_StorageRead",CheckAndRequestPermissionAsync(new StorageRead()).Result.ToString() },
                                 { "PermissionStatus_LocationWhenInUse",CheckAndRequestPermissionAsync(new LocationWhenInUse()).Result.ToString() },
                                 { "PermissionStatus_NetworkState",CheckAndRequestPermissionAsync(new NetworkState()).Result.ToString() },
                                 { "PermissionStatus_Permissions.Camera",CheckAndRequestPermissionAsync(new Permissions.Camera()).Result.ToString() },
                                 { "PermissionStatus_StorageWrite",CheckAndRequestPermissionAsync(new StorageWrite()).Result.ToString() },
                                 { "Phone",Servicemans.First().NewPhone },
-                                { "Name",Servicemans.First().NewName },
-                                { "ID",ServiceOrderFireAlarm.NewTest2Id.ToString() }
-                            });
+                                { "Name",Servicemans.First().NewName }
+                                    //{ "ID",ServiceOrderFireAlarm.NewTest2Id.ToString() }
+                                });
+                    }
+                    ServiceOrderFireAlarm.NewIncome = DateTime.Now.AddHours(-5);
+                    IncomeCommand.ChangeCanExecute();
                 }
                 Opacity = 1;
                 IndicatorVisible = false;
-                ServiceOrderFireAlarm.NewIncome = DateTime.Now.AddHours(-5);
-                IncomeCommand.ChangeCanExecute();
             },obj=> ServiceOrderFireAlarm.NewIncome==null);
         }
 

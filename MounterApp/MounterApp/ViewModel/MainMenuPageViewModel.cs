@@ -5,6 +5,7 @@ using MounterApp.Properties;
 using MounterApp.Views;
 using Newtonsoft.Json;
 using Rg.Plugins.Popup.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -24,6 +25,7 @@ namespace MounterApp.ViewModel {
             SettingsImage = IconName("settings");
             Analytics.TrackEvent("Инициализация окна главного меню приложения");
             App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
+            CheckVersionApp.Execute(null);
         }        
         /// <summary>
         /// Команда перехода к странице монтажей
@@ -111,11 +113,15 @@ namespace MounterApp.ViewModel {
                 AppVersions av = new AppVersions();
                 string Version = av.GetVersionAndBuildNumber().VersionNumber;
                 using (HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/VersionNumber");
-                    if(response != null)
-                        if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                            var resp = response.Content.ReadAsStringAsync().Result;
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/VersionNumber?appVersion="+ Version);
+                    if(response != null) {
+                        if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) { }
+                        if(response.StatusCode.Equals(System.Net.HttpStatusCode.MethodNotAllowed)) {
+                            await Application.Current.MainPage.DisplayAlert("Информация"
+                                ,"У Вас установлена не актуальная версия приложения, пожалуйста обновите её." + Environment.NewLine + Environment.NewLine + "Если Вы не получили ссылку на новую версию, то сообщите свою почту в ИТ-отдел."
+                                ,"OK");
                         }
+                    }
                 }
             });
         }

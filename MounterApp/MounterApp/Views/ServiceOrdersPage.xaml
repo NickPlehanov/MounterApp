@@ -11,21 +11,29 @@
                 <SwipeGestureRecognizer Direction="Up" Command="{Binding RefreshOrdersCommand}" />
             </StackLayout.GestureRecognizers>
             <StackLayout Grid.Row="0"  Margin="5" Opacity="{Binding OpacityForm}" >
-                <Grid HorizontalOptions="Center">
+                <!--<Grid HorizontalOptions="Center">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <DatePicker Grid.Column="1"  Date="{Binding Date, Mode=TwoWay}" HorizontalOptions="Center" Style="{DynamicResource DatePickerStyle}"/>
-                    <Image Grid.Column="2" Aspect="AspectFit" Source="{Binding HelpImage}">
+                    </Grid.ColumnDefinitions>-->
+                <FlexLayout HorizontalOptions="Center">
+                    <DatePicker Grid.Column="1"  Date="{Binding Date, Mode=TwoWay}" VerticalOptions="Center" HorizontalOptions="Center" Style="{DynamicResource DatePickerStyle}"/>
+                    <!--<Image Grid.Column="2" Aspect="AspectFit" Source="{Binding HelpImage}">
                         <Image.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding HelpCommand}"/>
                         </Image.GestureRecognizers>
                     </Image>
-                    <!--<Button ImageSource="{Binding HelpImage}"/>-->
-                </Grid>
+                    --><!--<Button ImageSource="{Binding HelpImage}"/>--><!--
+                </Grid>-->
+                    <Image HorizontalOptions="End" Grid.Column="2" Source="{Binding HelpImage}">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding HelpCommand}"/>
+                        </Image.GestureRecognizers>
+                    </Image>
+                </FlexLayout>
                 <Button Style="{DynamicResource ServiceOrderHeaderStyle}" ImageSource="{Binding RefreshImage}" Text="Обновить" Command="{Binding RefreshOrdersCommand}"/>
+                
             </StackLayout>
             <Expander IsVisible="{Binding TransferServiceOrderVisible}" Grid.Row="0" Opacity="{Binding OpacityForm}" IsExpanded="{Binding TransferServiceOrderExpanded}">
                 <Expander.Header>

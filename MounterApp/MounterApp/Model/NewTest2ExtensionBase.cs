@@ -84,6 +84,23 @@ namespace MounterApp.Model {
             }
         }
         [NotMapped]
+        public Color FrameColor {
+            get {
+                //if(NewOrderFrom.HasValue) {
+                //    if(NewOrderFrom.Value == 1)//ВИП клиент
+                //        return Color.Red;
+                //    else if(NewOrderFrom.Value == 2)//Клиент
+                //        return Color.Yellow;
+                //    else if(NewOrderFrom.Value == 3)//Сотрудник витязя
+                //        return Color.Blue;
+                //    else
+                //        return Color.FromArgb(51,37,97);
+                //}
+                //else
+                    return Color.FromArgb(51,37,97);
+            }
+        }
+        [NotMapped]
         public string ControlTime { get; set; }
 
         public virtual NewAndromedaBase NewAndromedaServiceorderNavigation { get; set; }

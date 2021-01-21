@@ -7,11 +7,11 @@
     <popup:PopupPage.Content>
         <Frame Style="{DynamicResource PopupFrameStyle}">
             <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
-                <Expander IsExpanded="{Binding PastServiceOrdersExpandedState}">
+                <!--<Expander IsExpanded="{Binding PastServiceOrdersExpandedState}">
                     <Expander.Header>
                         <Button Style="{DynamicResource CommonButtonStyle}" Command="{Binding PastServiceOrdersExpanderCommand}" Text="Заявки по объекту" ImageSource="{Binding ArrowCirclePastServiceOrders}">
                         </Button>
-                    </Expander.Header>
+                    </Expander.Header>-->
                     <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
                         <StackLayout IsVisible="{Binding IndicatorVisible}" Style="{DynamicResource ActivityIndicatorStackLayoutStyle}">
                             <ActivityIndicator Style="{DynamicResource ActivityIndicatorStyle}"/>
@@ -44,7 +44,7 @@
                             </CollectionView.ItemTemplate>
                         </CollectionView>
                     </StackLayout>
-                </Expander>
+                <!--</Expander>-->
                 <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding CloseCommand}"/>
             </StackLayout>
         </Frame>

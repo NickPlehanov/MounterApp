@@ -42,6 +42,8 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -118,6 +120,12 @@
 
                             <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="15" Grid.Column="0" Text="Контрольное время" FontAttributes="Bold"/>
                             <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="15" Grid.Column="1" Text="{Binding ServiceOrderID.ControlTime}"/>
+
+                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="16" Grid.Column="0" Text="Шаблон событий" FontAttributes="Bold"/>
+                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="16" Grid.Column="1" Text="{Binding EventTemplate}"/>
+
+                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="17" Grid.Column="0" Text="Прибор" FontAttributes="Bold"/>
+                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="17" Grid.Column="1" Text="{Binding DeviceName}"/>
                         </Grid>
                     </Expander>
                 </StackLayout>

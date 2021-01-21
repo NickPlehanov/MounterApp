@@ -7,10 +7,10 @@
     <popup:PopupPage.Content>
         <Frame Style="{DynamicResource PopupFrameStyle}">
             <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
-                <Expander IsExpanded="{Binding CustomersExpandedState}">
+                <!--<Expander IsExpanded="{Binding CustomersExpandedState}">
                     <Expander.Header>
                         <Button Style="{DynamicResource CommonButtonStyle}" Command="{Binding CustomersExpanderCommand}" Text="Ответственные лица" ImageSource="{Binding ArrowCircleCustomers}"/>
-                    </Expander.Header>
+                    </Expander.Header>-->
                     <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
                         <StackLayout Style="{DynamicResource ActivityIndicatorStackLayoutStyle}" IsVisible="{Binding IndicatorVisible}">
                             <ActivityIndicator Style="{DynamicResource ActivityIndicatorStyle}"/>
@@ -48,7 +48,7 @@
                             </CollectionView.ItemTemplate>
                         </CollectionView>
                     </StackLayout>
-                </Expander>
+                <!--</Expander>-->
                 <Button Style="{DynamicResource CommonButtonStyle}" Opacity="{Binding OpacityForm}" ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding CloseCommand}"/>
             </StackLayout>
         </Frame>

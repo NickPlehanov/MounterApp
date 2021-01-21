@@ -586,47 +586,48 @@ namespace MounterApp.ViewModel {
                         else
                             Toast.MakeText(Android.App.Application.Context,"Время прихода записано",ToastLength.Long).Show();
                     }
-                    //запишем координаты
-                    Analytics.TrackEvent("Попытка записи координат на сервер по объекту заявка технику",
-                        new Dictionary<string,string> {
+                        //запишем координаты
+                        Analytics.TrackEvent("Попытка записи координат на сервер по объекту заявка технику",
+                            new Dictionary<string,string> {
                         {"ServiceOrderID",ServiceOrderID.NewServiceorderId.ToString() }
-                        });
-                    if(!string.IsNullOrEmpty(Latitude) && !string.IsNullOrEmpty(Longitude)) {
-                        using(HttpClient clientPost = new HttpClient(GetHttpClientHandler())) {
-                            var data = JsonConvert.SerializeObject(new ServiceOrderCoordinates() {
-                                SocId = Guid.NewGuid(),
-                                SocServiceOrderId = ServiceOrderID.NewServiceorderId,
-                                SocIncomeLatitude = Latitude,
-                                SocIncomeLongitude = Longitude
                             });
-                            StringContent content = new StringContent(data,Encoding.UTF8,"application/json");
-                            HttpResponseMessage responsePost = await clientPost.PostAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates",content);
-                            if(!responsePost.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
-                                Crashes.TrackError(new Exception("Ошибка при сохранении объекта Заявка технику"),
-                                new Dictionary<string,string> {
+                        if(!string.IsNullOrEmpty(Latitude) && !string.IsNullOrEmpty(Longitude)) {
+                            using(HttpClient clientPost = new HttpClient(GetHttpClientHandler())) {
+                                var data = JsonConvert.SerializeObject(new ServiceOrderCoordinates() {
+                                    SocId = Guid.NewGuid(),
+                                    SocServiceOrderId = ServiceOrderID.NewServiceorderId,
+                                    SocIncomeLatitude = Latitude,
+                                    SocIncomeLongitude = Longitude
+                                });
+                                StringContent content = new StringContent(data,Encoding.UTF8,"application/json");
+                                HttpResponseMessage responsePost = await clientPost.PostAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates",content);
+                                if(!responsePost.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
+                                    Crashes.TrackError(new Exception("Ошибка при сохранении объекта Заявка технику"),
+                                    new Dictionary<string,string> {
                         {"ServerResponse",responsePost.Content.ReadAsStringAsync().Result },
                         {"StatusCode",responsePost.StatusCode.ToString() },
                         {"Response",responsePost.ToString() }
-                                });
+                                    });
+                                }
                             }
                         }
-                    }
-                    else {
-                        Crashes.TrackError(new Exception("Заявка технику. Пустые координаты"),
-                                new Dictionary<string,string> {
+                        else {
+                            Crashes.TrackError(new Exception("Заявка технику. Пустые координаты"),
+                                    new Dictionary<string,string> {
                                 { "PermissionStatus_StorageRead",CheckAndRequestPermissionAsync(new StorageRead()).Result.ToString() },
                                 { "PermissionStatus_LocationWhenInUse",CheckAndRequestPermissionAsync(new LocationWhenInUse()).Result.ToString() },
                                 { "PermissionStatus_NetworkState",CheckAndRequestPermissionAsync(new NetworkState()).Result.ToString() },
                                 { "PermissionStatus_Permissions.Camera",CheckAndRequestPermissionAsync(new Permissions.Camera()).Result.ToString() },
                                 { "PermissionStatus_StorageWrite",CheckAndRequestPermissionAsync(new StorageWrite()).Result.ToString() },
                                 { "Phone",Servicemans.First().NewPhone },
-                                { "Name",Servicemans.First().NewName },
-                                { "ID",ServiceOrderFireAlarm.NewTest2Id.ToString() }
-                                });
+                                { "Name",Servicemans.First().NewName }
+                                //{ "ID",ServiceOrderFireAlarm.NewTest2Id.ToString() }
+                                    });
+                        }
+                        ServiceOrderID.NewIncome = DateTime.Now.AddHours(-5);
+                        IncomeCommand.ChangeCanExecute();
                     }
-                    ServiceOrderID.NewIncome = DateTime.Now.AddHours(-5);
-                    IncomeCommand.ChangeCanExecute();
-                }
+                
                 Opacity = 1;
                 IndicatorVisible = false;
             },obj => ServiceOrderID.NewIncome == null);
@@ -661,20 +662,46 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetObjectNameCommand;
         public RelayCommand GetObjectNameCommand {
             get => _GetObjectNameCommand ??= new RelayCommand(async obj => {
+                //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/GetObjectInfo?ObjectNumber=" + ServiceOrderID.NewNumber.ToString() + "");
+                //    A28Object a28Object = new A28Object();
+                //    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                //        var resp = response.Content.ReadAsStringAsync().Result;
+                //        try {
+                //            a28Object = JsonConvert.DeserializeObject<A28Object>(resp);
+                //        }
+                //        catch {
+                //            a28Object = null;
+                //        }
+                //        if(a28Object != null) {
+                //            ObjectName = a28Object.Name;
+                //            ControlTime = a28Object.ControlTime.ToString();
+                //        }
+                //    }
+                //}
+
                 using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/GetObjectInfo?ObjectNumber=" + ServiceOrderID.NewNumber.ToString() + "");
-                    A28Object a28Object = new A28Object();
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/Objinfo?objNumber=" + ServiceOrderID.NewNumber.ToString() + "");
+                    List<Info> obj_info = new List<Info>();
                     if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
                         var resp = response.Content.ReadAsStringAsync().Result;
                         try {
-                            a28Object = JsonConvert.DeserializeObject<A28Object>(resp);
+                            obj_info = JsonConvert.DeserializeObject<List<Info>>(resp);
                         }
-                        catch {
-                            a28Object = null;
+                        catch (Exception ex) {
+                            obj_info = null;
                         }
-                        if(a28Object != null) {
-                            ObjectName = a28Object.Name;
-                            ControlTime = a28Object.ControlTime.ToString();
+                        if(obj_info != null) {
+                            foreach(var item in obj_info) {
+                                ObjectName = item.Name;
+                                ControlTime = item.ControlTime.ToString();
+                                EventTemplate = item.EventTemplateName.ToString();
+                                DeviceName = item.DeviceName.ToString();
+                            }
+
+
+                            //ObjectName = a28Object.Name;
+                            //ControlTime = a28Object.ControlTime.ToString();
                         }
                     }
                 }
@@ -687,6 +714,24 @@ namespace MounterApp.ViewModel {
             set {
                 _ControlTime = value;
                 OnPropertyChanged(nameof(ControlTime));
+            }
+        }
+
+        private string _DeviceName;
+        public string DeviceName {
+            get => _DeviceName;
+            set {
+                _DeviceName = value;
+                OnPropertyChanged(nameof(DeviceName));
+            }
+        }
+
+        private string _EventTemplate;
+        public string EventTemplate {
+            get => _EventTemplate;
+            set {
+                _EventTemplate = value;
+                OnPropertyChanged(nameof(EventTemplate));
             }
         }
 

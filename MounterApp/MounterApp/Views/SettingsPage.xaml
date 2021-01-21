@@ -34,7 +34,7 @@
 
                 <Label Text="{Binding Version, Mode=TwoWay}" Grid.Row="6" Grid.ColumnSpan="2" Style="{DynamicResource MountersLabelStyle}">
                     <Label.GestureRecognizers>
-                        <TapGestureRecognizer NumberOfTapsRequired="2" Command="{Binding GetEventsObjectInfo}"/>
+                        <TapGestureRecognizer NumberOfTapsRequired="2" Command="{Binding CheckAccessToSecret}"/>
                     </Label.GestureRecognizers>
                 </Label>
             </Grid>

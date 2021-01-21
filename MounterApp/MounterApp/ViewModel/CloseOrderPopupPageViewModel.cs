@@ -721,8 +721,8 @@ namespace MounterApp.ViewModel {
                                         return;
                                     }
                                 }
-                                //await App.Current.MainPage.Navigation.PopPopupAsync(true);
-                                //App.Current.MainPage = new ServiceOrdersPage(vm);
+                                await App.Current.MainPage.Navigation.PopPopupAsync(true);
+                                App.Current.MainPage = new ServiceOrdersPage(vm);
                             }
                             else
                                 Crashes.TrackError(new Exception("При запросе информация о заявке технику от сервера пришел ответ с ошибкой"),
