@@ -112,7 +112,7 @@ namespace MounterApp.ViewModel {
         private RelayCommand _ExitCommand;
         public RelayCommand ExitCommand {
             get => _ExitCommand ??= new RelayCommand(async obj => {
-                await App.Current.MainPage.Navigation.PopPopupAsync(true);
+                await App.Current.MainPage.Navigation.PopPopupAsync(false);
             });
         }
         /// <summary>

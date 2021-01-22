@@ -271,7 +271,7 @@ namespace MounterApp.ViewModel {
         private RelayCommand _BackPressedCommand;
         public RelayCommand BackPressedCommand {
             get => _BackPressedCommand ??= new RelayCommand(async obj => {
-                await App.Current.MainPage.Navigation.PopPopupAsync(true);
+                await App.Current.MainPage.Navigation.PopPopupAsync(false);
                 NewMountPageViewModel vm = new NewMountPageViewModel(Mount,Mounters,IsChanged,Servicemans);
                 App.Current.MainPage = new NewMountpage(vm);
             });

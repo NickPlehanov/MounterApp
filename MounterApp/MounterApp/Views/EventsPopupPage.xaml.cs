@@ -10,15 +10,17 @@ namespace MounterApp.Views {
         public EventsPopupViewModel VM { get; private set; }
         public EventsPopupPage() {
             InitializeComponent();
+            this.HasSystemPadding = false;
         }
         public EventsPopupPage(EventsPopupViewModel vm) {
             InitializeComponent();
             VM = vm;
             this.BindingContext = VM;
+            this.HasSystemPadding = false;
         }
 
         private void PopupPage_BackgroundClicked(object sender,EventArgs e) {
-            App.Current.MainPage.Navigation.PopPopupAsync();
+            App.Current.MainPage.Navigation.PopPopupAsync(false);
         }
     }
 }

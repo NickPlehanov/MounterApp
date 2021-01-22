@@ -10,14 +10,16 @@ namespace MounterApp.Views {
         public OrdersForITViewModel VM  { get; private set; }
         public OrdersForITPopupPage() {
             InitializeComponent();
+            this.HasSystemPadding = false;
         }
         public OrdersForITPopupPage(OrdersForITViewModel vm) {
             InitializeComponent();
             VM = vm;
             this.BindingContext = VM;
+            this.HasSystemPadding = false;
         }
         private async void PopupPage_BackgroundClicked(object sender,EventArgs e) {
-            await App.Current.MainPage.Navigation.PopPopupAsync(true);
+            await App.Current.MainPage.Navigation.PopPopupAsync(false);
         }
     }
 }

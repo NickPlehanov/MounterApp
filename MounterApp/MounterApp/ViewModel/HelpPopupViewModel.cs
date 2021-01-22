@@ -19,13 +19,13 @@ namespace MounterApp.ViewModel {
         private RelayCommand _CloseCommand;
         public RelayCommand CloseCommand {
             get => _CloseCommand ??= new RelayCommand(async obj => {
-                await App.Current.MainPage.Navigation.PopPopupAsync(true);
+                await App.Current.MainPage.Navigation.PopPopupAsync(false);
             });
         }
         private RelayCommand _BackPressedCommand;
         public RelayCommand BackPressedCommand {
             get => _BackPressedCommand ??= new RelayCommand(async obj => {
-                await App.Current.MainPage.Navigation.PopPopupAsync(true);
+                await App.Current.MainPage.Navigation.PopPopupAsync(false);
             });
         }
     }

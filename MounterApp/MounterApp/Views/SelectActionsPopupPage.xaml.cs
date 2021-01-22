@@ -16,14 +16,16 @@ namespace MounterApp.Views {
         public SelectActionsPopupPageViewModel VM { get; private set; } 
         public SelectActionsPopupPage() {
             InitializeComponent();
+            this.HasSystemPadding = false;
         }
         public SelectActionsPopupPage(SelectActionsPopupPageViewModel vm) {
             InitializeComponent();
             VM = vm;
             this.BindingContext = VM;
+            this.HasSystemPadding = false;
         }
         private void PopupPage_BackgroundClicked(object sender,EventArgs e) {
-            App.Current.MainPage.Navigation.PopPopupAsync();
+            App.Current.MainPage.Navigation.PopPopupAsync(false);
         }
     }
 }

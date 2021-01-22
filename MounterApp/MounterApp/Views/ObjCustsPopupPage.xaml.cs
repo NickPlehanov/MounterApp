@@ -21,9 +21,10 @@ namespace MounterApp.Views {
             InitializeComponent();
             VM = vm;
             this.BindingContext = VM;
+            this.HasSystemPadding = false;
         }
         private void PopupPage_BackgroundClicked(object sender,EventArgs e) {
-            App.Current.MainPage.Navigation.PopPopupAsync();
+            App.Current.MainPage.Navigation.PopPopupAsync(false);
         }
     }
 }

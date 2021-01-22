@@ -283,7 +283,7 @@ namespace MounterApp.ViewModel {
                 new Dictionary<string,string> {
                     {"ServicemanPhone",Servicemans.First().NewPhone }
                 });
-                await App.Current.MainPage.Navigation.PopPopupAsync(true);
+                await App.Current.MainPage.Navigation.PopPopupAsync(false);
             });
         }
     }

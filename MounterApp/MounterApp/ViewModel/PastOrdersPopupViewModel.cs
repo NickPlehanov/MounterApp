@@ -207,7 +207,7 @@ namespace MounterApp.ViewModel {
         private RelayCommand _CloseCommand;
         public RelayCommand CloseCommand {
             get => _CloseCommand ??= new RelayCommand(async obj => {
-                await App.Current.MainPage.Navigation.PopPopupAsync(true);
+                await App.Current.MainPage.Navigation.PopPopupAsync(false);
                 //ServiceOrderViewModel vm = new ServiceOrderViewModel(ServiceOrder,Servicemans,Mounters);
                 //App.Current.MainPage = new ServiceOrder(vm);
             });

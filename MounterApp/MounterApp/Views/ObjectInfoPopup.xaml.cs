@@ -10,14 +10,16 @@ namespace MounterApp.Views {
         public ObjectInfoViewModel VM { get; private set; }
         public ObjectInfoPopup() {
             InitializeComponent();
+            this.HasSystemPadding = false;
         }
         public ObjectInfoPopup(ObjectInfoViewModel vm) {
             InitializeComponent();
             VM = vm;
             BindingContext = VM;
+            this.HasSystemPadding = false;
         }
         private void PopupPage_BackgroundClicked(object sender,EventArgs e) {
-            App.Current.MainPage.Navigation.PopPopupAsync();
+            App.Current.MainPage.Navigation.PopPopupAsync(false);
         }
     }
 }

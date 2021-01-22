@@ -582,7 +582,7 @@ namespace MounterApp.ViewModel {
                                         return;
                                     }
                                 }
-                                await App.Current.MainPage.Navigation.PopPopupAsync(true);
+                                await App.Current.MainPage.Navigation.PopPopupAsync(false);
                                 App.Current.MainPage = new ServiceOrdersPage(vm);
                             }
                             else
@@ -721,7 +721,7 @@ namespace MounterApp.ViewModel {
                                         return;
                                     }
                                 }
-                                await App.Current.MainPage.Navigation.PopPopupAsync(true);
+                                await App.Current.MainPage.Navigation.PopPopupAsync(false);
                                 App.Current.MainPage = new ServiceOrdersPage(vm);
                             }
                             else
