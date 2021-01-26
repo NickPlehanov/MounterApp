@@ -7,12 +7,14 @@ using Rg.Plugins.Popup.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class OrdersForITViewModel : BaseViewModel {
+        readonly ClientHttp http = new ClientHttp();
         public OrdersForITViewModel(List<NewMounterExtensionBase> mounters,List<NewServicemanExtensionBase> servicemans) {
             TextButton = "Закрыть";
             Mounters = mounters;
@@ -98,12 +100,15 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetUserInfo;
         public RelayCommand GetUserInfo {
             get => _GetUserInfo ??= new RelayCommand(async obj => {
-                if(Mounters.Count > 0 || Servicemans.Count > 0) {
-                    if(Mounters.Count > 0)
-                        UserInfo = Mounters.FirstOrDefault().NewName+Environment.NewLine+Mounters.FirstOrDefault().NewPhone + Environment.NewLine + Mounters.FirstOrDefault().NewMounterId;
-                    if(Servicemans.Count > 0)
-                        UserInfo = Servicemans.FirstOrDefault().NewName + Environment.NewLine + Servicemans.FirstOrDefault().NewPhone + Environment.NewLine + Servicemans.FirstOrDefault().NewServicemanId;
-                }
+                //if(Mounters.Count > 0 || Servicemans.Count > 0) {
+                //    if(Mounters.Count > 0)
+                //        UserInfo = Mounters.FirstOrDefault().NewName+Environment.NewLine+Mounters.FirstOrDefault().NewPhone + Environment.NewLine + Mounters.FirstOrDefault().NewMounterId;
+                //    if(Servicemans.Count > 0)
+                //        UserInfo = Servicemans.FirstOrDefault().NewName + Environment.NewLine + Servicemans.FirstOrDefault().NewPhone + Environment.NewLine + Servicemans.FirstOrDefault().NewServicemanId;
+                //}
+                UserInfo = Mounters!=null ? 
+                    Mounters.FirstOrDefault().NewName + Environment.NewLine + Mounters.FirstOrDefault().NewPhone + Environment.NewLine + Mounters.FirstOrDefault().NewMounterId:
+                    Servicemans.FirstOrDefault().NewName + Environment.NewLine + Servicemans.FirstOrDefault().NewPhone + Environment.NewLine + Servicemans.FirstOrDefault().NewServicemanId;
             });
         }
         /// <summary>
@@ -121,37 +126,50 @@ namespace MounterApp.ViewModel {
         private RelayCommand _SendCommand;
         public RelayCommand SendCommand {
             get => _SendCommand ??= new RelayCommand(async obj => {
-                using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                    Guid id = Guid.NewGuid();
-                    var data = JsonConvert.SerializeObject(new NewItBase() {
-                        NewItId = id,
-                        CreatedOn = DateTime.Now.AddHours(-5),
-                        //CreatedBy = UserID,
-                        ModifiedOn = DateTime.Now.AddHours(-5),
-                        //ModifiedBy = UserID,
-                        //OwningUser = UserID,
-                        DeletionStateCode = 0,
-                        Statecode = 0,
-                        Statuscode = 1
-                    });
-                    StringContent content = new StringContent(data,Encoding.UTF8,"application/json");
-                    HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress + "/api/NewItBases",content);
-                    if(response.IsSuccessStatusCode || response.StatusCode == System.Net.HttpStatusCode.Accepted) {
-                        using(HttpClient ex_client = new HttpClient(GetHttpClientHandler())) {
-                            var ex_data = JsonConvert.SerializeObject(new NewItExtensionBase() {
-                                NewItId = id,
-                                NewComment = DescriptionProblem+Environment.NewLine+ UserInfo,
-                                NewName = "Проблема в мобильном приложении MounterApp"
-                            });
-                            StringContent ex_content = new StringContent(ex_data,Encoding.UTF8,"application/json");
-                            HttpResponseMessage ex_response = await client.PostAsync(Resources.BaseAddress + "/api/NewItExtensionBases",ex_content);
-                            if(ex_response.IsSuccessStatusCode || ex_response.StatusCode == System.Net.HttpStatusCode.Accepted) 
-                                Toast.MakeText(Android.App.Application.Context,"Успешно отправлено",ToastLength.Long).Show();
-                            else
-                                Toast.MakeText(Android.App.Application.Context,"Ошибка при отправке сообщения",ToastLength.Long).Show();
-                        }
-                    }
-                }
+                Guid id = Guid.NewGuid();
+                var data = JsonConvert.SerializeObject(new NewItBase() {
+                    NewItId = id,
+                    CreatedOn = DateTime.Now.AddHours(-5),
+                    ModifiedOn = DateTime.Now.AddHours(-5),
+                    DeletionStateCode = 0,
+                    Statecode = 0,
+                    Statuscode = 1
+                });
+                HttpStatusCode code = await http.PostQuery("/api/NewItBases",new StringContent(data,Encoding.UTF8,"application/json"));
+                string msg = code.Equals(HttpStatusCode.Accepted) ? "Успешно отправлено" : "Ошибка при отправке сообщения";
+                Toast.MakeText(Android.App.Application.Context,msg,ToastLength.Long).Show();
+
+                //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                //    Guid id = Guid.NewGuid();
+                //    var data = JsonConvert.SerializeObject(new NewItBase() {
+                //        NewItId = id,
+                //        CreatedOn = DateTime.Now.AddHours(-5),
+                //        //CreatedBy = UserID,
+                //        ModifiedOn = DateTime.Now.AddHours(-5),
+                //        //ModifiedBy = UserID,
+                //        //OwningUser = UserID,
+                //        DeletionStateCode = 0,
+                //        Statecode = 0,
+                //        Statuscode = 1
+                //    });
+                //    StringContent content = new StringContent(data,Encoding.UTF8,"application/json");
+                //    HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress + "/api/NewItBases",content);
+                //    if(response.IsSuccessStatusCode || response.StatusCode == System.Net.HttpStatusCode.Accepted) {
+                //        using(HttpClient ex_client = new HttpClient(GetHttpClientHandler())) {
+                //            var ex_data = JsonConvert.SerializeObject(new NewItExtensionBase() {
+                //                NewItId = id,
+                //                NewComment = DescriptionProblem+Environment.NewLine+ UserInfo,
+                //                NewName = "Проблема в мобильном приложении MounterApp"
+                //            });
+                //            StringContent ex_content = new StringContent(ex_data,Encoding.UTF8,"application/json");
+                //            HttpResponseMessage ex_response = await client.PostAsync(Resources.BaseAddress + "/api/NewItExtensionBases",ex_content);
+                //            if(ex_response.IsSuccessStatusCode || ex_response.StatusCode == System.Net.HttpStatusCode.Accepted) 
+                //                Toast.MakeText(Android.App.Application.Context,"Успешно отправлено",ToastLength.Long).Show();
+                //            else
+                //                Toast.MakeText(Android.App.Application.Context,"Ошибка при отправке сообщения",ToastLength.Long).Show();
+                //        }
+                //    }
+                //}
                 ExitCommand.Execute(null);
             });
         }

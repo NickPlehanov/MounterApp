@@ -1,11 +1,7 @@
-﻿using Android.Graphics.Drawables;
-using MounterApp.Helpers;
+﻿using MounterApp.Helpers;
 using MounterApp.InternalModel;
 using MounterApp.Model;
-using MounterApp.Properties;
 using MounterApp.Views;
-using Newtonsoft.Json;
-using Plugin.Media;
 using Plugin.Media.Abstractions;
 using System;
 using System.Collections.Generic;
@@ -14,19 +10,16 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
 using Xamarin.Forms;
-using System.ComponentModel;
 using Rg.Plugins.Popup.Extensions;
 using Android.Widget;
 using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 using Xamarin.Essentials;
 using System.Net;
 
 namespace MounterApp.ViewModel {
     public class NewMountPageViewModel : BaseViewModel {
+        readonly ClientHttp http = new ClientHttp();
         private List<NewMounterExtensionBase> _Mounters;
         public List<NewMounterExtensionBase> Mounters {
             get => _Mounters;
@@ -38,15 +31,28 @@ namespace MounterApp.ViewModel {
         public NewMountPageViewModel() {
 
         }
+
+        private RelayCommand _FillPhotoNames;
+        public RelayCommand FillPhotoNames {
+            get => _FillPhotoNames ??= new RelayCommand(async obj => {
+                PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Карточка объекта" });
+                PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Схема объекта" });
+                PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Расшлейфовка объекта" });
+                PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Ответственные объекта" });
+                PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Вывеска объекта" });
+                PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Доп. фото" });
+            });
+        }
         public NewMountPageViewModel(List<NewMounterExtensionBase> mounters,List<NewServicemanExtensionBase> servicemans) {
             Servicemans = servicemans;
             Mounters = mounters;
-            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Карточка объекта" });
-            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Схема объекта" });
-            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Расшлейфовка объекта" });
-            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Ответственные объекта" });
-            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Вывеска объекта" });
-            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Доп. фото" });
+            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Карточка объекта" });
+            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Схема объекта" });
+            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Расшлейфовка объекта" });
+            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Ответственные объекта" });
+            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Вывеска объекта" });
+            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Доп. фото" });
+            FillPhotoNames.Execute(null);
             ImgSrc = "EmptyPhoto.png";
             PhotoImage = IconName("media");
             SaveImage = IconName("save");
@@ -64,12 +70,13 @@ namespace MounterApp.ViewModel {
         }
         public NewMountPageViewModel(Mounts mount,List<NewMounterExtensionBase> mounters,bool _IsChanged,List<NewServicemanExtensionBase> servicemans) {
             Servicemans = servicemans;
-            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Карточка объекта" });
-            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Схема объекта" });
-            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Расшлейфовка объекта" });
-            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Ответственные объекта" });
-            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Вывеска объекта" });
-            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Доп. фото" });
+            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Карточка объекта" });
+            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Схема объекта" });
+            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Расшлейфовка объекта" });
+            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Ответственные объекта" });
+            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Вывеска объекта" });
+            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Доп. фото" });
+            FillPhotoNames.Execute(null);
             ImgSrc = "EmptyPhoto.png";
             PhotoImage = IconName("media");
             SaveImage = IconName("save");
@@ -287,7 +294,8 @@ namespace MounterApp.ViewModel {
                 if(string.IsNullOrEmpty(ObjectNumberValidationError) && string.IsNullOrWhiteSpace(ObjectNumberValidationError))
                     if(string.IsNullOrEmpty(ObjectNameValidationError) && string.IsNullOrWhiteSpace(ObjectNameValidationError))
                         if(string.IsNullOrEmpty(ObjectAddressValidationError) && string.IsNullOrWhiteSpace(ObjectAddressValidationError))
-                            if(Photos.Count >= 5) {
+                            if(Photos.Count >= 5) { 
+                                //TODO: проверять, что это обязательные фото, а не просто количество
                                 Analytics.TrackEvent("Отправка нового монтажа на сервер",
                                     new Dictionary<string,string> {
                                         {"ObjectNumber",ObjectNumber }
@@ -295,14 +303,12 @@ namespace MounterApp.ViewModel {
                                 Opacity = 0.1;
                                 IndicatorVisible = true;
                                 IndicatorText = "Подождите, идет загрузка...";
-                                bool error = false;
                                 ProgressValue = 0.1;
                                 Analytics.TrackEvent("Сохранение монтажа перед отправкой на сервер в локальной базе",
                                     new Dictionary<string,string> {
                                         {"ObjectNumber",ObjectNumber }
                                     });
                                 SaveToDB.Execute(null);
-                                int cnt = 1;
                                 StringBuilder sb = new StringBuilder();
                                 sb.AppendLine("Номер объекта: " + ObjectNumber);
                                 sb.AppendLine("Наименование объекта: " + ObjectName);
@@ -310,36 +316,45 @@ namespace MounterApp.ViewModel {
                                 sb.AppendLine("Монтажник: " + Mounters.FirstOrDefault().NewName);
                                 sb.AppendLine("Подъездные пути: " + ObjectDriveways);
 
+
+                                MultipartFormDataContent form = new MultipartFormDataContent();
                                 foreach(PhotoCollection ph in Photos.Where(x => x.Data != null)) {
-                                    using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                                        MultipartFormDataContent form = new MultipartFormDataContent();
+
+                                    //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
                                         form.Add(new StreamContent(new MemoryStream(Convert.FromBase64String(ph.Data)))
                                             ,String.Format("file"),String.Format(ObjectNumber + "_" + ph._Types.PhotoTypeName + "_" + ph.ID.ToString() + ".jpeg"));
-                                        HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress + "/api/Common?NumberObject=" + ObjectNumber +
+                                        //HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress + "/api/Common?NumberObject=" + ObjectNumber +
+                                        //    "&NameObject=" + ObjectName +
+                                        //    "&AddressObject=" + ObjectAddress +
+                                        //    "&MounterName=" + Mounters.FirstOrDefault().NewName +
+                                        //    "&Driveways=" + ObjectDriveways
+                                        //    ,form);
+                                        //IndicatorText = "Подождите, идет загрузка..." + Environment.NewLine + "Загружено " + cnt.ToString() + " фото из " + Photos.Count.ToString();
+                                        //cnt++;
+                                        //if(response.StatusCode.ToString() == "OK") {
+                                        //    PathToSaveModel path = JsonConvert.DeserializeObject<PathToSaveModel>(response.Content.ReadAsStringAsync().Result);
+                                        //    Path = path.PathToSave.ToString().Replace("C:\\","\\\\SQL-SERVICE\\");
+                                        //}
+                                        //if(response.StatusCode.ToString() != "OK") {
+                                        //    await Application.Current.MainPage.DisplayAlert("Ошибка (Фото не было загружено)",response.Content.ReadAsStringAsync().Result,"OK");
+                                        //    error = true;
+                                        //    Crashes.TrackError(new Exception("Ошибка отправки фото на сервер"),
+                                        //        new Dictionary<string,string> {
+                                        //            {"Error",response.Content.ReadAsStringAsync().Result },
+                                        //            {"ErrorResponse",response.ToString() },
+                                        //            {"ErrorPhotoNumber",cnt.ToString() }
+                                        //        });
+                                        //}
+                                    //}
+                                }
+                                HttpStatusCode result = await http.PostQuery("/api/Common?NumberObject=" + ObjectNumber +
                                             "&NameObject=" + ObjectName +
                                             "&AddressObject=" + ObjectAddress +
                                             "&MounterName=" + Mounters.FirstOrDefault().NewName +
                                             "&Driveways=" + ObjectDriveways
                                             ,form);
-                                        IndicatorText = "Подождите, идет загрузка..." + Environment.NewLine + "Загружено " + cnt.ToString() + " фото из " + Photos.Count.ToString();
-                                        cnt++;
-                                        if(response.StatusCode.ToString() == "OK") {
-                                            PathToSaveModel path = JsonConvert.DeserializeObject<PathToSaveModel>(response.Content.ReadAsStringAsync().Result);
-                                            Path = path.PathToSave.ToString().Replace("C:\\","\\\\SQL-SERVICE\\");
-                                        }
-                                        if(response.StatusCode.ToString() != "OK") {
-                                            await Application.Current.MainPage.DisplayAlert("Ошибка (Фото не было загружено)",response.Content.ReadAsStringAsync().Result,"OK");
-                                            error = true;
-                                            Crashes.TrackError(new Exception("Ошибка отправки фото на сервер"),
-                                                new Dictionary<string,string> {
-                                                    {"Error",response.Content.ReadAsStringAsync().Result },
-                                                    {"ErrorResponse",response.ToString() },
-                                                    {"ErrorPhotoNumber",cnt.ToString() }
-                                                });
-                                        }
-                                    }
-                                }
-                                if(!error) {
+                                //if(!error) {
+                                if(result.Equals(HttpStatusCode.OK)) { 
                                     if(Mount != null) {
                                         Mount.State = 1;
                                         Mount.DateSended = DateTime.Now;
@@ -403,96 +418,104 @@ namespace MounterApp.ViewModel {
         private RelayCommand _WriteCoordinates;
         public RelayCommand WriteCoordinates {
             get => _WriteCoordinates ??= new RelayCommand(async obj => {
-                using (HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                    HttpResponseMessage responseCoords=await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/coords?ObjectNumber=" + ObjectNumber + "&ObjectAddress=" + ObjectAddress + "");
-                    if (responseCoords.IsSuccessStatusCode || responseCoords.StatusCode == HttpStatusCode.Accepted) { }
-                    else {
-                        Crashes.TrackError(new Exception("Не удачная попытка записи координат в андромеду"),
-                            new Dictionary<string,string> {
-                                    {"ResponseStatusCode",responseCoords.StatusCode.ToString() },
-                                    {"ResponseError",responseCoords.Content.ReadAsStringAsync().Result },
-                                    {"Response",responseCoords.ToString() },
-                                    {"ObjectNumber",ObjectNumber },
-                                    {"ObjectAddress",ObjectAddress }
-                            });
-                    }
-                }
+                await http.GetQuery("/api/Andromeda/coords?ObjectNumber=" + ObjectNumber + "&ObjectAddress=" + ObjectAddress + "");
+
+                //using (HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                //    HttpResponseMessage responseCoords=await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/coords?ObjectNumber=" + ObjectNumber + "&ObjectAddress=" + ObjectAddress + "");
+                //    if (responseCoords.IsSuccessStatusCode || responseCoords.StatusCode == HttpStatusCode.Accepted) { }
+                //    else {
+                //        Crashes.TrackError(new Exception("Не удачная попытка записи координат в андромеду"),
+                //            new Dictionary<string,string> {
+                //                    {"ResponseStatusCode",responseCoords.StatusCode.ToString() },
+                //                    {"ResponseError",responseCoords.Content.ReadAsStringAsync().Result },
+                //                    {"Response",responseCoords.ToString() },
+                //                    {"ObjectNumber",ObjectNumber },
+                //                    {"ObjectAddress",ObjectAddress }
+                //            });
+                //    }
+                //}
             });
         }
 
         private RelayCommand _WriteDriveways;
         public RelayCommand WriteDriveways {
             get => _WriteDriveways ??= new RelayCommand(async obj => {
-                using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                    HttpResponseMessage responseCoords = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/driveways?ObjectNumber=" + ObjectNumber + "&ObjectDriveways=" + ObjectDriveways + "");
-                    if(responseCoords.IsSuccessStatusCode || responseCoords.StatusCode == HttpStatusCode.Accepted) { }
-                    else {
-                        Crashes.TrackError(new Exception("Не удачная попытка записи подъездных путей в андромеду"),
-                            new Dictionary<string,string> {
-                                    {"ResponseStatusCode",responseCoords.StatusCode.ToString() },
-                                    {"ResponseError",responseCoords.Content.ReadAsStringAsync().Result },
-                                    {"Response",responseCoords.ToString() },
-                                    {"ObjectNumber",ObjectNumber },
-                                    {"ObjectDriveways",ObjectDriveways }
-                            });
-                    }
-                }
+                await http.GetQuery("/api/Andromeda/driveways?ObjectNumber=" + ObjectNumber + "&ObjectDriveways=" + ObjectDriveways + "");
+                //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                //    HttpResponseMessage responseCoords = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/driveways?ObjectNumber=" + ObjectNumber + "&ObjectDriveways=" + ObjectDriveways + "");
+                //    if(responseCoords.IsSuccessStatusCode || responseCoords.StatusCode == HttpStatusCode.Accepted) { }
+                //    else {
+                //        Crashes.TrackError(new Exception("Не удачная попытка записи подъездных путей в андромеду"),
+                //            new Dictionary<string,string> {
+                //                    {"ResponseStatusCode",responseCoords.StatusCode.ToString() },
+                //                    {"ResponseError",responseCoords.Content.ReadAsStringAsync().Result },
+                //                    {"Response",responseCoords.ToString() },
+                //                    {"ObjectNumber",ObjectNumber },
+                //                    {"ObjectDriveways",ObjectDriveways }
+                //            });
+                //    }
+                //}
             });
         }
 
         private RelayCommand _WriteWebLink;
         public RelayCommand WriteWebLink {
             get => _WriteWebLink ??= new RelayCommand(async obj => {
-                IsSuccessWriteWebLink = false;
-                using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                    HttpResponseMessage responseweblink = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/weblink?ObjectNumber=" + ObjectNumber + "&path=" + Path + "");
-                    if(responseweblink.StatusCode.ToString() != "Accepted") {
-                        IsSuccessWriteWebLink = false;
-                        Crashes.TrackError(new Exception("Не удачная попытка записи Web-ссылки в андромеду"),
-                            new Dictionary<string,string> {
-                                    {"ResponseStatusCode",responseweblink.StatusCode.ToString() },
-                                    {"ResponseError",responseweblink.Content.ReadAsStringAsync().Result },
-                                    {"Response",responseweblink.ToString() },
-                                    {"ObjectNumber",ObjectNumber },
-                                    {"Path",Path }
-                            });
-                    }
-                    else if(responseweblink.IsSuccessStatusCode || responseweblink.StatusCode.ToString() == "Accepted") {
-                        IsSuccessWriteWebLink = true;
-                        Analytics.TrackEvent("Монтаж отправлен, данные получены оператором",
-                            new Dictionary<string,string> {
-                            {"ObjectNumber",ObjectNumber },
-                            {"Date",DateTime.Now.ToString() }
-                        });
-                    }
-                }
+                HttpStatusCode code =  await http.GetQuery("/api/Andromeda/weblink?ObjectNumber=" + ObjectNumber + "&path=" + Path + "");
+                IsSuccessWriteWebLink = code.Equals(HttpStatusCode.Accepted);
+                //IsSuccessWriteWebLink = false;
+                //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                //    HttpResponseMessage responseweblink = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/weblink?ObjectNumber=" + ObjectNumber + "&path=" + Path + "");
+                //    if(responseweblink.StatusCode.ToString() != "Accepted") {
+                //        IsSuccessWriteWebLink = false;
+                //        Crashes.TrackError(new Exception("Не удачная попытка записи Web-ссылки в андромеду"),
+                //            new Dictionary<string,string> {
+                //                    {"ResponseStatusCode",responseweblink.StatusCode.ToString() },
+                //                    {"ResponseError",responseweblink.Content.ReadAsStringAsync().Result },
+                //                    {"Response",responseweblink.ToString() },
+                //                    {"ObjectNumber",ObjectNumber },
+                //                    {"Path",Path }
+                //            });
+                //    }
+                //    else if(responseweblink.IsSuccessStatusCode || responseweblink.StatusCode.ToString() == "Accepted") {
+                //        IsSuccessWriteWebLink = true;
+                //        Analytics.TrackEvent("Монтаж отправлен, данные получены оператором",
+                //            new Dictionary<string,string> {
+                //            {"ObjectNumber",ObjectNumber },
+                //            {"Date",DateTime.Now.ToString() }
+                //        });
+                //    }
+                //}
             });
         }
         private RelayCommand _SendEventsToAndromeda;
         public RelayCommand SendEventsToAndromeda {
             get => _SendEventsToAndromeda ??= new RelayCommand(async obj => {
-                IsSuccessSendEvents = false;
-                using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                    HttpResponseMessage responseEvents = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/SendEvents?ObjectNumber=" + ObjectNumber + "");
-                    if(responseEvents.IsSuccessStatusCode || responseEvents.StatusCode.ToString() == "Accepted") {
-                        Analytics.TrackEvent("Получен код 6 от Андромеды",
-                        new Dictionary<string,string> {
-                            {"ObjectNumber",ObjectNumber },
-                            {"Date",DateTime.Now.ToString() }
-                        });
-                        IsSuccessSendEvents = true;
-                    }
-                    else {
-                        Crashes.TrackError(new Exception("Не получен код 6 от Андромеды"),
-                        new Dictionary<string,string> {
-                            { "ResponseStatusCode",responseEvents.StatusCode.ToString() }
-                        });
-                        IsSuccessSendEvents = false;
-                        await Application.Current.MainPage.DisplayAlert("Внимание"
-                            ,"От сервера не был получен корректный ответ. Доставка обходного до оператора не может быть гарантирована. Рекомендуется уточнить информацию у оператора по номеру объекта"
-                            ,"OK");
-                    }
-                }
+                HttpStatusCode code = await http.GetQuery("/api/Andromeda/SendEvents?ObjectNumber=" + ObjectNumber + "");
+                IsSuccessSendEvents = code.Equals(HttpStatusCode.Accepted);
+
+                //IsSuccessSendEvents = false;
+                //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                //    HttpResponseMessage responseEvents = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/SendEvents?ObjectNumber=" + ObjectNumber + "");
+                //    if(responseEvents.IsSuccessStatusCode || responseEvents.StatusCode.ToString() == "Accepted") {
+                //        Analytics.TrackEvent("Получен код 6 от Андромеды",
+                //        new Dictionary<string,string> {
+                //            {"ObjectNumber",ObjectNumber },
+                //            {"Date",DateTime.Now.ToString() }
+                //        });
+                //        IsSuccessSendEvents = true;
+                //    }
+                //    else {
+                //        Crashes.TrackError(new Exception("Не получен код 6 от Андромеды"),
+                //        new Dictionary<string,string> {
+                //            { "ResponseStatusCode",responseEvents.StatusCode.ToString() }
+                //        });
+                //        IsSuccessSendEvents = false;
+                //        await Application.Current.MainPage.DisplayAlert("Внимание"
+                //            ,"От сервера не был получен корректный ответ. Доставка обходного до оператора не может быть гарантирована. Рекомендуется уточнить информацию у оператора по номеру объекта"
+                //            ,"OK");
+                //    }
+                //}
             });
         }
         private RelayCommand _SaveToDB;
@@ -715,7 +738,6 @@ namespace MounterApp.ViewModel {
 
         private string _ObjectName;
         public string ObjectName {
-            //get => _ObjectName;
             get {
                 if(string.IsNullOrEmpty(_ObjectName) || string.IsNullOrWhiteSpace(_ObjectName)) {
                     ObjectNameValidationError = "Название объекта не может быть пустым";
@@ -860,20 +882,6 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(IsSuccessWriteWebLink));
             }
         }
-
-        //private bool _SendButtonEnabled;
-        //public bool SendButtonEnabled {
-        //    get => _SendButtonEnabled;
-        //    set {
-        //        _SendButtonEnabled = value;
-        //        SendButtonEnabled = false;
-        //        if(!string.IsNullOrEmpty(ObjectNumberValidationError) && !string.IsNullOrWhiteSpace(ObjectNumberValidationError))
-        //            if(!string.IsNullOrEmpty(ObjectNameValidationError) && !string.IsNullOrWhiteSpace(ObjectNameValidationError))
-        //                if(!string.IsNullOrEmpty(ObjectAddressValidationError) && !string.IsNullOrWhiteSpace(ObjectAddressValidationError))
-        //                    SendButtonEnabled = true;
-        //        OnPropertyChanged(nameof(SendButtonEnabled));
-        //    }
-        //}
 
         private ObservableCollection<PhotoCollection> _Photos = new ObservableCollection<PhotoCollection>();
         public ObservableCollection<PhotoCollection> Photos {

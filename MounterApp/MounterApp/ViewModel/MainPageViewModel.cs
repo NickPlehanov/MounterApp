@@ -3,12 +3,9 @@ using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using MounterApp.Helpers;
 using MounterApp.Model;
-using MounterApp.Properties;
 using MounterApp.Views;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -16,8 +13,8 @@ using static Xamarin.Essentials.Permissions;
 
 namespace MounterApp.ViewModel {
     public class MainPageViewModel : BaseViewModel {
+        ClientHttp http = new ClientHttp();
 
-        //HttpClientHandler clientHandler = new HttpClientHandler();
         public MainPageViewModel() {
             
             IndicatorVisible = false;
@@ -31,17 +28,16 @@ namespace MounterApp.ViewModel {
             }
             else {
                 Application.Current.Properties["AutoEnter"] = true;
-                Application.Current.SavePropertiesAsync();
             }
             if(!Application.Current.Properties.ContainsKey("Quality")) {
                 Application.Current.Properties["Quality"] = 50;
-                Application.Current.SavePropertiesAsync();
             }
             if(!Application.Current.Properties.ContainsKey("Compression")) {
                 Application.Current.Properties["Compression"] = 50;
-                Application.Current.SavePropertiesAsync();
             }
             CheckAndRequestPermissions.Execute(null);
+
+            Application.Current.SavePropertiesAsync();
         }
 
         private RelayCommand _CheckAndRequestPermissions;
@@ -50,27 +46,17 @@ namespace MounterApp.ViewModel {
                 await CheckAndRequestPermissionAsync(new StorageRead());
                 await CheckAndRequestPermissionAsync(new LocationWhenInUse());
                 await CheckAndRequestPermissionAsync(new NetworkState());
-                await CheckAndRequestPermissionAsync(new Permissions.Camera());
+                await CheckAndRequestPermissionAsync(new Camera());
                 await CheckAndRequestPermissionAsync(new StorageWrite());
             });
         }
-        //public async Task<PermissionStatus> CheckAndRequestPermissionAsync<T>(T permission)
-        //    where T : BasePermission {
-        //    var status = await permission.CheckStatusAsync();
-        //    if(status != PermissionStatus.Granted) {
-        //        status = await permission.RequestAsync();
-        //    }
-
-        //    return status;
-        //}
         private RelayCommand _AuthCommand;
         public RelayCommand AuthCommand {
             get => _AuthCommand ??= new RelayCommand(async obj => {
                 IndicatorVisible = true;
                 OpacityForm = 0.1;
-                //App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
                 Analytics.TrackEvent("App start");
-                using HttpClient client = new HttpClient(GetHttpClientHandler());
+                //using HttpClient client = new HttpClient(GetHttpClientHandler());
                 string Phone = null;
                 if(PhoneNumber.Substring(0,2) == "+7")
                     PhoneNumber=PhoneNumber.Replace("+7","8");
@@ -87,40 +73,13 @@ namespace MounterApp.ViewModel {
                     await Application.Current.SavePropertiesAsync();
                     Analytics.TrackEvent("Сохранение номера телефона в локальную базу данных");
                     Analytics.TrackEvent("Запрос монтажников по номеру телефона");
-                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewMounterExtensionBases/phone?phone=" + Phone);
-                    var resp = response.Content.ReadAsStringAsync().Result;
+
                     List<NewMounterExtensionBase> mounters = new List<NewMounterExtensionBase>();
-                    try {
-                        if(response.StatusCode.ToString() == "OK") {
-                            Analytics.TrackEvent("Попытка сериализации результата запроса монтажников");
-                            mounters = JsonConvert.DeserializeObject<List<NewMounterExtensionBase>>(resp).Where(x => x.NewIsWorking == true).ToList();
-                        }
-                    }
-                    catch(Exception MountersParseExecption) {
-                        Dictionary<string,string> parameters = new Dictionary<string,string> {
-                            { "Phone",PhoneNumber },
-                            { "Error","Не удалось провести сериализацию объекта монтажники" }
-                        };
-                        Crashes.TrackError(MountersParseExecption,parameters);
-                    }
-                    Analytics.TrackEvent("Запрос техников по номеру телефона");
-                    response = await client.GetAsync(Resources.BaseAddress + "/api/NewServicemanExtensionBases/phone?phone=" + Phone);
-                    resp = response.Content.ReadAsStringAsync().Result;
+                    mounters = await http.GetQuery<List<NewMounterExtensionBase>>("/api/NewMounterExtensionBases/phone?phone=" + Phone);
+
                     List<NewServicemanExtensionBase> servicemans = new List<NewServicemanExtensionBase>();
-                    try {
-                        if(response.StatusCode.ToString() == "OK") {
-                            Analytics.TrackEvent("Попытка сериализации результата запроса техников");
-                            servicemans = JsonConvert.DeserializeObject<List<NewServicemanExtensionBase>>(resp).Where(x => x.NewIswork == true).ToList();
-                        }
-                    }
-                    catch(Exception ServicemansParseException) {
-                        Dictionary<string,string> parameters = new Dictionary<string,string> {
-                            { "Phone",PhoneNumber },
-                            { "Error","Не удалось провести сериализацию объекта техники" }
-                        };
-                        Crashes.TrackError(ServicemansParseException,parameters);
-                    }
-                    //TODO: перелопатить авторизацию
+                    servicemans = await http.GetQuery<List<NewServicemanExtensionBase>>("/api/NewServicemanExtensionBases/phone?phone=" + Phone);
+
                     if(mounters != null || servicemans != null) {
                         if(mounters.Count > 0 || servicemans.Count > 0) {
                             if(mounters.Count > 1 || servicemans.Count > 1) {
@@ -137,14 +96,6 @@ namespace MounterApp.ViewModel {
                                 App.Current.MainPage = new MainMenuPage(vm);
                             }
                         }
-                        //else {
-                        //    Message = "Сотрудника с таким номером телефона не найдено" + Environment.NewLine + "Проверьте правильность ввода номера телефона";
-                        //    Dictionary<string,string> parameters = new Dictionary<string,string> {
-                        //        { "Phone",PhoneNumber },
-                        //        { "Error","Не найден сотрудник по номеру телефона" }
-                        //    };
-                        //    Crashes.TrackError(new Exception("Не найден сотрудник по номеру телефона"),parameters);
-                        //}
                     }
                     else {
                         Message = "Сотрудника с таким номером телефона не найдено";

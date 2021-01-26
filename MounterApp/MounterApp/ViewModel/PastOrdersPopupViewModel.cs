@@ -1,21 +1,17 @@
 ﻿using Android.Widget;
 using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 using MounterApp.Helpers;
 using MounterApp.Model;
-using MounterApp.Properties;
-using Newtonsoft.Json;
 using Rg.Plugins.Popup.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Net.Http;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class PastOrdersPopupViewModel : BaseViewModel {
+        readonly ClientHttp http = new ClientHttp();
         public PastOrdersPopupViewModel(NewServiceorderExtensionBase_ex _so,List<NewServicemanExtensionBase> _servicemans, List<NewMounterExtensionBase> _mounters) {
             Mounters = _mounters;
             Servicemans = _servicemans;
@@ -111,69 +107,75 @@ namespace MounterApp.ViewModel {
             get => _GetPastServiceOrders ??= new RelayCommand(async obj => {
                 IndicatorVisible = true;
                 OpacityForm = 0.1;
-                PastServiceOrders.Clear();
+
                 List<NewServiceorderExtensionBase_ex> _pso = new List<NewServiceorderExtensionBase_ex>();
                 List<NewTest2ExtensionBase> _pso_fa = new List<NewTest2ExtensionBase>();
-                string resp = null;
-                HttpResponseMessage response = null;
-                using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                    if(ServiceOrder != null) {
-                        response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByObjectNew?Andromeda_ID=" + ServiceOrder.NewAndromedaServiceorder);
-                        resp = response.Content.ReadAsStringAsync().Result;
-                        try {
-                            _pso = JsonConvert.DeserializeObject<List<NewServiceorderExtensionBase_ex>>(resp);
-                        }
-                        catch (Exception ex) {
-                            _pso = null;
-                            Crashes.TrackError(new Exception("Ошибка десериализации запроса по старым заявкам на объект"),
-                            new Dictionary<string,string> {
-                            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                            {"ErrorMessage",ex.Message },
-                            {"StatusCode",response.StatusCode.ToString() },
-                            {"Response",response.ToString() },
-                            {"Query","NewServiceorderExtensionBases/ServiceOrderByObjectIDNew?Andromeda_ID=" + ServiceOrder.NewAndromedaServiceorder}
-                            });
-                        }
-                        if(_pso.Count() > 0) {
-                            foreach(var item in _pso.OrderByDescending(o => o.NewDate)) {
-                                NewServiceorderExtensionBase_ex _item = item;
-                                _item.NewDate = _item.NewDate.Value.AddHours(5).Date;
-                                PastServiceOrders.Add(_item);
-                            }
-                        }
-                    }
-                    else if(ServiceOrderFireAlarm != null) {
-                        response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByObjectNew?Andromeda_ID=" + ServiceOrderFireAlarm.NewAndromedaServiceorder);
-                        resp = response.Content.ReadAsStringAsync().Result;
-                        try {
-                            _pso = JsonConvert.DeserializeObject<List<NewServiceorderExtensionBase_ex>>(resp);
-                        }
-                        catch(Exception ex) {
-                            _pso = null;
-                            Crashes.TrackError(new Exception("Ошибка десериализации запроса по старым заявкам на объект"),
-                            new Dictionary<string,string> {
-                            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                            {"ErrorMessage",ex.Message },
-                            {"StatusCode",response.StatusCode.ToString() },
-                            {"Response",response.ToString() },
-                            {"Query","NewServiceorderExtensionBases/ServiceOrderByObject?Andromeda_ID=" + ServiceOrder.NewAndromedaServiceorder + "&ObjectNumber=" + ServiceOrder.NewNumber }
-                            });
-                        }
-                        if(_pso.Count() > 0) {
-                            foreach(var item in _pso.OrderByDescending(o => o.NewDate)) {
-                                PastServiceOrders.Add(item);
-                                //NewServiceorderExtensionBase_ex _item = item;
-                                //_item.NewDate = _item.NewDate.Value.AddHours(5).Date;
-                                //PastServiceOrders.Add(new NewServiceorderExtensionBase_ex() {
-                                //    NewServiceorderId = _item.NewServiceorderId,
-                                //    NewDate=_item.NewDate,
-                                //    NewTime=_item.NewTime,
-                                //    NewResult=_item.NewResult
-                                //});
-                            }
-                        }
-                    }
-                }
+                Guid? andr = ServiceOrder != null ? ServiceOrder.NewAndromedaServiceorder : ServiceOrderFireAlarm.NewAndromedaServiceorder;
+                PastServiceOrders = await http.GetQuery<ObservableCollection<NewServiceorderExtensionBase_ex>>("/api/NewServiceorderExtensionBases/ServiceOrderByObjectNew?Andromeda_ID=" + andr);
+
+                //PastServiceOrders.Clear();
+                //List<NewServiceorderExtensionBase_ex> _pso = new List<NewServiceorderExtensionBase_ex>();
+                //List<NewTest2ExtensionBase> _pso_fa = new List<NewTest2ExtensionBase>();
+                //string resp = null;
+                //HttpResponseMessage response = null;
+                //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                //    if(ServiceOrder != null) {
+                //        response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByObjectNew?Andromeda_ID=" + ServiceOrder.NewAndromedaServiceorder);
+                //        resp = response.Content.ReadAsStringAsync().Result;
+                //        try {
+                //            _pso = JsonConvert.DeserializeObject<List<NewServiceorderExtensionBase_ex>>(resp);
+                //        }
+                //        catch (Exception ex) {
+                //            _pso = null;
+                //            Crashes.TrackError(new Exception("Ошибка десериализации запроса по старым заявкам на объект"),
+                //            new Dictionary<string,string> {
+                //            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                //            {"ErrorMessage",ex.Message },
+                //            {"StatusCode",response.StatusCode.ToString() },
+                //            {"Response",response.ToString() },
+                //            {"Query","NewServiceorderExtensionBases/ServiceOrderByObjectIDNew?Andromeda_ID=" + ServiceOrder.NewAndromedaServiceorder}
+                //            });
+                //        }
+                //        if(_pso.Count() > 0) {
+                //            foreach(var item in _pso.OrderByDescending(o => o.NewDate)) {
+                //                NewServiceorderExtensionBase_ex _item = item;
+                //                _item.NewDate = _item.NewDate.Value.AddHours(5).Date;
+                //                PastServiceOrders.Add(_item);
+                //            }
+                //        }
+                //    }
+                //    else if(ServiceOrderFireAlarm != null) {
+                //        response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByObjectNew?Andromeda_ID=" + ServiceOrderFireAlarm.NewAndromedaServiceorder);
+                //        resp = response.Content.ReadAsStringAsync().Result;
+                //        try {
+                //            _pso = JsonConvert.DeserializeObject<List<NewServiceorderExtensionBase_ex>>(resp);
+                //        }
+                //        catch(Exception ex) {
+                //            _pso = null;
+                //            Crashes.TrackError(new Exception("Ошибка десериализации запроса по старым заявкам на объект"),
+                //            new Dictionary<string,string> {
+                //            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                //            {"ErrorMessage",ex.Message },
+                //            {"StatusCode",response.StatusCode.ToString() },
+                //            {"Response",response.ToString() },
+                //            {"Query","NewServiceorderExtensionBases/ServiceOrderByObject?Andromeda_ID=" + ServiceOrder.NewAndromedaServiceorder + "&ObjectNumber=" + ServiceOrder.NewNumber }
+                //            });
+                //        }
+                //        if(_pso.Count() > 0) {
+                //            foreach(var item in _pso.OrderByDescending(o => o.NewDate)) {
+                //                PastServiceOrders.Add(item);
+                //                //NewServiceorderExtensionBase_ex _item = item;
+                //                //_item.NewDate = _item.NewDate.Value.AddHours(5).Date;
+                //                //PastServiceOrders.Add(new NewServiceorderExtensionBase_ex() {
+                //                //    NewServiceorderId = _item.NewServiceorderId,
+                //                //    NewDate=_item.NewDate,
+                //                //    NewTime=_item.NewTime,
+                //                //    NewResult=_item.NewResult
+                //                //});
+                //            }
+                //        }
+                //    }
+                //}
                 IndicatorVisible = false;
                 OpacityForm = 1;
             });

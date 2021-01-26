@@ -8,12 +8,14 @@ using Rg.Plugins.Popup.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class MainMenuPageViewModel : BaseViewModel {
+        ClientHttp http = new ClientHttp();
         /// <summary>
         /// Конструктор страницы главного меню
         /// </summary>
@@ -112,17 +114,32 @@ namespace MounterApp.ViewModel {
             get => _CheckVersionApp ??= new RelayCommand(async obj => {
                 AppVersions av = new AppVersions();
                 string Version = av.GetVersionAndBuildNumber().VersionNumber;
-                using (HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/VersionNumber?appVersion="+ Version);
-                    if(response != null) {
-                        if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) { }
-                        if(response.StatusCode.Equals(System.Net.HttpStatusCode.MethodNotAllowed)) {
-                            await Application.Current.MainPage.DisplayAlert("Информация"
+                HttpStatusCode code = await http.GetQuery("/api/Common/VersionNumber?appVersion=" + Version);
+                if (code.Equals(HttpStatusCode.MethodNotAllowed))
+                    await Application.Current.MainPage.DisplayAlert("Информация"
                                 ,"У Вас установлена не актуальная версия приложения, пожалуйста обновите её." + Environment.NewLine + Environment.NewLine + "Если Вы не получили ссылку на новую версию, то сообщите свою почту в ИТ-отдел."
                                 ,"OK");
-                        }
-                    }
-                }
+                //else if (code.Equals(HttpStatusCode.OK)) { }
+                //else {
+                //    Analytics.TrackEvent("Выполнение запроса",
+                //    new Dictionary<string,string> {
+                //        {"query","/api/Common/VersionNumber?appVersion=" + Version },
+                //        {"code",code.ToString() },
+                //        {"phone", Application.Current.Properties["Phone"].ToString() }
+                //    });
+                //}
+
+                //using (HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/VersionNumber?appVersion="+ Version);
+                //    if(response != null) {
+                //        if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) { }
+                //        if(response.StatusCode.Equals(HttpStatusCode.MethodNotAllowed)) {
+                //            await Application.Current.MainPage.DisplayAlert("Информация"
+                //                ,"У Вас установлена не актуальная версия приложения, пожалуйста обновите её." + Environment.NewLine + Environment.NewLine + "Если Вы не получили ссылку на новую версию, то сообщите свою почту в ИТ-отдел."
+                //                ,"OK");
+                //        }
+                //    }
+                //}
             });
         }
         /// <summary>

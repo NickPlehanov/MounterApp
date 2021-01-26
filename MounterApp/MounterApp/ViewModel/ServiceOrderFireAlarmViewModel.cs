@@ -1,12 +1,9 @@
-﻿using Android.Content;
-using Android.OS;
-using Android.Widget;
+﻿using Android.Widget;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using MounterApp.Helpers;
 using MounterApp.InternalModel;
 using MounterApp.Model;
-using MounterApp.Properties;
 using MounterApp.Views;
 using Newtonsoft.Json;
 using Rg.Plugins.Popup.Extensions;
@@ -14,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using Xamarin.Essentials;
@@ -22,6 +20,7 @@ using static Xamarin.Essentials.Permissions;
 
 namespace MounterApp.ViewModel {
     public class ServiceOrderFireAlarmViewModel : BaseViewModel {
+        readonly ClientHttp http = new ClientHttp();
         public ServiceOrderFireAlarmViewModel() { }
         //public ServiceOrderViewModel(NewServiceorderExtensionBase _so) {
         //    ServiceOrderID = _so;
@@ -103,31 +102,40 @@ namespace MounterApp.ViewModel {
                 //        }
                 //    }
                 //}
-                using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/Objinfo?objNumber=" + ServiceOrderFireAlarm.NewNumber.ToString() + "");
-                    List<Info> obj_info = new List<Info>();
-                    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                        var resp = response.Content.ReadAsStringAsync().Result;
-                        try {
-                            obj_info = JsonConvert.DeserializeObject<List<Info>>(resp);
-                        }
-                        catch(Exception ex) {
-                            obj_info = null;
-                        }
-                        if(obj_info != null) {
-                            foreach(var item in obj_info) {
-                                ObjectName = item.Name;
-                                ControlTime = item.ControlTime.ToString();
-                                EventTemplate = item.EventTemplateName.ToString();
-                                DeviceName = item.DeviceName.ToString();
-                            }
+                List<Info> obj_info = new List<Info>();
+                obj_info = await http.GetQuery<List<Info>>("/api/Andromeda/Objinfo?objNumber=" + ServiceOrderFireAlarm.NewNumber.ToString() + "");
+                Info inf = obj_info.First();
+                ObjectName = inf.Name;
+                ControlTime = inf.ControlTime.ToString();
+                EventTemplate = inf.EventTemplateName.ToString();
+                DeviceName = inf.DeviceName.ToString();
 
 
-                            //ObjectName = a28Object.Name;
-                            //ControlTime = a28Object.ControlTime.ToString();
-                        }
-                    }
-                }
+                //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/Objinfo?objNumber=" + ServiceOrderFireAlarm.NewNumber.ToString() + "");
+                //    List<Info> obj_info = new List<Info>();
+                //    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                //        var resp = response.Content.ReadAsStringAsync().Result;
+                //        try {
+                //            obj_info = JsonConvert.DeserializeObject<List<Info>>(resp);
+                //        }
+                //        catch(Exception ex) {
+                //            obj_info = null;
+                //        }
+                //        if(obj_info != null) {
+                //            foreach(var item in obj_info) {
+                //                ObjectName = item.Name;
+                //                ControlTime = item.ControlTime.ToString();
+                //                EventTemplate = item.EventTemplateName.ToString();
+                //                DeviceName = item.DeviceName.ToString();
+                //            }
+
+
+                //            //ObjectName = a28Object.Name;
+                //            //ControlTime = a28Object.ControlTime.ToString();
+                //        }
+                //    }
+                //}
             });
         }
         private string _DeviceName;
@@ -427,30 +435,34 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetCategory;
         public RelayCommand GetCategory {
             get => _GetCategory ??= new RelayCommand(async obj => {
-                Analytics.TrackEvent("Получение списка категорий заявок технику",
-                    new Dictionary<string,string> {
-                        {"Servicemans",Servicemans.First().NewPhone } });
-                using HttpClient client = new HttpClient(GetHttpClientHandler());
-                HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/metadata?ColumnName=new_category&ObjectName=New_test2");                
                 List<MetadataModel> mm = new List<MetadataModel>();
-                if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                    var resp = response.Content.ReadAsStringAsync().Result;
-                    try {
-                        Analytics.TrackEvent("Попытка десериализации ответа от сервера с категориями техников");
-                        mm = JsonConvert.DeserializeObject<List<MetadataModel>>(resp);
-                    }
-                    catch (Exception ex) {
-                        Crashes.TrackError(new Exception("Ошибка получения списка категорий заявок технику"),
-                        new Dictionary<string,string> {
-                        {"Servicemans",Servicemans.First().NewPhone },
-                        {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                        {"ErrorMessage",ex.Message },
-                        {"StatusCode",response.StatusCode.ToString() },
-                        {"Response",response.ToString() }
-                        });
-                    }
-                }
-                if(mm != null && ServiceOrderFireAlarm.NewCategory!=null)
+                mm = await http.GetQuery<List<MetadataModel>>("/api/Common/metadata?ColumnName=new_category&ObjectName=New_test2");
+                //Category=mm.Where(x=>x.Value)
+
+                //Analytics.TrackEvent("Получение списка категорий заявок технику",
+                //    new Dictionary<string,string> {
+                //        {"Servicemans",Servicemans.First().NewPhone } });
+                //using HttpClient client = new HttpClient(GetHttpClientHandler());
+                //HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/metadata?ColumnName=new_category&ObjectName=New_test2");                
+                //List<MetadataModel> mm = new List<MetadataModel>();
+                //if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                //    var resp = response.Content.ReadAsStringAsync().Result;
+                //    try {
+                //        Analytics.TrackEvent("Попытка десериализации ответа от сервера с категориями техников");
+                //        mm = JsonConvert.DeserializeObject<List<MetadataModel>>(resp);
+                //    }
+                //    catch (Exception ex) {
+                //        Crashes.TrackError(new Exception("Ошибка получения списка категорий заявок технику"),
+                //        new Dictionary<string,string> {
+                //        {"Servicemans",Servicemans.First().NewPhone },
+                //        {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                //        {"ErrorMessage",ex.Message },
+                //        {"StatusCode",response.StatusCode.ToString() },
+                //        {"Response",response.ToString() }
+                //        });
+                //    }
+                //}
+                if(mm != null && ServiceOrderFireAlarm.NewCategory != null)
                     Category = mm.FirstOrDefault(x => x.Value == ServiceOrderFireAlarm.NewCategory).Label;
             });
         }
@@ -467,114 +479,130 @@ namespace MounterApp.ViewModel {
             get => _GetInfoByGuardObject ??= new RelayCommand(async obj => {
                 Opacity = 0.1;
                 IndicatorVisible = true;
-                using HttpClient client = new HttpClient(GetHttpClientHandler());
-                if(ServiceOrderFireAlarm.NewNumber.HasValue) {
-                    Analytics.TrackEvent("Выполнение запроса(Охр.объекты) для получения информации по объекту",
-                    new Dictionary<string,string> {
-                        {"Servicemans",Servicemans.First().NewPhone },
-                        {"ObjectNumber",ServiceOrderFireAlarm.NewNumber.ToString() } 
-                    });
-                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewGuardObjectExtensionBases/GetInfoByNumber?number=" + ServiceOrderFireAlarm.NewNumber);
-                    List<NewGuardObjectExtensionBase> goeb = new List<NewGuardObjectExtensionBase>();
-                    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                        var resp = response.Content.ReadAsStringAsync().Result;
-                        try {
-                            Analytics.TrackEvent("Попытка десериализации результата запроса(Охр.объекты) для получения информации по объекту",
-                            new Dictionary<string,string> {
-                                {"Servicemans",Servicemans.First().NewPhone },
-                                {"ObjectNumber",ServiceOrderFireAlarm.NewNumber.ToString() }
-                            });
-                            goeb = JsonConvert.DeserializeObject<List<NewGuardObjectExtensionBase>>(resp);
-                        }
-                        catch (Exception ex) {
-                            Crashes.TrackError(new Exception("Ошибка десериализации результата запроса(Охр.объекты) для получения информации по объекту"),
-                            new Dictionary<string,string> {
-                                {"Servicemans",Servicemans.First().NewPhone },
-                                {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                                {"ErrorMessage",ex.Message },
-                                {"StatusCode",response.StatusCode.ToString() },
-                                {"Response",response.ToString() }
-                            });
-                        }
-                        if(goeb.Count > 0) {
-                            Contact = goeb.FirstOrDefault().NewFirstcontact;
-                            Siding = goeb.FirstOrDefault().NewSiding;
-                            rrOS = goeb.FirstOrDefault().NewRrOs.HasValue ? (bool)goeb.FirstOrDefault().NewRrOs : false;
-                            rrPS = goeb.FirstOrDefault().NewRrPs.HasValue ? (bool)goeb.FirstOrDefault().NewRrPs : false;
-                            rrVideo = goeb.FirstOrDefault().NewRrVideo.HasValue ? (bool)goeb.FirstOrDefault().NewRrVideo : false;
-                            rrAccess = goeb.FirstOrDefault().NewRrSkud.HasValue ? (bool)goeb.FirstOrDefault().NewRrSkud : false;
-                        }
-                    }
+                List<NewGuardObjectExtensionBase> goeb = new List<NewGuardObjectExtensionBase>();
+                NewAndromedaExtensionBase andromeda = new NewAndromedaExtensionBase();
+                if(!ServiceOrderFireAlarm.NewNumber.HasValue) {
+                    andromeda = await http.GetQuery<NewAndromedaExtensionBase>("/api/NewAndromedaExtensionBases/id?id=" + ServiceOrderFireAlarm.NewAndromedaServiceorder);
+                    ServiceOrderFireAlarm.NewNumber = andromeda.NewNumber;
                 }
-                else {
-                    Analytics.TrackEvent("Выполнение запроса(Андромеда) для получения номера объекта, так как в заявке не был найден номер объекта для поиска в охр. объектах",
-                    new Dictionary<string,string> {
-                        {"Servicemans",Servicemans.First().NewPhone },
-                        {"NewAndromedaServiceorder",ServiceOrderFireAlarm.NewAndromedaServiceorder.ToString() }
-                    });
-                    using HttpClient clientA28 = new HttpClient(GetHttpClientHandler());
-                    HttpResponseMessage responseA28 = await clientA28.GetAsync(Resources.BaseAddress + "/api/NewAndromedaExtensionBases/id?id=" + ServiceOrderFireAlarm.NewAndromedaServiceorder);
-                    NewAndromedaExtensionBase andromeda = new NewAndromedaExtensionBase();
-                    if(responseA28.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                        var respA28 = responseA28.Content.ReadAsStringAsync().Result;                        
-                        try {
-                            Analytics.TrackEvent("Попытка десериализации результата запросы из базы(объект: Андромеда)",
-                            new Dictionary<string,string> {
-                                {"Servicemans",Servicemans.First().NewPhone },
-                                {"NewAndromedaServiceorder",ServiceOrderFireAlarm.NewAndromedaServiceorder.ToString() }
-                            });
-                            andromeda = JsonConvert.DeserializeObject<NewAndromedaExtensionBase>(respA28);
-                        }
-                        catch (Exception ex) {
-                            Crashes.TrackError(new Exception("Ошибка десериализации результата запроса(Андромеда) для получения номера объекта"),
-                            new Dictionary<string,string> {
-                                {"Servicemans",Servicemans.First().NewPhone },
-                                {"ServerResponse",responseA28.Content.ReadAsStringAsync().Result },
-                                {"ErrorMessage",ex.Message },
-                                {"StatusCode",responseA28.StatusCode.ToString() },
-                                {"Response",responseA28.ToString() }
-                            });
-                        }
-                    }
-                    if(andromeda != null) {
-                        Analytics.TrackEvent("Выполнение запроса(Охр.объекта) для получения информации по объекту",
-                                new Dictionary<string,string> {
-                                    {"Servicemans",Servicemans.First().NewPhone },
-                                    {"ObjectNumber",ServiceOrderFireAlarm.NewNumber.ToString() }
-                                });
-                        HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewGuardObjectExtensionBases/GetInfoByNumber?number=" + andromeda.NewNumber);                        
-                        List<NewGuardObjectExtensionBase> goeb = new List<NewGuardObjectExtensionBase>();
-                        if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                            var resp = response.Content.ReadAsStringAsync().Result;
-                            try {
-                                Analytics.TrackEvent("Попытка десериализации результата запроса(Охр.объекты) для получения информации по объекту",
-                                new Dictionary<string,string> {
-                                    {"Servicemans",Servicemans.First().NewPhone },
-                                    {"ObjectNumber",ServiceOrderFireAlarm.NewNumber.ToString() }
-                                });
-                                goeb = JsonConvert.DeserializeObject<List<NewGuardObjectExtensionBase>>(resp);
-                            }
-                            catch (Exception ex) {
-                                Crashes.TrackError(new Exception("Ошибка десериализации результата запроса(Охр.объекты) для получения информации по объекту"),
-                                new Dictionary<string,string> {
-                                    {"Servicemans",Servicemans.First().NewPhone },
-                                    {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                                    {"ErrorMessage",ex.Message },
-                                    {"StatusCode",response.StatusCode.ToString() },
-                                    {"Response",response.ToString() }
-                                });
-                            }
-                        }
-                        if(goeb.Count > 0) {
-                            Contact = goeb.FirstOrDefault().NewFirstcontact;
-                            Siding = goeb.FirstOrDefault().NewSiding;
-                            rrOS = goeb.FirstOrDefault().NewRrOs.HasValue ? (bool)goeb.FirstOrDefault().NewRrOs : false;
-                            rrPS = goeb.FirstOrDefault().NewRrPs.HasValue ? (bool)goeb.FirstOrDefault().NewRrPs : false;
-                            rrVideo = goeb.FirstOrDefault().NewRrVideo.HasValue ? (bool)goeb.FirstOrDefault().NewRrVideo : false;
-                            rrAccess = goeb.FirstOrDefault().NewRrSkud.HasValue ? (bool)goeb.FirstOrDefault().NewRrSkud : false;
-                        }
-                    }
-                }
+                goeb = await http.GetQuery<List<NewGuardObjectExtensionBase>>("/api/NewGuardObjectExtensionBases/GetInfoByNumber?number=" + ServiceOrderFireAlarm.NewNumber);
+                NewGuardObjectExtensionBase g = goeb.First();
+                Contact = g.NewFirstcontact;
+                Siding = g.NewSiding;
+                rrOS = g.NewRrOs.HasValue ? (bool)g.NewRrOs : false;
+                rrPS = g.NewRrPs.HasValue ? (bool)g.NewRrPs : false;
+                rrVideo = g.NewRrVideo.HasValue ? (bool)g.NewRrVideo : false;
+                rrAccess = g.NewRrSkud.HasValue ? (bool)g.NewRrSkud : false;
+
+
+                //using HttpClient client = new HttpClient(GetHttpClientHandler());
+                //if(ServiceOrderFireAlarm.NewNumber.HasValue) {
+                //    Analytics.TrackEvent("Выполнение запроса(Охр.объекты) для получения информации по объекту",
+                //    new Dictionary<string,string> {
+                //        {"Servicemans",Servicemans.First().NewPhone },
+                //        {"ObjectNumber",ServiceOrderFireAlarm.NewNumber.ToString() }
+                //    });
+                //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewGuardObjectExtensionBases/GetInfoByNumber?number=" + ServiceOrderFireAlarm.NewNumber);
+                //    List<NewGuardObjectExtensionBase> goeb = new List<NewGuardObjectExtensionBase>();
+                //    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                //        var resp = response.Content.ReadAsStringAsync().Result;
+                //        try {
+                //            Analytics.TrackEvent("Попытка десериализации результата запроса(Охр.объекты) для получения информации по объекту",
+                //            new Dictionary<string,string> {
+                //                {"Servicemans",Servicemans.First().NewPhone },
+                //                {"ObjectNumber",ServiceOrderFireAlarm.NewNumber.ToString() }
+                //            });
+                //            goeb = JsonConvert.DeserializeObject<List<NewGuardObjectExtensionBase>>(resp);
+                //        }
+                //        catch(Exception ex) {
+                //            Crashes.TrackError(new Exception("Ошибка десериализации результата запроса(Охр.объекты) для получения информации по объекту"),
+                //            new Dictionary<string,string> {
+                //                {"Servicemans",Servicemans.First().NewPhone },
+                //                {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                //                {"ErrorMessage",ex.Message },
+                //                {"StatusCode",response.StatusCode.ToString() },
+                //                {"Response",response.ToString() }
+                //            });
+                //        }
+                //        if(goeb.Count > 0) {
+                //            Contact = goeb.FirstOrDefault().NewFirstcontact;
+                //            Siding = goeb.FirstOrDefault().NewSiding;
+                //            rrOS = goeb.FirstOrDefault().NewRrOs.HasValue ? (bool)goeb.FirstOrDefault().NewRrOs : false;
+                //            rrPS = goeb.FirstOrDefault().NewRrPs.HasValue ? (bool)goeb.FirstOrDefault().NewRrPs : false;
+                //            rrVideo = goeb.FirstOrDefault().NewRrVideo.HasValue ? (bool)goeb.FirstOrDefault().NewRrVideo : false;
+                //            rrAccess = goeb.FirstOrDefault().NewRrSkud.HasValue ? (bool)goeb.FirstOrDefault().NewRrSkud : false;
+                //        }
+                //    }
+                //}
+                //else {
+                //    Analytics.TrackEvent("Выполнение запроса(Андромеда) для получения номера объекта, так как в заявке не был найден номер объекта для поиска в охр. объектах",
+                //    new Dictionary<string,string> {
+                //        {"Servicemans",Servicemans.First().NewPhone },
+                //        {"NewAndromedaServiceorder",ServiceOrderFireAlarm.NewAndromedaServiceorder.ToString() }
+                //    });
+                //    using HttpClient clientA28 = new HttpClient(GetHttpClientHandler());
+                //    HttpResponseMessage responseA28 = await clientA28.GetAsync(Resources.BaseAddress + "/api/NewAndromedaExtensionBases/id?id=" + ServiceOrderFireAlarm.NewAndromedaServiceorder);
+                //    NewAndromedaExtensionBase andromeda = new NewAndromedaExtensionBase();
+                //    if(responseA28.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                //        var respA28 = responseA28.Content.ReadAsStringAsync().Result;
+                //        try {
+                //            Analytics.TrackEvent("Попытка десериализации результата запросы из базы(объект: Андромеда)",
+                //            new Dictionary<string,string> {
+                //                {"Servicemans",Servicemans.First().NewPhone },
+                //                {"NewAndromedaServiceorder",ServiceOrderFireAlarm.NewAndromedaServiceorder.ToString() }
+                //            });
+                //            andromeda = JsonConvert.DeserializeObject<NewAndromedaExtensionBase>(respA28);
+                //        }
+                //        catch(Exception ex) {
+                //            Crashes.TrackError(new Exception("Ошибка десериализации результата запроса(Андромеда) для получения номера объекта"),
+                //            new Dictionary<string,string> {
+                //                {"Servicemans",Servicemans.First().NewPhone },
+                //                {"ServerResponse",responseA28.Content.ReadAsStringAsync().Result },
+                //                {"ErrorMessage",ex.Message },
+                //                {"StatusCode",responseA28.StatusCode.ToString() },
+                //                {"Response",responseA28.ToString() }
+                //            });
+                //        }
+                //    }
+                //    if(andromeda != null) {
+                //        Analytics.TrackEvent("Выполнение запроса(Охр.объекта) для получения информации по объекту",
+                //                new Dictionary<string,string> {
+                //                    {"Servicemans",Servicemans.First().NewPhone },
+                //                    {"ObjectNumber",ServiceOrderFireAlarm.NewNumber.ToString() }
+                //                });
+                //        HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewGuardObjectExtensionBases/GetInfoByNumber?number=" + andromeda.NewNumber);
+                //        List<NewGuardObjectExtensionBase> goeb = new List<NewGuardObjectExtensionBase>();
+                //        if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                //            var resp = response.Content.ReadAsStringAsync().Result;
+                //            try {
+                //                Analytics.TrackEvent("Попытка десериализации результата запроса(Охр.объекты) для получения информации по объекту",
+                //                new Dictionary<string,string> {
+                //                    {"Servicemans",Servicemans.First().NewPhone },
+                //                    {"ObjectNumber",ServiceOrderFireAlarm.NewNumber.ToString() }
+                //                });
+                //                goeb = JsonConvert.DeserializeObject<List<NewGuardObjectExtensionBase>>(resp);
+                //            }
+                //            catch(Exception ex) {
+                //                Crashes.TrackError(new Exception("Ошибка десериализации результата запроса(Охр.объекты) для получения информации по объекту"),
+                //                new Dictionary<string,string> {
+                //                    {"Servicemans",Servicemans.First().NewPhone },
+                //                    {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                //                    {"ErrorMessage",ex.Message },
+                //                    {"StatusCode",response.StatusCode.ToString() },
+                //                    {"Response",response.ToString() }
+                //                });
+                //            }
+                //        }
+                //        if(goeb.Count > 0) {
+                //            Contact = goeb.FirstOrDefault().NewFirstcontact;
+                //            Siding = goeb.FirstOrDefault().NewSiding;
+                //            rrOS = goeb.FirstOrDefault().NewRrOs.HasValue ? (bool)goeb.FirstOrDefault().NewRrOs : false;
+                //            rrPS = goeb.FirstOrDefault().NewRrPs.HasValue ? (bool)goeb.FirstOrDefault().NewRrPs : false;
+                //            rrVideo = goeb.FirstOrDefault().NewRrVideo.HasValue ? (bool)goeb.FirstOrDefault().NewRrVideo : false;
+                //            rrAccess = goeb.FirstOrDefault().NewRrSkud.HasValue ? (bool)goeb.FirstOrDefault().NewRrSkud : false;
+                //        }
+                //    }
+                //}
                 Opacity = 1;
                 IndicatorVisible = false;
             });
@@ -589,7 +617,7 @@ namespace MounterApp.ViewModel {
                 });
                 Opacity = 0.1;
                 IndicatorVisible = true;
-                PermissionStatus status= PermissionStatus.Unknown;
+                PermissionStatus status = PermissionStatus.Unknown;
                 try {
                     status = await CheckAndRequestPermissionAsync(new LocationWhenInUse());
                     Location location = await Geolocation.GetLastKnownLocationAsync();
@@ -608,58 +636,68 @@ namespace MounterApp.ViewModel {
                 if(status == PermissionStatus.Granted) {
                     Analytics.TrackEvent("Запрос данных на сервере (могло же что-то измениться",
                     new Dictionary<string,string> {
-                    {"ServiceOrderID",ServiceOrderFireAlarm.NewTest2Id.ToString() }
+                        {"ServiceOrderID",ServiceOrderFireAlarm.NewTest2Id.ToString() }
                     });
-                    using HttpClient client = new HttpClient(GetHttpClientHandler());
-                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceOrderForFireAlarmExtensionBase/id?id=" + ServiceOrderFireAlarm.NewTest2Id);
-                    NewTest2ExtensionBase soeb = null;
-                    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                        var resp = response.Content.ReadAsStringAsync().Result;
-                        try {
-                            soeb = JsonConvert.DeserializeObject<NewTest2ExtensionBase>(resp);
-                        }
-                        catch(Exception ex) {
-                            Crashes.TrackError(new Exception("Ошибка десериализации объекта заявка технику(пс)"),
-                            new Dictionary<string,string> {
-                        {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                        {"ErrorMessage",ex.Message },
-                        {"StatusCode",response.StatusCode.ToString() }
-                            });
-                        }
-                    }
-                    else {
-                        Crashes.TrackError(new Exception("Ошибка получения данных об объекте заявка технику(пс) с сервера"),
-                        new Dictionary<string,string> {
-                    {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                    {"StatusCode",response.StatusCode.ToString() },
-                    {"Response",response.ToString() }
-                        });
-                        await Application.Current.MainPage.DisplayAlert("Ошибка"
-                                ,"От сервера не получена информация о текущей заявке. Повторите попытку позже, в случае если ошибка повторяется, сообщите в IT-отдел."
-                                ,"OK");
-                    }
+                    NewTest2ExtensionBase soeb = await http.GetQuery<NewTest2ExtensionBase>("/api/NewServiceOrderForFireAlarmExtensionBase/id?id=" + ServiceOrderFireAlarm.NewTest2Id);
+
+                    //using HttpClient client = new HttpClient(GetHttpClientHandler());
+                    //HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceOrderForFireAlarmExtensionBase/id?id=" + ServiceOrderFireAlarm.NewTest2Id);
+                    //NewTest2ExtensionBase soeb = null;
+                    //if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                    //    var resp = response.Content.ReadAsStringAsync().Result;
+                    //    try {
+                    //        soeb = JsonConvert.DeserializeObject<NewTest2ExtensionBase>(resp);
+                    //    }
+                    //    catch(Exception ex) {
+                    //        Crashes.TrackError(new Exception("Ошибка десериализации объекта заявка технику(пс)"),
+                    //        new Dictionary<string,string> {
+                    //    {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                    //    {"ErrorMessage",ex.Message },
+                    //    {"StatusCode",response.StatusCode.ToString() }
+                    //        });
+                    //    }
+                    //}
+                    //else {
+                    //    Crashes.TrackError(new Exception("Ошибка получения данных об объекте заявка технику(пс) с сервера"),
+                    //    new Dictionary<string,string> {
+                    //{"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                    //{"StatusCode",response.StatusCode.ToString() },
+                    //{"Response",response.ToString() }
+                    //    });
+                    //    await Application.Current.MainPage.DisplayAlert("Ошибка"
+                    //            ,"От сервера не получена информация о текущей заявке. Повторите попытку позже, в случае если ошибка повторяется, сообщите в IT-отдел."
+                    //            ,"OK");
+                    //}
                     if(soeb != null) {
                         Analytics.TrackEvent("Попытка записи данных на сервер по объекту заявка технику(пс), заполняем поле Пришел",
                         new Dictionary<string,string> {
-                        {"ServiceOrderID",ServiceOrderFireAlarm.NewTest2Id.ToString() }
+                            {"ServiceOrderID",ServiceOrderFireAlarm.NewTest2Id.ToString() }
                         });
                         soeb.NewIncome = DateTime.Now.AddHours(-5);
-                        using HttpClient clientPut = new HttpClient(GetHttpClientHandler());
-                        var httpContent = new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json");
-                        HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/NewServiceOrderForFireAlarmExtensionBase",httpContent);
-                        if(!responsePut.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
-                            Crashes.TrackError(new Exception("Ошибка при сохранении объекта Заявка технику"),
-                            new Dictionary<string,string> {
-                        {"ServerResponse",responsePut.Content.ReadAsStringAsync().Result },
-                        {"StatusCode",responsePut.StatusCode.ToString() },
-                        {"Response",responsePut.ToString() }
-                            });
+                        HttpStatusCode code = await http.PutQuery("/api/NewServiceOrderForFireAlarmExtensionBase",new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json"));
+                        if (code.Equals(HttpStatusCode.Accepted))
+                            Toast.MakeText(Android.App.Application.Context,"ОТМЕТКА ВРЕМЕНИ ПРИХОДА СОХРАНЕНА",ToastLength.Long).Show();
+                        else
                             await Application.Current.MainPage.DisplayAlert("Ошибка"
                                 ,"При попытке сохранения данных произошла ошибка. Повторите попытку позже, в случае если ошибка повторяется, сообщите в IT-отдел."
                                 ,"OK");
-                        }
-                        else
-                            Toast.MakeText(Android.App.Application.Context,"ОТМЕТКА ВРЕМЕНИ ПРИХОДА СОХРАНЕНА",ToastLength.Long).Show();
+
+                        //using HttpClient clientPut = new HttpClient(GetHttpClientHandler());
+                        //var httpContent = new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json");
+                        //HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/NewServiceOrderForFireAlarmExtensionBase",httpContent);
+                        //if(!responsePut.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
+                        //    Crashes.TrackError(new Exception("Ошибка при сохранении объекта Заявка технику"),
+                        //    new Dictionary<string,string> {
+                        //{"ServerResponse",responsePut.Content.ReadAsStringAsync().Result },
+                        //{"StatusCode",responsePut.StatusCode.ToString() },
+                        //{"Response",responsePut.ToString() }
+                        //    });
+                        //    await Application.Current.MainPage.DisplayAlert("Ошибка"
+                        //        ,"При попытке сохранения данных произошла ошибка. Повторите попытку позже, в случае если ошибка повторяется, сообщите в IT-отдел."
+                        //        ,"OK");
+                        //}
+                        //else
+                        //    Toast.MakeText(Android.App.Application.Context,"ОТМЕТКА ВРЕМЕНИ ПРИХОДА СОХРАНЕНА",ToastLength.Long).Show();
                     }
                     //запишем координаты
                     Analytics.TrackEvent("Попытка записи координат на сервер по объекту заявка технику(ПС)",
@@ -667,44 +705,52 @@ namespace MounterApp.ViewModel {
                         {"ServiceOrderID",ServiceOrderFireAlarm.NewTest2Id.ToString() }
                         });
                     if(!string.IsNullOrEmpty(Latitude) && !string.IsNullOrEmpty(Longitude)) {
-                        using(HttpClient clientPost = new HttpClient(GetHttpClientHandler())) {
-                            var data = JsonConvert.SerializeObject(new ServiceOrderCoordinates() {
-                                SocId = Guid.NewGuid(),
-                                SocServiceOrderId = ServiceOrderFireAlarm.NewTest2Id,
-                                SocIncomeLatitude = Latitude,
-                                SocIncomeLongitude = Longitude
-                            });
-                            StringContent content = new StringContent(data,Encoding.UTF8,"application/json");
-                            HttpResponseMessage responsePost = await clientPost.PostAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates",content);
-                            if(!responsePost.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
-                                Crashes.TrackError(new Exception("Ошибка при сохранении объекта Заявка технику"),
-                                new Dictionary<string,string> {
-                                {"ServerResponse",responsePost.Content.ReadAsStringAsync().Result },
-                                {"StatusCode",responsePost.StatusCode.ToString() },
-                                {"Response",responsePost.ToString() }
-                                });
-                            }
-                        }
+                        var data = JsonConvert.SerializeObject(new ServiceOrderCoordinates() {
+                            SocId = Guid.NewGuid(),
+                            SocServiceOrderId = ServiceOrderFireAlarm.NewTest2Id,
+                            SocIncomeLatitude = Latitude,
+                            SocIncomeLongitude = Longitude
+                        });
+                        await http.PostQuery("/api/ServiceOrderCoordinates",new StringContent(data,Encoding.UTF8,"application/json"));
+
+                        //using(HttpClient clientPost = new HttpClient(GetHttpClientHandler())) {
+                        //    var data = JsonConvert.SerializeObject(new ServiceOrderCoordinates() {
+                        //        SocId = Guid.NewGuid(),
+                        //        SocServiceOrderId = ServiceOrderFireAlarm.NewTest2Id,
+                        //        SocIncomeLatitude = Latitude,
+                        //        SocIncomeLongitude = Longitude
+                        //    });
+                        //    StringContent content = new StringContent(data,Encoding.UTF8,"application/json");
+                        //    HttpResponseMessage responsePost = await clientPost.PostAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates",content);
+                        //    if(!responsePost.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
+                        //        Crashes.TrackError(new Exception("Ошибка при сохранении объекта Заявка технику"),
+                        //        new Dictionary<string,string> {
+                        //        {"ServerResponse",responsePost.Content.ReadAsStringAsync().Result },
+                        //        {"StatusCode",responsePost.StatusCode.ToString() },
+                        //        {"Response",responsePost.ToString() }
+                        //        });
+                        //    }
+                        //}
                     }
-                    else {
-                        Crashes.TrackError(new Exception("Заявка на ПС. Пустые координаты"),
-                                new Dictionary<string,string> {
-                                { "PermissionStatus_StorageRead",CheckAndRequestPermissionAsync(new StorageRead()).Result.ToString() },
-                                { "PermissionStatus_LocationWhenInUse",CheckAndRequestPermissionAsync(new LocationWhenInUse()).Result.ToString() },
-                                { "PermissionStatus_NetworkState",CheckAndRequestPermissionAsync(new NetworkState()).Result.ToString() },
-                                { "PermissionStatus_Permissions.Camera",CheckAndRequestPermissionAsync(new Permissions.Camera()).Result.ToString() },
-                                { "PermissionStatus_StorageWrite",CheckAndRequestPermissionAsync(new StorageWrite()).Result.ToString() },
-                                { "Phone",Servicemans.First().NewPhone },
-                                { "Name",Servicemans.First().NewName }
-                                    //{ "ID",ServiceOrderFireAlarm.NewTest2Id.ToString() }
-                                });
-                    }
+                    //else {
+                    //    Analytics.TrackEvent("Заявка на ПС. Пустые координаты",
+                    //            new Dictionary<string,string> {
+                    //            { "PermissionStatus_StorageRead",CheckAndRequestPermissionAsync(new StorageRead()).Result.ToString() },
+                    //            { "PermissionStatus_LocationWhenInUse",CheckAndRequestPermissionAsync(new LocationWhenInUse()).Result.ToString() },
+                    //            { "PermissionStatus_NetworkState",CheckAndRequestPermissionAsync(new NetworkState()).Result.ToString() },
+                    //            { "PermissionStatus_Permissions.Camera",CheckAndRequestPermissionAsync(new Permissions.Camera()).Result.ToString() },
+                    //            { "PermissionStatus_StorageWrite",CheckAndRequestPermissionAsync(new StorageWrite()).Result.ToString() },
+                    //            { "Phone",Servicemans.First().NewPhone },
+                    //            { "Name",Servicemans.First().NewName }
+                    //                //{ "ID",ServiceOrderFireAlarm.NewTest2Id.ToString() }
+                    //            });
+                    //}
                     ServiceOrderFireAlarm.NewIncome = DateTime.Now.AddHours(-5);
                     IncomeCommand.ChangeCanExecute();
                 }
                 Opacity = 1;
                 IndicatorVisible = false;
-            },obj=> ServiceOrderFireAlarm.NewIncome==null);
+            },obj => ServiceOrderFireAlarm.NewIncome == null);
         }
 
         private ImageSource _PeopleImage;

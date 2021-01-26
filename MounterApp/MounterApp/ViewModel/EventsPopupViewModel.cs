@@ -15,6 +15,7 @@ using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class EventsPopupViewModel : BaseViewModel {
+        readonly ClientHttp http = new ClientHttp();
         /// <summary>
         /// Конструктор popup-окна для отображения событий по оъекту за выбранный период
         /// </summary>
@@ -176,84 +177,17 @@ namespace MounterApp.ViewModel {
                     {"EndDate",EndDate.ToShortDateString() }
                 });
                 if(StartDate <= EndDate) {
-                    //IndicatorVisible = true;
-                    //OpacityForm = 0.1;
                     Events.Clear();
-                    string resp = null;
-                    //if(StartDate < DateTime.Now.AddHours(-7)) {
                     if((EndDate-StartDate).TotalDays>7) {
                         StartDate = EndDate.AddDays(-7.0);
                         Toast.MakeText(Android.App.Application.Context,"Просмотр событий более чем за неделю, запрещен!",ToastLength.Long).Show();
                     }
                     List<GetEventsReceivedFromObject_Result> _evnts = new List<GetEventsReceivedFromObject_Result>();
-                    HttpResponseMessage response = null;
-                    using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                        string obj_number = ServiceOrder != null ? ServiceOrder.NewNumber.ToString() : ServiceOrderFireAlarm.NewNumber.ToString();
-                        Analytics.TrackEvent("Запрос событий по объекту. Заявка технику",
-                        new Dictionary<string,string> {
-                                {"ServicemanPhone",Servicemans.First().NewPhone },
-                                {"StartDate",StartDate.ToShortDateString() },
-                                {"EndDate",EndDate.ToShortDateString() },
-                                {"ObjectNumber",obj_number }
-                        });
-                        response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/events?objNumber=" + obj_number +
+                    string obj_number = ServiceOrder != null ? ServiceOrder.NewNumber.ToString() : ServiceOrderFireAlarm.NewNumber.ToString();
+                    Events = await http.GetQuery<ObservableCollection<GetEventsReceivedFromObject_Result>>("/api/Andromeda/events?objNumber=" + obj_number +
                                             "&startDate=" + StartDate +
                                             "&endDate=" + EndDate +
-                                            "&testFiltered=0&doubleFiltered=0"
-                                            );
-                        if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                            resp = response.Content.ReadAsStringAsync().Result;
-                            try {
-                                Analytics.TrackEvent("Попытка десериализации результата запроса события по объекту",
-                                new Dictionary<string,string> {
-                                {"Servicemans",Servicemans.First().NewPhone },
-                                {"ServicemanPhone",Servicemans.First().NewPhone },
-                                    {"StartDate",StartDate.ToShortDateString() },
-                                    {"EndDate",EndDate.ToShortDateString() },
-                                    {"ObjectNumber",obj_number }
-                                });
-                                _evnts = JsonConvert.DeserializeObject<List<GetEventsReceivedFromObject_Result>>(resp);
-                            }
-                            catch(Exception ex) {
-                                Crashes.TrackError(new Exception("Ошибка десериализации результата запроса события по объекту"),
-                                new Dictionary<string,string> {
-                                {"Servicemans",Servicemans.First().NewPhone },
-                                {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                                {"ErrorMessage",ex.Message },
-                                {"StatusCode",response.StatusCode.ToString() },
-                                {"Response",response.ToString() }
-                                });
-                            }
-                            if(_evnts.Count > 0) {
-                                foreach(var item in _evnts)
-                                    Events.Add(item);
-                            }
-                            else
-                                Crashes.TrackError(new Exception("Запрос событий по объекту. Пустой результат запроса"),
-                                    new Dictionary<string,string> {
-                                    {"ServicemanPhone",Servicemans.First().NewPhone },
-                                    {"StartDate",StartDate.ToShortDateString() },
-                                    {"EndDate",EndDate.ToShortDateString() },
-                                    {"ObjectNumber",obj_number },
-                                    {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                                    {"StatusCode",response.StatusCode.ToString() },
-                                    {"Response",response.ToString() }
-                                    });
-                        }
-                        else {
-                            resp = null;
-                            Crashes.TrackError(new Exception("Запрос событий по объекту. Заявка технику. От сервера не получен корректный ответ"),
-                            new Dictionary<string,string> {
-                                    {"ServicemanPhone",Servicemans.First().NewPhone },
-                                    {"StartDate",StartDate.ToShortDateString() },
-                                    {"EndDate",EndDate.ToShortDateString() },
-                                    {"ObjectNumber",obj_number },
-                                    {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                                    {"StatusCode",response.StatusCode.ToString() },
-                                    {"Response",response.ToString() }
-                            });
-                        }
-                    }
+                                            "&testFiltered=0&doubleFiltered=0");
                 }
                 else {
                     await Application.Current.MainPage.DisplayAlert("Ошибка","Дата начала не может быть больше или равна дате окончания","OK");
