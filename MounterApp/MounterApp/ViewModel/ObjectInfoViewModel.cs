@@ -7,7 +7,7 @@ using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class ObjectInfoViewModel : BaseViewModel {
-        readonly ClientHttp http = new ClientHttp();
+        //readonly ClientHttp http = new ClientHttp();
         public ObjectInfoViewModel(NewServiceorderExtensionBase _so,List<NewServicemanExtensionBase> _servicemans, List<NewMounterExtensionBase> _mounters) {
             Mounters = _mounters;
             Servicemans = _servicemans;
@@ -24,8 +24,8 @@ namespace MounterApp.ViewModel {
             Mounters = _mounters;
             Servicemans = _servicemans;
             ServiceOrderFireAlarm = _so;            
-            GetWires.ExecuteAsync(null);
-            GetExtFields.ExecuteAsync(null);
+            GetWires.Execute(null);
+            GetExtFields.Execute(null);
             ArrowCircleWires = IconName("arrow_circle_down");
             ArrowCircleExtFields = IconName("arrow_circle_down");
             CloseImage = IconName("close");
@@ -108,9 +108,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(Mounters));
             }
         }
-        private AsyncCommand _GetWires;
-        public AsyncCommand GetWires {
-            get => _GetWires ??= new AsyncCommand(async () => {
+        private RelayCommand _GetWires;
+        public RelayCommand GetWires {
+            get => _GetWires ??= new RelayCommand(async obj => {
                 OpacityForm = 0.1;
                 IndicatorVisible = true;
                 int? number = null;
@@ -118,7 +118,7 @@ namespace MounterApp.ViewModel {
                     number = ServiceOrder.NewNumber;
                 else if (ServiceOrderFireAlarm.NewNumber.HasValue)
                     number = ServiceOrderFireAlarm.NewNumber;
-                WiresCollection = await http.GetQuery<ObservableCollection<Wires>>("/api/Andromeda/wires?objNumber=" + number);
+                WiresCollection = await ClientHttp.GetQuery<ObservableCollection<Wires>>("/api/Andromeda/wires?objNumber=" + number);
 
 
                 //WiresCollection.Clear();
@@ -147,9 +147,9 @@ namespace MounterApp.ViewModel {
                 IndicatorVisible = false;
             });
         }
-        private AsyncCommand _GetExtFields;
-        public AsyncCommand GetExtFields {
-            get => _GetExtFields ??= new AsyncCommand(async () => {
+        private RelayCommand _GetExtFields;
+        public RelayCommand GetExtFields {
+            get => _GetExtFields ??= new RelayCommand(async obj => {
                 OpacityForm = 0.1;
                 IndicatorVisible = true;
                 int? number = 63020;
@@ -157,7 +157,7 @@ namespace MounterApp.ViewModel {
                     number = ServiceOrder.NewNumber;
                 else if(ServiceOrderFireAlarm.NewNumber.HasValue)
                     number = ServiceOrderFireAlarm.NewNumber;
-                ExtFields = await http.GetQuery<ObservableCollection<ExtFields>>("/api/Andromeda/ext?objNumber=" + number);
+                ExtFields = await ClientHttp.GetQuery<ObservableCollection<ExtFields>>("/api/Andromeda/ext?objNumber=" + number);
 
                 //ExtFields.Clear();
                 //List<ExtFields> _ext = new List<ExtFields>();

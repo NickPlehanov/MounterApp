@@ -11,7 +11,7 @@ using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class PastOrdersPopupViewModel : BaseViewModel {
-        readonly ClientHttp http = new ClientHttp();
+        //readonly ClientHttp http = new ClientHttp();
         public PastOrdersPopupViewModel(NewServiceorderExtensionBase_ex _so,List<NewServicemanExtensionBase> _servicemans, List<NewMounterExtensionBase> _mounters) {
             Mounters = _mounters;
             Servicemans = _servicemans;
@@ -111,7 +111,8 @@ namespace MounterApp.ViewModel {
                 List<NewServiceorderExtensionBase_ex> _pso = new List<NewServiceorderExtensionBase_ex>();
                 List<NewTest2ExtensionBase> _pso_fa = new List<NewTest2ExtensionBase>();
                 Guid? andr = ServiceOrder != null ? ServiceOrder.NewAndromedaServiceorder : ServiceOrderFireAlarm.NewAndromedaServiceorder;
-                PastServiceOrders = await http.GetQuery<ObservableCollection<NewServiceorderExtensionBase_ex>>("/api/NewServiceorderExtensionBases/ServiceOrderByObjectNew?Andromeda_ID=" + andr);
+                //var t = await http.GetQuery<ObservableCollection<NewServiceorderExtensionBase>>("/api/NewServiceorderExtensionBases/ServiceOrderByObjectNew?Andromeda_ID=" + andr);
+                PastServiceOrders = await ClientHttp.GetQuery<ObservableCollection<NewServiceorderExtensionBase_ex>>("/api/NewServiceorderExtensionBases/ServiceOrderByObjectNew?Andromeda_ID=" + andr);
 
                 //PastServiceOrders.Clear();
                 //List<NewServiceorderExtensionBase_ex> _pso = new List<NewServiceorderExtensionBase_ex>();

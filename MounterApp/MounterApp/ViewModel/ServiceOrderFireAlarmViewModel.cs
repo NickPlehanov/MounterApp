@@ -20,7 +20,7 @@ using static Xamarin.Essentials.Permissions;
 
 namespace MounterApp.ViewModel {
     public class ServiceOrderFireAlarmViewModel : BaseViewModel {
-        readonly ClientHttp http = new ClientHttp();
+        //readonly ClientHttp http = new ClientHttp();
         public ServiceOrderFireAlarmViewModel() { }
         //public ServiceOrderViewModel(NewServiceorderExtensionBase _so) {
         //    ServiceOrderID = _so;
@@ -103,7 +103,7 @@ namespace MounterApp.ViewModel {
                 //    }
                 //}
                 List<Info> obj_info = new List<Info>();
-                obj_info = await http.GetQuery<List<Info>>("/api/Andromeda/Objinfo?objNumber=" + ServiceOrderFireAlarm.NewNumber.ToString() + "");
+                obj_info = await ClientHttp.GetQuery<List<Info>>("/api/Andromeda/Objinfo?objNumber=" + ServiceOrderFireAlarm.NewNumber.ToString() + "");
                 Info inf = obj_info.First();
                 ObjectName = inf.Name;
                 ControlTime = inf.ControlTime.ToString();
@@ -436,7 +436,7 @@ namespace MounterApp.ViewModel {
         public RelayCommand GetCategory {
             get => _GetCategory ??= new RelayCommand(async obj => {
                 List<MetadataModel> mm = new List<MetadataModel>();
-                mm = await http.GetQuery<List<MetadataModel>>("/api/Common/metadata?ColumnName=new_category&ObjectName=New_test2");
+                mm = await ClientHttp.GetQuery<List<MetadataModel>>("/api/Common/metadata?ColumnName=new_category&ObjectName=New_test2");
                 //Category=mm.Where(x=>x.Value)
 
                 //Analytics.TrackEvent("Получение списка категорий заявок технику",
@@ -482,10 +482,10 @@ namespace MounterApp.ViewModel {
                 List<NewGuardObjectExtensionBase> goeb = new List<NewGuardObjectExtensionBase>();
                 NewAndromedaExtensionBase andromeda = new NewAndromedaExtensionBase();
                 if(!ServiceOrderFireAlarm.NewNumber.HasValue) {
-                    andromeda = await http.GetQuery<NewAndromedaExtensionBase>("/api/NewAndromedaExtensionBases/id?id=" + ServiceOrderFireAlarm.NewAndromedaServiceorder);
+                    andromeda = await ClientHttp.GetQuery<NewAndromedaExtensionBase>("/api/NewAndromedaExtensionBases/id?id=" + ServiceOrderFireAlarm.NewAndromedaServiceorder);
                     ServiceOrderFireAlarm.NewNumber = andromeda.NewNumber;
                 }
-                goeb = await http.GetQuery<List<NewGuardObjectExtensionBase>>("/api/NewGuardObjectExtensionBases/GetInfoByNumber?number=" + ServiceOrderFireAlarm.NewNumber);
+                goeb = await ClientHttp.GetQuery<List<NewGuardObjectExtensionBase>>("/api/NewGuardObjectExtensionBases/GetInfoByNumber?number=" + ServiceOrderFireAlarm.NewNumber);
                 NewGuardObjectExtensionBase g = goeb.First();
                 Contact = g.NewFirstcontact;
                 Siding = g.NewSiding;
@@ -638,7 +638,7 @@ namespace MounterApp.ViewModel {
                     new Dictionary<string,string> {
                         {"ServiceOrderID",ServiceOrderFireAlarm.NewTest2Id.ToString() }
                     });
-                    NewTest2ExtensionBase soeb = await http.GetQuery<NewTest2ExtensionBase>("/api/NewServiceOrderForFireAlarmExtensionBase/id?id=" + ServiceOrderFireAlarm.NewTest2Id);
+                    NewTest2ExtensionBase soeb = await ClientHttp.GetQuery<NewTest2ExtensionBase>("/api/NewServiceOrderForFireAlarmExtensionBase/id?id=" + ServiceOrderFireAlarm.NewTest2Id);
 
                     //using HttpClient client = new HttpClient(GetHttpClientHandler());
                     //HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceOrderForFireAlarmExtensionBase/id?id=" + ServiceOrderFireAlarm.NewTest2Id);
@@ -674,7 +674,7 @@ namespace MounterApp.ViewModel {
                             {"ServiceOrderID",ServiceOrderFireAlarm.NewTest2Id.ToString() }
                         });
                         soeb.NewIncome = DateTime.Now.AddHours(-5);
-                        HttpStatusCode code = await http.PutQuery("/api/NewServiceOrderForFireAlarmExtensionBase",new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json"));
+                        HttpStatusCode code = await ClientHttp.PutQuery("/api/NewServiceOrderForFireAlarmExtensionBase",new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json"));
                         if (code.Equals(HttpStatusCode.Accepted))
                             Toast.MakeText(Android.App.Application.Context,"ОТМЕТКА ВРЕМЕНИ ПРИХОДА СОХРАНЕНА",ToastLength.Long).Show();
                         else
@@ -711,7 +711,7 @@ namespace MounterApp.ViewModel {
                             SocIncomeLatitude = Latitude,
                             SocIncomeLongitude = Longitude
                         });
-                        await http.PostQuery("/api/ServiceOrderCoordinates",new StringContent(data,Encoding.UTF8,"application/json"));
+                        await ClientHttp.PostQuery("/api/ServiceOrderCoordinates",new StringContent(data,Encoding.UTF8,"application/json"));
 
                         //using(HttpClient clientPost = new HttpClient(GetHttpClientHandler())) {
                         //    var data = JsonConvert.SerializeObject(new ServiceOrderCoordinates() {

@@ -21,7 +21,7 @@ using static Xamarin.Essentials.Permissions;
 
 namespace MounterApp.ViewModel {
     public class ServiceOrderViewModel : BaseViewModel {
-        readonly ClientHttp http = new ClientHttp();
+        //readonly ClientHttp http = new ClientHttp();
         public ServiceOrderViewModel() { }
         public ServiceOrderViewModel(NewServiceorderExtensionBase_ex _so,List<NewServicemanExtensionBase> _servicemans,List<NewMounterExtensionBase> _mounters) {
             Analytics.TrackEvent("Инициализация окна заявки технику",
@@ -337,7 +337,7 @@ namespace MounterApp.ViewModel {
                     new Dictionary<string,string> {
                         {"Servicemans",Servicemans.First().NewPhone } });
                 List<MetadataModel> mm = new List<MetadataModel>();
-                mm=await http.GetQuery<List<MetadataModel>>("/api/Common/metadata?ColumnName=new_category&ObjectName=New_serviceorder");
+                mm=await ClientHttp.GetQuery<List<MetadataModel>>("/api/Common/metadata?ColumnName=new_category&ObjectName=New_serviceorder");
                 //using (HttpClient client = new HttpClient(GetHttpClientHandler())) {
                 //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/metadata?ColumnName=new_category&ObjectName=New_serviceorder");
                 //    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
@@ -377,18 +377,20 @@ namespace MounterApp.ViewModel {
                 IndicatorVisible = true;
 
                 if(!ServiceOrderID.NewNumber.HasValue) {
-                    NewAndromedaExtensionBase andromeda = await http.GetQuery<NewAndromedaExtensionBase>("/api/NewAndromedaExtensionBases/id?id=" + ServiceOrderID.NewAndromedaServiceorder);
+                    NewAndromedaExtensionBase andromeda = await ClientHttp.GetQuery<NewAndromedaExtensionBase>("/api/NewAndromedaExtensionBases/id?id=" + ServiceOrderID.NewAndromedaServiceorder);
                     ServiceOrderID.NewNumber = andromeda.NewNumber;
                 }
-                List<NewGuardObjectExtensionBase> goeb = new List<NewGuardObjectExtensionBase>();
-                goeb = await http.GetQuery<List<NewGuardObjectExtensionBase>>("/api/NewGuardObjectExtensionBases/GetInfoByNumber?number=" + ServiceOrderID.NewNumber);
-                NewGuardObjectExtensionBase g = goeb.First();
-                Contact = g.NewFirstcontact;
-                Siding = g.NewSiding;
-                rrOS = g.NewRrOs.HasValue ? (bool)g.NewRrOs : false;
-                rrPS = g.NewRrPs.HasValue ? (bool)g.NewRrPs : false;
-                rrVideo = g.NewRrVideo.HasValue ? (bool)g.NewRrVideo : false;
-                rrAccess = g.NewRrSkud.HasValue ? (bool)g.NewRrSkud : false;
+                //List<NewGuardObjectExtensionBase> goeb = new List<NewGuardObjectExtensionBase>();
+                NewGuardObjectExtensionBase goeb;
+                //goeb = await http.GetQuery<List<NewGuardObjectExtensionBase>>("/api/NewGuardObjectExtensionBases/GetInfoByNumberNew?number=" + ServiceOrderID.NewNumber);
+                goeb = await ClientHttp.GetQuery<NewGuardObjectExtensionBase>("/api/NewGuardObjectExtensionBases/GetInfoByNumberNew?number=" + ServiceOrderID.NewNumber);
+                //NewGuardObjectExtensionBase g = goeb.First();
+                Contact = goeb.NewFirstcontact;
+                Siding = goeb.NewSiding;
+                rrOS = goeb.NewRrOs.HasValue ? (bool)goeb.NewRrOs : false;
+                rrPS = goeb.NewRrPs.HasValue ? (bool)goeb.NewRrPs : false;
+                rrVideo = goeb.NewRrVideo.HasValue ? (bool)goeb.NewRrVideo : false;
+                rrAccess = goeb.NewRrSkud.HasValue ? (bool)goeb.NewRrSkud : false;
 
                 //using HttpClient client = new HttpClient(GetHttpClientHandler());
                 //if(ServiceOrderID.NewNumber.HasValue) {
@@ -553,7 +555,7 @@ namespace MounterApp.ViewModel {
                     new Dictionary<string,string> {
                         {"ServiceOrderID",ServiceOrderID.NewServiceorderId.ToString() }
                     });
-                    NewServiceorderExtensionBase soeb = await http.GetQuery<NewServiceorderExtensionBase>("/api/NewServiceorderExtensionBases/id?id=" + ServiceOrderID.NewServiceorderId);
+                    NewServiceorderExtensionBase soeb = await ClientHttp.GetQuery<NewServiceorderExtensionBase>("/api/NewServiceorderExtensionBases/id?id=" + ServiceOrderID.NewServiceorderId);
 
                     //using HttpClient client = new HttpClient(GetHttpClientHandler());
                     //HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/id?id=" + ServiceOrderID.NewServiceorderId);
@@ -589,7 +591,7 @@ namespace MounterApp.ViewModel {
                             {"ServiceOrderID",ServiceOrderID.NewServiceorderId.ToString() }
                         });
                         soeb.NewIncome = DateTime.Now.AddHours(-5);
-                        HttpStatusCode code = await http.PutQuery("/api/NewServiceorderExtensionBases",new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json"));
+                        HttpStatusCode code = await ClientHttp.PutQuery("/api/NewServiceorderExtensionBases",new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json"));
                         if (code.Equals(HttpStatusCode.Accepted))
                             Toast.MakeText(Android.App.Application.Context,"Время прихода записано",ToastLength.Long).Show();
                         else
@@ -626,7 +628,7 @@ namespace MounterApp.ViewModel {
                             SocIncomeLatitude = Latitude,
                             SocIncomeLongitude = Longitude
                         });
-                        await http.PostQuery("/api/ServiceOrderCoordinates",new StringContent(data,Encoding.UTF8,"application/json"));
+                        await ClientHttp.PostQuery("/api/ServiceOrderCoordinates",new StringContent(data,Encoding.UTF8,"application/json"));
 
                         //    using(HttpClient clientPost = new HttpClient(GetHttpClientHandler())) {
                                 
@@ -711,7 +713,7 @@ namespace MounterApp.ViewModel {
                 //    }
                 //}
                 List<Info> obj_info = new List<Info>();
-                obj_info = await http.GetQuery<List<Info>>("/api/Andromeda/Objinfo?objNumber=" + ServiceOrderID.NewNumber.ToString() + "");
+                obj_info = await ClientHttp.GetQuery<List<Info>>("/api/Andromeda/Objinfo?objNumber=" + ServiceOrderID.NewNumber.ToString() + "");
                 Info inf = obj_info.First();
                 ObjectName = inf.Name;
                 ControlTime = inf.ControlTime.ToString();

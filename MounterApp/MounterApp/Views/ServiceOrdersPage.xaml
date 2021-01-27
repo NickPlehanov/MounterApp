@@ -128,12 +128,18 @@
                                         <SwipeItems Mode="Execute">
                                             <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
                                                    CommandParameter="{Binding Path=NewNumber}">
-                                                <!--<Grid>-->
                                                 <Button Style="{DynamicResource SwipeNavigationButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
-                                                <!--</Grid>-->
                                             </SwipeItemView>
                                         </SwipeItems>
                                     </SwipeView.LeftItems>
+                                    <SwipeView.RightItems>
+                                        <SwipeItems Mode="Execute">
+                                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=ViewDescriptionServiceOrder}"
+                                                   CommandParameter="{Binding Path=NewName}">
+                                                <Button Style="{DynamicResource SwipeOpenButton}" Text="Информация"/>
+                                            </SwipeItemView>
+                                        </SwipeItems>
+                                    </SwipeView.RightItems>
                                     <Frame Style="{DynamicResource FrameServiceOrderStyle}" BorderColor="{Binding Path=FrameColor}">
                                         <Frame.Content>
                                             <StackLayout>

@@ -14,7 +14,7 @@ using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class OrdersForITViewModel : BaseViewModel {
-        readonly ClientHttp http = new ClientHttp();
+        //readonly ClientHttp http = new ClientHttp();
         public OrdersForITViewModel(List<NewMounterExtensionBase> mounters,List<NewServicemanExtensionBase> servicemans) {
             TextButton = "Закрыть";
             Mounters = mounters;
@@ -135,7 +135,7 @@ namespace MounterApp.ViewModel {
                     Statecode = 0,
                     Statuscode = 1
                 });
-                HttpStatusCode code = await http.PostQuery("/api/NewItBases",new StringContent(data,Encoding.UTF8,"application/json"));
+                HttpStatusCode code = await ClientHttp.PostQuery("/api/NewItBases",new StringContent(data,Encoding.UTF8,"application/json"));
                 string msg = code.Equals(HttpStatusCode.Accepted) ? "Успешно отправлено" : "Ошибка при отправке сообщения";
                 Toast.MakeText(Android.App.Application.Context,msg,ToastLength.Long).Show();
 

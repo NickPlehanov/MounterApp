@@ -19,7 +19,7 @@ using System.Net;
 
 namespace MounterApp.ViewModel {
     public class NewMountPageViewModel : BaseViewModel {
-        readonly ClientHttp http = new ClientHttp();
+        //readonly ClientHttp http = new ClientHttp();
         private List<NewMounterExtensionBase> _Mounters;
         public List<NewMounterExtensionBase> Mounters {
             get => _Mounters;
@@ -347,7 +347,7 @@ namespace MounterApp.ViewModel {
                                         //}
                                     //}
                                 }
-                                HttpStatusCode result = await http.PostQuery("/api/Common?NumberObject=" + ObjectNumber +
+                                HttpStatusCode result = await ClientHttp.PostQuery("/api/Common?NumberObject=" + ObjectNumber +
                                             "&NameObject=" + ObjectName +
                                             "&AddressObject=" + ObjectAddress +
                                             "&MounterName=" + Mounters.FirstOrDefault().NewName +
@@ -418,7 +418,7 @@ namespace MounterApp.ViewModel {
         private RelayCommand _WriteCoordinates;
         public RelayCommand WriteCoordinates {
             get => _WriteCoordinates ??= new RelayCommand(async obj => {
-                await http.GetQuery("/api/Andromeda/coords?ObjectNumber=" + ObjectNumber + "&ObjectAddress=" + ObjectAddress + "");
+                await ClientHttp.GetQuery("/api/Andromeda/coords?ObjectNumber=" + ObjectNumber + "&ObjectAddress=" + ObjectAddress + "");
 
                 //using (HttpClient client = new HttpClient(GetHttpClientHandler())) {
                 //    HttpResponseMessage responseCoords=await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/coords?ObjectNumber=" + ObjectNumber + "&ObjectAddress=" + ObjectAddress + "");
@@ -440,7 +440,7 @@ namespace MounterApp.ViewModel {
         private RelayCommand _WriteDriveways;
         public RelayCommand WriteDriveways {
             get => _WriteDriveways ??= new RelayCommand(async obj => {
-                await http.GetQuery("/api/Andromeda/driveways?ObjectNumber=" + ObjectNumber + "&ObjectDriveways=" + ObjectDriveways + "");
+                await ClientHttp.GetQuery("/api/Andromeda/driveways?ObjectNumber=" + ObjectNumber + "&ObjectDriveways=" + ObjectDriveways + "");
                 //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
                 //    HttpResponseMessage responseCoords = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/driveways?ObjectNumber=" + ObjectNumber + "&ObjectDriveways=" + ObjectDriveways + "");
                 //    if(responseCoords.IsSuccessStatusCode || responseCoords.StatusCode == HttpStatusCode.Accepted) { }
@@ -461,7 +461,7 @@ namespace MounterApp.ViewModel {
         private RelayCommand _WriteWebLink;
         public RelayCommand WriteWebLink {
             get => _WriteWebLink ??= new RelayCommand(async obj => {
-                HttpStatusCode code =  await http.GetQuery("/api/Andromeda/weblink?ObjectNumber=" + ObjectNumber + "&path=" + Path + "");
+                HttpStatusCode code =  await ClientHttp.GetQuery("/api/Andromeda/weblink?ObjectNumber=" + ObjectNumber + "&path=" + Path + "");
                 IsSuccessWriteWebLink = code.Equals(HttpStatusCode.Accepted);
                 //IsSuccessWriteWebLink = false;
                 //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
@@ -491,7 +491,7 @@ namespace MounterApp.ViewModel {
         private RelayCommand _SendEventsToAndromeda;
         public RelayCommand SendEventsToAndromeda {
             get => _SendEventsToAndromeda ??= new RelayCommand(async obj => {
-                HttpStatusCode code = await http.GetQuery("/api/Andromeda/SendEvents?ObjectNumber=" + ObjectNumber + "");
+                HttpStatusCode code = await ClientHttp.GetQuery("/api/Andromeda/SendEvents?ObjectNumber=" + ObjectNumber + "");
                 IsSuccessSendEvents = code.Equals(HttpStatusCode.Accepted);
 
                 //IsSuccessSendEvents = false;

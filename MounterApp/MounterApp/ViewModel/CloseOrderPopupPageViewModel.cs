@@ -29,7 +29,7 @@ namespace MounterApp.ViewModel {
             IndicatorVisible = state;
             OpacityForm = state ? 0.1 : 1;
         }
-        readonly ClientHttp http = new ClientHttp();
+        //readonly ClientHttp http = new ClientHttp();
         /// <summary>
         /// Конструктор для закрытия заявки технику
         /// </summary>
@@ -254,7 +254,7 @@ namespace MounterApp.ViewModel {
         private AsyncCommand _GetReasons;
         public AsyncCommand GetReasons {
             get => _GetReasons ??= new AsyncCommand(async () => {
-                Reasons = await http.GetQuery<ObservableCollection<MetadataModel>>("/api/Common/metadata?ColumnName=New_resultid&ObjectName=New_serviceorder");
+                Reasons = await ClientHttp.GetQuery<ObservableCollection<MetadataModel>>("/api/Common/metadata?ColumnName=New_resultid&ObjectName=New_serviceorder");
 
                 //Analytics.TrackEvent("Форма закрытия заявок. Получение причин для переноса заявки",
                 //new Dictionary<string,string> {
@@ -307,7 +307,7 @@ namespace MounterApp.ViewModel {
         private AsyncCommand _GetResults;
         public AsyncCommand GetResults {
             get => _GetResults ??= new AsyncCommand(async () => {
-                Results = await http.GetQuery<ObservableCollection<MetadataModel>>("/api/Common/metadata?ColumnName=New_result&ObjectName=New_serviceorder");
+                Results = await ClientHttp.GetQuery<ObservableCollection<MetadataModel>>("/api/Common/metadata?ColumnName=New_result&ObjectName=New_serviceorder");
 
                 //Analytics.TrackEvent("Форма закрытия заявок. Получение результата работы по заявке",
                 //new Dictionary<string,string> {
@@ -495,7 +495,7 @@ namespace MounterApp.ViewModel {
                 }
                 if(!string.IsNullOrEmpty(ConclusionByOrder)) {
                     if(so != null) {
-                        NewServiceorderExtensionBase soeb = await http.GetQuery<NewServiceorderExtensionBase>("/api/NewServiceorderExtensionBases/id?id=" + so.NewServiceorderId);
+                        NewServiceorderExtensionBase soeb = await ClientHttp.GetQuery<NewServiceorderExtensionBase>("/api/NewServiceorderExtensionBases/id?id=" + so.NewServiceorderId);
                         if(soeb != null) {
                             PermissionStatus permissionStatus = await CheckPermission();
                             if(permissionStatus.Equals(PermissionStatus.Granted)) {
@@ -504,20 +504,20 @@ namespace MounterApp.ViewModel {
                                 soeb.NewTechConclusion = ConclusionByOrder;
                                 soeb.NewMustRead = NecesseryRead;
                                 soeb.NewNewServiceman = Servicemans.First().NewServicemanId;
-                                HttpStatusCode code = http.PutQuery("/api/NewServiceorderExtensionBases",new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json")).GetAwaiter().GetResult();
+                                HttpStatusCode code = ClientHttp.PutQuery("/api/NewServiceorderExtensionBases",new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json")).GetAwaiter().GetResult();
                                 if(code.Equals(HttpStatusCode.Accepted)) {
                                     Toast.MakeText(Android.App.Application.Context,"СОХРАНЕНО",ToastLength.Long).Show();
                                 }
                                 else
                                     await Application.Current.MainPage.DisplayAlert("Ошибка","При сохранении информации о заявке технику, произошла ошибка, не был получен корректный ответ от сервера. Попробуйте позже, в случае повторной ошибки, сообщите в ИТ-отдел.","OK");
-                                ServiceOrderCoordinates soc = await http.GetQuery<ServiceOrderCoordinates>("/api/ServiceOrderCoordinates/id?so_id=" + so.NewServiceorderId);
+                                ServiceOrderCoordinates soc = await ClientHttp.GetQuery<ServiceOrderCoordinates>("/api/ServiceOrderCoordinates/id?so_id=" + so.NewServiceorderId);
                                 if(soc != null) {
                                     //ServiceOrderCoordinates s = soc.First(x => x.SocOutcomeLatitide == null && x.SocOutcomeLongitude == null);
                                     //if(s != null) {
                                         GetLocation();
                                         soc.SocOutcomeLatitide = Latitude;
                                         soc.SocOutcomeLongitude = Longitude;
-                                        http.PutQuery("/api/ServiceOrderCoordinates",new StringContent(JsonConvert.SerializeObject(soc),Encoding.UTF8,"application/json")).GetAwaiter().GetResult();
+                                    ClientHttp.PutQuery("/api/ServiceOrderCoordinates",new StringContent(JsonConvert.SerializeObject(soc),Encoding.UTF8,"application/json")).GetAwaiter().GetResult();
                                     //}
                                 }
                                 App.Current.MainPage = new ServiceOrdersPage(vm);
@@ -530,7 +530,7 @@ namespace MounterApp.ViewModel {
                             await Application.Current.MainPage.DisplayAlert("Ошибка","При сохранении информации о заявке технику, произошла ошибка.","OK");
                     }
                     if(sofa != null) {
-                        NewTest2ExtensionBase soeb = await http.GetQuery<NewTest2ExtensionBase>("/api/NewServiceOrderForFireAlarmExtensionBase/id?id=" + sofa.NewTest2Id);
+                        NewTest2ExtensionBase soeb = await ClientHttp.GetQuery<NewTest2ExtensionBase>("/api/NewServiceOrderForFireAlarmExtensionBase/id?id=" + sofa.NewTest2Id);
                         if(soeb != null) {
                             PermissionStatus permissionStatus = await CheckPermission();
                             if(permissionStatus.Equals(PermissionStatus.Granted)) {
@@ -538,20 +538,20 @@ namespace MounterApp.ViewModel {
                                 //soeb.NewTransferReason = string.IsNullOrEmpty(ReasonComment) ? "" : ReasonComment;
                                 soeb.NewTechconclusion = ConclusionByOrder;
                                 soeb.NewTechniqueEnd = Servicemans.First().NewServicemanId;
-                                HttpStatusCode code = http.PutQuery("/api/NewServiceOrderForFireAlarmExtensionBase",new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json")).GetAwaiter().GetResult();
+                                HttpStatusCode code = ClientHttp.PutQuery("/api/NewServiceOrderForFireAlarmExtensionBase",new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json")).GetAwaiter().GetResult();
                                 if(code.Equals(HttpStatusCode.Accepted)) {
                                     Toast.MakeText(Android.App.Application.Context,"СОХРАНЕНО",ToastLength.Long).Show();
                                 }
                                 else
                                     await Application.Current.MainPage.DisplayAlert("Ошибка","При сохранении информации о заявке технику, произошла ошибка, не был получен корректный ответ от сервера. Попробуйте позже, в случае повторной ошибки, сообщите в ИТ-отдел.","OK");
-                                ServiceOrderCoordinates soc = await http.GetQuery<ServiceOrderCoordinates>("/api/ServiceOrderCoordinates/id?so_id=" + sofa.NewTest2Id);
+                                ServiceOrderCoordinates soc = await ClientHttp.GetQuery<ServiceOrderCoordinates>("/api/ServiceOrderCoordinates/id?so_id=" + sofa.NewTest2Id);
                                 if(soc != null) {
                                     //ServiceOrderCoordinates s = soc.First(x => x.SocOutcomeLatitide == null && x.SocOutcomeLongitude == null);
                                     //if(s != null) {
                                         GetLocation();
                                         soc.SocOutcomeLatitide = Latitude;
                                         soc.SocOutcomeLongitude = Longitude;
-                                        http.PutQuery("/api/ServiceOrderCoordinates",new StringContent(JsonConvert.SerializeObject(soc),Encoding.UTF8,"application/json")).GetAwaiter().GetResult();
+                                    ClientHttp.PutQuery("/api/ServiceOrderCoordinates",new StringContent(JsonConvert.SerializeObject(soc),Encoding.UTF8,"application/json")).GetAwaiter().GetResult();
                                     //}
                                 }
                                 App.Current.MainPage = new ServiceOrdersPage(vm);

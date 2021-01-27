@@ -17,7 +17,7 @@ using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class ServiceOrdersPageViewModel : BaseViewModel {
-        readonly ClientHttp http = new ClientHttp();
+        //readonly ClientHttp http = new ClientHttp();
         public ServiceOrdersPageViewModel() {
 
         }
@@ -280,11 +280,11 @@ namespace MounterApp.ViewModel {
                 await App.Current.MainPage.Navigation.PushPopupAsync(new HelpPopupPage(vm));
             });
         }
-        private AsyncCommand _GetCategoryTech;
-        public AsyncCommand GetCategoryTech {
-            get => _GetCategoryTech ??= new AsyncCommand(async () => {
+        private RelayCommand _GetCategoryTech;
+        public RelayCommand GetCategoryTech {
+            get => _GetCategoryTech ??= new RelayCommand(async obj => {
                 //List<MetadataModel> mm = new List<MetadataModel>();
-                Category = await http.GetQuery<ObservableCollection<MetadataModel>>("/api/Common/metadata?ColumnName=new_category&ObjectName=New_serviceman");
+                Category = await ClientHttp.GetQuery<ObservableCollection<MetadataModel>>("/api/Common/metadata?ColumnName=new_category&ObjectName=New_serviceman");
 
                 //Analytics.TrackEvent("Получение категорий техников",
                 //new Dictionary<string,string> {
@@ -337,6 +337,15 @@ namespace MounterApp.ViewModel {
                });
                 MainMenuPageViewModel vm = new MainMenuPageViewModel(Mounters,Servicemans);
                 App.Current.MainPage = new MainMenuPage(vm);
+            });
+        }
+
+        private RelayCommand _ViewDescriptionServiceOrder;
+        public RelayCommand ViewDescriptionServiceOrder {
+            get => _ViewDescriptionServiceOrder ??= new RelayCommand(async obj => {
+                if(obj != null) {
+                    await Application.Current.MainPage.DisplayAlert("Информация",obj.ToString(),"OK");
+                }
             });
         }
 
@@ -397,9 +406,9 @@ namespace MounterApp.ViewModel {
                 //ActivityIndicatorViewModel vm = new ActivityIndicatorViewModel(false);
                 //await App.Current.MainPage.Navigation.PushModalAsync(new ActivityIndicatorPopupPage(vm));
 
-                await GetCategoryTech.ExecuteAsync(Category);
-                await GetServiceOrders.ExecuteAsync(Servicemans);
-                await GetServiceOrderByTransfer.ExecuteAsync(Servicemans);
+                GetCategoryTech.Execute(Category);
+                GetServiceOrders.Execute(Servicemans);
+                GetServiceOrderByTransfer.Execute(Servicemans);
                 NewServicemanExtensionBase sm = null;
                 if(Category != null)
                     if(Category.Count > 0) {
@@ -414,8 +423,8 @@ namespace MounterApp.ViewModel {
                             });
                         }
                         if(sm != null) {
-                            await GetServiceOrderByTransferFireAlarm.ExecuteAsync(null);
-                            await GetServiceOrdersFireAlarm.ExecuteAsync(null);
+                            GetServiceOrderByTransferFireAlarm.Execute(null);
+                            GetServiceOrdersFireAlarm.Execute(null);
                         }
                     }
                 //vm = new ActivityIndicatorViewModel(false);
@@ -423,9 +432,9 @@ namespace MounterApp.ViewModel {
                 //await PopupNavigation.Instance.PushAsync(new ActivityIndicatorPopupPage(vm));
             });
         }
-        private AsyncCommand _GetServiceOrders;
-        public AsyncCommand GetServiceOrders {
-            get => _GetServiceOrders ??= new AsyncCommand(async () => {
+        private RelayCommand _GetServiceOrders;
+        public RelayCommand GetServiceOrders {
+            get => _GetServiceOrders ??= new RelayCommand(async obj => {
                 OpacityForm = 0.1;
                 IndicatorVisible = true;
                 if(Servicemans.Count > 0) {
@@ -439,7 +448,7 @@ namespace MounterApp.ViewModel {
                         Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
 
                     List<NewServiceorderExtensionBase_ex> _serviceorders = new List<NewServiceorderExtensionBase_ex>();
-                    _serviceorders = await http.GetQuery<List<NewServiceorderExtensionBase_ex>>("/api/NewServiceorderExtensionBases/ServiceOrderByUserNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
+                    _serviceorders = await ClientHttp.GetQuery<List<NewServiceorderExtensionBase_ex>>("/api/NewServiceorderExtensionBases/ServiceOrderByUserNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
 
                     //using HttpClient client = new HttpClient(GetHttpClientHandler());
                     //HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByUserNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
@@ -492,9 +501,9 @@ namespace MounterApp.ViewModel {
                 OpacityForm = 1;
             });
         }
-        private AsyncCommand _GetServiceOrdersFireAlarm;
-        public AsyncCommand GetServiceOrdersFireAlarm {
-            get => _GetServiceOrdersFireAlarm ??= new AsyncCommand(async () => {
+        private RelayCommand _GetServiceOrdersFireAlarm;
+        public RelayCommand GetServiceOrdersFireAlarm {
+            get => _GetServiceOrdersFireAlarm ??= new RelayCommand(async obj => {
                 OpacityForm = 0.1;
                 IndicatorVisible = true;
                 if(Servicemans.Count > 0) {
@@ -508,7 +517,7 @@ namespace MounterApp.ViewModel {
                         Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
 
                     List<NewTest2ExtensionBase_ex> _serviceorders = new List<NewTest2ExtensionBase_ex>();
-                    _serviceorders = await http.GetQuery<List<NewTest2ExtensionBase_ex>>("/api/NewServiceOrderForFireAlarmExtensionBase/ServiceOrderByUserNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
+                    _serviceorders = await ClientHttp.GetQuery<List<NewTest2ExtensionBase_ex>>("/api/NewServiceOrderForFireAlarmExtensionBase/ServiceOrderByUserNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
 
                     //using HttpClient client = new HttpClient(GetHttpClientHandler());
                     //HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceOrderForFireAlarmExtensionBase/ServiceOrderByUserNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
@@ -562,9 +571,9 @@ namespace MounterApp.ViewModel {
             });
         }
 
-        private AsyncCommand _GetServiceOrderByTransfer;
-        public AsyncCommand GetServiceOrderByTransfer {
-            get => _GetServiceOrderByTransfer ??= new AsyncCommand(async () => {
+        private RelayCommand _GetServiceOrderByTransfer;
+        public RelayCommand GetServiceOrderByTransfer {
+            get => _GetServiceOrderByTransfer ??= new RelayCommand(async obj => {
                 OpacityForm = 0.1;
                 IndicatorVisible = true;
                 if(Servicemans.Count > 0) {
@@ -578,7 +587,7 @@ namespace MounterApp.ViewModel {
                         Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
 
                     List<NewServiceorderExtensionBase_ex> _serviceorders = new List<NewServiceorderExtensionBase_ex>();
-                    _serviceorders = await http.GetQuery<List<NewServiceorderExtensionBase_ex>>("/api/NewServiceorderExtensionBases/ServiceOrderByUserTransferReasonNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
+                    _serviceorders = await ClientHttp.GetQuery<List<NewServiceorderExtensionBase_ex>>("/api/NewServiceorderExtensionBases/ServiceOrderByUserTransferReasonNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
 
                     //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
                     //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByUserTransferReasonNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
@@ -624,9 +633,9 @@ namespace MounterApp.ViewModel {
                 OpacityForm = 1;
             });
         }
-        private AsyncCommand _GetServiceOrderByTransferFireAlarm;
-        public AsyncCommand GetServiceOrderByTransferFireAlarm {
-            get => _GetServiceOrderByTransferFireAlarm ??= new AsyncCommand(async () => {
+        private RelayCommand _GetServiceOrderByTransferFireAlarm;
+        public RelayCommand GetServiceOrderByTransferFireAlarm {
+            get => _GetServiceOrderByTransferFireAlarm ??= new RelayCommand(async obj => {
                 OpacityForm = 0.1;
                 IndicatorVisible = true;
                 if(Servicemans.Count > 0) {
@@ -639,7 +648,7 @@ namespace MounterApp.ViewModel {
                         Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
 
                     List<NewTest2ExtensionBase_ex> _serviceorders = new List<NewTest2ExtensionBase_ex>();
-                    _serviceorders = await http.GetQuery<List<NewTest2ExtensionBase_ex>>("/api/NewServiceOrderForFireAlarmExtensionBase/ServiceOrderByUserTransferReasonNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
+                    _serviceorders = await ClientHttp.GetQuery<List<NewTest2ExtensionBase_ex>>("/api/NewServiceOrderForFireAlarmExtensionBase/ServiceOrderByUserTransferReasonNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
 
                     ///api/NewServiceorderExtensionBases/ServiceOrderByUser?usr_ID=FEF46B07-8D7A-E311-920A-00155D01051D&date=18.11.2020
                     

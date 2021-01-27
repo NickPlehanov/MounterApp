@@ -13,7 +13,7 @@ using static Xamarin.Essentials.Permissions;
 
 namespace MounterApp.ViewModel {
     public class MainPageViewModel : BaseViewModel {
-        ClientHttp http = new ClientHttp();
+        //ClientHttp http = new ClientHttp();
 
         public MainPageViewModel() {
             
@@ -75,10 +75,10 @@ namespace MounterApp.ViewModel {
                     Analytics.TrackEvent("Запрос монтажников по номеру телефона");
 
                     List<NewMounterExtensionBase> mounters = new List<NewMounterExtensionBase>();
-                    mounters = await http.GetQuery<List<NewMounterExtensionBase>>("/api/NewMounterExtensionBases/phone?phone=" + Phone);
+                    mounters = await ClientHttp.GetQuery<List<NewMounterExtensionBase>>("/api/NewMounterExtensionBases/phone?phone=" + Phone);
 
                     List<NewServicemanExtensionBase> servicemans = new List<NewServicemanExtensionBase>();
-                    servicemans = await http.GetQuery<List<NewServicemanExtensionBase>>("/api/NewServicemanExtensionBases/phone?phone=" + Phone);
+                    servicemans = await ClientHttp.GetQuery<List<NewServicemanExtensionBase>>("/api/NewServicemanExtensionBases/phone?phone=" + Phone);
 
                     if(mounters != null || servicemans != null) {
                         if(mounters.Count > 0 || servicemans.Count > 0) {

@@ -19,7 +19,7 @@ using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class MountsViewModel : BaseViewModel {
-        readonly ClientHttp http = new ClientHttp();
+        //readonly ClientHttp http = new ClientHttp();
         private ObservableCollection<Mounts> _Mounts = new ObservableCollection<Mounts>();
         public ObservableCollection<Mounts> Mounts {
             get => _Mounts;
@@ -273,7 +273,7 @@ namespace MounterApp.ViewModel {
             get => _GetGoogleMounts ??= new RelayCommand(async obj => {
                 Opacity = 0.1;
                 IndicatorVisible = true;
-                GoogleMounts = await http.GetQuery<ObservableCollection<GoogleMountModel>>("/api/Common?phone=7" + Mounters.FirstOrDefault().NewPhone + "&date=" + DateTime.Now.Date + "");
+                GoogleMounts = await ClientHttp.GetQuery<ObservableCollection<GoogleMountModel>>("/api/Common?phone=7" + Mounters.FirstOrDefault().NewPhone + "&date=" + DateTime.Now.Date + "");
                 GoogleMountsExpander = GoogleMounts.Count > 0;
 
                 //using HttpClient client = new HttpClient(GetHttpClientHandler());

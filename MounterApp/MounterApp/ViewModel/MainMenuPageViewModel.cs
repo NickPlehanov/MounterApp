@@ -15,7 +15,7 @@ using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class MainMenuPageViewModel : BaseViewModel {
-        ClientHttp http = new ClientHttp();
+        //ClientHttp http = new ClientHttp();
         /// <summary>
         /// Конструктор страницы главного меню
         /// </summary>
@@ -114,7 +114,7 @@ namespace MounterApp.ViewModel {
             get => _CheckVersionApp ??= new RelayCommand(async obj => {
                 AppVersions av = new AppVersions();
                 string Version = av.GetVersionAndBuildNumber().VersionNumber;
-                HttpStatusCode code = await http.GetQuery("/api/Common/VersionNumber?appVersion=" + Version);
+                HttpStatusCode code = await ClientHttp.GetQuery("/api/Common/VersionNumber?appVersion=" + Version);
                 if (code.Equals(HttpStatusCode.MethodNotAllowed))
                     await Application.Current.MainPage.DisplayAlert("Информация"
                                 ,"У Вас установлена не актуальная версия приложения, пожалуйста обновите её." + Environment.NewLine + Environment.NewLine + "Если Вы не получили ссылку на новую версию, то сообщите свою почту в ИТ-отдел."

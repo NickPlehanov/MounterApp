@@ -11,7 +11,7 @@ using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class ObjCustsPopupViewModel:BaseViewModel {
-        readonly ClientHttp http = new ClientHttp();
+        //readonly ClientHttp http = new ClientHttp();
 
         public ObjCustsPopupViewModel(NewServiceorderExtensionBase _serviceorder) {
             ServiceOrder = _serviceorder;
@@ -159,7 +159,7 @@ namespace MounterApp.ViewModel {
                     number = ServiceOrder.NewNumber;
                 else if(ServiceOrderFireAlarm.NewNumber.HasValue)
                     number = ServiceOrderFireAlarm.NewNumber;
-                CutomersCollection = await http.GetQuery<ObservableCollection<ObjCust>>("/api/Andromeda/Customer?ObjectNumber=" + number);
+                CutomersCollection = await ClientHttp.GetQuery<ObservableCollection<ObjCust>>("/api/Andromeda/Customer?ObjectNumber=" + number);
 
                 //HttpResponseMessage response = null;
                 //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {

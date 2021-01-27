@@ -14,7 +14,7 @@ using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class EventsExternalPageViewModel : BaseViewModel {
-        readonly ClientHttp http = new ClientHttp();
+        //readonly ClientHttp http = new ClientHttp();
         public EventsExternalPageViewModel(List<NewMounterExtensionBase> mounters, List<NewServicemanExtensionBase> servicemans) {
             Mounters = mounters;
             Servicemans = servicemans;
@@ -133,7 +133,7 @@ namespace MounterApp.ViewModel {
             if(StartDate <= EndDate) {
                 IndicatorVisible = true;
                 OpacityForm = 0.1;
-                Events = await http.GetQuery<ObservableCollection<GetEventsReceivedFromObject_Result>>("/api/Andromeda/events?objNumber=" + ObjectNumber +
+                Events = await ClientHttp.GetQuery<ObservableCollection<GetEventsReceivedFromObject_Result>>("/api/Andromeda/events?objNumber=" + ObjectNumber +
                                         "&startDate=" + StartDate +
                                         "&endDate=" + EndDate +
                                         "&testFiltered=0&doubleFiltered=0");

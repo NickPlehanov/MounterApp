@@ -15,7 +15,7 @@ using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class EventsPopupViewModel : BaseViewModel {
-        readonly ClientHttp http = new ClientHttp();
+        //readonly ClientHttp http = new ClientHttp();
         /// <summary>
         /// Конструктор popup-окна для отображения событий по оъекту за выбранный период
         /// </summary>
@@ -184,7 +184,7 @@ namespace MounterApp.ViewModel {
                     }
                     List<GetEventsReceivedFromObject_Result> _evnts = new List<GetEventsReceivedFromObject_Result>();
                     string obj_number = ServiceOrder != null ? ServiceOrder.NewNumber.ToString() : ServiceOrderFireAlarm.NewNumber.ToString();
-                    Events = await http.GetQuery<ObservableCollection<GetEventsReceivedFromObject_Result>>("/api/Andromeda/events?objNumber=" + obj_number +
+                    Events = await ClientHttp.GetQuery<ObservableCollection<GetEventsReceivedFromObject_Result>>("/api/Andromeda/events?objNumber=" + obj_number +
                                             "&startDate=" + StartDate +
                                             "&endDate=" + EndDate +
                                             "&testFiltered=0&doubleFiltered=0");
