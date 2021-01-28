@@ -38,8 +38,8 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
+                                <!--<RowDefinition Height="Auto"/>-->
+                                <!--<RowDefinition Height="Auto"/>-->
                                 <!--<RowDefinition Height="Auto"/>-->
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
@@ -113,40 +113,40 @@
                                 <Label Style="{DynamicResource CommonLabelStyle}" Margin="0" Grid.Row="0" Grid.Column="3" Text="ТО СКУД" FontAttributes="Bold" VerticalOptions="Center"/>
                                 <CheckBox Style="{DynamicResource CheckBoxStyle}" Margin="0" Grid.Row="1" Grid.Column="3" IsEnabled="False" IsChecked="{Binding rrAccess}"/>
                             </Grid>
-                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="9" Grid.Column="0" Text="Дата заявки" FontAttributes="Bold"/>
-                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="9" Grid.Column="1" Text="{Binding ServiceOrderID.NewDate, StringFormat='{0:dd.MM.yyyy}'}"/>
+                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="6" Grid.Column="0" Text="Дата заявки" FontAttributes="Bold"/>
+                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="6" Grid.Column="1" Text="{Binding ServiceOrderID.NewDate, StringFormat='{0:dd.MM.yyyy}'}"/>
 
-                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="10" Grid.Column="0" Text="Время заявки" FontAttributes="Bold"/>
-                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="10" Grid.Column="1" Text="{Binding ServiceOrderID.NewTime, StringFormat='{}{0:hh\\:mm}'}"/>
+                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="7" Grid.Column="0" Text="Время заявки" FontAttributes="Bold"/>
+                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="7" Grid.Column="1" Text="{Binding ServiceOrderID.NewTime, StringFormat='{}{0:hh\\:mm}'}"/>
 
                             <!--<Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="11" Grid.Column="0" Text="Категория заявки" FontAttributes="Bold"/>
                             <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="11" Grid.Column="1" Text="{Binding Category}"/>-->
 
-                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="11" Grid.Column="0" Text="Кто дал заявку" FontAttributes="Bold"/>
-                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="11" Grid.Column="1" Text="{Binding ServiceOrderID.NewWhoInit}"/>
+                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="8" Grid.Column="0" Text="Кто дал заявку" FontAttributes="Bold"/>
+                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="8" Grid.Column="1" Text="{Binding ServiceOrderID.NewWhoInit}"/>
 
-                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="12" Grid.Column="0" Text="Причина посещения" FontAttributes="Bold"/>
-                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="12" Grid.Column="1" Text="{Binding ServiceOrderID.NewName}">
+                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="9" Grid.Column="0" Text="Причина посещения" FontAttributes="Bold"/>
+                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="9" Grid.Column="1" Text="{Binding ServiceOrderID.NewName}">
                                 <Label.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding ShowInfoCommand}" CommandParameter="{Binding ServiceOrderID.NewName}"/>
                                 </Label.GestureRecognizers>
                             </Label>
 
-                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="13" Grid.Column="0" Text="Примечание" FontAttributes="Bold"/>
-                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="13" Grid.Column="1" Text="{Binding ServiceOrderID.NewCommentNew}">
+                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="10" Grid.Column="0" Text="Примечание" FontAttributes="Bold"/>
+                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="10" Grid.Column="1" Text="{Binding ServiceOrderID.NewCommentNew}">
                                 <Label.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding ShowInfoCommand}" CommandParameter="{Binding ServiceOrderID.NewCommentNew}"/>
                                 </Label.GestureRecognizers>
                             </Label>
 
-                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="14" Grid.Column="0" Text="Контрольное время" FontAttributes="Bold"/>
-                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="14" Grid.Column="1" Text="{Binding ControlTime}"/>
+                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="11" Grid.Column="0" Text="Контрольное время" FontAttributes="Bold"/>
+                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="11" Grid.Column="1" Text="{Binding ControlTime}"/>
 
-                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="15" Grid.Column="0" Text="Шаблон событий" FontAttributes="Bold"/>
-                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="15" Grid.Column="1" Text="{Binding EventTemplate}"/>
+                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="12" Grid.Column="0" Text="Шаблон событий" FontAttributes="Bold"/>
+                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="12" Grid.Column="1" Text="{Binding EventTemplate}"/>
 
-                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="16" Grid.Column="0" Text="Прибор" FontAttributes="Bold"/>
-                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="16" Grid.Column="1" Text="{Binding DeviceName}"/>
+                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="13" Grid.Column="0" Text="Прибор" FontAttributes="Bold"/>
+                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="13" Grid.Column="1" Text="{Binding DeviceName}"/>
                         </Grid>
                     </Expander>
                 </StackLayout>
@@ -171,7 +171,7 @@
                     </Expander>
                 </StackLayout>
                 <StackLayout Opacity="{Binding Opacity}" Grid.Row="3" Grid.Column="0" >
-                    <Button Style="{DynamicResource CommonButtonStyle}" Margin="0" ImageSource="{Binding TransferImage}" Text="Пришел" Command="{Binding IncomeCommand, Mode=TwoWay}" IsEnabled="False"/>
+                    <Button Style="{DynamicResource CommonButtonStyle}" Margin="0" ImageSource="{Binding TransferImage}" Text="{Binding IncomeButtonText}" Command="{Binding IncomeCommand, Mode=TwoWay}" IsEnabled="False"/>
                 </StackLayout>
                 <StackLayout Opacity="{Binding Opacity}" Grid.Row="3" Grid.Column="1" >
                     <Button Style="{DynamicResource CommonButtonStyle}" Margin="0" ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding CloseOrderCommand}"/>

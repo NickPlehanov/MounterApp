@@ -48,6 +48,8 @@ namespace MounterApp.ViewModel {
             CloseImage = IconName("close");
             TransferImage = IconName("transfer");
             PeopleImage = IconName("people");
+            //IncomeButtonText = "Пришел";
+            IncomeButtonText = ServiceOrderID.NewIncome.HasValue ? ServiceOrderID.NewIncome.Value.AddHours(5).ToShortTimeString() : "Пришел";
         }
 
         public ServiceOrderViewModel(NewTest2ExtensionBase _so,List<NewServicemanExtensionBase> _servicemans,List<NewMounterExtensionBase> _mounters) {
@@ -658,6 +660,7 @@ namespace MounterApp.ViewModel {
                         //            });
                         }
                         ServiceOrderID.NewIncome = DateTime.Now.AddHours(-5);
+                        IncomeButtonText = ServiceOrderID.NewIncome.Value.AddHours(5).ToShortTimeString();
                         IncomeCommand.ChangeCanExecute();
                     }
                 
@@ -666,6 +669,14 @@ namespace MounterApp.ViewModel {
             },obj => ServiceOrderID.NewIncome == null);
         }
 
+        private string _IncomeButtonText;
+        public string IncomeButtonText {
+            get => _IncomeButtonText;
+            set {
+                _IncomeButtonText = value;
+                OnPropertyChanged(nameof(IncomeButtonText));
+            }
+        }
         private ImageSource _PeopleImage;
         public ImageSource PeopleImage {
             get => _PeopleImage;

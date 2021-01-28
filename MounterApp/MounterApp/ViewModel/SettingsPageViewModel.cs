@@ -121,7 +121,7 @@ namespace MounterApp.ViewModel {
         private RelayCommand _CheckAccessToSecret;
         public RelayCommand CheckAccessToSecret {
             get => _CheckAccessToSecret ??= new RelayCommand(async obj => {
-                HttpStatusCode code = await ClientHttp.GetQuery(Resources.BaseAddress + "/api/Common/AccessSecret?phone=" + Application.Current.Properties["Phone"].ToString());
+                HttpStatusCode code = await ClientHttp.GetQuery("/api/Common/AccessSecret?phone=" + Application.Current.Properties["Phone"].ToString());
                 if (code.Equals(HttpStatusCode.OK))
                     GetEventsObjectInfo.Execute(null);
                 //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {                    
