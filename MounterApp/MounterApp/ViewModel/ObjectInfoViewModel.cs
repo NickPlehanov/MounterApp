@@ -1,8 +1,12 @@
 ﻿using MounterApp.Helpers;
 using MounterApp.Model;
+using MounterApp.Properties;
+using Newtonsoft.Json;
 using Rg.Plugins.Popup.Extensions;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Net.Http;
 using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
@@ -118,31 +122,31 @@ namespace MounterApp.ViewModel {
                     number = ServiceOrder.NewNumber;
                 else if (ServiceOrderFireAlarm.NewNumber.HasValue)
                     number = ServiceOrderFireAlarm.NewNumber;
-                WiresCollection = await ClientHttp.GetQuery<ObservableCollection<Wires>>("/api/Andromeda/wires?objNumber=" + number);
+                //WiresCollection = await ClientHttp.GetQuery<ObservableCollection<Wires>>("/api/Andromeda/wires?objNumber=" + number);
 
 
-                //WiresCollection.Clear();
-                //using HttpClient client = new HttpClient(GetHttpClientHandler());
-                //List<Wires> _wrs = new List<Wires>();
-                //string resp = "";
-                //if(ServiceOrder != null) {
-                //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/wires?objNumber=" + ServiceOrder.NewNumber);
-                //    resp = response.Content.ReadAsStringAsync().Result;
-                //}
-                //else if(ServiceOrderFireAlarm != null) {
-                //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/wires?objNumber=" + ServiceOrderFireAlarm.NewNumber);
-                //    resp = response.Content.ReadAsStringAsync().Result;
-                //}
-                //try {
-                //    if(!string.IsNullOrEmpty(resp))
-                //        _wrs = JsonConvert.DeserializeObject<List<Wires>>(resp);
-                //}
-                //catch { }
-                //if(_wrs.Count() > 0) {
-                //    foreach(var item in _wrs) {
-                //        WiresCollection.Add(item);
-                //    }
-                //}
+                WiresCollection.Clear();
+                using HttpClient client = new HttpClient(GetHttpClientHandler());
+                List<Wires> _wrs = new List<Wires>();
+                string resp = "";
+                if(ServiceOrder != null) {
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/wires?objNumber=" + ServiceOrder.NewNumber);
+                    resp = response.Content.ReadAsStringAsync().Result;
+                }
+                else if(ServiceOrderFireAlarm != null) {
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/wires?objNumber=" + ServiceOrderFireAlarm.NewNumber);
+                    resp = response.Content.ReadAsStringAsync().Result;
+                }
+                try {
+                    if(!string.IsNullOrEmpty(resp))
+                        _wrs = JsonConvert.DeserializeObject<List<Wires>>(resp);
+                }
+                catch { }
+                if(_wrs.Count() > 0) {
+                    foreach(var item in _wrs) {
+                        WiresCollection.Add(item);
+                    }
+                }
                 OpacityForm = 1;
                 IndicatorVisible = false;
             });
@@ -157,31 +161,31 @@ namespace MounterApp.ViewModel {
                     number = ServiceOrder.NewNumber;
                 else if(ServiceOrderFireAlarm.NewNumber.HasValue)
                     number = ServiceOrderFireAlarm.NewNumber;
-                ExtFields = await ClientHttp.GetQuery<ObservableCollection<ExtFields>>("/api/Andromeda/ext?objNumber=" + number);
+                //ExtFields = await ClientHttp.GetQuery<ObservableCollection<ExtFields>>("/api/Andromeda/ext?objNumber=" + number);
 
-                //ExtFields.Clear();
-                //List<ExtFields> _ext = new List<ExtFields>();
-                //string resp = "";
+                ExtFields.Clear();
+                List<ExtFields> _ext = new List<ExtFields>();
+                string resp = "";
 
-                //using HttpClient client = new HttpClient(GetHttpClientHandler());
-                //if(ServiceOrder != null) {
-                //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/ext?objNumber=" + ServiceOrder.NewNumber);
-                //    resp = response.Content.ReadAsStringAsync().Result;
-                //}
-                //else if(ServiceOrderFireAlarm != null) {
-                //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/ext?objNumber=" + ServiceOrderFireAlarm.NewNumber);
-                //    resp = response.Content.ReadAsStringAsync().Result;
-                //}
-                //try {
-                //    if(!string.IsNullOrEmpty(resp))
-                //        _ext = JsonConvert.DeserializeObject<List<ExtFields>>(resp);
-                //}
-                //catch { }
-                //if(_ext.Count() > 0) {
-                //    foreach(var item in _ext) {
-                //        ExtFields.Add(item);
-                //    }
-                //}
+                using HttpClient client = new HttpClient(GetHttpClientHandler());
+                if(ServiceOrder != null) {
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/ext?objNumber=" + ServiceOrder.NewNumber);
+                    resp = response.Content.ReadAsStringAsync().Result;
+                }
+                else if(ServiceOrderFireAlarm != null) {
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/ext?objNumber=" + ServiceOrderFireAlarm.NewNumber);
+                    resp = response.Content.ReadAsStringAsync().Result;
+                }
+                try {
+                    if(!string.IsNullOrEmpty(resp))
+                        _ext = JsonConvert.DeserializeObject<List<ExtFields>>(resp);
+                }
+                catch { }
+                if(_ext.Count() > 0) {
+                    foreach(var item in _ext) {
+                        ExtFields.Add(item);
+                    }
+                }
                 OpacityForm = 1;
                 IndicatorVisible = false;
             });

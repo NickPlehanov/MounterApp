@@ -30,6 +30,49 @@ namespace MounterApp.ViewModel {
             GetImage = IconName("get");
             IndicatorVisible = false;
             OpacityForm = 1;
+            StartDateVisible = true;
+            EndDateVisible = true;
+            GetButtonVisible = true;
+        }
+        public EventsPopupViewModel(string objectNumber, DateTime? dt) {
+            CloseImage = IconName("close");
+            GetImage = IconName("get");
+            IndicatorVisible = false;
+            OpacityForm = 1;
+            ObjectNumber = objectNumber;
+            StartDate = dt.Value.AddHours(-4);
+            EndDate = dt.Value.AddHours(4);
+            GetEvents2.Execute(null);
+            StartDateVisible = false;
+            EndDateVisible = false;
+            GetButtonVisible = false;
+        }
+
+        private string _ObjectNumber;
+        public string ObjectNumber {
+            get => _ObjectNumber;
+            set {
+                _ObjectNumber = value;
+                OnPropertyChanged(nameof(ObjectNumber));
+            }
+        }
+
+        private RelayCommand _GetEvents2;
+        public RelayCommand GetEvents2 {
+            get => _GetEvents2 ??= new RelayCommand(async obj => {
+                using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                    client.DefaultRequestHeaders.Clear();
+                    client.DefaultRequestHeaders.ConnectionClose = true;
+                    client.DefaultRequestHeaders.ExpectContinue = false;
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/events?objNumber=" + ObjectNumber +
+                                        "&startDate=" + StartDate +
+                                        "&endDate=" + EndDate +
+                                        "&testFiltered=0&doubleFiltered=0");
+                    if(response.IsSuccessStatusCode) {
+                        Events = JsonConvert.DeserializeObject<ObservableCollection<GetEventsReceivedFromObject_Result>>(await response.Content.ReadAsStringAsync());
+                    }
+                }
+            });
         }
         /// <summary>
         /// Конструктор popup-окна для отображения событий по оъекту за выбранный период
@@ -45,6 +88,9 @@ namespace MounterApp.ViewModel {
             GetImage = IconName("get");
             IndicatorVisible = false;
             OpacityForm = 1;
+            StartDateVisible = true;
+            EndDateVisible = true;
+            GetButtonVisible = true;
         }
         /// <summary>
         /// Объект для хранения заявки на пс, заполняется в конструкторе
@@ -184,10 +230,22 @@ namespace MounterApp.ViewModel {
                     }
                     List<GetEventsReceivedFromObject_Result> _evnts = new List<GetEventsReceivedFromObject_Result>();
                     string obj_number = ServiceOrder != null ? ServiceOrder.NewNumber.ToString() : ServiceOrderFireAlarm.NewNumber.ToString();
-                    Events = await ClientHttp.GetQuery<ObservableCollection<GetEventsReceivedFromObject_Result>>("/api/Andromeda/events?objNumber=" + obj_number +
+                    //Events = await ClientHttp.GetQuery<ObservableCollection<GetEventsReceivedFromObject_Result>>("/api/Andromeda/events?objNumber=" + obj_number +
+                    //                        "&startDate=" + StartDate +
+                    //                        "&endDate=" + EndDate +
+                    //                        "&testFiltered=0&doubleFiltered=0");
+                    using (HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                        client.DefaultRequestHeaders.Clear();
+                        client.DefaultRequestHeaders.ConnectionClose = true;
+                        client.DefaultRequestHeaders.ExpectContinue = false;
+                        HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/events?objNumber=" + obj_number +
                                             "&startDate=" + StartDate +
                                             "&endDate=" + EndDate +
                                             "&testFiltered=0&doubleFiltered=0");
+                        if(response.IsSuccessStatusCode) {
+                            Events= JsonConvert.DeserializeObject<ObservableCollection<GetEventsReceivedFromObject_Result>>(await response.Content.ReadAsStringAsync());
+                        }
+                    }
                 }
                 else {
                     await Application.Current.MainPage.DisplayAlert("Ошибка","Дата начала не может быть больше или равна дате окончания","OK");
@@ -195,6 +253,33 @@ namespace MounterApp.ViewModel {
                 IndicatorVisible = false;
                 OpacityForm = 1;
             });
+        }
+
+        private bool _StartDateVisible;
+        public bool StartDateVisible {
+            get => _StartDateVisible;
+            set {
+                _StartDateVisible = value;
+                OnPropertyChanged(nameof(StartDateVisible));
+            }
+        }
+
+        private bool _EndDateVisible;
+        public bool EndDateVisible {
+            get => _EndDateVisible;
+            set {
+                _EndDateVisible = value;
+                OnPropertyChanged(nameof(EndDateVisible));
+            }
+        }
+
+        private bool _GetButtonVisible;
+        public bool GetButtonVisible {
+            get => _GetButtonVisible;
+            set {
+                _GetButtonVisible = value;
+                OnPropertyChanged(nameof(GetButtonVisible));
+            }
         }
         /// <summary>
         /// Монтажники список
@@ -213,10 +298,13 @@ namespace MounterApp.ViewModel {
         private RelayCommand _ExitCommand;
         public RelayCommand ExitCommand {
             get => _ExitCommand ??= new RelayCommand(async obj => {
-                Analytics.TrackEvent("Выход со страницы для запроса событий по объекту",
-                new Dictionary<string,string> {
+                try {
+                    Analytics.TrackEvent("Выход со страницы для запроса событий по объекту",
+                    new Dictionary<string,string> {
                     {"ServicemanPhone",Servicemans.First().NewPhone }
-                });
+                    });
+                }
+                catch { }
                 await App.Current.MainPage.Navigation.PopPopupAsync(false);
             });
         }

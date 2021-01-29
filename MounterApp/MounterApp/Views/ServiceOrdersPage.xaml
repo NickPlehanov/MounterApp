@@ -3,7 +3,7 @@
              xmlns:vm="clr-namespace:MounterApp.ViewModel"
              x:Class="MounterApp.Views.ServiceOrdersPage">
     <ContentPage.Resources>
-        <vm:ServiceOrdersPageViewModel x:Key="vm"/>
+        <!--<vm:ServiceOrdersPageViewModel x:Key="vm"/>-->
     </ContentPage.Resources>
     <ContentPage.Content>
         <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
@@ -49,16 +49,38 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
                                 <SwipeView Style="{DynamicResource SwipeViewStyle}">
+                                    <SwipeView.TopItems>
+                                        <SwipeItems Mode="Execute">
+                                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=ViewEntraceCommand}"
+                                                   CommandParameter="{Binding Path=NewNumber}">
+                                                <Button Style="{DynamicResource SwipeNavigationButton}" Text="Входная группа"/>
+                                            </SwipeItemView>
+                                        </SwipeItems>
+                                    </SwipeView.TopItems>
+                                    <SwipeView.BottomItems>
+                                        <SwipeItems Mode="Execute">
+                                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=ViewSchemeCommand}"
+                                                   CommandParameter="{Binding Path=NewNumber}">
+                                                <Button Style="{DynamicResource SwipeNavigationButton}" Text="Схема объекта"/>
+                                            </SwipeItemView>
+                                        </SwipeItems>
+                                    </SwipeView.BottomItems>
                                     <SwipeView.LeftItems>
                                         <SwipeItems Mode="Execute">
                                             <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
                                                    CommandParameter="{Binding Path=NewNumber}">
-                                                <Grid>
-                                                    <Button Style="{DynamicResource SwipeNavigationButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
-                                                </Grid>
+                                                <Button Style="{DynamicResource SwipeNavigationButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
                                             </SwipeItemView>
                                         </SwipeItems>
                                     </SwipeView.LeftItems>
+                                    <SwipeView.RightItems>
+                                        <SwipeItems Mode="Execute">
+                                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=ViewDescriptionServiceOrder}"
+                                                   CommandParameter="{Binding Path=NewName}">
+                                                <Button Style="{DynamicResource SwipeOpenButton}" Text="Информация"/>
+                                            </SwipeItemView>
+                                        </SwipeItems>
+                                    </SwipeView.RightItems>
                                     <Frame Style="{DynamicResource FrameServiceOrderStyle}" BorderColor="{Binding Path=FrameColor}" >
                                         <Frame.Content>
                                             <StackLayout>
@@ -86,16 +108,38 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
                                 <SwipeView Style="{DynamicResource SwipeViewStyle}">
+                                    <SwipeView.TopItems>
+                                        <SwipeItems Mode="Execute">
+                                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=ViewEntraceCommand}"
+                                                   CommandParameter="{Binding Path=NewNumber}">
+                                                <Button Style="{DynamicResource SwipeNavigationButton}" Text="Входная группа"/>
+                                            </SwipeItemView>
+                                        </SwipeItems>
+                                    </SwipeView.TopItems>
+                                    <SwipeView.BottomItems>
+                                        <SwipeItems Mode="Execute">
+                                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=ViewSchemeCommand}"
+                                                   CommandParameter="{Binding Path=NewNumber}">
+                                                <Button Style="{DynamicResource SwipeNavigationButton}" Text="Схема объекта"/>
+                                            </SwipeItemView>
+                                        </SwipeItems>
+                                    </SwipeView.BottomItems>
                                     <SwipeView.LeftItems>
                                         <SwipeItems Mode="Execute">
                                             <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
                                                    CommandParameter="{Binding Path=NewNumber}">
-                                                <Grid>
-                                                    <Button Style="{DynamicResource SwipeNavigationButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
-                                                </Grid>
+                                                <Button Style="{DynamicResource SwipeNavigationButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
                                             </SwipeItemView>
                                         </SwipeItems>
                                     </SwipeView.LeftItems>
+                                    <SwipeView.RightItems>
+                                        <SwipeItems Mode="Execute">
+                                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=ViewDescriptionServiceOrder}"
+                                                   CommandParameter="{Binding Path=NewName}">
+                                                <Button Style="{DynamicResource SwipeOpenButton}" Text="Информация"/>
+                                            </SwipeItemView>
+                                        </SwipeItems>
+                                    </SwipeView.RightItems>
                                     <Frame Style="{DynamicResource FrameServiceOrderStyle}" BorderColor="{Binding Path=FrameColor}">
                                         <Frame.Content>
                                             <StackLayout>
@@ -124,6 +168,22 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
                                 <SwipeView Style="{DynamicResource SwipeViewStyle}">
+                                    <SwipeView.TopItems>
+                                        <SwipeItems Mode="Execute">
+                                            <SwipeItemView  Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=ViewEntraceCommand}"
+                                                   CommandParameter="{Binding Path=NewNumber}">
+                                                <Button Style="{DynamicResource SwipePhotoButton}" Text="Входная группа"/>
+                                            </SwipeItemView>
+                                        </SwipeItems>
+                                    </SwipeView.TopItems>
+                                    <SwipeView.BottomItems>
+                                        <SwipeItems Mode="Execute">
+                                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=ViewSchemeCommand}"
+                                                   CommandParameter="{Binding Path=NewNumber}">
+                                                <Button Style="{DynamicResource SwipePhotoButton}" Text="Схема объекта"/>
+                                            </SwipeItemView>
+                                        </SwipeItems>
+                                    </SwipeView.BottomItems>
                                     <SwipeView.LeftItems>
                                         <SwipeItems Mode="Execute">
                                             <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
@@ -167,16 +227,38 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
                                 <SwipeView Style="{DynamicResource SwipeViewStyle}">
+                                    <SwipeView.TopItems>
+                                        <SwipeItems Mode="Execute">
+                                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=ViewEntraceCommand}"
+                                                   CommandParameter="{Binding Path=NewNumber}">
+                                                <Button Style="{DynamicResource SwipeNavigationButton}" Text="Входная группа"/>
+                                            </SwipeItemView>
+                                        </SwipeItems>
+                                    </SwipeView.TopItems>
+                                    <SwipeView.BottomItems>
+                                        <SwipeItems Mode="Execute">
+                                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=ViewSchemeCommand}"
+                                                   CommandParameter="{Binding Path=NewNumber}">
+                                                <Button Style="{DynamicResource SwipeNavigationButton}" Text="Схема объекта"/>
+                                            </SwipeItemView>
+                                        </SwipeItems>
+                                    </SwipeView.BottomItems>
                                     <SwipeView.LeftItems>
                                         <SwipeItems Mode="Execute">
                                             <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
                                                    CommandParameter="{Binding Path=NewNumber}">
-                                                <Grid>
-                                                    <Button Style="{DynamicResource SwipeNavigationButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
-                                                </Grid>
+                                                <Button Style="{DynamicResource SwipeNavigationButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
                                             </SwipeItemView>
                                         </SwipeItems>
                                     </SwipeView.LeftItems>
+                                    <SwipeView.RightItems>
+                                        <SwipeItems Mode="Execute">
+                                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=ViewDescriptionServiceOrder}"
+                                                   CommandParameter="{Binding Path=NewName}">
+                                                <Button Style="{DynamicResource SwipeOpenButton}" Text="Информация"/>
+                                            </SwipeItemView>
+                                        </SwipeItems>
+                                    </SwipeView.RightItems>
                                     <Frame Style="{DynamicResource FrameServiceOrderStyle}" BorderColor="{Binding Path=FrameColor}">
                                         <Frame.Content>
                                             <StackLayout>
@@ -204,16 +286,38 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
                                 <SwipeView Style="{DynamicResource SwipeViewStyle}">
+                                    <SwipeView.TopItems>
+                                        <SwipeItems Mode="Execute">
+                                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=ViewEntraceCommand}"
+                                                   CommandParameter="{Binding Path=NewNumber}">
+                                                <Button Style="{DynamicResource SwipeNavigationButton}" Text="Входная группа"/>
+                                            </SwipeItemView>
+                                        </SwipeItems>
+                                    </SwipeView.TopItems>
+                                    <SwipeView.BottomItems>
+                                        <SwipeItems Mode="Execute">
+                                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=ViewSchemeCommand}"
+                                                   CommandParameter="{Binding Path=NewNumber}">
+                                                <Button Style="{DynamicResource SwipeNavigationButton}" Text="Схема объекта"/>
+                                            </SwipeItemView>
+                                        </SwipeItems>
+                                    </SwipeView.BottomItems>
                                     <SwipeView.LeftItems>
                                         <SwipeItems Mode="Execute">
                                             <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
                                                    CommandParameter="{Binding Path=NewNumber}">
-                                                <Grid>
-                                                    <Button Style="{DynamicResource SwipeNavigationButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
-                                                </Grid>
+                                                <Button Style="{DynamicResource SwipeNavigationButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
                                             </SwipeItemView>
                                         </SwipeItems>
                                     </SwipeView.LeftItems>
+                                    <SwipeView.RightItems>
+                                        <SwipeItems Mode="Execute">
+                                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=ViewDescriptionServiceOrder}"
+                                                   CommandParameter="{Binding Path=NewName}">
+                                                <Button Style="{DynamicResource SwipeOpenButton}" Text="Информация"/>
+                                            </SwipeItemView>
+                                        </SwipeItems>
+                                    </SwipeView.RightItems>
                                     <Frame Style="{DynamicResource FrameServiceOrderStyle}"  BorderColor="{Binding Path=FrameColor}">
                                         <Frame.Content>
                                             <StackLayout>
@@ -241,16 +345,38 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
                                 <SwipeView Style="{DynamicResource SwipeViewStyle}">
+                                    <SwipeView.TopItems>
+                                        <SwipeItems Mode="Execute">
+                                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=ViewEntraceCommand}"
+                                                   CommandParameter="{Binding Path=NewNumber}">
+                                                <Button Style="{DynamicResource SwipeNavigationButton}" Text="Входная группа"/>
+                                            </SwipeItemView>
+                                        </SwipeItems>
+                                    </SwipeView.TopItems>
+                                    <SwipeView.BottomItems>
+                                        <SwipeItems Mode="Execute">
+                                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=ViewSchemeCommand}"
+                                                   CommandParameter="{Binding Path=NewNumber}">
+                                                <Button Style="{DynamicResource SwipeNavigationButton}" Text="Схема объекта"/>
+                                            </SwipeItemView>
+                                        </SwipeItems>
+                                    </SwipeView.BottomItems>
                                     <SwipeView.LeftItems>
                                         <SwipeItems Mode="Execute">
                                             <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
                                                    CommandParameter="{Binding Path=NewNumber}">
-                                                <Grid>
-                                                    <Button Style="{DynamicResource SwipeNavigationButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
-                                                </Grid>
+                                                <Button Style="{DynamicResource SwipeNavigationButton}" ImageSource="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=MapImage}"/>
                                             </SwipeItemView>
                                         </SwipeItems>
                                     </SwipeView.LeftItems>
+                                    <SwipeView.RightItems>
+                                        <SwipeItems Mode="Execute">
+                                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=ViewDescriptionServiceOrder}"
+                                                   CommandParameter="{Binding Path=NewName}">
+                                                <Button Style="{DynamicResource SwipeOpenButton}" Text="Информация"/>
+                                            </SwipeItemView>
+                                        </SwipeItems>
+                                    </SwipeView.RightItems>
                                     <Frame Style="{DynamicResource FrameServiceOrderStyle}" BorderColor="{Binding Path=FrameColor}">
                                         <Frame.Content>
                                             <StackLayout>

@@ -28,13 +28,13 @@ namespace MounterApp.ViewModel {
             Analytics.TrackEvent("Инициализация окна главного меню приложения");
             App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
             CheckVersionApp.Execute(null);
-        }        
+        }
         /// <summary>
         /// Команда перехода к странице монтажей
         /// </summary>
         private RelayCommand _GetMountworksCommand;
         public RelayCommand GetMountworksCommand {
-            get => _GetMountworksCommand ??= new RelayCommand(async obj  => {
+            get => _GetMountworksCommand ??= new RelayCommand(async obj => {
                 if(Mounters.Any()) {
                     Analytics.TrackEvent("Переход к монтажам",
                     new Dictionary<string,string> {
@@ -45,7 +45,7 @@ namespace MounterApp.ViewModel {
                 }
                 else
                     await Application.Current.MainPage.DisplayAlert("Ошибка","Не определен сотрудник, переход невозможен","OK");
-            },obj=>Mounters != null && Mounters.Count > 0);
+            },obj => Mounters != null && Mounters.Count > 0);
         }
         /// <summary>
         /// Команда перехода к странице с заявками технику
@@ -114,11 +114,11 @@ namespace MounterApp.ViewModel {
             get => _CheckVersionApp ??= new RelayCommand(async obj => {
                 AppVersions av = new AppVersions();
                 string Version = av.GetVersionAndBuildNumber().VersionNumber;
-                HttpStatusCode code = await ClientHttp.GetQuery("/api/Common/VersionNumber?appVersion=" + Version);
-                if (code.Equals(HttpStatusCode.MethodNotAllowed))
-                    await Application.Current.MainPage.DisplayAlert("Информация"
-                                ,"У Вас установлена не актуальная версия приложения, пожалуйста обновите её." + Environment.NewLine + Environment.NewLine + "Если Вы не получили ссылку на новую версию, то сообщите свою почту в ИТ-отдел."
-                                ,"OK");
+                //HttpStatusCode code = await ClientHttp.GetQuery("/api/Common/VersionNumber?appVersion=" + Version);
+                //if (code.Equals(HttpStatusCode.MethodNotAllowed))
+                //    await Application.Current.MainPage.DisplayAlert("Информация"
+                //                ,"У Вас установлена не актуальная версия приложения, пожалуйста обновите её." + Environment.NewLine + Environment.NewLine + "Если Вы не получили ссылку на новую версию, то сообщите свою почту в ИТ-отдел."
+                //                ,"OK");
                 //else if (code.Equals(HttpStatusCode.OK)) { }
                 //else {
                 //    Analytics.TrackEvent("Выполнение запроса",
@@ -129,17 +129,17 @@ namespace MounterApp.ViewModel {
                 //    });
                 //}
 
-                //using (HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/VersionNumber?appVersion="+ Version);
-                //    if(response != null) {
-                //        if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) { }
-                //        if(response.StatusCode.Equals(HttpStatusCode.MethodNotAllowed)) {
-                //            await Application.Current.MainPage.DisplayAlert("Информация"
-                //                ,"У Вас установлена не актуальная версия приложения, пожалуйста обновите её." + Environment.NewLine + Environment.NewLine + "Если Вы не получили ссылку на новую версию, то сообщите свою почту в ИТ-отдел."
-                //                ,"OK");
-                //        }
-                //    }
-                //}
+                using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/VersionNumber?appVersion=" + Version);
+                    if(response != null) {
+                        if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) { }
+                        if(response.StatusCode.Equals(HttpStatusCode.MethodNotAllowed)) {
+                            await Application.Current.MainPage.DisplayAlert("Информация"
+                                ,"У Вас установлена не актуальная версия приложения, пожалуйста обновите её." + Environment.NewLine + Environment.NewLine + "Если Вы не получили ссылку на новую версию, то сообщите свою почту в ИТ-отдел."
+                                ,"OK");
+                        }
+                    }
+                }
             });
         }
         /// <summary>

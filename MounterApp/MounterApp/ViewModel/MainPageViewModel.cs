@@ -3,10 +3,14 @@ using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using MounterApp.Helpers;
 using MounterApp.Model;
+using MounterApp.Properties;
 using MounterApp.Views;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using static Xamarin.Essentials.Permissions;
@@ -16,14 +20,14 @@ namespace MounterApp.ViewModel {
         //ClientHttp http = new ClientHttp();
 
         public MainPageViewModel() {
-            
+
             IndicatorVisible = false;
             OpacityForm = 1;
             if(Application.Current.Properties.ContainsKey("Phone"))
                 PhoneNumber = Application.Current.Properties["Phone"] as string;
             if(Application.Current.Properties.ContainsKey("AutoEnter")) {
                 if(bool.TryParse(Application.Current.Properties["AutoEnter"].ToString(),out bool tmp))
-                    if(tmp && PhoneNumber!=null)
+                    if(tmp && PhoneNumber != null)
                         AuthCommand.Execute(null);
             }
             else {
@@ -50,6 +54,40 @@ namespace MounterApp.ViewModel {
                 await CheckAndRequestPermissionAsync(new StorageWrite());
             });
         }
+        List<NewMounterExtensionBase> mounters = new List<NewMounterExtensionBase>();
+        List<NewServicemanExtensionBase> servicemans = new List<NewServicemanExtensionBase>();
+        private RelayCommand _GetMounters;
+        public RelayCommand GetMounters {
+            get => _GetMounters ??= new RelayCommand(async obj => {
+                using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                    client.DefaultRequestHeaders.Clear();
+                    client.DefaultRequestHeaders.ConnectionClose = true;
+                    client.DefaultRequestHeaders.ExpectContinue = false;
+                    //HttpResponseMessage httpResponse = await client.GetAsync(Resources.BaseAddress + "/api/NewMounterExtensionBases/phone?phone=" + Application.Current.Properties["Phone"].ToString().Substring(1,PhoneNumber.Length - 1));
+                    HttpResponseMessage httpResponse = await client.GetAsync(Resources.BaseAddress + "/api/NewMounterExtensionBases/phone?phone=" + obj);
+                    if(httpResponse.IsSuccessStatusCode) {
+                        mounters = JsonConvert.DeserializeObject<List<NewMounterExtensionBase>>(await httpResponse.Content.ReadAsStringAsync());
+                    }
+                }
+                //mounters = await ClientHttp.GetQuery<List<NewMounterExtensionBase>>("/api/NewMounterExtensionBases/phone?phone=" + Application.Current.Properties["Phone"].ToString().Substring(1,PhoneNumber.Length - 1)).ConfigureAwait(false);
+            });
+        }
+
+        private RelayCommand _GetServicemans;
+        public RelayCommand GetServicemans {
+            get => _GetServicemans ??= new RelayCommand(async obj => {
+                using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                    client.DefaultRequestHeaders.Clear();
+                    client.DefaultRequestHeaders.ConnectionClose = true;
+                    client.DefaultRequestHeaders.ExpectContinue = false;
+                    HttpResponseMessage httpResponse = await client.GetAsync(Resources.BaseAddress + "/api/NewServicemanExtensionBases/phone?phone=" + obj);
+                    if(httpResponse.IsSuccessStatusCode) {
+                        servicemans = JsonConvert.DeserializeObject<List<NewServicemanExtensionBase>>(await httpResponse.Content.ReadAsStringAsync());
+                    }
+                }
+                //servicemans =await  ClientHttp.GetQuery<List<NewServicemanExtensionBase>>("/api/NewServicemanExtensionBases/phone?phone=" + Application.Current.Properties["Phone"].ToString().Substring(1,PhoneNumber.Length - 1)).ConfigureAwait(false);
+            });
+        }
         private RelayCommand _AuthCommand;
         public RelayCommand AuthCommand {
             get => _AuthCommand ??= new RelayCommand(async obj => {
@@ -59,10 +97,10 @@ namespace MounterApp.ViewModel {
                 //using HttpClient client = new HttpClient(GetHttpClientHandler());
                 string Phone = null;
                 if(PhoneNumber.Substring(0,2) == "+7")
-                    PhoneNumber=PhoneNumber.Replace("+7","8");
-                else if(PhoneNumber.Length == 11) 
+                    PhoneNumber = PhoneNumber.Replace("+7","8");
+                else if(PhoneNumber.Length == 11)
                     Phone = PhoneNumber.Substring(1,PhoneNumber.Length - 1);
-                else if(PhoneNumber.Length == 10) 
+                else if(PhoneNumber.Length == 10)
                     Phone = PhoneNumber;
                 else {
                     Message = "Введен не корректный номер телефона";
@@ -74,11 +112,64 @@ namespace MounterApp.ViewModel {
                     Analytics.TrackEvent("Сохранение номера телефона в локальную базу данных");
                     Analytics.TrackEvent("Запрос монтажников по номеру телефона");
 
+                    using HttpClient client = new HttpClient(GetHttpClientHandler());
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewMounterExtensionBases/phone?phone=" + Phone);
+                    var resp = response.Content.ReadAsStringAsync().Result;
                     List<NewMounterExtensionBase> mounters = new List<NewMounterExtensionBase>();
-                    mounters = await ClientHttp.GetQuery<List<NewMounterExtensionBase>>("/api/NewMounterExtensionBases/phone?phone=" + Phone);
-
+                    try {
+                        if(response.StatusCode.ToString() == "OK") {
+                            Analytics.TrackEvent("Попытка сериализации результата запроса монтажников");
+                            mounters = JsonConvert.DeserializeObject<List<NewMounterExtensionBase>>(resp).Where(x => x.NewIsWorking == true).ToList();
+                        }
+                    }
+                    catch(Exception MountersParseExecption) {
+                        Dictionary<string,string> parameters = new Dictionary<string,string> {
+                            { "Phone",PhoneNumber },
+                            { "Error","Не удалось провести сериализацию объекта монтажники" }
+                        };
+                        Crashes.TrackError(MountersParseExecption,parameters);
+                    }
+                    Analytics.TrackEvent("Запрос техников по номеру телефона");
+                    response = await client.GetAsync(Resources.BaseAddress + "/api/NewServicemanExtensionBases/phone?phone=" + Phone);
+                    resp = response.Content.ReadAsStringAsync().Result;
                     List<NewServicemanExtensionBase> servicemans = new List<NewServicemanExtensionBase>();
-                    servicemans = await ClientHttp.GetQuery<List<NewServicemanExtensionBase>>("/api/NewServicemanExtensionBases/phone?phone=" + Phone);
+                    try {
+                        if(response.StatusCode.ToString() == "OK") {
+                            Analytics.TrackEvent("Попытка сериализации результата запроса техников");
+                            servicemans = JsonConvert.DeserializeObject<List<NewServicemanExtensionBase>>(resp).Where(x => x.NewIswork == true).ToList();
+                        }
+                    }
+                    catch(Exception ServicemansParseException) {
+                        Dictionary<string,string> parameters = new Dictionary<string,string> {
+                            { "Phone",PhoneNumber },
+                            { "Error","Не удалось провести сериализацию объекта техники" }
+                        };
+                        Crashes.TrackError(ServicemansParseException,parameters);
+                    }
+                    //response = await client.GetAsync(Resources.BaseAddress + "/api/Common/download?ObjectNumber=63020&PhotoType=Схема объекта");
+                    //var t = 0;
+
+                    //GetMounters.Execute(Phone);
+                    //GetServicemans.Execute(Phone);
+                    //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                    //    //client.DefaultRequestHeaders.Clear();
+                    //    //client.DefaultRequestHeaders.ConnectionClose = true;
+                    //    //client.DefaultRequestHeaders.ExpectContinue = false;
+                    //    //HttpResponseMessage httpResponse = await client.GetAsync(Resources.BaseAddress + "/api/NewMounterExtensionBases/phone?phone=" + Application.Current.Properties["Phone"].ToString().Substring(1,PhoneNumber.Length - 1));
+                    //    HttpResponseMessage httpResponse = await client.GetAsync(Resources.BaseAddress + "/api/NewMounterExtensionBases/phone?phone=" + Phone);
+                    //    if(httpResponse.IsSuccessStatusCode) {
+                    //        mounters = JsonConvert.DeserializeObject<List<NewMounterExtensionBase>>(await httpResponse.Content.ReadAsStringAsync());
+                    //    }
+                    //}
+                    //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                    //    //client.DefaultRequestHeaders.Clear();
+                    //    //client.DefaultRequestHeaders.ConnectionClose = true;
+                    //    //client.DefaultRequestHeaders.ExpectContinue = false;
+                    //    HttpResponseMessage httpResponse = await client.GetAsync(Resources.BaseAddress + "/api/NewServicemanExtensionBases/phone?phone=" + Phone);
+                    //    if(httpResponse.IsSuccessStatusCode) {
+                    //        servicemans = JsonConvert.DeserializeObject<List<NewServicemanExtensionBase>>(await httpResponse.Content.ReadAsStringAsync());
+                    //    }
+                    //}
 
                     if(mounters != null || servicemans != null) {
                         if(mounters.Count > 0 || servicemans.Count > 0) {

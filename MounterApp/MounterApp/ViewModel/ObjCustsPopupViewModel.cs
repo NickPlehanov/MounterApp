@@ -1,11 +1,15 @@
 ﻿using Android.Widget;
 using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using MounterApp.Helpers;
 using MounterApp.Model;
+using MounterApp.Properties;
+using Newtonsoft.Json;
 using Rg.Plugins.Popup.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Net.Http;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -159,38 +163,38 @@ namespace MounterApp.ViewModel {
                     number = ServiceOrder.NewNumber;
                 else if(ServiceOrderFireAlarm.NewNumber.HasValue)
                     number = ServiceOrderFireAlarm.NewNumber;
-                CutomersCollection = await ClientHttp.GetQuery<ObservableCollection<ObjCust>>("/api/Andromeda/Customer?ObjectNumber=" + number);
+                //CutomersCollection = await ClientHttp.GetQuery<ObservableCollection<ObjCust>>("/api/Andromeda/Customer?ObjectNumber=" + number);
 
-                //HttpResponseMessage response = null;
-                //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                //    if(ServiceOrder != null) {
-                //        response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/Customer?ObjectNumber=" + ServiceOrder.NewNumber);
-                //    }
-                //    else if(ServiceOrderFireAlarm != null) {
-                //        response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/Customer?ObjectNumber=" + ServiceOrderFireAlarm.NewNumber);
-                //    }
-                //}                
-                //if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                //    var resp = response.Content.ReadAsStringAsync().Result;
-                //    try {
-                //        Analytics.TrackEvent("Попытка десериализации ответа от сервера с ответсвенными лицами");
-                //        custs = JsonConvert.DeserializeObject<List<ObjCust>>(resp);
-                //    }
-                //    catch(Exception ex) {
-                //        Crashes.TrackError(new Exception("Ошибка получения списка ответственных лиц по объекту"),
-                //        new Dictionary<string,string> {
-                //        {"ServiceOrderId",ServiceOrder.NewServiceorderId.ToString() },
-                //        {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                //        {"ErrorMessage",ex.Message },
-                //        {"StatusCode",response.StatusCode.ToString() },
-                //        {"Response",response.ToString() }
-                //        });
-                //    }
-                //}
-                //if(custs != null)
-                //    foreach(var item in custs) {
-                //        CutomersCollection.Add(item);
-                //    }
+                HttpResponseMessage response = null;
+                using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                    if(ServiceOrder != null) {
+                        response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/Customer?ObjectNumber=" + ServiceOrder.NewNumber);
+                    }
+                    else if(ServiceOrderFireAlarm != null) {
+                        response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/Customer?ObjectNumber=" + ServiceOrderFireAlarm.NewNumber);
+                    }
+                }
+                if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                    var resp = response.Content.ReadAsStringAsync().Result;
+                    try {
+                        Analytics.TrackEvent("Попытка десериализации ответа от сервера с ответсвенными лицами");
+                        custs = JsonConvert.DeserializeObject<List<ObjCust>>(resp);
+                    }
+                    catch(Exception ex) {
+                        Crashes.TrackError(new Exception("Ошибка получения списка ответственных лиц по объекту"),
+                        new Dictionary<string,string> {
+                        {"ServiceOrderId",ServiceOrder.NewServiceorderId.ToString() },
+                        {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                        {"ErrorMessage",ex.Message },
+                        {"StatusCode",response.StatusCode.ToString() },
+                        {"Response",response.ToString() }
+                        });
+                    }
+                }
+                if(custs != null)
+                    foreach(var item in custs) {
+                        CutomersCollection.Add(item);
+                    }
                 OpacityForm = 1;
                 IndicatorVisible = false;
             });

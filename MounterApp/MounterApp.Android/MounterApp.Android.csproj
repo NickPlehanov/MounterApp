@@ -49,7 +49,10 @@
     <AndroidSigningStorePass>30051992</AndroidSigningStorePass>
     <AndroidSigningKeyAlias>NickDev</AndroidSigningKeyAlias>
     <AndroidSigningKeyPass>30051992</AndroidSigningKeyPass>
-    <AndroidHttpClientHandlerType>System.Net.Http.HttpClientHandler</AndroidHttpClientHandlerType>
+    <AndroidHttpClientHandlerType>
+    </AndroidHttpClientHandlerType>
+    <AndroidTlsProvider>
+    </AndroidTlsProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

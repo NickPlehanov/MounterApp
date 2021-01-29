@@ -24,11 +24,19 @@ namespace MounterApp.ViewModel {
             Mounters = _mounters;
             Servicemans = _servicemans;
             IsPickPhoto = null;
-            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Карточка объекта" });
-            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Схема объекта" });
+            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Карточка объекта" });
+            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Схема объекта" });
+            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Расшлейфовка объекта" });
+            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Ответственные объекта" });
+            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Вывеска объекта" });
+            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Доп. фото" });
+            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Вывеска объекта" });
+            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Обходной лист" });
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Расшлейфовка объекта" });
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Ответственные объекта" });
-            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Вывеска объекта" });
+            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Акт технич. сост-я 1" });
+            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Акт технич. сост-я 2" });
+            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Схема объекта" });
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Доп. фото" });
             //ImgSrc = "EmptyPhoto.png";
             VisibleAcceptedLayout = false;
@@ -133,7 +141,7 @@ namespace MounterApp.ViewModel {
                                 ));
                             PhotoSource.Add(ImgSrc);
                             switch(PhotoName.PhotoTypeName) {
-                                case "Карточка объекта":
+                                case "Обходной лист":
                                     Mount.ObjectCard = Convert.ToBase64String(System.IO.File.ReadAllBytes(File.Path));
                                     break;
                                 case "Схема объекта":
@@ -147,6 +155,12 @@ namespace MounterApp.ViewModel {
                                     break;
                                 case "Вывеска объекта":
                                     Mount.ObjectSignboard = Convert.ToBase64String(System.IO.File.ReadAllBytes(File.Path));
+                                    break;
+                                case "Акт технич. сост-я 1":
+                                    Mount.ObjectActTech1 = Convert.ToBase64String(System.IO.File.ReadAllBytes(File.Path));
+                                    break;
+                                case "Акт технич. сост-я 2":
+                                    Mount.ObjectActTech2 = Convert.ToBase64String(System.IO.File.ReadAllBytes(File.Path));
                                     break;
                                 case "Доп. фото":
                                     Counter++;

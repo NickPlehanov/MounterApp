@@ -8,6 +8,7 @@ using MounterApp.Properties;
 using MounterApp.Views;
 using Newtonsoft.Json;
 using Rg.Plugins.Popup.Extensions;
+using Rg.Plugins.Popup.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -273,8 +274,18 @@ namespace MounterApp.ViewModel {
             get => _GetGoogleMounts ??= new RelayCommand(async obj => {
                 Opacity = 0.1;
                 IndicatorVisible = true;
-                GoogleMounts = await ClientHttp.GetQuery<ObservableCollection<GoogleMountModel>>("/api/Common?phone=7" + Mounters.FirstOrDefault().NewPhone + "&date=" + DateTime.Now.Date + "");
-                GoogleMountsExpander = GoogleMounts.Count > 0;
+                //GoogleMounts = await ClientHttp.GetQuery<ObservableCollection<GoogleMountModel>>("/api/Common?phone=7" + Mounters.FirstOrDefault().NewPhone + "&date=" + DateTime.Now.Date + "");
+                
+                using (HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                    client.DefaultRequestHeaders.Clear();
+                    client.DefaultRequestHeaders.ConnectionClose = true;
+                    client.DefaultRequestHeaders.ExpectContinue = false;
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common?phone=7" + Mounters.FirstOrDefault().NewPhone + "&date=" + DateTime.Now.Date + "");
+                    if(response.IsSuccessStatusCode) {
+                        GoogleMounts = JsonConvert.DeserializeObject<ObservableCollection<GoogleMountModel>>(await response.Content.ReadAsStringAsync());
+                    }
+                }
+                GoogleMountsExpander = GoogleMounts != null ? false : GoogleMounts.Count > 0;
 
                 //using HttpClient client = new HttpClient(GetHttpClientHandler());
                 //try {
@@ -310,7 +321,7 @@ namespace MounterApp.ViewModel {
                 //        {"ErrorMessage",GetGoogleMountsException.Message }
                 //    });
                 //}
-                HeaderGoogle = "Запланированные (" + GoogleMounts.Count() + ")";
+                HeaderGoogle = "Запланированные (" + GoogleMounts.Count + ")";
                 Opacity = 1;
                 IndicatorVisible = false;
             });
@@ -416,6 +427,17 @@ namespace MounterApp.ViewModel {
                         }
                     }
                 }
+            });
+        }
+
+        private RelayCommand _GetEvents;
+        public RelayCommand GetEvents {
+            get => _GetEvents ??= new RelayCommand(async obj => {
+                int _id = -1;
+                int.TryParse(obj.ToString(),out _id);
+                EventsPopupViewModel vm = new EventsPopupViewModel(HistoryMounts.First(x => x.ID == _id).ObjectNumber,HistoryMounts.First(x => x.ID == _id).DateSended);
+                await App.Current.MainPage.Navigation.PushPopupAsync(new EventsPopupPage(vm));
+                //await PopupNavigation.Instance.PopAsync();
             });
         }
         private string _HeaderNotSended;

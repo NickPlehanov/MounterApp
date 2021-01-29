@@ -102,6 +102,13 @@
                 <Setter Property="WidthRequest" Value="200"/>
                 <Setter Property="TextColor" Value="{DynamicResource ButtonTextColor}"/>
             </Style>
+            <Style x:Key="SwipePhotoButton" TargetType="Button">
+                <Setter Property="Text" Value="Открыть"/>
+                <Setter Property="BackgroundColor" Value="White"/>
+                <Setter Property="WidthRequest" Value="200"/>
+                <Setter Property="HeightRequest" Value="80"/>
+                <Setter Property="TextColor" Value="#84A98C"/>
+            </Style>
             <Style x:Key="ActivityIndicatorStyle" TargetType="ActivityIndicator">
                 <Setter Property="IsRunning" Value="True"/>
                 <Setter Property="Color" Value="Red"/>

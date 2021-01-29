@@ -102,11 +102,21 @@
                     </CollectionView.ItemsLayout>
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Frame Style="{DynamicResource FrameServiceOrderStyle}">
-                                <Frame.Content>
-                                    <Label Style="{DynamicResource MountersLabelStyle}" Text="{Binding Path=CompositeName}"/>
-                                </Frame.Content>
-                            </Frame>
+                            <SwipeView Style="{DynamicResource SwipeViewStyle}">
+                                <SwipeView.LeftItems>
+                                    <SwipeItems Mode="Execute">
+                                        <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MountsViewModel}}, Path=GetEvents}"
+                                                   CommandParameter="{Binding Path=ID}">
+                                            <Button Style="{DynamicResource SwipeNavigationButton}" Text="События по объекту(+-4)"/>
+                                        </SwipeItemView>
+                                    </SwipeItems>
+                                </SwipeView.LeftItems>
+                                <Frame Style="{DynamicResource FrameServiceOrderStyle}">
+                                    <Frame.Content>
+                                        <Label Style="{DynamicResource MountersLabelStyle}" Text="{Binding Path=CompositeName}"/>
+                                    </Frame.Content>
+                                </Frame>
+                            </SwipeView>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>

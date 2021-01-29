@@ -10,17 +10,19 @@ using Rg.Plugins.Popup.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class ServiceOrdersPageViewModel : BaseViewModel {
         //readonly ClientHttp http = new ClientHttp();
-        public ServiceOrdersPageViewModel() {
+        //public ServiceOrdersPageViewModel() {
 
-        }
+        //}
         public ServiceOrdersPageViewModel(List<NewServicemanExtensionBase> _servicemans,List<NewMounterExtensionBase> _mounters) {
             Category.Clear();
             ServiceOrders.Clear();
@@ -42,7 +44,7 @@ namespace MounterApp.ViewModel {
             new Dictionary<string,string> {
                 {"Serviceman",Servicemans.FirstOrDefault().NewPhone }
             });
-            Width = DeviceDisplay.MainDisplayInfo.Width-10;
+            Width = DeviceDisplay.MainDisplayInfo.Width - 10;
             App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
             RefreshImage = IconName("refresh");
             MapImage = IconName("map");
@@ -107,8 +109,8 @@ namespace MounterApp.ViewModel {
             //                 //return false; //to stop running continuously 
 
             //    });
-                #endregion
-            }
+            #endregion
+        }
 
         private ImageSource _HelpImage;
         public ImageSource HelpImage {
@@ -274,7 +276,7 @@ namespace MounterApp.ViewModel {
                 " - Если Вы видите только что закрытую заявку, попробуйте обновить страницу" + Environment.NewLine + Environment.NewLine +
                 " - В информации об ответсвенных лицах - свайп вправо позволяет позвонить по номеру указанному на карточке" + Environment.NewLine + Environment.NewLine +
                 " - В прошлых заявках по объекту - свайп вправо позволяет позвонить технику закрывшему заявку" + Environment.NewLine + Environment.NewLine +
-                " - В общей информации по заявкам - нажатия на такие поля как Название, Адрес, Подездные пути, Причина, Примечание - открывают дополнительное окно для просмотра информации" + Environment.NewLine + Environment.NewLine 
+                " - В общей информации по заявкам - нажатия на такие поля как Название, Адрес, Подездные пути, Причина, Примечание - открывают дополнительное окно для просмотра информации" + Environment.NewLine + Environment.NewLine
                 ;
                 HelpPopupViewModel vm = new HelpPopupViewModel(msg);
                 await App.Current.MainPage.Navigation.PushPopupAsync(new HelpPopupPage(vm));
@@ -284,48 +286,48 @@ namespace MounterApp.ViewModel {
         public RelayCommand GetCategoryTech {
             get => _GetCategoryTech ??= new RelayCommand(async obj => {
                 //List<MetadataModel> mm = new List<MetadataModel>();
-                Category = await ClientHttp.GetQuery<ObservableCollection<MetadataModel>>("/api/Common/metadata?ColumnName=new_category&ObjectName=New_serviceman");
+                //Category = await ClientHttp.GetQuery<ObservableCollection<MetadataModel>>("/api/Common/metadata?ColumnName=new_category&ObjectName=New_serviceman");
 
-                //Analytics.TrackEvent("Получение категорий техников",
-                //new Dictionary<string,string> {
-                //    {"Query","Common/metadata?ColumnName=new_category&ObjectName=New_serviceman" }
-                //});
-                //using HttpClient httpClient = new HttpClient(GetHttpClientHandler());
-                //HttpResponseMessage httpResponse = await httpClient.GetAsync(Resources.BaseAddress + "/api/Common/metadata?ColumnName=new_category&ObjectName=New_serviceman");
-                //List<MetadataModel> mm = new List<MetadataModel>();
-                //if(httpResponse.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                //    var resp = httpResponse.Content.ReadAsStringAsync().Result;
-                //    try {
-                //        mm = JsonConvert.DeserializeObject<List<MetadataModel>>(resp);
-                //    }
-                //    catch(Exception ex) {
-                //        mm = null;
-                //        Crashes.TrackError(new Exception("Ошибка десериализации категорий техников"),
-                //        new Dictionary<string,string> {
-                //            {"ServerResponse",httpResponse.Content.ReadAsStringAsync().Result },
-                //            {"ErrorMessage",ex.Message },
-                //            {"StatusCode",httpResponse.StatusCode.ToString() },
-                //            {"Response",httpResponse.ToString() },
-                //            {"Query","Common/metadata?ColumnName=new_category&ObjectName=New_serviceman" }
-                //        });
-                //    }
-                //    if(mm != null) {
-                //        Category.Clear();
-                //        foreach(MetadataModel item in mm)
-                //            Category.Add(item);
-                //    }
-                //    else {
-                //        Analytics.TrackEvent("Не получен список категорий техников. Список причин пустой");
-                //    }
-                //}
-                //else
-                //    Crashes.TrackError(new Exception("Категории техников. От сервера не получен корректный ответ"),
-                //        new Dictionary<string,string> {
-                //            {"ServerResponse",httpResponse.Content.ReadAsStringAsync().Result },
-                //            {"StatusCode",httpResponse.StatusCode.ToString() },
-                //            {"Response",httpResponse.ToString() },
-                //            {"Query","Common/metadata?ColumnName=new_category&ObjectName=New_serviceman" }
-                //        });
+                Analytics.TrackEvent("Получение категорий техников",
+                new Dictionary<string,string> {
+                    {"Query","Common/metadata?ColumnName=new_category&ObjectName=New_serviceman" }
+                });
+                using HttpClient httpClient = new HttpClient(GetHttpClientHandler());
+                HttpResponseMessage httpResponse = await httpClient.GetAsync(Resources.BaseAddress + "/api/Common/metadata?ColumnName=new_category&ObjectName=New_serviceman");
+                List<MetadataModel> mm = new List<MetadataModel>();
+                if(httpResponse.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                    var resp = httpResponse.Content.ReadAsStringAsync().Result;
+                    try {
+                        mm = JsonConvert.DeserializeObject<List<MetadataModel>>(resp);
+                    }
+                    catch(Exception ex) {
+                        mm = null;
+                        Crashes.TrackError(new Exception("Ошибка десериализации категорий техников"),
+                        new Dictionary<string,string> {
+                            {"ServerResponse",httpResponse.Content.ReadAsStringAsync().Result },
+                            {"ErrorMessage",ex.Message },
+                            {"StatusCode",httpResponse.StatusCode.ToString() },
+                            {"Response",httpResponse.ToString() },
+                            {"Query","Common/metadata?ColumnName=new_category&ObjectName=New_serviceman" }
+                        });
+                    }
+                    if(mm != null) {
+                        Category.Clear();
+                        foreach(MetadataModel item in mm)
+                            Category.Add(item);
+                    }
+                    else {
+                        Analytics.TrackEvent("Не получен список категорий техников. Список причин пустой");
+                    }
+                }
+                else
+                    Crashes.TrackError(new Exception("Категории техников. От сервера не получен корректный ответ"),
+                        new Dictionary<string,string> {
+                            {"ServerResponse",httpResponse.Content.ReadAsStringAsync().Result },
+                            {"StatusCode",httpResponse.StatusCode.ToString() },
+                            {"Response",httpResponse.ToString() },
+                            {"Query","Common/metadata?ColumnName=new_category&ObjectName=New_serviceman" }
+                        });
             });
         }
         private RelayCommand _BackPressCommand;
@@ -409,6 +411,7 @@ namespace MounterApp.ViewModel {
                 GetCategoryTech.Execute(Category);
                 GetServiceOrders.Execute(Servicemans);
                 GetServiceOrderByTransfer.Execute(Servicemans);
+
                 NewServicemanExtensionBase sm = null;
                 if(Category != null)
                     if(Category.Count > 0) {
@@ -447,39 +450,39 @@ namespace MounterApp.ViewModel {
                     if(Date == DateTime.Parse("01.01.0001 00:00:00"))
                         Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
 
-                    List<NewServiceorderExtensionBase_ex> _serviceorders = new List<NewServiceorderExtensionBase_ex>();
-                    _serviceorders = await ClientHttp.GetQuery<List<NewServiceorderExtensionBase_ex>>("/api/NewServiceorderExtensionBases/ServiceOrderByUserNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
-
-                    //using HttpClient client = new HttpClient(GetHttpClientHandler());
-                    //HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByUserNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
                     //List<NewServiceorderExtensionBase_ex> _serviceorders = new List<NewServiceorderExtensionBase_ex>();
-                    //if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                    //    var resp = response.Content.ReadAsStringAsync().Result;
-                    //    try {
-                    //        _serviceorders = JsonConvert.DeserializeObject<List<NewServiceorderExtensionBase_ex>>(resp).ToList();
-                    //    }
-                    //    catch(Exception ex) {
-                    //        _serviceorders = null;
-                    //        Crashes.TrackError(new Exception("Ошибка десериализации результата запроса(Заявки технику)"),
-                    //        new Dictionary<string,string> {
-                    //            {"Servicemans",Servicemans.First().NewPhone },
-                    //            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                    //            {"ErrorMessage",ex.Message },
-                    //            {"StatusCode",response.StatusCode.ToString() },
-                    //            {"Response",response.ToString() }
-                    //        });
-                    //    }
-                    //}
-                    //else {
-                    //    _serviceorders = null;
-                    //    Crashes.TrackError(new Exception("Ошибка запроса(Заявки технику)"),
-                    //    new Dictionary<string,string> {
-                    //            {"Servicemans",Servicemans.First().NewPhone },
-                    //            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                    //            {"StatusCode",response.StatusCode.ToString() },
-                    //            {"Response",response.ToString() }
-                    //    });
-                    //}
+                    //_serviceorders = await ClientHttp.GetQuery<List<NewServiceorderExtensionBase_ex>>("/api/NewServiceorderExtensionBases/ServiceOrderByUserNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
+
+                    using HttpClient client = new HttpClient(GetHttpClientHandler());
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByUserNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
+                    List<NewServiceorderExtensionBase_ex> _serviceorders = new List<NewServiceorderExtensionBase_ex>();
+                    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                        var resp = response.Content.ReadAsStringAsync().Result;
+                        try {
+                            _serviceorders = JsonConvert.DeserializeObject<List<NewServiceorderExtensionBase_ex>>(resp).ToList();
+                        }
+                        catch(Exception ex) {
+                            _serviceorders = null;
+                            Crashes.TrackError(new Exception("Ошибка десериализации результата запроса(Заявки технику)"),
+                            new Dictionary<string,string> {
+                                {"Servicemans",Servicemans.First().NewPhone },
+                                {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                                {"ErrorMessage",ex.Message },
+                                {"StatusCode",response.StatusCode.ToString() },
+                                {"Response",response.ToString() }
+                            });
+                        }
+                    }
+                    else {
+                        _serviceorders = null;
+                        Crashes.TrackError(new Exception("Ошибка запроса(Заявки технику)"),
+                        new Dictionary<string,string> {
+                                {"Servicemans",Servicemans.First().NewPhone },
+                                {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                                {"StatusCode",response.StatusCode.ToString() },
+                                {"Response",response.ToString() }
+                        });
+                    }
                     if(_serviceorders != null) {
                         if(ServiceOrders != null)
                             ServiceOrders.Clear();
@@ -516,39 +519,39 @@ namespace MounterApp.ViewModel {
                     if(Date == DateTime.Parse("01.01.0001 00:00:00"))
                         Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
 
-                    List<NewTest2ExtensionBase_ex> _serviceorders = new List<NewTest2ExtensionBase_ex>();
-                    _serviceorders = await ClientHttp.GetQuery<List<NewTest2ExtensionBase_ex>>("/api/NewServiceOrderForFireAlarmExtensionBase/ServiceOrderByUserNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
-
-                    //using HttpClient client = new HttpClient(GetHttpClientHandler());
-                    //HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceOrderForFireAlarmExtensionBase/ServiceOrderByUserNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
                     //List<NewTest2ExtensionBase_ex> _serviceorders = new List<NewTest2ExtensionBase_ex>();
-                    //if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                    //    var resp = response.Content.ReadAsStringAsync().Result;
-                    //    try {
-                    //        _serviceorders = JsonConvert.DeserializeObject<List<NewTest2ExtensionBase_ex>>(resp).ToList();
-                    //    }
-                    //    catch(Exception ex) {
-                    //        _serviceorders = null;
-                    //        Crashes.TrackError(new Exception("Ошибка десериализации результата запроса(Заявки технику ПС)"),
-                    //        new Dictionary<string,string> {
-                    //            {"Servicemans",Servicemans.First().NewPhone },
-                    //            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                    //            {"ErrorMessage",ex.Message },
-                    //            {"StatusCode",response.StatusCode.ToString() },
-                    //            {"Response",response.ToString() }
-                    //        });
-                    //    }
-                    //}
-                    //else {
-                    //    _serviceorders = null;
-                    //    Crashes.TrackError(new Exception("Ошибка запроса(Заявки технику)"),
-                    //    new Dictionary<string,string> {
-                    //            {"Servicemans",Servicemans.First().NewPhone },
-                    //            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                    //            {"StatusCode",response.StatusCode.ToString() },
-                    //            {"Response",response.ToString() }
-                    //    });
-                    //}
+                    //_serviceorders = await ClientHttp.GetQuery<List<NewTest2ExtensionBase_ex>>("/api/NewServiceOrderForFireAlarmExtensionBase/ServiceOrderByUserNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
+
+                    using HttpClient client = new HttpClient(GetHttpClientHandler());
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceOrderForFireAlarmExtensionBase/ServiceOrderByUserNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
+                    List<NewTest2ExtensionBase_ex> _serviceorders = new List<NewTest2ExtensionBase_ex>();
+                    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                        var resp = response.Content.ReadAsStringAsync().Result;
+                        try {
+                            _serviceorders = JsonConvert.DeserializeObject<List<NewTest2ExtensionBase_ex>>(resp).ToList();
+                        }
+                        catch(Exception ex) {
+                            _serviceorders = null;
+                            Crashes.TrackError(new Exception("Ошибка десериализации результата запроса(Заявки технику ПС)"),
+                            new Dictionary<string,string> {
+                                {"Servicemans",Servicemans.First().NewPhone },
+                                {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                                {"ErrorMessage",ex.Message },
+                                {"StatusCode",response.StatusCode.ToString() },
+                                {"Response",response.ToString() }
+                            });
+                        }
+                    }
+                    else {
+                        _serviceorders = null;
+                        Crashes.TrackError(new Exception("Ошибка запроса(Заявки технику)"),
+                        new Dictionary<string,string> {
+                                {"Servicemans",Servicemans.First().NewPhone },
+                                {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                                {"StatusCode",response.StatusCode.ToString() },
+                                {"Response",response.ToString() }
+                        });
+                    }
                     if(_serviceorders != null) {
                         if(ServiceOrdersFireAlarm != null)
                             ServiceOrdersFireAlarm.Clear();
@@ -587,38 +590,38 @@ namespace MounterApp.ViewModel {
                         Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
 
                     List<NewServiceorderExtensionBase_ex> _serviceorders = new List<NewServiceorderExtensionBase_ex>();
-                    _serviceorders = await ClientHttp.GetQuery<List<NewServiceorderExtensionBase_ex>>("/api/NewServiceorderExtensionBases/ServiceOrderByUserTransferReasonNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
+                    //_serviceorders = await ClientHttp.GetQuery<List<NewServiceorderExtensionBase_ex>>("/api/NewServiceorderExtensionBases/ServiceOrderByUserTransferReasonNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
 
-                    //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                    //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByUserTransferReasonNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
-                    //    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                    //        var resp = response.Content.ReadAsStringAsync().Result;
-                    //        try {
-                    //            _serviceorders = JsonConvert.DeserializeObject<List<NewServiceorderExtensionBase_ex>>(resp).ToList();
-                    //        }
-                    //        catch(Exception ex) {
-                    //            _serviceorders = null;
-                    //            Crashes.TrackError(new Exception("Ошибка десериализации результата запроса(Заявки технику - переносы)"),
-                    //            new Dictionary<string,string> {
-                    //            {"Servicemans",Servicemans.First().NewPhone },
-                    //            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                    //            {"ErrorMessage",ex.Message },
-                    //            {"StatusCode",response.StatusCode.ToString() },
-                    //            {"Response",response.ToString() }
-                    //            });
-                    //        }
-                    //    }
-                    //    else {
-                    //        _serviceorders = null;
-                    //        Crashes.TrackError(new Exception("Ошибка запроса(Заявки технику - переносы)"),
-                    //        new Dictionary<string,string> {
-                    //            {"Servicemans",Servicemans.First().NewPhone },
-                    //            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                    //            {"StatusCode",response.StatusCode.ToString() },
-                    //            {"Response",response.ToString() }
-                    //        });
-                    //    }
-                    //}
+                    using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                        HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByUserTransferReasonNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
+                        if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                            var resp = response.Content.ReadAsStringAsync().Result;
+                            try {
+                                _serviceorders = JsonConvert.DeserializeObject<List<NewServiceorderExtensionBase_ex>>(resp).ToList();
+                            }
+                            catch(Exception ex) {
+                                _serviceorders = null;
+                                Crashes.TrackError(new Exception("Ошибка десериализации результата запроса(Заявки технику - переносы)"),
+                                new Dictionary<string,string> {
+                                {"Servicemans",Servicemans.First().NewPhone },
+                                {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                                {"ErrorMessage",ex.Message },
+                                {"StatusCode",response.StatusCode.ToString() },
+                                {"Response",response.ToString() }
+                                });
+                            }
+                        }
+                        else {
+                            _serviceorders = null;
+                            Crashes.TrackError(new Exception("Ошибка запроса(Заявки технику - переносы)"),
+                            new Dictionary<string,string> {
+                                {"Servicemans",Servicemans.First().NewPhone },
+                                {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                                {"StatusCode",response.StatusCode.ToString() },
+                                {"Response",response.ToString() }
+                            });
+                        }
+                    }
                     if(_serviceorders != null) {
                         if(ServiceOrderByTransfer != null)
                             ServiceOrderByTransfer.Clear();
@@ -647,41 +650,41 @@ namespace MounterApp.ViewModel {
                     if(Date == DateTime.Parse("01.01.0001 00:00:00"))
                         Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
 
-                    List<NewTest2ExtensionBase_ex> _serviceorders = new List<NewTest2ExtensionBase_ex>();
-                    _serviceorders = await ClientHttp.GetQuery<List<NewTest2ExtensionBase_ex>>("/api/NewServiceOrderForFireAlarmExtensionBase/ServiceOrderByUserTransferReasonNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
+                    //List<NewTest2ExtensionBase_ex> _serviceorders = new List<NewTest2ExtensionBase_ex>();
+                    //_serviceorders = await ClientHttp.GetQuery<List<NewTest2ExtensionBase_ex>>("/api/NewServiceOrderForFireAlarmExtensionBase/ServiceOrderByUserTransferReasonNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
 
                     ///api/NewServiceorderExtensionBases/ServiceOrderByUser?usr_ID=FEF46B07-8D7A-E311-920A-00155D01051D&date=18.11.2020
-                    
-                    //using HttpClient client = new HttpClient(GetHttpClientHandler());
-                    //HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceOrderForFireAlarmExtensionBase/ServiceOrderByUserTransferReasonNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
-                    //List<NewTest2ExtensionBase_ex> _serviceorders = new List<NewTest2ExtensionBase_ex>();
-                    //if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                    //    var resp = response.Content.ReadAsStringAsync().Result;
-                    //    try {
-                    //        _serviceorders = JsonConvert.DeserializeObject<List<NewTest2ExtensionBase_ex>>(resp).ToList();
-                    //    }
-                    //    catch(Exception ex) {
-                    //        _serviceorders = null;
-                    //        Crashes.TrackError(new Exception("Ошибка десериализации результата запроса(Заявки технику - переносы(ПС))"),
-                    //        new Dictionary<string,string> {
-                    //            {"Servicemans",Servicemans.First().NewPhone },
-                    //            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                    //            {"ErrorMessage",ex.Message },
-                    //            {"StatusCode",response.StatusCode.ToString() },
-                    //            {"Response",response.ToString() }
-                    //        });
-                    //    }
-                    //}
-                    //else {
-                    //    _serviceorders = null;
-                    //    Crashes.TrackError(new Exception("Ошибка запроса(Заявки технику - переносы)"),
-                    //    new Dictionary<string,string> {
-                    //            {"Servicemans",Servicemans.First().NewPhone },
-                    //            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                    //            {"StatusCode",response.StatusCode.ToString() },
-                    //            {"Response",response.ToString() }
-                    //    });
-                    //}
+
+                    using HttpClient client = new HttpClient(GetHttpClientHandler());
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceOrderForFireAlarmExtensionBase/ServiceOrderByUserTransferReasonNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
+                    List<NewTest2ExtensionBase_ex> _serviceorders = new List<NewTest2ExtensionBase_ex>();
+                    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                        var resp = response.Content.ReadAsStringAsync().Result;
+                        try {
+                            _serviceorders = JsonConvert.DeserializeObject<List<NewTest2ExtensionBase_ex>>(resp).ToList();
+                        }
+                        catch(Exception ex) {
+                            _serviceorders = null;
+                            Crashes.TrackError(new Exception("Ошибка десериализации результата запроса(Заявки технику - переносы(ПС))"),
+                            new Dictionary<string,string> {
+                                {"Servicemans",Servicemans.First().NewPhone },
+                                {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                                {"ErrorMessage",ex.Message },
+                                {"StatusCode",response.StatusCode.ToString() },
+                                {"Response",response.ToString() }
+                            });
+                        }
+                    }
+                    else {
+                        _serviceorders = null;
+                        Crashes.TrackError(new Exception("Ошибка запроса(Заявки технику - переносы)"),
+                        new Dictionary<string,string> {
+                                {"Servicemans",Servicemans.First().NewPhone },
+                                {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                                {"StatusCode",response.StatusCode.ToString() },
+                                {"Response",response.ToString() }
+                        });
+                    }
                     if(_serviceorders != null) {
                         if(ServiceOrderByTransferFireAlarm != null)
                             ServiceOrderByTransferFireAlarm.Clear();
@@ -1048,6 +1051,64 @@ namespace MounterApp.ViewModel {
             });
         }
 
+
+        private RelayCommand _ViewEntraceCommand;
+        public RelayCommand ViewEntraceCommand {
+            get => _ViewEntraceCommand ??= new RelayCommand(async obj => {
+                IndicatorVisible = true;
+                OpacityForm = 0.1;
+                ImageSource _is = null;
+                using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/download?ObjectNumber=" + obj + "&PhotoType=Вывеска объекта");
+                    //HttpResponseMessage response = await client.GetAsync("http://localhost:60987/api/Common/download?ObjectNumber=" + obj + "&PhotoType=Вывеска объекта");
+                    if(response.IsSuccessStatusCode) {
+                        var result = await response.Content.ReadAsStringAsync();
+                        _is = ImageSource.FromStream(() => { 
+                            return new MemoryStream(Convert.FromBase64String(result)); 
+                        });
+                    }
+                }
+                if(_is != null) {
+                    ImagePopupViewModel vm = new ImagePopupViewModel(_is);
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new ImagePopupPage(vm));
+                    IndicatorVisible = false;
+                    OpacityForm = 1;
+                }
+                else {
+                    await Application.Current.MainPage.DisplayAlert("Ошибка","Фотография не найдена!","OK");
+                    IndicatorVisible = false;
+                    OpacityForm = 1;
+                }
+            });
+        }
+        private RelayCommand _ViewSchemeCommand;
+        public RelayCommand ViewSchemeCommand {
+            get => _ViewSchemeCommand ??= new RelayCommand(async obj => {
+                IndicatorVisible = true;
+                OpacityForm = 0.1;
+                ImageSource _is = null;
+                using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/download?ObjectNumber=" + obj + "&PhotoType=Схема объекта");
+                    if(response.IsSuccessStatusCode) {
+                        var result = await response.Content.ReadAsStringAsync();
+                        _is = ImageSource.FromStream(() => {
+                            return new MemoryStream(Convert.FromBase64String(result));
+                        });
+                    }
+                }
+                if(_is != null) {
+                    ImagePopupViewModel vm = new ImagePopupViewModel(_is);
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new ImagePopupPage(vm));
+                    IndicatorVisible = false;
+                    OpacityForm = 1;
+                }
+                else {
+                    await Application.Current.MainPage.DisplayAlert("Ошибка","Фотография не найдена!","OK");
+                    IndicatorVisible = false;
+                    OpacityForm = 1;
+                }
+            });
+        }
 
 
         private string _TimeServiceOrder;

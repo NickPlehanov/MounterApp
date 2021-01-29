@@ -14,10 +14,10 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <DatePicker Grid.Row="0" Grid.Column="0" Style="{DynamicResource DatePickerStyle}" Date="{Binding StartDate}"/>
-                    <DatePicker Grid.Row="0" Grid.Column="1" Style="{DynamicResource DatePickerStyle}" Date="{Binding EndDate}"/>
-                </Grid>
-                <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding GetImage}" FontSize="Default" Text="Получить" Command="{Binding GetEventsCommands}"/>
+                    <DatePicker Grid.Row="0" Grid.Column="0" Style="{DynamicResource DatePickerStyle}" Date="{Binding StartDate}" IsVisible="{Binding StartDateVisible}"/>
+                    <DatePicker Grid.Row="0" Grid.Column="1" Style="{DynamicResource DatePickerStyle}" Date="{Binding EndDate}" IsVisible="{Binding EndDateVisible}"/>
+                </Grid> 
+                <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding GetImage}" FontSize="Default" Text="Получить" Command="{Binding GetEventsCommands}" IsVisible="{Binding GetButtonVisible}"/>
                 <StackLayout Style="{DynamicResource ActivityIndicatorStackLayoutStyle}" IsVisible="{Binding IndicatorVisible}">
                     <ActivityIndicator Style="{DynamicResource ActivityIndicatorStyle}"/>
                     <Label Style="{DynamicResource ActivityIndicatorLabelStyle}"/>

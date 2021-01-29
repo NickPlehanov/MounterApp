@@ -36,7 +36,7 @@ namespace MounterApp.InternalModel {
         /// </summary>
         public string Driveways{ get; set; }
         /// <summary>
-        /// Фото карточки объекта
+        /// Фото обходного листа
         /// </summary>
         public string ObjectCard { get; set; }
         /// <summary>
@@ -55,6 +55,14 @@ namespace MounterApp.InternalModel {
         /// Фото списка ответственныъ
         /// </summary>
         public string ObjectListResponsible { get; set; }
+        /// <summary>
+        /// Фото акта технического состояния объекта
+        /// </summary>
+        public string ObjectActTech1 { get; set; }
+        /// <summary>
+        /// Фото акта технического состояния объекта
+        /// </summary>
+        public string ObjectActTech2 { get; set; }
         /// <summary>
         /// Доп. фото 1
         /// </summary>
