@@ -72,46 +72,67 @@ namespace MounterApp.ViewModel {
             FireAlarmTransferServiceOrderVisible = false;
             FireAlarmTimeServiceOrderVisible = false;
             FireAlarmOtherServiceOrderVisible = false;
-
-            #region Данный код прекрасно мог бы обновлять заявки в фоне, но иногда он крашится, из-за коллекции
-            Device.StartTimer(TimeSpan.FromMinutes(1),() => {
-                Task.Run(async () => {
-                    try {
-                        if(ServiceOrdersByTime != null)
-                            if(ServiceOrdersByTime.Any()) {
-                                int count_time = ServiceOrdersByTime.Count;
-                            }
-                        if(ServiceOrders != null)
-                            if(ServiceOrders.Any()) {
-                                int count_ordr = ServiceOrders.Count;
-                            }
-                        if(ServiceOrderByTransfer != null)
-                            if(ServiceOrderByTransfer.Any()) {
-                                int count_transfer = ServiceOrderByTransfer.Count;
-                            }
-                        FireAlarmOtherServiceOrderExpanded = true;
-                        FireAlarmServiceOrderExpanded = true;
-                        FireAlarmTimeServiceOrderExpanded = true;
-                        FireAlarmTransferServiceOrderExpanded = true;
-                        OtherServiceOrderExpanded = true;
-                        ServiceOrderExpanded = true;
-                        TimeServiceOrderExpanded = true;
-                        TransferServiceOrderExpanded = true;
-                        GetServiceOrders.Execute(Servicemans);
-                        GetServiceOrderByTransfer.Execute(Servicemans);
-                        GetServiceOrdersFireAlarm.Execute(Servicemans);
-                        GetServiceOrderByTransferFireAlarm.Execute(Servicemans);
-                    }
-                    catch { }
-                    //if (count_time< ServiceOrdersByTime.Count || count_ordr< ServiceOrders.Count || count_transfer< ServiceOrderByTransfer.Count) { }
-                });
-                return true; //use this to run continuously 
-                             //return false; //to stop running continuously 
-
-            });
-            #endregion
+            if(Application.Current.Properties.ContainsKey("AutoUpdateTime"))
+                AutoUpdateTime = double.Parse(Application.Current.Properties["AutoUpdateTime"].ToString());
+            else
+                AutoUpdateTime = null;
+            AutoUpdateOrdersCommand.Execute(AutoUpdateTime);
         }
 
+
+        private double? _AutoUpdateTime;
+        public double? AutoUpdateTime {
+            get => _AutoUpdateTime;
+            set {
+                _AutoUpdateTime = value;
+                OnPropertyChanged(nameof(AutoUpdateTime));
+            }
+        }
+        private RelayCommand _AutoUpdateOrdersCommand;
+        public RelayCommand AutoUpdateOrdersCommand {
+            get => _AutoUpdateOrdersCommand ??= new RelayCommand(async obj => {
+                #region Данный код прекрасно мог бы обновлять заявки в фоне, но иногда он крашится, из-за коллекции
+                if(obj != null) 
+                    if(double.Parse(obj.ToString()) > 0) { 
+                    Device.StartTimer(TimeSpan.FromMinutes(Convert.ToDouble(obj)),() => {
+                        Task.Run(async () => {
+                            try {
+                                if(ServiceOrdersByTime != null)
+                                    if(ServiceOrdersByTime.Any()) {
+                                        int count_time = ServiceOrdersByTime.Count;
+                                    }
+                                if(ServiceOrders != null)
+                                    if(ServiceOrders.Any()) {
+                                        int count_ordr = ServiceOrders.Count;
+                                    }
+                                if(ServiceOrderByTransfer != null)
+                                    if(ServiceOrderByTransfer.Any()) {
+                                        int count_transfer = ServiceOrderByTransfer.Count;
+                                    }
+                                FireAlarmOtherServiceOrderExpanded = true;
+                                FireAlarmServiceOrderExpanded = true;
+                                FireAlarmTimeServiceOrderExpanded = true;
+                                FireAlarmTransferServiceOrderExpanded = true;
+                                OtherServiceOrderExpanded = true;
+                                ServiceOrderExpanded = true;
+                                TimeServiceOrderExpanded = true;
+                                TransferServiceOrderExpanded = true;
+                                GetServiceOrders.Execute(Servicemans);
+                                GetServiceOrderByTransfer.Execute(Servicemans);
+                                GetServiceOrdersFireAlarm.Execute(Servicemans);
+                                GetServiceOrderByTransferFireAlarm.Execute(Servicemans);
+                            }
+                            catch { }
+                            //if (count_time< ServiceOrdersByTime.Count || count_ordr< ServiceOrders.Count || count_transfer< ServiceOrderByTransfer.Count) { }
+                        });
+                        return true; //use this to run continuously 
+                                     //return false; //to stop running continuously 
+
+                    });
+                }
+                #endregion
+            });
+        }
         private ImageSource _HelpImage;
         public ImageSource HelpImage {
             get => _HelpImage;

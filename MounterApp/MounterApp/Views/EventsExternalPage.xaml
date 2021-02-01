@@ -23,7 +23,7 @@
                             </CollectionView.ItemsLayout>
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
-                                    <Frame Style="{DynamicResource FrameInfoStyle}">
+                                    <Frame Style="{DynamicResource FrameInfoStyle}"  BorderColor="{Binding ColorEvents}">
                                         <Frame.Content>
                                             <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
                                                 <Label Style="{DynamicResource CommonLabelStyle}" Text="{Binding Path=REDateTime}" Margin="5" FontAttributes="Bold"/>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Drawing;
 using System.Text;
 
 namespace MounterApp.Model {
@@ -33,6 +34,15 @@ namespace MounterApp.Model {
         [NotMapped]
         public string EventClassNameText {
             get => string.Format("Класс: {0}",EventClassName);
+        }
+        [NotMapped]
+        public Color ColorEvents {
+            get {
+                if(EventClassName.ToLower().Contains("тревога")) 
+                        return Color.Red;
+                else
+                    return Color.White;
+            }
         }
     }
 }

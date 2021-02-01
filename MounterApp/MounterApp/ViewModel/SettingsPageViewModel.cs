@@ -31,8 +31,14 @@ namespace MounterApp.ViewModel {
             }
             if(Application.Current.Properties.ContainsKey("Quality"))
                 Quality = int.Parse(Application.Current.Properties["Quality"].ToString());
-            if(Application.Current.Properties.ContainsKey("Compression"))
-                Compression = int.Parse(Application.Current.Properties["Compression"].ToString());
+            //if(Application.Current.Properties.ContainsKey("Compression"))
+            //    Compression = int.Parse(Application.Current.Properties["Compression"].ToString());
+            if(Application.Current.Properties.ContainsKey("AutoUpdateTime"))
+                AutoUpdateTime = double.TryParse(Application.Current.Properties["AutoUpdateTime"].ToString(),out _) ? double.Parse(Application.Current.Properties["AutoUpdateTime"].ToString()) : 0;
+            else {
+                AutoUpdateTime = 0;
+                Application.Current.SavePropertiesAsync();
+            }
             SaveImage = IconName("save");
             ClearImage = IconName("clear");
             HelpImage = IconName("help");
@@ -50,6 +56,15 @@ namespace MounterApp.ViewModel {
             set {
                 _ReportImage = value;
                 OnPropertyChanged(nameof(ReportImage));
+            }
+        }
+
+        private double? _AutoUpdateTime;
+        public double? AutoUpdateTime {
+            get => _AutoUpdateTime;
+            set {
+                _AutoUpdateTime = value;
+                OnPropertyChanged(nameof(AutoUpdateTime));
             }
         }
 
@@ -202,7 +217,8 @@ namespace MounterApp.ViewModel {
             get => _SaveCommand ??= new RelayCommand(async obj => {
                 Application.Current.Properties["AutoEnter"] = AutoEnter;
                 Application.Current.Properties["Quality"] = Quality;
-                Application.Current.Properties["Compression"] = Compression;
+                //Application.Current.Properties["Compression"] = Compression;
+                Application.Current.Properties["AutoUpdateTime"] = AutoUpdateTime;
                 await Application.Current.SavePropertiesAsync();
                 Toast.MakeText(Android.App.Application.Context,"Настройки успешно сохранены",ToastLength.Long).Show();
                 Dictionary<string,string> parameters = new Dictionary<string,string> {

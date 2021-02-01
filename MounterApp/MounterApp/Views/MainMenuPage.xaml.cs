@@ -6,7 +6,7 @@ using Xamarin.Forms.Xaml;
 
 namespace MounterApp.Views {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class MainMenuPage : ContentPage {
+    public partial class MainMenuPage : ContentPage {
         public MainMenuPageViewModel VM { get; private set; }
         public MainMenuPage() {
             InitializeComponent();

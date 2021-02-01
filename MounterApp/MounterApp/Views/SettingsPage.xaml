@@ -18,6 +18,7 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
                 <CheckBox Style="{DynamicResource CheckBoxStyle}" Grid.Column="0" Grid.Row="0" IsChecked="{Binding AutoEnter}" />
@@ -26,13 +27,16 @@
                 <Entry Grid.Column="0" Grid.Row="1" Keyboard="Numeric" Text="{Binding Quality}" Style="{DynamicResource EntryStyle}"/>
                 <Label Grid.Column="1" Grid.Row="1" Text="Качество фото" Style="{DynamicResource MountersLabelStyle}"/>
 
-                <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding ClearImage}" Grid.ColumnSpan="2" Grid.Row="2" Text="Очистить локальную базу монтажей" Command="{Binding ClearDatabaseCommand}"/>
+                <Entry Grid.Column="0" Grid.Row="2" Keyboard="Numeric" Text="{Binding AutoUpdateTime}" Style="{DynamicResource EntryStyle}"/>
+                <Label Grid.Column="1" Grid.Row="2" Text="Время автоматического обновления заявок" Style="{DynamicResource MountersLabelStyle}"/>
 
-                <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding SaveImage}"  Grid.ColumnSpan="2" Grid.Row="3" Text="Сохранить" Command="{Binding SaveCommand}"/>
-                <Button ImageSource="{Binding ReportImage}" Style="{DynamicResource CommonButtonStyle}" Grid.ColumnSpan="2" Grid.Row="4" Text="Оставить отзыв" Command="{Binding OpenOrdersForItPageCommand}"/>
-                <Button ImageSource="{Binding HelpImage}" Style="{DynamicResource CommonButtonStyle}" Grid.ColumnSpan="2" Grid.Row="5" Text="Помощь" Command="{Binding HelpCommand}"/>
+                <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding ClearImage}" Grid.ColumnSpan="2" Grid.Row="3" Text="Очистить локальную базу монтажей" Command="{Binding ClearDatabaseCommand}"/>
 
-                <Label Text="{Binding Version, Mode=TwoWay}" Grid.Row="6" Grid.ColumnSpan="2" Style="{DynamicResource MountersLabelStyle}">
+                <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding SaveImage}"  Grid.ColumnSpan="2" Grid.Row="4" Text="Сохранить" Command="{Binding SaveCommand}"/>
+                <Button ImageSource="{Binding ReportImage}" Style="{DynamicResource CommonButtonStyle}" Grid.ColumnSpan="2" Grid.Row="5" Text="Оставить отзыв" Command="{Binding OpenOrdersForItPageCommand}"/>
+                <Button ImageSource="{Binding HelpImage}" Style="{DynamicResource CommonButtonStyle}" Grid.ColumnSpan="2" Grid.Row="6" Text="Помощь" Command="{Binding HelpCommand}"/>
+
+                <Label Text="{Binding Version, Mode=TwoWay}" Grid.Row="7" Grid.ColumnSpan="2" Style="{DynamicResource MountersLabelStyle}">
                     <Label.GestureRecognizers>
                         <TapGestureRecognizer NumberOfTapsRequired="2" Command="{Binding CheckAccessToSecret}"/>
                     </Label.GestureRecognizers>

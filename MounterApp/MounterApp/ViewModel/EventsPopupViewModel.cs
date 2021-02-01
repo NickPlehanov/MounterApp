@@ -1,6 +1,4 @@
-﻿using Android.Widget;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
+﻿using Microsoft.AppCenter.Analytics;
 using MounterApp.Helpers;
 using MounterApp.Model;
 using MounterApp.Properties;

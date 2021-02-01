@@ -30,7 +30,7 @@
                             </CollectionView.ItemsLayout>
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
-                                    <Frame Style="{DynamicResource FrameInfoStyle}">
+                                    <Frame Style="{DynamicResource FrameInfoStyle}" BorderColor="{Binding ColorEvents}">
                                         <Frame.Content>
                                             <StackLayout>
                                                 <Label Style="{DynamicResource CommonLabelStyle}"  Text="{Binding Path=REDateTime}" FontAttributes="Bold"/>

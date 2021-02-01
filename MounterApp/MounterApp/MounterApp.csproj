@@ -17,6 +17,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Fonts\HachiMaruPop-Regular.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Fonts\HachiMaruPop-Regular.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.0.0" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
