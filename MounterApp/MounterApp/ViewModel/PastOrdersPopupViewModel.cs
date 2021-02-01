@@ -4,6 +4,7 @@ using Microsoft.AppCenter.Crashes;
 using MounterApp.Helpers;
 using MounterApp.Model;
 using MounterApp.Properties;
+using MounterApp.Views;
 using Newtonsoft.Json;
 using Rg.Plugins.Popup.Extensions;
 using System;
@@ -17,7 +18,7 @@ using Xamarin.Forms;
 namespace MounterApp.ViewModel {
     public class PastOrdersPopupViewModel : BaseViewModel {
         //readonly ClientHttp http = new ClientHttp();
-        public PastOrdersPopupViewModel(NewServiceorderExtensionBase_ex _so,List<NewServicemanExtensionBase> _servicemans, List<NewMounterExtensionBase> _mounters) {
+        public PastOrdersPopupViewModel(NewServiceorderExtensionBase_ex _so,List<NewServicemanExtensionBase> _servicemans,List<NewMounterExtensionBase> _mounters) {
             Mounters = _mounters;
             Servicemans = _servicemans;
             ServiceOrder = _so;
@@ -164,22 +165,23 @@ namespace MounterApp.ViewModel {
                             {"ErrorMessage",ex.Message },
                             {"StatusCode",response.StatusCode.ToString() },
                             {"Response",response.ToString() },
-                            {"Query","NewServiceorderExtensionBases/ServiceOrderByObject?Andromeda_ID=" + ServiceOrder.NewAndromedaServiceorder + "&ObjectNumber=" + ServiceOrder.NewNumber }
+                            {"Query","NewServiceorderExtensionBases/ServiceOrderByObject?Andromeda_ID=" + ServiceOrderFireAlarm.NewAndromedaServiceorder + "&ObjectNumber=" + ServiceOrderFireAlarm.NewNumber }
                             });
                         }
-                        if(_pso.Count() > 0) {
-                            foreach(var item in _pso.OrderByDescending(o => o.NewDate)) {
-                                PastServiceOrders.Add(item);
-                                //NewServiceorderExtensionBase_ex _item = item;
-                                //_item.NewDate = _item.NewDate.Value.AddHours(5).Date;
-                                //PastServiceOrders.Add(new NewServiceorderExtensionBase_ex() {
-                                //    NewServiceorderId = _item.NewServiceorderId,
-                                //    NewDate=_item.NewDate,
-                                //    NewTime=_item.NewTime,
-                                //    NewResult=_item.NewResult
-                                //});
+                        if(_pso != null)
+                            if(_pso.Count() > 0) {
+                                foreach(var item in _pso.OrderByDescending(o => o.NewDate)) {
+                                    PastServiceOrders.Add(item);
+                                    //NewServiceorderExtensionBase_ex _item = item;
+                                    //_item.NewDate = _item.NewDate.Value.AddHours(5).Date;
+                                    //PastServiceOrders.Add(new NewServiceorderExtensionBase_ex() {
+                                    //    NewServiceorderId = _item.NewServiceorderId,
+                                    //    NewDate=_item.NewDate,
+                                    //    NewTime=_item.NewTime,
+                                    //    NewResult=_item.NewResult
+                                    //});
+                                }
                             }
-                        }
                     }
                 }
                 IndicatorVisible = false;
@@ -198,17 +200,20 @@ namespace MounterApp.ViewModel {
         private RelayCommand _CallCustomer;
         public RelayCommand CallCustomer {
             get => _CallCustomer ??= new RelayCommand(async obj => {
-                if(!string.IsNullOrEmpty(obj.ToString())) {
-                    Analytics.TrackEvent("Звонок клиенту",
-                        new Dictionary<string,string> {
+                if(obj != null)
+                    if(!string.IsNullOrEmpty(obj.ToString())) {
+                        Analytics.TrackEvent("Звонок клиенту",
+                            new Dictionary<string,string> {
                         //{"ServiceOrderID",ServiceOrder.NewServiceorderId.ToString() },
                         {"PhoneNumber",obj.ToString() }
-                        });
-                    Uri uri = new Uri("tel:" + obj);
-                    await Launcher.OpenAsync(uri);
-                }
+                            });
+                        Uri uri = new Uri("tel:" + obj);
+                        await Launcher.OpenAsync(uri);
+                    }
+                    else
+                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Номер телефона не указан",Color.Red,LayoutOptions.EndAndExpand),4000));
                 else
-                    Toast.MakeText(Android.App.Application.Context,"Номер телефона не указан",ToastLength.Long).Show();
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Номер телефона не указан",Color.Red,LayoutOptions.EndAndExpand),4000));
             });
         }
 

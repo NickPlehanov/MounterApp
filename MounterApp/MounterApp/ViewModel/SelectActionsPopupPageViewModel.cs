@@ -183,14 +183,17 @@ namespace MounterApp.ViewModel {
                                 PhotoNames.Remove(PhotoName);
                             if(Counter == 5)
                                 PhotoNames.Remove(PhotoName);
-                            Toast.MakeText(Android.App.Application.Context,"Фото добавлено",ToastLength.Short).Show();
+                            //Toast.MakeText(Android.App.Application.Context,"Фото добавлено",ToastLength.Short).Show();
+                            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Фото добавлено",Color.Green,LayoutOptions.EndAndExpand),500));
                         }
                         else
-                            await Application.Current.MainPage.DisplayAlert("Ошибка","Такая фотография уже была загружена","OK");
+                            //await Application.Current.MainPage.DisplayAlert("Ошибка","Такая фотография уже была загружена","OK");
+                            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Такая фотография уже была загружена",Color.Red,LayoutOptions.EndAndExpand),4000));
                     }
                 }
                 else
-                    await Application.Current.MainPage.DisplayAlert("Ошибка","Выберите тип фотографии","OK");
+                    //await Application.Current.MainPage.DisplayAlert("Ошибка","Выберите тип фотографии","OK"); 
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Выберите тип фотографии",Color.Red,LayoutOptions.EndAndExpand),4000));
             });
         }
 
@@ -323,7 +326,8 @@ namespace MounterApp.ViewModel {
                             new Dictionary<string,string> {
                             {"Error","Камера недоступна" }
                             });
-                            await Application.Current.MainPage.DisplayAlert("No Camera",":( No camera available.","OK");
+                            //await Application.Current.MainPage.DisplayAlert("No Camera",":( No camera available.","OK"); 
+                            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Камера не доступна",Color.Red,LayoutOptions.EndAndExpand),4000));
                             return;
                         }
                     }

@@ -111,32 +111,29 @@ namespace MounterApp.ViewModel {
                 //EventTemplate = inf.EventTemplateName.ToString();
                 //DeviceName = inf.DeviceName.ToString();
 
-
-                using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/Objinfo?objNumber=" + ServiceOrderFireAlarm.NewNumber.ToString() + "");
-                    List<Info> obj_info = new List<Info>();
-                    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                        var resp = response.Content.ReadAsStringAsync().Result;
-                        try {
-                            obj_info = JsonConvert.DeserializeObject<List<Info>>(resp);
-                        }
-                        catch(Exception ex) {
-                            obj_info = null;
-                        }
-                        if(obj_info != null) {
-                            foreach(var item in obj_info) {
-                                ObjectName = item.Name;
-                                ControlTime = item.ControlTime.ToString();
-                                EventTemplate = item.EventTemplateName.ToString();
-                                DeviceName = item.DeviceName.ToString();
+                if(ServiceOrderFireAlarm.NewNumber.HasValue)
+                    if(!string.IsNullOrEmpty(ServiceOrderFireAlarm.NewNumber.Value.ToString()))
+                        using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                            HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/Objinfo?objNumber=" + ServiceOrderFireAlarm.NewNumber.ToString() + "");
+                            List<Info> obj_info = new List<Info>();
+                            if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                                var resp = response.Content.ReadAsStringAsync().Result;
+                                try {
+                                    obj_info = JsonConvert.DeserializeObject<List<Info>>(resp);
+                                }
+                                catch(Exception ex) {
+                                    obj_info = null;
+                                }
+                                if(obj_info != null) {
+                                    foreach(var item in obj_info) {
+                                        ObjectName = item.Name;
+                                        ControlTime = item.ControlTime.ToString();
+                                        EventTemplate = item.EventTemplateName.ToString();
+                                        DeviceName = item.DeviceName.ToString();
+                                    }
+                                }
                             }
-
-
-                            //ObjectName = a28Object.Name;
-                            //ControlTime = a28Object.ControlTime.ToString();
                         }
-                    }
-                }
             });
         }
         private string _DeviceName;
@@ -525,14 +522,15 @@ namespace MounterApp.ViewModel {
                                 {"Response",response.ToString() }
                             });
                         }
-                        if(goeb.Count > 0) {
-                            Contact = goeb.FirstOrDefault().NewFirstcontact;
-                            Siding = goeb.FirstOrDefault().NewSiding;
-                            rrOS = goeb.FirstOrDefault().NewRrOs.HasValue ? (bool)goeb.FirstOrDefault().NewRrOs : false;
-                            rrPS = goeb.FirstOrDefault().NewRrPs.HasValue ? (bool)goeb.FirstOrDefault().NewRrPs : false;
-                            rrVideo = goeb.FirstOrDefault().NewRrVideo.HasValue ? (bool)goeb.FirstOrDefault().NewRrVideo : false;
-                            rrAccess = goeb.FirstOrDefault().NewRrSkud.HasValue ? (bool)goeb.FirstOrDefault().NewRrSkud : false;
-                        }
+                        if(goeb != null)
+                            if(goeb.Count > 0) {
+                                Contact = goeb.FirstOrDefault().NewFirstcontact;
+                                Siding = goeb.FirstOrDefault().NewSiding;
+                                rrOS = goeb.FirstOrDefault().NewRrOs.HasValue ? (bool)goeb.FirstOrDefault().NewRrOs : false;
+                                rrPS = goeb.FirstOrDefault().NewRrPs.HasValue ? (bool)goeb.FirstOrDefault().NewRrPs : false;
+                                rrVideo = goeb.FirstOrDefault().NewRrVideo.HasValue ? (bool)goeb.FirstOrDefault().NewRrVideo : false;
+                                rrAccess = goeb.FirstOrDefault().NewRrSkud.HasValue ? (bool)goeb.FirstOrDefault().NewRrSkud : false;
+                            }
                     }
                 }
                 else {
@@ -594,14 +592,15 @@ namespace MounterApp.ViewModel {
                                 });
                             }
                         }
-                        if(goeb.Count > 0) {
-                            Contact = goeb.FirstOrDefault().NewFirstcontact;
-                            Siding = goeb.FirstOrDefault().NewSiding;
-                            rrOS = goeb.FirstOrDefault().NewRrOs.HasValue ? (bool)goeb.FirstOrDefault().NewRrOs : false;
-                            rrPS = goeb.FirstOrDefault().NewRrPs.HasValue ? (bool)goeb.FirstOrDefault().NewRrPs : false;
-                            rrVideo = goeb.FirstOrDefault().NewRrVideo.HasValue ? (bool)goeb.FirstOrDefault().NewRrVideo : false;
-                            rrAccess = goeb.FirstOrDefault().NewRrSkud.HasValue ? (bool)goeb.FirstOrDefault().NewRrSkud : false;
-                        }
+                        if(goeb != null)
+                            if(goeb.Count > 0) {
+                                Contact = goeb.FirstOrDefault().NewFirstcontact;
+                                Siding = goeb.FirstOrDefault().NewSiding;
+                                rrOS = goeb.FirstOrDefault().NewRrOs.HasValue ? (bool)goeb.FirstOrDefault().NewRrOs : false;
+                                rrPS = goeb.FirstOrDefault().NewRrPs.HasValue ? (bool)goeb.FirstOrDefault().NewRrPs : false;
+                                rrVideo = goeb.FirstOrDefault().NewRrVideo.HasValue ? (bool)goeb.FirstOrDefault().NewRrVideo : false;
+                                rrAccess = goeb.FirstOrDefault().NewRrSkud.HasValue ? (bool)goeb.FirstOrDefault().NewRrSkud : false;
+                            }
                     }
                 }
                 Opacity = 1;
@@ -665,9 +664,10 @@ namespace MounterApp.ViewModel {
                     {"StatusCode",response.StatusCode.ToString() },
                     {"Response",response.ToString() }
                         });
-                        await Application.Current.MainPage.DisplayAlert("Ошибка"
-                                ,"От сервера не получена информация о текущей заявке. Повторите попытку позже, в случае если ошибка повторяется, сообщите в IT-отдел."
-                                ,"OK");
+                        //await Application.Current.MainPage.DisplayAlert("Ошибка"
+                        //        ,"От сервера не получена информация о текущей заявке. Повторите попытку позже, в случае если ошибка повторяется, сообщите в IT-отдел."
+                        //        ,"OK");
+                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("От сервера не получена информация о текущей заявке. Повторите попытку позже, в случае если ошибка повторяется, сообщите в IT-отдел.",Color.Red,LayoutOptions.EndAndExpand),4000));
                     }
                     if(soeb != null) {
                         Analytics.TrackEvent("Попытка записи данных на сервер по объекту заявка технику(пс), заполняем поле Пришел",
@@ -693,9 +693,10 @@ namespace MounterApp.ViewModel {
                         {"StatusCode",responsePut.StatusCode.ToString() },
                         {"Response",responsePut.ToString() }
                             });
-                            await Application.Current.MainPage.DisplayAlert("Ошибка"
-                                ,"При попытке сохранения данных произошла ошибка. Повторите попытку позже, в случае если ошибка повторяется, сообщите в IT-отдел."
-                                ,"OK");
+                            //await Application.Current.MainPage.DisplayAlert("Ошибка"
+                            //    ,"При попытке сохранения данных произошла ошибка. Повторите попытку позже, в случае если ошибка повторяется, сообщите в IT-отдел."
+                            //    ,"OK");
+                            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При попытке сохранения данных произошла ошибка. Повторите попытку позже",Color.Red,LayoutOptions.EndAndExpand),4000));
                         }
                         else
                             Toast.MakeText(Android.App.Application.Context,"ОТМЕТКА ВРЕМЕНИ ПРИХОДА СОХРАНЕНА",ToastLength.Long).Show();
@@ -765,13 +766,20 @@ namespace MounterApp.ViewModel {
         private RelayCommand _CallClientCommand;
         public RelayCommand CallClientCommand {
             get => _CallClientCommand ??= new RelayCommand(async obj => {
-                Analytics.TrackEvent("Звонок клиенту",
-                    new Dictionary<string,string> {
+                if(obj != null)
+                    if(string.IsNullOrEmpty(obj.ToString())) {
+                        Analytics.TrackEvent("Звонок клиенту",
+                            new Dictionary<string,string> {
                         {"ServiceOrderID",ServiceOrderFireAlarm.NewTest2Id.ToString() },
                         {"PhoneNumber",obj.ToString() }
-                    });
-                Uri uri = new Uri("tel:" + obj);
-                await Launcher.OpenAsync(uri);
+                            });
+                        Uri uri = new Uri("tel:" + obj);
+                        await Launcher.OpenAsync(uri);
+                    }
+                    else
+                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Не указан номер телефона",Color.Red,LayoutOptions.EndAndExpand),4000));
+                else
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Не указан номер телефона",Color.Red,LayoutOptions.EndAndExpand),4000));
             });
         }
         private RelayCommand _CloseOrderCommand;

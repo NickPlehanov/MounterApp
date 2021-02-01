@@ -6,6 +6,7 @@ using MounterApp.Model;
 using MounterApp.Properties;
 using MounterApp.Views;
 using Newtonsoft.Json;
+using Rg.Plugins.Popup.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -104,6 +105,7 @@ namespace MounterApp.ViewModel {
                     Phone = PhoneNumber;
                 else {
                     Message = "Введен не корректный номер телефона";
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Введен не корректный номер телефона",Color.Red,LayoutOptions.EndAndExpand),4000));
                     Analytics.TrackEvent("Ошибка ввода номера телефона");
                 }
                 try {
@@ -253,7 +255,7 @@ namespace MounterApp.ViewModel {
         private RelayCommand _BackPressCommand;
         public RelayCommand BackPressCommand {
             get => _BackPressCommand ??= new RelayCommand(async obj => {
-                System.Environment.Exit(0);
+                Environment.Exit(0);
             });
         }
     }

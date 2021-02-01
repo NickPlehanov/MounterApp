@@ -2,6 +2,7 @@
 using MounterApp.Helpers;
 using MounterApp.Model;
 using MounterApp.Properties;
+using MounterApp.Views;
 using Newtonsoft.Json;
 using Rg.Plugins.Popup.Extensions;
 using System;
@@ -164,9 +165,11 @@ namespace MounterApp.ViewModel {
                             StringContent ex_content = new StringContent(ex_data,Encoding.UTF8,"application/json");
                             HttpResponseMessage ex_response = await client.PostAsync(Resources.BaseAddress + "/api/NewItExtensionBases",ex_content);
                             if(ex_response.IsSuccessStatusCode || ex_response.StatusCode == System.Net.HttpStatusCode.Accepted)
-                                Toast.MakeText(Android.App.Application.Context,"Успешно отправлено",ToastLength.Long).Show();
+                                //Toast.MakeText(Android.App.Application.Context,"Успешно отправлено",ToastLength.Long).Show();
+                                await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Успешно отправлено",Color.Green,LayoutOptions.EndAndExpand),4000));
                             else
-                                Toast.MakeText(Android.App.Application.Context,"Ошибка при отправке сообщения",ToastLength.Long).Show();
+                                //Toast.MakeText(Android.App.Application.Context,"Ошибка при отправке сообщения",ToastLength.Long).Show();
+                                await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Ошибка при отправке",Color.Red,LayoutOptions.EndAndExpand),4000));
                         }
                     }
                 }

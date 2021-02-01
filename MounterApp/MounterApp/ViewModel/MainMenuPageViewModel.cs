@@ -44,7 +44,8 @@ namespace MounterApp.ViewModel {
                     App.Current.MainPage = new MountsPage(vm);
                 }
                 else
-                    await Application.Current.MainPage.DisplayAlert("Ошибка","Не определен сотрудник, переход невозможен","OK");
+                    //await Application.Current.MainPage.DisplayAlert("Ошибка","Не определен сотрудник, переход невозможен","OK");
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Не определен сотрудник, переход невозможен",Color.Red,LayoutOptions.EndAndExpand),4000));
             },obj => Mounters != null && Mounters.Count > 0);
         }
         /// <summary>
@@ -62,7 +63,8 @@ namespace MounterApp.ViewModel {
                     App.Current.MainPage = new ServiceOrdersPage(vm);
                 }
                 else
-                    await Application.Current.MainPage.DisplayAlert("Ошибка","Не определен сотрудник, переход невозможен","OK");
+                    //await Application.Current.MainPage.DisplayAlert("Ошибка","Не определен сотрудник, переход невозможен","OK");
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Не определен сотрудник, переход невозможен",Color.Red,LayoutOptions.EndAndExpand),4000));
             },obj => Serviceman != null && Serviceman.Count > 0);
         }
         /// <summary>
@@ -134,9 +136,10 @@ namespace MounterApp.ViewModel {
                     if(response != null) {
                         if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) { }
                         if(response.StatusCode.Equals(HttpStatusCode.MethodNotAllowed)) {
-                            await Application.Current.MainPage.DisplayAlert("Информация"
-                                ,"У Вас установлена не актуальная версия приложения, пожалуйста обновите её." + Environment.NewLine + Environment.NewLine + "Если Вы не получили ссылку на новую версию, то сообщите свою почту в ИТ-отдел."
-                                ,"OK");
+                            //await Application.Current.MainPage.DisplayAlert("Информация"
+                            //    ,"У Вас установлена не актуальная версия приложения, пожалуйста обновите её." + Environment.NewLine + Environment.NewLine + "Если Вы не получили ссылку на новую версию, то сообщите свою почту в ИТ-отдел."
+                            //    ,"OK");
+                            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("У Вас установлена не актуальная версия приложения, пожалуйста обновите её",Color.Red,LayoutOptions.EndAndExpand),4000));
                         }
                     }
                 }

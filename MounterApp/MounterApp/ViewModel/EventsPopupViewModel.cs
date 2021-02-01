@@ -4,6 +4,7 @@ using Microsoft.AppCenter.Crashes;
 using MounterApp.Helpers;
 using MounterApp.Model;
 using MounterApp.Properties;
+using MounterApp.Views;
 using Newtonsoft.Json;
 using Rg.Plugins.Popup.Extensions;
 using System;
@@ -226,7 +227,8 @@ namespace MounterApp.ViewModel {
                     Events.Clear();
                     if((EndDate-StartDate).TotalDays>7) {
                         StartDate = EndDate.AddDays(-7.0);
-                        Toast.MakeText(Android.App.Application.Context,"Просмотр событий более чем за неделю, запрещен!",ToastLength.Long).Show();
+                        //Toast.MakeText(Android.App.Application.Context,"Просмотр событий более чем за неделю, запрещен!",ToastLength.Long).Show(); 
+                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Просмотр событий более чем за неделю запрещен",Color.Red,LayoutOptions.EndAndExpand),4000));
                     }
                     List<GetEventsReceivedFromObject_Result> _evnts = new List<GetEventsReceivedFromObject_Result>();
                     string obj_number = ServiceOrder != null ? ServiceOrder.NewNumber.ToString() : ServiceOrderFireAlarm.NewNumber.ToString();
@@ -248,7 +250,9 @@ namespace MounterApp.ViewModel {
                     }
                 }
                 else {
-                    await Application.Current.MainPage.DisplayAlert("Ошибка","Дата начала не может быть больше или равна дате окончания","OK");
+                    //await Application.Current.MainPage.DisplayAlert("Ошибка","Дата начала не может быть больше или равна дате окончания","OK");
+                    //Toast.MakeText(Android.App.Application.Context,"Дата начала не может быть больше или равна дате окончания",ToastLength.Long).Show();
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Дата начала не может быть больше или равна дате окончания",Color.Red,LayoutOptions.EndAndExpand),4000));
                 }
                 IndicatorVisible = false;
                 OpacityForm = 1;

@@ -1,0 +1,18 @@
+﻿<popup:PopupPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:popup="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup" xmlns:animations="http://rotorgames.com" xmlns:vm="clr-namespace:MounterApp.ViewModel"
+                 x:Class="MounterApp.Views.MessagePopupPage">
+    <!--<popup:PopupPage.Resources>
+        <vm:MessagePopupPageViewModel x:Key="vm" MoveAnimationProperty="Top" BackgroundColor="Empty" AlertMessage=" " VerticalOptionsProperty="StartAndExpand"/>
+    </popup:PopupPage.Resources>-->
+    <!--<popup:PopupPage.Animation>
+        <animations:MoveAnimation HasBackgroundAnimation="True" PositionIn="Bottom" PositionOut="Bottom" />
+        --><!--<animations:MoveAnimation HasBackgroundAnimation="True" PositionIn="{Binding MoveAnimationProperty}" PositionOut="{Binding MoveAnimationProperty}" />--><!--
+    </popup:PopupPage.Animation>-->
+    <popup:PopupPage.Content>
+        <StackLayout Orientation="Horizontal" BackgroundColor="{Binding BackgroundColor}" VerticalOptions="{Binding VerticalOptionsProperty}" Padding="50,0">
+            <!--<Image x:Name="imgAlert" Source="note" HeightRequest="24" WidthRequest="24" />-->
+            <Label Text="{Binding AlertMessage}" TextColor="Black" FontSize="Large" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" />
+        </StackLayout>
+    </popup:PopupPage.Content>
+</popup:PopupPage>

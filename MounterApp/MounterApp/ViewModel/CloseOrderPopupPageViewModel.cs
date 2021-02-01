@@ -464,7 +464,10 @@ namespace MounterApp.ViewModel {
                                             {"name",Servicemans.First().NewName },
                                             {"PermissionStatus",status.ToString()}
                 });
-                await Application.Current.MainPage.DisplayAlert("Ошибка","Ошибка при попытке сохранения","OK");
+                //await Application.Current.MainPage.DisplayAlert("Ошибка","Ошибка при попытке сохранения","OK");
+                //MessagePopupPageViewModel vm = new MessagePopupPageViewModel("Ошибка при попытке сохранения.",Color.Red);
+                await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(
+                    new MessagePopupPageViewModel("Ошибка при попытке сохранения. Не получены необходимые разрешения",Color.Red,LayoutOptions.EndAndExpand),4000));
                 IsLoading(false);
                 return PermissionStatus.Denied;
             }
@@ -492,7 +495,8 @@ namespace MounterApp.ViewModel {
                     { "ServiceOrder",so != null ? so.NewServiceorderId.ToString() : sofa.NewTest2Id.ToString() },
                     { "ServicemanPhone",Servicemans.FirstOrDefault().NewPhone }
                     });
-                    await Application.Current.MainPage.DisplayAlert("Ошибка","Не указано заключение по заявке","OK");
+                    //await Application.Current.MainPage.DisplayAlert("Ошибка","Не указано заключение по заявке","OK");
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Не указано заключение по заявке",Color.Red,LayoutOptions.EndAndExpand),4000));
                     IsLoading(false);
                     return;
                 }
@@ -611,12 +615,15 @@ namespace MounterApp.ViewModel {
                                             {"StatusCode",response.StatusCode.ToString() },
                                             {"Response",response.ToString() }
                                             });
-                                            await Application.Current.MainPage.DisplayAlert("Ошибка","При сохранении информации о заявке технику, произошла ошибка, не был получен корректный ответ от сервера. Попробуйте позже, в случае повторной ошибки, сообщите в ИТ-отдел.","OK");
+                                            //await Application.Current.MainPage.DisplayAlert("Ошибка","При сохранении информации о заявке технику, произошла ошибка, не был получен корректный ответ от сервера. Попробуйте позже, в случае повторной ошибки, сообщите в ИТ-отдел.","OK");
+                                            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка, не был получен корректный ответ от сервера. Попробуйте позже, в случае повторной ошибки, сообщите в ИТ-отдел",Color.Red,LayoutOptions.EndAndExpand),7000));
                                         }
                                         else {
-                                            Toast.MakeText(Android.App.Application.Context,"СОХРАНЕНО",ToastLength.Long).Show();
-                                            //await App.Current.MainPage.Navigation.PopPopupAsync(true);
-                                            App.Current.MainPage = new ServiceOrdersPage(vm);
+                                            await App.Current.MainPage.Navigation.PopPopupAsync(false);
+                                            //Toast.MakeText(Android.App.Application.Context,"СОХРАНЕНО",ToastLength.Long).Show();
+                                            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Заключение и время ухода сохранены",Color.Green,LayoutOptions.EndAndExpand),4000));
+
+                                            App.Current.MainPage = new ServiceOrdersPage(new ServiceOrdersPageViewModel(Servicemans,Mounters));
                                         }
                                     }
                                     Analytics.TrackEvent("Попытка получения координат (Перенос/Отмена)");
@@ -652,7 +659,8 @@ namespace MounterApp.ViewModel {
                                             {"name",Servicemans.First().NewName },
                                             {"PermissionStatus",status.ToString()}
                                         });
-                                        await Application.Current.MainPage.DisplayAlert("Ошибка","Ошибка при попытке сохранения","OK");
+                                        //await Application.Current.MainPage.DisplayAlert("Ошибка","Ошибка при попытке сохранения","OK");
+                                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Ошибка при попытке сохранения",Color.Red,LayoutOptions.EndAndExpand),4000));
                                         OpacityForm = 1;
                                         IndicatorVisible = false;
                                         return;
@@ -702,7 +710,7 @@ namespace MounterApp.ViewModel {
                                         return;
                                     }
                                 }
-                                await App.Current.MainPage.Navigation.PopPopupAsync(false);
+                                //await App.Current.MainPage.Navigation.PopPopupAsync(false);
                                 App.Current.MainPage = new ServiceOrdersPage(vm);
                             }
                             else
@@ -759,7 +767,8 @@ namespace MounterApp.ViewModel {
                                             await Application.Current.MainPage.DisplayAlert("Ошибка","При сохранении информации о заявке технику, произошла ошибка, не был получен корректный ответ от сервера. Попробуйте позже, в случае повторной ошибки, сообщите в ИТ-отдел.","OK");
                                         }
                                         else {
-                                            Toast.MakeText(Android.App.Application.Context,"СОХРАНЕНО",ToastLength.Long).Show();
+                                            //Toast.MakeText(Android.App.Application.Context,"СОХРАНЕНО",ToastLength.Long).Show();
+                                            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Заключение и время ухода сохранены",Color.Green,LayoutOptions.EndAndExpand),4000));
                                             //await App.Current.MainPage.Navigation.PopPopupAsync(true);
                                             App.Current.MainPage = new ServiceOrdersPage(vm);
                                         }
@@ -857,9 +866,10 @@ namespace MounterApp.ViewModel {
                     }
                 }
                 else
-                    await Application.Current.MainPage.DisplayAlert("Ошибка","Не выбрана причина отмены(переноса), не указан комментарий к причине или заключение по заявке пустое","OK");
-                await App.Current.MainPage.Navigation.PopPopupAsync(false);
-                App.Current.MainPage = new ServiceOrdersPage(vm);
+                    //await Application.Current.MainPage.DisplayAlert("Ошибка","Не выбрана причина отмены(переноса), не указан комментарий к причине или заключение по заявке пустое","OK");
+                await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Заключение по заявке не может быть пустым",Color.Red,LayoutOptions.EndAndExpand),7000));
+                //await App.Current.MainPage.Navigation.PopPopupAsync(false);
+                //App.Current.MainPage = new ServiceOrdersPage(vm);
                 IsLoading(false);
             });
         }

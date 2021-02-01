@@ -74,41 +74,41 @@ namespace MounterApp.ViewModel {
             FireAlarmOtherServiceOrderVisible = false;
 
             #region Данный код прекрасно мог бы обновлять заявки в фоне, но иногда он крашится, из-за коллекции
-            //Device.StartTimer(TimeSpan.FromMinutes(1),() => {
-            //    Task.Run(async () => {
-            //        try {
-            //            if(ServiceOrdersByTime != null)
-            //                if(ServiceOrdersByTime.Any()) {
-            //                    int count_time = ServiceOrdersByTime.Count;
-            //                }
-            //            if(ServiceOrders != null)
-            //                if(ServiceOrders.Any()) {
-            //                    int count_ordr = ServiceOrders.Count;
-            //                }
-            //            if(ServiceOrderByTransfer != null)
-            //                if(ServiceOrderByTransfer.Any()) {
-            //                    int count_transfer = ServiceOrderByTransfer.Count;
-            //                }
-            //            FireAlarmOtherServiceOrderExpanded = true;
-            //            FireAlarmServiceOrderExpanded = true;
-            //            FireAlarmTimeServiceOrderExpanded = true;
-            //            FireAlarmTransferServiceOrderExpanded = true;
-            //            OtherServiceOrderExpanded = true;
-            //            ServiceOrderExpanded = true;
-            //            TimeServiceOrderExpanded = true;
-            //            TransferServiceOrderExpanded = true;
-            //            await GetServiceOrders.ExecuteAsync(Servicemans);
-            //            await GetServiceOrderByTransfer.ExecuteAsync(Servicemans);
-            //            await GetServiceOrdersFireAlarm.ExecuteAsync(Servicemans);
-            //            await GetServiceOrderByTransferFireAlarm.ExecuteAsync(Servicemans);
-            //        }
-            //        catch { }
-            //        //if (count_time< ServiceOrdersByTime.Count || count_ordr< ServiceOrders.Count || count_transfer< ServiceOrderByTransfer.Count) { }
-            //    });
-            //    return true; //use this to run continuously 
-            //                 //return false; //to stop running continuously 
+            Device.StartTimer(TimeSpan.FromMinutes(1),() => {
+                Task.Run(async () => {
+                    try {
+                        if(ServiceOrdersByTime != null)
+                            if(ServiceOrdersByTime.Any()) {
+                                int count_time = ServiceOrdersByTime.Count;
+                            }
+                        if(ServiceOrders != null)
+                            if(ServiceOrders.Any()) {
+                                int count_ordr = ServiceOrders.Count;
+                            }
+                        if(ServiceOrderByTransfer != null)
+                            if(ServiceOrderByTransfer.Any()) {
+                                int count_transfer = ServiceOrderByTransfer.Count;
+                            }
+                        FireAlarmOtherServiceOrderExpanded = true;
+                        FireAlarmServiceOrderExpanded = true;
+                        FireAlarmTimeServiceOrderExpanded = true;
+                        FireAlarmTransferServiceOrderExpanded = true;
+                        OtherServiceOrderExpanded = true;
+                        ServiceOrderExpanded = true;
+                        TimeServiceOrderExpanded = true;
+                        TransferServiceOrderExpanded = true;
+                        GetServiceOrders.Execute(Servicemans);
+                        GetServiceOrderByTransfer.Execute(Servicemans);
+                        GetServiceOrdersFireAlarm.Execute(Servicemans);
+                        GetServiceOrderByTransferFireAlarm.Execute(Servicemans);
+                    }
+                    catch { }
+                    //if (count_time< ServiceOrdersByTime.Count || count_ordr< ServiceOrders.Count || count_transfer< ServiceOrderByTransfer.Count) { }
+                });
+                return true; //use this to run continuously 
+                             //return false; //to stop running continuously 
 
-            //    });
+            });
             #endregion
         }
 
@@ -1075,7 +1075,8 @@ namespace MounterApp.ViewModel {
                     OpacityForm = 1;
                 }
                 else {
-                    await Application.Current.MainPage.DisplayAlert("Ошибка","Фотография не найдена!","OK");
+                    //await Application.Current.MainPage.DisplayAlert("Ошибка","Фотография не найдена!","OK");
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Фотография не найдена",Color.Red,LayoutOptions.EndAndExpand),4000));
                     IndicatorVisible = false;
                     OpacityForm = 1;
                 }
@@ -1103,7 +1104,8 @@ namespace MounterApp.ViewModel {
                     OpacityForm = 1;
                 }
                 else {
-                    await Application.Current.MainPage.DisplayAlert("Ошибка","Фотография не найдена!","OK");
+                    //await Application.Current.MainPage.DisplayAlert("Ошибка","Фотография не найдена!","OK");
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Фотография не найдена",Color.Red,LayoutOptions.EndAndExpand),4000));
                     IndicatorVisible = false;
                     OpacityForm = 1;
                 }

@@ -360,7 +360,8 @@ namespace MounterApp.ViewModel {
                                             Path = path.PathToSave.ToString().Replace("C:\\","\\\\SQL-SERVICE\\");
                                         }
                                         if(response.StatusCode.ToString() != "OK") {
-                                            await Application.Current.MainPage.DisplayAlert("Ошибка (Фото не было загружено)",response.Content.ReadAsStringAsync().Result,"OK");
+                                            //await Application.Current.MainPage.DisplayAlert("Ошибка (Фото не было загружено)",response.Content.ReadAsStringAsync().Result,"OK");
+                                            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Ошибка при загрузке фото",Color.Red,LayoutOptions.EndAndExpand),4000));
                                             error = true;
                                             Crashes.TrackError(new Exception("Ошибка отправки фото на сервер"),
                                                 new Dictionary<string,string> {
@@ -388,7 +389,8 @@ namespace MounterApp.ViewModel {
                                             {"ObjectNumber",Mount.ObjectNumber.ToString() },
                                             {"DateSended",Mount.DateSended.ToString() }
                                         });
-                                        Toast.MakeText(Android.App.Application.Context,"Данные сохранены",ToastLength.Long).Show();
+                                        //Toast.MakeText(Android.App.Application.Context,"Данные сохранены",ToastLength.Long).Show();
+                                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Сохранение в локальной базе. Успешно.",Color.Green,LayoutOptions.EndAndExpand),4000));
                                         Analytics.TrackEvent("Отправка монтажа на сервер. Успешно",
                                             new Dictionary<string,string> { { "Mount",Mount.ObjectNumber } });
                                         IndicatorText = "Подождите, идет загрузка..." + Environment.NewLine + "Отправка уведомления для операторов";
@@ -402,9 +404,11 @@ namespace MounterApp.ViewModel {
                                         WriteCoordinates.Execute(null);
                                         WriteDriveways.Execute(null);
                                         if(IsSuccessSendEvents && IsSuccessWriteWebLink)
-                                            Toast.MakeText(Android.App.Application.Context,"Монтаж отправлен, данные получены оператором",ToastLength.Long).Show();
+                                            //Toast.MakeText(Android.App.Application.Context,"Монтаж отправлен, данные получены оператором",ToastLength.Long).Show();
+                                            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Монтаж отправлен, данные получены оператором",Color.Green,LayoutOptions.EndAndExpand),4000));
                                         else {
-                                            Toast.MakeText(Android.App.Application.Context,"Монтаж отправлен, данные получены оператором",ToastLength.Long).Show();
+                                            //Toast.MakeText(Android.App.Application.Context,"Монтаж отправлен, данные получены оператором",ToastLength.Long).Show();
+                                            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Монтаж отправлен, данные получены оператором",Color.Green,LayoutOptions.EndAndExpand),4000));
                                             Analytics.TrackEvent("Ошибка при отправке монтажа, не получилось записать ссылку, координаты, маршрут или отправить событие",
                                             new Dictionary<string,string> {
                                                 {"IsSuccessSendEvents",IsSuccessSendEvents.ToString() },
@@ -419,19 +423,23 @@ namespace MounterApp.ViewModel {
                                 }
                             }
                             else {
-                                await Application.Current.MainPage.DisplayAlert("Ошибка","Не все обязательные фото были сделаны","OK");
+                                //await Application.Current.MainPage.DisplayAlert("Ошибка","Не все обязательные фото были сделаны","OK");
+                                await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Не все обязательные фото были сделаны",Color.Red,LayoutOptions.EndAndExpand),4000));
                                 Analytics.TrackEvent("Ошибка. Количество фото");
                             }
                         else {
-                            await Application.Current.MainPage.DisplayAlert("Ошибка","Адрес объекта не может быть пустым","OK");
+                            //await Application.Current.MainPage.DisplayAlert("Ошибка","Адрес объекта не может быть пустым","OK");
+                            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Адрес объекта не может быть пустым",Color.Red,LayoutOptions.EndAndExpand),4000));
                             Analytics.TrackEvent("Ошибка. Адрес объекта");
                         }
                     else {
-                        await Application.Current.MainPage.DisplayAlert("Ошибка","Название объекта не может быть пустым","OK");
+                        //await Application.Current.MainPage.DisplayAlert("Ошибка","Название объекта не может быть пустым","OK");
+                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Название объекта не может быть пустым",Color.Red,LayoutOptions.EndAndExpand),4000));
                         Analytics.TrackEvent("Ошибка. Название объекта");
                     }
                 else {
-                    await Application.Current.MainPage.DisplayAlert("Ошибка","Номер объекта не может быть пустым","OK");
+                    //await Application.Current.MainPage.DisplayAlert("Ошибка","Номер объекта не может быть пустым","OK");
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Номер объекта не может быть пустым",Color.Red,LayoutOptions.EndAndExpand),4000));
                     Analytics.TrackEvent("Ошибка. Номер объекта");
                 }
                 Opacity = 1;
@@ -535,9 +543,10 @@ namespace MounterApp.ViewModel {
                             { "ResponseStatusCode",responseEvents.StatusCode.ToString() }
                         });
                         IsSuccessSendEvents = false;
-                        await Application.Current.MainPage.DisplayAlert("Внимание"
-                            ,"От сервера не был получен корректный ответ. Доставка обходного до оператора не может быть гарантирована. Рекомендуется уточнить информацию у оператора по номеру объекта"
-                            ,"OK");
+                        //await Application.Current.MainPage.DisplayAlert("Внимание"
+                        //    ,"От сервера не был получен корректный ответ. Доставка обходного до оператора не может быть гарантирована. Рекомендуется уточнить информацию у оператора по номеру объекта"
+                        //    ,"OK");
+                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("От сервера не был получен корректный ответ. Доставка обходного до оператора не может быть гарантирована.",Color.Red,LayoutOptions.EndAndExpand),4000));
                     }
                 }
             });
@@ -585,7 +594,8 @@ namespace MounterApp.ViewModel {
                         }
                         App.Database.SaveMount(mount);
                         Analytics.TrackEvent("Монтаж сохранен в локальной базе");
-                        Toast.MakeText(Android.App.Application.Context,"Данные сохранены",ToastLength.Long).Show();
+                        //Toast.MakeText(Android.App.Application.Context,"Данные сохранены",ToastLength.Long).Show(); 
+                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Сохранение в локальной базе. Успешно.",Color.Green,LayoutOptions.EndAndExpand),4000));
                     }
                     else {
                         Mount.State = 0;
@@ -617,7 +627,8 @@ namespace MounterApp.ViewModel {
                         }
                         App.Database.SaveUpdateMount(Mount);
                         Analytics.TrackEvent("Монтаж обновлен в локальной базе");
-                        Toast.MakeText(Android.App.Application.Context,"Данные сохранены",ToastLength.Long).Show();
+                        //Toast.MakeText(Android.App.Application.Context,"Данные сохранены",ToastLength.Long).Show();
+                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Сохранение в локальной базе. Успешно.",Color.Green,LayoutOptions.EndAndExpand),4000));
                     }
                 }
                 else {
@@ -654,7 +665,8 @@ namespace MounterApp.ViewModel {
                         }
                         App.Database.SaveMount(mount);
                         Analytics.TrackEvent("Монтаж сохранен в локальной базе");
-                        Toast.MakeText(Android.App.Application.Context,"Данные сохранены",ToastLength.Long).Show();
+                        //Toast.MakeText(Android.App.Application.Context,"Данные сохранены",ToastLength.Long).Show();
+                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Сохранение в локальной базе. Успешно.",Color.Green,LayoutOptions.EndAndExpand),4000));
                     }
                 }
                 //}
@@ -684,7 +696,7 @@ namespace MounterApp.ViewModel {
         private RelayCommand _TakePhotoCommand;
         public RelayCommand TakePhotoCommand {
             get => _TakePhotoCommand ??= new RelayCommand(async obj => {
-                Analytics.TrackEvent("Сохарянем данные по монтажу в памяти приложения, и переходим к добавлению фото, чтобы после не вбивать данные заного",
+                Analytics.TrackEvent("Сохраняем данные по монтажу в памяти приложения, и переходим к добавлению фото, чтобы после не вбивать данные заного",
                 new Dictionary<string,string> {
                     {"MounterPhone",Mounters.FirstOrDefault().NewPhone },
                     {"ObjectNumber",ObjectNumber }

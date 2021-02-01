@@ -423,7 +423,8 @@ namespace MounterApp.ViewModel {
                             List<Mounts> _ntMounts = new List<Mounts>();
                             _ntMounts = App.Database.GetMounts().Where(x => x.State == 0 && x.MounterID == Mounters.FirstOrDefault().NewMounterId).ToList();
                             HeaderNotSended = "Неотправленные (" + _ntMounts.Count.ToString() + ")";
-                            Toast.MakeText(Android.App.Application.Context,"Монтаж удален из локальной базы",ToastLength.Long).Show();
+                            //Toast.MakeText(Android.App.Application.Context,"Монтаж удален из локальной базы",ToastLength.Long).Show();
+                            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Монтаж удален из локальной базы",Color.Green,LayoutOptions.EndAndExpand),4000));
                         }
                     }
                 }

@@ -4,6 +4,7 @@ using Microsoft.AppCenter.Crashes;
 using MounterApp.Helpers;
 using MounterApp.Model;
 using MounterApp.Properties;
+using MounterApp.Views;
 using Newtonsoft.Json;
 using Rg.Plugins.Popup.Extensions;
 using System;
@@ -14,7 +15,7 @@ using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
-    public class ObjCustsPopupViewModel:BaseViewModel {
+    public class ObjCustsPopupViewModel : BaseViewModel {
         //readonly ClientHttp http = new ClientHttp();
 
         public ObjCustsPopupViewModel(NewServiceorderExtensionBase _serviceorder) {
@@ -112,7 +113,7 @@ namespace MounterApp.ViewModel {
             }
         }
 
-        private ObservableCollection<ObjCust> _CutomersCollection=new ObservableCollection<ObjCust>();
+        private ObservableCollection<ObjCust> _CutomersCollection = new ObservableCollection<ObjCust>();
         public ObservableCollection<ObjCust> CutomersCollection {
             get => _CutomersCollection;
             set {
@@ -138,16 +139,21 @@ namespace MounterApp.ViewModel {
         private RelayCommand _CallCustomer;
         public RelayCommand CallCustomer {
             get => _CallCustomer ??= new RelayCommand(async obj => {
-                if(!string.IsNullOrEmpty(obj.ToString())) {
-                    Analytics.TrackEvent("Звонок клиенту",
-                        new Dictionary<string,string> {
+                if(obj != null)
+                    if(!string.IsNullOrEmpty(obj.ToString())) {
+                        Analytics.TrackEvent("Звонок клиенту",
+                            new Dictionary<string,string> {
                         {"PhoneNumber",obj.ToString() }
-                        });
-                    Uri uri = new Uri("tel:" + obj);
-                    await Launcher.OpenAsync(uri);
-                }
+                            });
+                        Uri uri = new Uri("tel:" + obj);
+                        await Launcher.OpenAsync(uri);
+                    }
+                    else
+                        //Toast.MakeText(Android.App.Application.Context,"Номер телефона не указан",ToastLength.Long).Show(); 
+                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Номер телефона не указан или не корректный",Color.Red,LayoutOptions.EndAndExpand),4000));
                 else
-                    Toast.MakeText(Android.App.Application.Context,"Номер телефона не указан",ToastLength.Long).Show();
+                    //Toast.MakeText(Android.App.Application.Context,"Номер телефона не указан",ToastLength.Long).Show();
+                await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Номер телефона не указан или не корректный",Color.Red,LayoutOptions.EndAndExpand),4000));
             });
         }
 
