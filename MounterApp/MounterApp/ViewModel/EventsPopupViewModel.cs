@@ -59,18 +59,23 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetEvents2;
         public RelayCommand GetEvents2 {
             get => _GetEvents2 ??= new RelayCommand(async obj => {
-                using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                    client.DefaultRequestHeaders.Clear();
-                    client.DefaultRequestHeaders.ConnectionClose = true;
-                    client.DefaultRequestHeaders.ExpectContinue = false;
-                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/events?objNumber=" + ObjectNumber +
+                //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                //    client.DefaultRequestHeaders.Clear();
+                //    client.DefaultRequestHeaders.ConnectionClose = true;
+                //    client.DefaultRequestHeaders.ExpectContinue = false;
+                //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/events?objNumber=" + ObjectNumber +
+                //                        "&startDate=" + StartDate +
+                //                        "&endDate=" + EndDate +
+                //                        "&testFiltered=0&doubleFiltered=0");
+                //    if(response.IsSuccessStatusCode) {
+                //        Events = JsonConvert.DeserializeObject<ObservableCollection<GetEventsReceivedFromObject_Result>>(await response.Content.ReadAsStringAsync());
+                //    }
+                //}
+                Events = await ClientHttp.Get<ObservableCollection<GetEventsReceivedFromObject_Result>>("/api/Andromeda/events?objNumber=" + ObjectNumber +
                                         "&startDate=" + StartDate +
                                         "&endDate=" + EndDate +
-                                        "&testFiltered=0&doubleFiltered=0");
-                    if(response.IsSuccessStatusCode) {
-                        Events = JsonConvert.DeserializeObject<ObservableCollection<GetEventsReceivedFromObject_Result>>(await response.Content.ReadAsStringAsync());
-                    }
-                }
+                                        "&testFiltered=0&doubleFiltered=0"
+                                        );
             });
         }
         /// <summary>
@@ -234,18 +239,24 @@ namespace MounterApp.ViewModel {
                     //                        "&startDate=" + StartDate +
                     //                        "&endDate=" + EndDate +
                     //                        "&testFiltered=0&doubleFiltered=0");
-                    using (HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                        client.DefaultRequestHeaders.Clear();
-                        client.DefaultRequestHeaders.ConnectionClose = true;
-                        client.DefaultRequestHeaders.ExpectContinue = false;
-                        HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/events?objNumber=" + obj_number +
-                                            "&startDate=" + StartDate +
-                                            "&endDate=" + EndDate +
-                                            "&testFiltered=0&doubleFiltered=0");
-                        if(response.IsSuccessStatusCode) {
-                            Events= JsonConvert.DeserializeObject<ObservableCollection<GetEventsReceivedFromObject_Result>>(await response.Content.ReadAsStringAsync());
-                        }
-                    }
+
+                    //using (HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                    //    client.DefaultRequestHeaders.Clear();
+                    //    client.DefaultRequestHeaders.ConnectionClose = true;
+                    //    client.DefaultRequestHeaders.ExpectContinue = false;
+                    //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/events?objNumber=" + obj_number +
+                    //                        "&startDate=" + StartDate +
+                    //                        "&endDate=" + EndDate +
+                    //                        "&testFiltered=0&doubleFiltered=0");
+                    //    if(response.IsSuccessStatusCode) {
+                    //        Events= JsonConvert.DeserializeObject<ObservableCollection<GetEventsReceivedFromObject_Result>>(await response.Content.ReadAsStringAsync());
+                    //    }
+                    //}
+                    Events = await ClientHttp.Get<ObservableCollection<GetEventsReceivedFromObject_Result>>("/api/Andromeda/events?objNumber=" + obj_number +
+                                        "&startDate=" + StartDate +
+                                        "&endDate=" + EndDate +
+                                        "&testFiltered=0&doubleFiltered=0"
+                                        );
                 }
                 else {
                     //await Application.Current.MainPage.DisplayAlert("Ошибка","Дата начала не может быть больше или равна дате окончания","OK");

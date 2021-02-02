@@ -254,109 +254,109 @@ namespace MounterApp.ViewModel {
         /// <summary>
         /// Команда для получения списка причин для отмены и переноса заявки технику
         /// </summary>
-        private AsyncCommand _GetReasons;
-        public AsyncCommand GetReasons {
-            get => _GetReasons ??= new AsyncCommand(async () => {
-                //Reasons = await ClientHttp.GetQuery<ObservableCollection<MetadataModel>>("/api/Common/metadata?ColumnName=New_resultid&ObjectName=New_serviceorder");
+        //private AsyncCommand _GetReasons;
+        //public AsyncCommand GetReasons {
+        //    get => _GetReasons ??= new AsyncCommand(async () => {
+        //        //Reasons = await ClientHttp.GetQuery<ObservableCollection<MetadataModel>>("/api/Common/metadata?ColumnName=New_resultid&ObjectName=New_serviceorder");
 
-                Analytics.TrackEvent("Форма закрытия заявок. Получение причин для переноса заявки",
-                new Dictionary<string,string> {
-                    {"Query","Common/metadata?ColumnName=New_resultid&ObjectName=New_serviceorder" }
-                });
-                List<MetadataModel> mm = new List<MetadataModel>();
-                HttpResponseMessage response = null;
-                using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                    response = await client.GetAsync(Resources.BaseAddress + "/api/Common/metadata?ColumnName=New_resultid&ObjectName=New_serviceorder");
-                    if(response != null)
-                        if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                            var resp = response.Content.ReadAsStringAsync().Result;
-                            try {
-                                mm = JsonConvert.DeserializeObject<List<MetadataModel>>(resp);
-                            }
-                            catch(Exception ex) {
-                                mm = null;
-                                Crashes.TrackError(new Exception("Форма закрытия заявок. Ошибка десереализации причин для переноса заявки"),
-                                new Dictionary<string,string> {
-                            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                            {"ErrorMessage",ex.Message },
-                            {"StatusCode",response.StatusCode.ToString() },
-                            {"Response",response.ToString() },
-                            {"Query","Common/metadata?ColumnName=New_resultid&ObjectName=New_serviceorder" }
-                                });
-                            }
-                            if(mm != null) {
-                                Reasons.Clear();
-                                foreach(MetadataModel item in mm)
-                                    Reasons.Add(item);
-                            }
-                            else {
-                                Analytics.TrackEvent("Форма закрытия заявок. Не получен список причин. Список причин пустой");
-                            }
-                        }
-                        else
-                            Crashes.TrackError(new Exception("Форма закрытия заявок. От сервера не получен корректный ответ"),
-                                new Dictionary<string,string> {
-                            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                            {"StatusCode",response.StatusCode.ToString() },
-                            {"Response",response.ToString() },
-                            {"Query","Common/metadata?ColumnName=New_resultid&ObjectName=New_serviceorder" }
-                                });
-                }
-            });
-        }
+        //        Analytics.TrackEvent("Форма закрытия заявок. Получение причин для переноса заявки",
+        //        new Dictionary<string,string> {
+        //            {"Query","Common/metadata?ColumnName=New_resultid&ObjectName=New_serviceorder" }
+        //        });
+        //        List<MetadataModel> mm = new List<MetadataModel>();
+        //        HttpResponseMessage response = null;
+        //        using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+        //            response = await client.GetAsync(Resources.BaseAddress + "/api/Common/metadata?ColumnName=New_resultid&ObjectName=New_serviceorder");
+        //            if(response != null)
+        //                if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+        //                    var resp = response.Content.ReadAsStringAsync().Result;
+        //                    try {
+        //                        mm = JsonConvert.DeserializeObject<List<MetadataModel>>(resp);
+        //                    }
+        //                    catch(Exception ex) {
+        //                        mm = null;
+        //                        Crashes.TrackError(new Exception("Форма закрытия заявок. Ошибка десереализации причин для переноса заявки"),
+        //                        new Dictionary<string,string> {
+        //                    {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+        //                    {"ErrorMessage",ex.Message },
+        //                    {"StatusCode",response.StatusCode.ToString() },
+        //                    {"Response",response.ToString() },
+        //                    {"Query","Common/metadata?ColumnName=New_resultid&ObjectName=New_serviceorder" }
+        //                        });
+        //                    }
+        //                    if(mm != null) {
+        //                        Reasons.Clear();
+        //                        foreach(MetadataModel item in mm)
+        //                            Reasons.Add(item);
+        //                    }
+        //                    else {
+        //                        Analytics.TrackEvent("Форма закрытия заявок. Не получен список причин. Список причин пустой");
+        //                    }
+        //                }
+        //                else
+        //                    Crashes.TrackError(new Exception("Форма закрытия заявок. От сервера не получен корректный ответ"),
+        //                        new Dictionary<string,string> {
+        //                    {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+        //                    {"StatusCode",response.StatusCode.ToString() },
+        //                    {"Response",response.ToString() },
+        //                    {"Query","Common/metadata?ColumnName=New_resultid&ObjectName=New_serviceorder" }
+        //                        });
+        //        }
+        //    });
+        //}
         /// <summary>
         /// Команда для получения списка результатов по заявке
         /// </summary>
-        private AsyncCommand _GetResults;
-        public AsyncCommand GetResults {
-            get => _GetResults ??= new AsyncCommand(async () => {
-                //Results = await ClientHttp.GetQuery<ObservableCollection<MetadataModel>>("/api/Common/metadata?ColumnName=New_result&ObjectName=New_serviceorder");
+        //private AsyncCommand _GetResults;
+        //public AsyncCommand GetResults {
+        //    get => _GetResults ??= new AsyncCommand(async () => {
+        //        //Results = await ClientHttp.GetQuery<ObservableCollection<MetadataModel>>("/api/Common/metadata?ColumnName=New_result&ObjectName=New_serviceorder");
 
-                //Analytics.TrackEvent("Форма закрытия заявок. Получение результата работы по заявке",
-                //new Dictionary<string,string> {
-                //    {"Query","Common/metadata?ColumnName=New_result&ObjectName=New_serviceorder" }
-                //});
-                //HttpResponseMessage response = null;
-                //List<MetadataModel> mm = new List<MetadataModel>();
-                //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                //    response = await client.GetAsync(Resources.BaseAddress + "/api/Common/metadata?ColumnName=New_result&ObjectName=New_serviceorder");
-                //    if(response != null)
-                //        if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                //            var resp = response.Content.ReadAsStringAsync().Result;
-                //            try {
-                //                mm = JsonConvert.DeserializeObject<List<MetadataModel>>(resp);
-                //            }
-                //            catch(Exception ex) {
-                //                mm = null;
-                //                Crashes.TrackError(new Exception("Форма закрытия заявок. Ошибка десереализации результатов по заявке"),
-                //                new Dictionary<string,string> {
-                //            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                //            {"ErrorMessage",ex.Message },
-                //            {"StatusCode",response.StatusCode.ToString() },
-                //            {"Response",response.ToString() },
-                //            {"Query","Common/metadata?ColumnName=New_result&ObjectName=New_serviceorder" }
-                //                });
-                //            }
-                //            if(mm != null) {
-                //                Results.Clear();
-                //                foreach(MetadataModel item in mm)
-                //                    Results.Add(item);
-                //            }
-                //            else {
-                //                Analytics.TrackEvent("Форма закрытия заявок. Не получен список результатов. Список результатов пустой");
-                //            }
-                //        }
-                //        else
-                //            Crashes.TrackError(new Exception("Форма закрытия заявок. От сервера не получен корректный ответ"),
-                //                new Dictionary<string,string> {
-                //            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                //            {"StatusCode",response.StatusCode.ToString() },
-                //            {"Response",response.ToString() },
-                //            {"Query","Common/metadata?ColumnName=New_result&ObjectName=New_serviceorder" }
-                //                });
-                //}
-            });
-        }
+        //        //Analytics.TrackEvent("Форма закрытия заявок. Получение результата работы по заявке",
+        //        //new Dictionary<string,string> {
+        //        //    {"Query","Common/metadata?ColumnName=New_result&ObjectName=New_serviceorder" }
+        //        //});
+        //        //HttpResponseMessage response = null;
+        //        //List<MetadataModel> mm = new List<MetadataModel>();
+        //        //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+        //        //    response = await client.GetAsync(Resources.BaseAddress + "/api/Common/metadata?ColumnName=New_result&ObjectName=New_serviceorder");
+        //        //    if(response != null)
+        //        //        if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+        //        //            var resp = response.Content.ReadAsStringAsync().Result;
+        //        //            try {
+        //        //                mm = JsonConvert.DeserializeObject<List<MetadataModel>>(resp);
+        //        //            }
+        //        //            catch(Exception ex) {
+        //        //                mm = null;
+        //        //                Crashes.TrackError(new Exception("Форма закрытия заявок. Ошибка десереализации результатов по заявке"),
+        //        //                new Dictionary<string,string> {
+        //        //            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+        //        //            {"ErrorMessage",ex.Message },
+        //        //            {"StatusCode",response.StatusCode.ToString() },
+        //        //            {"Response",response.ToString() },
+        //        //            {"Query","Common/metadata?ColumnName=New_result&ObjectName=New_serviceorder" }
+        //        //                });
+        //        //            }
+        //        //            if(mm != null) {
+        //        //                Results.Clear();
+        //        //                foreach(MetadataModel item in mm)
+        //        //                    Results.Add(item);
+        //        //            }
+        //        //            else {
+        //        //                Analytics.TrackEvent("Форма закрытия заявок. Не получен список результатов. Список результатов пустой");
+        //        //            }
+        //        //        }
+        //        //        else
+        //        //            Crashes.TrackError(new Exception("Форма закрытия заявок. От сервера не получен корректный ответ"),
+        //        //                new Dictionary<string,string> {
+        //        //            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+        //        //            {"StatusCode",response.StatusCode.ToString() },
+        //        //            {"Response",response.ToString() },
+        //        //            {"Query","Common/metadata?ColumnName=New_result&ObjectName=New_serviceorder" }
+        //        //                });
+        //        //}
+        //    });
+        //}
         //private bool _IsTransfer;
         //public bool IsTransfer {
         //    get => _IsTransfer;
