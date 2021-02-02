@@ -70,7 +70,6 @@ namespace MounterApp.ViewModel {
                         mounters = JsonConvert.DeserializeObject<List<NewMounterExtensionBase>>(await httpResponse.Content.ReadAsStringAsync());
                     }
                 }
-                //mounters = await ClientHttp.GetQuery<List<NewMounterExtensionBase>>("/api/NewMounterExtensionBases/phone?phone=" + Application.Current.Properties["Phone"].ToString().Substring(1,PhoneNumber.Length - 1)).ConfigureAwait(false);
             });
         }
 
