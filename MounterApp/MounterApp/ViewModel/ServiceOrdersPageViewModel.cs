@@ -366,9 +366,33 @@ namespace MounterApp.ViewModel {
         private RelayCommand _ViewDescriptionServiceOrder;
         public RelayCommand ViewDescriptionServiceOrder {
             get => _ViewDescriptionServiceOrder ??= new RelayCommand(async obj => {
+                //if(obj != null) {
+                //    await Application.Current.MainPage.DisplayAlert("Информация",obj.ToString(),"OK");
+                //}
+                NewServiceorderExtensionBase_ex so = null;
+                NewTest2ExtensionBase_ex fso = null;
                 if(obj != null) {
-                    await Application.Current.MainPage.DisplayAlert("Информация",obj.ToString(),"OK");
+                    if(!string.IsNullOrEmpty(obj.ToString())) {
+                        int? _obj = int.Parse(obj.ToString());
+                        try {
+                            if (ServiceOrders.Count>0)
+                            so = ServiceOrders.First(x => x.NewNumber == _obj);
+                        }
+                        catch {}
+                        try {
+                            if (ServiceOrdersFireAlarm.Count>0)
+                            fso = ServiceOrdersFireAlarm.First(x => x.NewNumber == _obj);
+                        }
+                        catch { }
+                    }
                 }
+                ServiceOrderInfoPopupViewModel vm = null;
+                if (so != null)
+                    vm = new ServiceOrderInfoPopupViewModel(so);
+                if(fso != null)
+                    vm = new ServiceOrderInfoPopupViewModel(fso);
+                await App.Current.MainPage.Navigation.PushPopupAsync(new ServiceOrderInfoPopupPage(vm));
+                //App.Current.MainPage = new ServiceOrderInfoPopupPage(vm);
             });
         }
 
@@ -634,13 +658,13 @@ namespace MounterApp.ViewModel {
                         }
                         else {
                             _serviceorders = null;
-                            Crashes.TrackError(new Exception("Ошибка запроса(Заявки технику - переносы)"),
-                            new Dictionary<string,string> {
-                                {"Servicemans",Servicemans.First().NewPhone },
-                                {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                                {"StatusCode",response.StatusCode.ToString() },
-                                {"Response",response.ToString() }
-                            });
+                            //Crashes.TrackError(new Exception("Ошибка запроса(Заявки технику - переносы)"),
+                            //new Dictionary<string,string> {
+                            //    {"Servicemans",Servicemans.First().NewPhone },
+                            //    {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                            //    {"StatusCode",response.StatusCode.ToString() },
+                            //    {"Response",response.ToString() }
+                            //});
                         }
                     }
                     if(_serviceorders != null) {
@@ -698,13 +722,13 @@ namespace MounterApp.ViewModel {
                     }
                     else {
                         _serviceorders = null;
-                        Crashes.TrackError(new Exception("Ошибка запроса(Заявки технику - переносы)"),
-                        new Dictionary<string,string> {
-                                {"Servicemans",Servicemans.First().NewPhone },
-                                {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                                {"StatusCode",response.StatusCode.ToString() },
-                                {"Response",response.ToString() }
-                        });
+                        //Crashes.TrackError(new Exception("Ошибка запроса(Заявки технику - переносы)"),
+                        //new Dictionary<string,string> {
+                        //        {"Servicemans",Servicemans.First().NewPhone },
+                        //        {"ServerResponse",response.Content.ReadAsStringAsync().Result },
+                        //        {"StatusCode",response.StatusCode.ToString() },
+                        //        {"Response",response.ToString() }
+                        //});
                     }
                     if(_serviceorders != null) {
                         if(ServiceOrderByTransferFireAlarm != null)
@@ -1081,25 +1105,21 @@ namespace MounterApp.ViewModel {
                 ImageSource _is = null;
                 using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
                     HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/download?ObjectNumber=" + obj + "&PhotoType=Вывеска объекта");
-                    //HttpResponseMessage response = await client.GetAsync("http://localhost:60987/api/Common/download?ObjectNumber=" + obj + "&PhotoType=Вывеска объекта");
-                    if(response.IsSuccessStatusCode) {
+                    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
                         var result = await response.Content.ReadAsStringAsync();
-                        _is = ImageSource.FromStream(() => { 
-                            return new MemoryStream(Convert.FromBase64String(result)); 
+                        _is = ImageSource.FromStream(() => {
+                            return new MemoryStream(Convert.FromBase64String(result));
                         });
+                        ImagePopupViewModel vm = new ImagePopupViewModel(_is);
+                        await App.Current.MainPage.Navigation.PushPopupAsync(new ImagePopupPage(vm));
+                        IndicatorVisible = false;
+                        OpacityForm = 1;
                     }
-                }
-                if(_is != null) {
-                    ImagePopupViewModel vm = new ImagePopupViewModel(_is);
-                    await App.Current.MainPage.Navigation.PushPopupAsync(new ImagePopupPage(vm));
-                    IndicatorVisible = false;
-                    OpacityForm = 1;
-                }
-                else {
-                    //await Application.Current.MainPage.DisplayAlert("Ошибка","Фотография не найдена!","OK");
-                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Фотография не найдена",Color.Red,LayoutOptions.EndAndExpand),4000));
-                    IndicatorVisible = false;
-                    OpacityForm = 1;
+                    else {
+                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Фотография не найдена",Color.Red,LayoutOptions.EndAndExpand),4000));
+                        IndicatorVisible = false;
+                        OpacityForm = 1;
+                    }
                 }
             });
         }
@@ -1111,24 +1131,40 @@ namespace MounterApp.ViewModel {
                 ImageSource _is = null;
                 using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
                     HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/download?ObjectNumber=" + obj + "&PhotoType=Схема объекта");
-                    if(response.IsSuccessStatusCode) {
+                    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
                         var result = await response.Content.ReadAsStringAsync();
                         _is = ImageSource.FromStream(() => {
                             return new MemoryStream(Convert.FromBase64String(result));
                         });
+                        ImagePopupViewModel vm = new ImagePopupViewModel(_is);
+                        await App.Current.MainPage.Navigation.PushPopupAsync(new ImagePopupPage(vm));
+                        IndicatorVisible = false;
+                        OpacityForm = 1;
                     }
-                }
-                if(_is != null) {
-                    ImagePopupViewModel vm = new ImagePopupViewModel(_is);
-                    await App.Current.MainPage.Navigation.PushPopupAsync(new ImagePopupPage(vm));
-                    IndicatorVisible = false;
-                    OpacityForm = 1;
-                }
-                else {
-                    //await Application.Current.MainPage.DisplayAlert("Ошибка","Фотография не найдена!","OK");
-                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Фотография не найдена",Color.Red,LayoutOptions.EndAndExpand),4000));
-                    IndicatorVisible = false;
-                    OpacityForm = 1;
+                    else {
+                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Фотография не найдена",Color.Red,LayoutOptions.EndAndExpand),4000));
+                        IndicatorVisible = false;
+                        OpacityForm = 1;
+                    }
+                    //    if(response.IsSuccessStatusCode) {
+                    //        var result = await response.Content.ReadAsStringAsync();
+                    //        _is = ImageSource.FromStream(() => {
+                    //            return new MemoryStream(Convert.FromBase64String(result));
+                    //        });
+                    //    }
+                    //}
+                    //if(_is != null) {
+                    //    ImagePopupViewModel vm = new ImagePopupViewModel(_is);
+                    //    await App.Current.MainPage.Navigation.PushPopupAsync(new ImagePopupPage(vm));
+                    //    IndicatorVisible = false;
+                    //    OpacityForm = 1;
+                    //}
+                    //else {
+                    //    //await Application.Current.MainPage.DisplayAlert("Ошибка","Фотография не найдена!","OK");
+                    //    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Фотография не найдена",Color.Red,LayoutOptions.EndAndExpand),4000));
+                    //    IndicatorVisible = false;
+                    //    OpacityForm = 1;
+                    //}
                 }
             });
         }

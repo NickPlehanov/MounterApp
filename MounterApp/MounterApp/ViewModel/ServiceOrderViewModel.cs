@@ -742,33 +742,34 @@ namespace MounterApp.ViewModel {
                 //ControlTime = inf.ControlTime.ToString();
                 //EventTemplate = inf.EventTemplateName.ToString();
                 //DeviceName = inf.DeviceName.ToString();
-
-                using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/Objinfo?objNumber=" + ServiceOrderID.NewNumber.ToString() + "");
-                    List<Info> obj_info = new List<Info>();
-                    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                        var resp = response.Content.ReadAsStringAsync().Result;
-                        try {
-                            obj_info = JsonConvert.DeserializeObject<List<Info>>(resp);
-                        }
-                        catch(Exception ex) {
-                            obj_info = null;
-                        }
-                        if(obj_info != null) {
-                            if(obj_info.Any<Info>())
-                                foreach(var item in obj_info) {
-                                    ObjectName = item.Name;
-                                    ControlTime = item.ControlTime.ToString();
-                                    EventTemplate = item.EventTemplateName.ToString();
-                                    DeviceName = item.DeviceName.ToString();
+                if(ServiceOrderID.NewNumber.HasValue)
+                    if(!string.IsNullOrEmpty(ServiceOrderID.NewNumber.Value.ToString()))
+                        using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                            HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/Objinfo?objNumber=" + ServiceOrderID.NewNumber.ToString() + "");
+                            List<Info> obj_info = new List<Info>();
+                            if(response.StatusCode.Equals(HttpStatusCode.OK)) {
+                                var resp = response.Content.ReadAsStringAsync().Result;
+                                try {
+                                    obj_info = JsonConvert.DeserializeObject<List<Info>>(resp);
                                 }
+                                catch(Exception ex) {
+                                    obj_info = null;
+                                }
+                                if(obj_info != null) {
+                                    if(obj_info.Any<Info>())
+                                        foreach(var item in obj_info) {
+                                            ObjectName = item.Name;
+                                            ControlTime = item.ControlTime.ToString();
+                                            EventTemplate = item.EventTemplateName.ToString();
+                                            DeviceName = item.DeviceName.ToString();
+                                        }
 
 
-                            //ObjectName = a28Object.Name;
-                            //ControlTime = a28Object.ControlTime.ToString();
+                                    //ObjectName = a28Object.Name;
+                                    //ControlTime = a28Object.ControlTime.ToString();
+                                }
+                            }
                         }
-                    }
-                }
             });
         }
 

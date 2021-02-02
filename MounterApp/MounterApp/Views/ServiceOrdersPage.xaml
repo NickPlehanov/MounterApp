@@ -49,7 +49,7 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
                                 <SwipeView Style="{DynamicResource SwipeViewStyle}">
-                                    <SwipeView.TopItems>
+                                    <!--<SwipeView.TopItems>
                                         <SwipeItems Mode="Execute">
                                             <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=ViewEntraceCommand}"
                                                    CommandParameter="{Binding Path=NewNumber}">
@@ -64,7 +64,7 @@
                                                 <Button Style="{DynamicResource SwipeNavigationButton}" Text="Схема объекта"/>
                                             </SwipeItemView>
                                         </SwipeItems>
-                                    </SwipeView.BottomItems>
+                                    </SwipeView.BottomItems>-->
                                     <SwipeView.LeftItems>
                                         <SwipeItems Mode="Execute">
                                             <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
@@ -108,7 +108,7 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
                                 <SwipeView Style="{DynamicResource SwipeViewStyle}">
-                                    <SwipeView.TopItems>
+                                    <!--<SwipeView.TopItems>
                                         <SwipeItems Mode="Execute">
                                             <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=ViewEntraceCommand}"
                                                    CommandParameter="{Binding Path=NewNumber}">
@@ -123,7 +123,7 @@
                                                 <Button Style="{DynamicResource SwipeNavigationButton}" Text="Схема объекта"/>
                                             </SwipeItemView>
                                         </SwipeItems>
-                                    </SwipeView.BottomItems>
+                                    </SwipeView.BottomItems>-->
                                     <SwipeView.LeftItems>
                                         <SwipeItems Mode="Execute">
                                             <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
@@ -168,7 +168,7 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
                                 <SwipeView Style="{DynamicResource SwipeViewStyle}">
-                                    <SwipeView.TopItems>
+                                    <!--<SwipeView.TopItems>
                                         <SwipeItems Mode="Execute">
                                             <SwipeItemView  Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=ViewEntraceCommand}"
                                                    CommandParameter="{Binding Path=NewNumber}">
@@ -183,7 +183,7 @@
                                                 <Button Style="{DynamicResource SwipePhotoButton}" Text="Схема объекта"/>
                                             </SwipeItemView>
                                         </SwipeItems>
-                                    </SwipeView.BottomItems>
+                                    </SwipeView.BottomItems>-->
                                     <SwipeView.LeftItems>
                                         <SwipeItems Mode="Execute">
                                             <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
@@ -195,7 +195,7 @@
                                     <SwipeView.RightItems>
                                         <SwipeItems Mode="Execute">
                                             <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=ViewDescriptionServiceOrder}"
-                                                   CommandParameter="{Binding Path=NewName}">
+                                                   CommandParameter="{Binding Path=NewNumber}">
                                                 <Button Style="{DynamicResource SwipeOpenButton}" Text="Информация"/>
                                             </SwipeItemView>
                                         </SwipeItems>
@@ -227,7 +227,7 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
                                 <SwipeView Style="{DynamicResource SwipeViewStyle}">
-                                    <SwipeView.TopItems>
+                                    <!--<SwipeView.TopItems>
                                         <SwipeItems Mode="Execute">
                                             <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=ViewEntraceCommand}"
                                                    CommandParameter="{Binding Path=NewNumber}">
@@ -242,7 +242,7 @@
                                                 <Button Style="{DynamicResource SwipeNavigationButton}" Text="Схема объекта"/>
                                             </SwipeItemView>
                                         </SwipeItems>
-                                    </SwipeView.BottomItems>
+                                    </SwipeView.BottomItems>-->
                                     <SwipeView.LeftItems>
                                         <SwipeItems Mode="Execute">
                                             <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
@@ -286,7 +286,7 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
                                 <SwipeView Style="{DynamicResource SwipeViewStyle}">
-                                    <SwipeView.TopItems>
+                                    <!--<SwipeView.TopItems>
                                         <SwipeItems Mode="Execute">
                                             <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=ViewEntraceCommand}"
                                                    CommandParameter="{Binding Path=NewNumber}">
@@ -301,7 +301,7 @@
                                                 <Button Style="{DynamicResource SwipeNavigationButton}" Text="Схема объекта"/>
                                             </SwipeItemView>
                                         </SwipeItems>
-                                    </SwipeView.BottomItems>
+                                    </SwipeView.BottomItems>-->
                                     <SwipeView.LeftItems>
                                         <SwipeItems Mode="Execute">
                                             <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"
@@ -345,7 +345,7 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
                                 <SwipeView Style="{DynamicResource SwipeViewStyle}">
-                                    <SwipeView.TopItems>
+                                    <!--<SwipeView.TopItems>
                                         <SwipeItems Mode="Execute">
                                             <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=ViewEntraceCommand}"
                                                    CommandParameter="{Binding Path=NewNumber}">
@@ -360,7 +360,7 @@
                                                 <Button Style="{DynamicResource SwipeNavigationButton}" Text="Схема объекта"/>
                                             </SwipeItemView>
                                         </SwipeItems>
-                                    </SwipeView.BottomItems>
+                                    </SwipeView.BottomItems>-->
                                     <SwipeView.LeftItems>
                                         <SwipeItems Mode="Execute">
                                             <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceOrdersPageViewModel}}, Path=OpenMapCommand}"

@@ -45,10 +45,11 @@ namespace MounterApp.ViewModel {
             Analytics.TrackEvent("Инициализация окна настроек приложения");
             AppVersions av = new AppVersions();
             Version = null;
-            Version = "Версия приложения: "+av.GetVersionAndBuildNumber().VersionNumber;
-            BuildNumber = "Сборка приложения: "+av.GetVersionAndBuildNumber().BuildNumber;
+            Version = "Версия приложения: " + av.GetVersionAndBuildNumber().VersionNumber;
+            BuildNumber = "Сборка приложения: " + av.GetVersionAndBuildNumber().BuildNumber;
             App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
             ReportImage = IconName("report");
+            IsChanged = false;
         }
         private ImageSource _ReportImage;
         public ImageSource ReportImage {
@@ -63,6 +64,8 @@ namespace MounterApp.ViewModel {
         public double? AutoUpdateTime {
             get => _AutoUpdateTime;
             set {
+                if(_AutoUpdateTime != value)
+                    IsChanged = true;
                 _AutoUpdateTime = value;
                 OnPropertyChanged(nameof(AutoUpdateTime));
             }
@@ -171,16 +174,19 @@ namespace MounterApp.ViewModel {
             get => _ClearDatabaseCommand ??= new RelayCommand(async obj => {
                 bool result = await Application.Current.MainPage.DisplayAlert("Удаление","Вы действительно хотите очистить базу данных?","Да","Нет");
                 if(result) {
-                    Toast.MakeText(Android.App.Application.Context,"Очищено объектов: " + App.Database.ClearDatabase().ToString(),ToastLength.Long).Show();
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Очищено объектов: " + App.Database.ClearDatabase().ToString(),Color.Green,LayoutOptions.EndAndExpand),4000));
+                    //Toast.MakeText(Android.App.Application.Context,"Очищено объектов: " + App.Database.ClearDatabase().ToString(),ToastLength.Long).Show();
                     Analytics.TrackEvent("Очистка локальной базы данных объектов");
                 }
                 ClearDatabaseCommand.ChangeCanExecute();
-            },obj=>App.Database.GetCount()>0);
+            },obj => App.Database.GetCount() > 0);
         }
         private int _Quality;
         public int Quality {
             get => _Quality;
             set {
+                if(_Quality != value)
+                    IsChanged = true;
                 _Quality = value;
                 OnPropertyChanged(nameof(Quality));
             }
@@ -199,16 +205,41 @@ namespace MounterApp.ViewModel {
         public bool AutoEnter {
             get => _AutoEnter;
             set {
+                if(_AutoEnter != value)
+                    IsChanged = true;
                 _AutoEnter = value;
                 OnPropertyChanged(nameof(AutoEnter));
+            }
+        }
+
+        private bool _IsChanged;
+        public bool IsChanged {
+            get => _IsChanged;
+            set {
+                _IsChanged = value;
+                OnPropertyChanged(nameof(IsChanged));
             }
         }
 
         private RelayCommand _BackPressCommand;
         public RelayCommand BackPressCommand {
             get => _BackPressCommand ??= new RelayCommand(async obj => {
-                MainMenuPageViewModel vm = new MainMenuPageViewModel(Mounters,Servicemans);
-                App.Current.MainPage = new MainMenuPage(vm);
+                if(IsChanged) {
+                    bool result = await Application.Current.MainPage.DisplayAlert("Внимание","Внесены изменения в настройки, Сохранить?","Да","Нет");
+                    if(result) 
+                        SaveCommand.Execute(null);
+                    
+                    //else {
+                    //    MainMenuPageViewModel vm = new MainMenuPageViewModel(Mounters,Servicemans);
+                    //    App.Current.MainPage = new MainMenuPage(vm);
+                    //}
+                }
+                //else {
+                //    MainMenuPageViewModel vm = new MainMenuPageViewModel(Mounters,Servicemans);
+                //    App.Current.MainPage = new MainMenuPage(vm);
+                //}
+                //MainMenuPageViewModel vm = new MainMenuPageViewModel(Mounters,Servicemans);
+                App.Current.MainPage = new MainMenuPage(new MainMenuPageViewModel(Mounters,Servicemans));
             });
         }
 
@@ -220,7 +251,8 @@ namespace MounterApp.ViewModel {
                 //Application.Current.Properties["Compression"] = Compression;
                 Application.Current.Properties["AutoUpdateTime"] = AutoUpdateTime;
                 await Application.Current.SavePropertiesAsync();
-                Toast.MakeText(Android.App.Application.Context,"Настройки успешно сохранены",ToastLength.Long).Show();
+                //Toast.MakeText(Android.App.Application.Context,"Настройки успешно сохранены",ToastLength.Long).Show();
+                await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Настройки успешно сохранены",Color.Green,LayoutOptions.EndAndExpand),4000));
                 Dictionary<string,string> parameters = new Dictionary<string,string> {
                      { "MounterPhone",Mounters!=null ? Mounters.Count()>0 ? Mounters.First().NewPhone:"":"" },
                      { "ServicemanPhone",Servicemans!=null ? Servicemans.Count()>0 ? Servicemans.First().NewPhone:"":"" },
@@ -230,7 +262,8 @@ namespace MounterApp.ViewModel {
                      { "Events","Сохранение локальных настроек приложения" }
                 };
                 Analytics.TrackEvent("Сохранение локальных настроек приложения",parameters);
-                BackPressCommand.Execute(null);
+                IsChanged = false;
+                //BackPressCommand.Execute(null);
             });
         }
 
