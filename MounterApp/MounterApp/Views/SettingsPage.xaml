@@ -1,5 +1,5 @@
 ﻿<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:controls="clr-namespace:MounterApp.Helpers.Controls"
              x:Class="MounterApp.Views.SettingsPage">
     <ContentPage.Content>
         <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
@@ -24,10 +24,10 @@
                 <CheckBox Style="{DynamicResource CheckBoxStyle}" Grid.Column="0" Grid.Row="0" IsChecked="{Binding AutoEnter}" />
                 <Label Grid.Column="1" Grid.Row="0" Text="Автоматический вход" Style="{DynamicResource MountersLabelStyle}"/>
 
-                <Entry Grid.Column="0" Grid.Row="1" Keyboard="Numeric" Text="{Binding Quality}" Style="{DynamicResource EntryStyle}"/>
+                <controls:CustomEntry Grid.Column="0" Grid.Row="1" MaxValue="100" MinValue="0" Keyboard="Numeric" Text="{Binding Quality}" Style="{DynamicResource EntryStyle}"/>
                 <Label Grid.Column="1" Grid.Row="1" Text="Качество фото" Style="{DynamicResource MountersLabelStyle}"/>
 
-                <Entry Grid.Column="0" Grid.Row="2" Keyboard="Numeric" Text="{Binding AutoUpdateTime}" Style="{DynamicResource EntryStyle}"/>
+                <controls:CustomEntry Grid.Column="0" IsNumeric="true" MaxLength="2" Grid.Row="2" MaxValue="60" MinValue="0" Keyboard="Numeric" Text="{Binding AutoUpdateTime}" Style="{DynamicResource EntryStyle}"/>
                 <Label Grid.Column="1" Grid.Row="2" Text="Время автоматического обновления заявок" Style="{DynamicResource MountersLabelStyle}"/>
 
                 <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding ClearImage}" Grid.ColumnSpan="2" Grid.Row="3" Text="Очистить локальную базу монтажей" Command="{Binding ClearDatabaseCommand}"/>
