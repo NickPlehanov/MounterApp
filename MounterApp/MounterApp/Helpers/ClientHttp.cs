@@ -56,5 +56,16 @@ namespace MounterApp.Helpers {
             else
                 return null;
         }
+        public static async Task<HttpStatusCode> Put(string query,HttpContent content) {
+            client.DefaultRequestHeaders.Clear();
+            client.DefaultRequestHeaders.ConnectionClose = true;
+            client.DefaultRequestHeaders.ExpectContinue = false;
+            HttpResponseMessage httpResponse = await client.PutAsync(Resources.BaseAddress + query,content);
+            return httpResponse.StatusCode;
+            //if(httpResponse.IsSuccessStatusCode)
+            //    return await httpResponse.Content.ReadAsStringAsync();
+            //else
+            //    return null;
+        }
     }
 }
