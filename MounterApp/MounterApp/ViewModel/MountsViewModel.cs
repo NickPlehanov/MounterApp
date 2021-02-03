@@ -285,7 +285,7 @@ namespace MounterApp.ViewModel {
                         GoogleMounts = JsonConvert.DeserializeObject<ObservableCollection<GoogleMountModel>>(await response.Content.ReadAsStringAsync());
                     }
                 }
-                GoogleMountsExpander = GoogleMounts != null ? false : GoogleMounts.Count > 0;
+                GoogleMountsExpander = GoogleMounts != null;
 
                 //using HttpClient client = new HttpClient(GetHttpClientHandler());
                 //try {
