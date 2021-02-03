@@ -373,25 +373,30 @@ namespace MounterApp.ViewModel {
                 NewTest2ExtensionBase_ex fso = null;
                 if(obj != null) {
                     if(!string.IsNullOrEmpty(obj.ToString())) {
-                        int? _obj = int.Parse(obj.ToString());
-                        try {
-                            if (ServiceOrders.Count>0)
-                            so = ServiceOrders.First(x => x.NewNumber == _obj);
+                        //int? _obj = int.Parse(obj.ToString());
+                        int? _obj = int.TryParse(obj.ToString(),out _) ? int.Parse(obj.ToString()) : -1;
+                        if(_obj != -1) {
+                            try {
+                                if(ServiceOrders.Count > 0)
+                                    so = ServiceOrders.First(x => x.NewNumber == _obj);
+                            }
+                            catch { }
+                            try {
+                                if(ServiceOrdersFireAlarm.Count > 0)
+                                    fso = ServiceOrdersFireAlarm.First(x => x.NewNumber == _obj);
+                            }
+                            catch { }
                         }
-                        catch {}
-                        try {
-                            if (ServiceOrdersFireAlarm.Count>0)
-                            fso = ServiceOrdersFireAlarm.First(x => x.NewNumber == _obj);
-                        }
-                        catch { }
                     }
+                    ServiceOrderInfoPopupViewModel vm = null;
+                    if(so != null)
+                        vm = new ServiceOrderInfoPopupViewModel(so);
+                    if(fso != null)
+                        vm = new ServiceOrderInfoPopupViewModel(fso);
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new ServiceOrderInfoPopupPage(vm));
                 }
-                ServiceOrderInfoPopupViewModel vm = null;
-                if (so != null)
-                    vm = new ServiceOrderInfoPopupViewModel(so);
-                if(fso != null)
-                    vm = new ServiceOrderInfoPopupViewModel(fso);
-                await App.Current.MainPage.Navigation.PushPopupAsync(new ServiceOrderInfoPopupPage(vm));
+                else
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Ошибка при получении номера объекта",Color.Red,LayoutOptions.EndAndExpand),4000));
                 //App.Current.MainPage = new ServiceOrderInfoPopupPage(vm);
             });
         }
