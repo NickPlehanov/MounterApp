@@ -92,44 +92,44 @@ namespace MounterApp.ViewModel {
         public RelayCommand AutoUpdateOrdersCommand {
             get => _AutoUpdateOrdersCommand ??= new RelayCommand(async obj => {
                 #region Данный код прекрасно мог бы обновлять заявки в фоне, но иногда он крашится, из-за коллекции
-                if(obj != null) 
-                    if(double.Parse(obj.ToString()) > 0) { 
-                    Device.StartTimer(TimeSpan.FromMinutes(Convert.ToDouble(obj)),() => {
-                        Task.Run(async () => {
-                            try {
-                                if(ServiceOrdersByTime != null)
-                                    if(ServiceOrdersByTime.Any()) {
-                                        int count_time = ServiceOrdersByTime.Count;
-                                    }
-                                if(ServiceOrders != null)
-                                    if(ServiceOrders.Any()) {
-                                        int count_ordr = ServiceOrders.Count;
-                                    }
-                                if(ServiceOrderByTransfer != null)
-                                    if(ServiceOrderByTransfer.Any()) {
-                                        int count_transfer = ServiceOrderByTransfer.Count;
-                                    }
-                                FireAlarmOtherServiceOrderExpanded = true;
-                                FireAlarmServiceOrderExpanded = true;
-                                FireAlarmTimeServiceOrderExpanded = true;
-                                FireAlarmTransferServiceOrderExpanded = true;
-                                OtherServiceOrderExpanded = true;
-                                ServiceOrderExpanded = true;
-                                TimeServiceOrderExpanded = true;
-                                TransferServiceOrderExpanded = true;
-                                GetServiceOrders.Execute(Servicemans);
-                                GetServiceOrderByTransfer.Execute(Servicemans);
-                                GetServiceOrdersFireAlarm.Execute(Servicemans);
-                                GetServiceOrderByTransferFireAlarm.Execute(Servicemans);
-                            }
-                            catch { }
-                            //if (count_time< ServiceOrdersByTime.Count || count_ordr< ServiceOrders.Count || count_transfer< ServiceOrderByTransfer.Count) { }
-                        });
-                        return true; //use this to run continuously 
-                                     //return false; //to stop running continuously 
+                if(obj != null)
+                    if(double.Parse(obj.ToString()) > 0) {
+                        Device.StartTimer(TimeSpan.FromMinutes(Convert.ToDouble(obj)),() => {
+                            Task.Run(async () => {
+                                try {
+                                    if(ServiceOrdersByTime != null)
+                                        if(ServiceOrdersByTime.Any()) {
+                                            int count_time = ServiceOrdersByTime.Count;
+                                        }
+                                    if(ServiceOrders != null)
+                                        if(ServiceOrders.Any()) {
+                                            int count_ordr = ServiceOrders.Count;
+                                        }
+                                    if(ServiceOrderByTransfer != null)
+                                        if(ServiceOrderByTransfer.Any()) {
+                                            int count_transfer = ServiceOrderByTransfer.Count;
+                                        }
+                                    FireAlarmOtherServiceOrderExpanded = true;
+                                    FireAlarmServiceOrderExpanded = true;
+                                    FireAlarmTimeServiceOrderExpanded = true;
+                                    FireAlarmTransferServiceOrderExpanded = true;
+                                    OtherServiceOrderExpanded = true;
+                                    ServiceOrderExpanded = true;
+                                    TimeServiceOrderExpanded = true;
+                                    TransferServiceOrderExpanded = true;
+                                    GetServiceOrders.Execute(Servicemans);
+                                    GetServiceOrderByTransfer.Execute(Servicemans);
+                                    GetServiceOrdersFireAlarm.Execute(Servicemans);
+                                    GetServiceOrderByTransferFireAlarm.Execute(Servicemans);
+                                }
+                                catch { }
+                                //if (count_time< ServiceOrdersByTime.Count || count_ordr< ServiceOrders.Count || count_transfer< ServiceOrderByTransfer.Count) { }
+                            });
+                            return true; //use this to run continuously 
+                                         //return false; //to stop running continuously 
 
-                    });
-                }
+                        });
+                    }
                 #endregion
             });
         }
@@ -406,29 +406,39 @@ namespace MounterApp.ViewModel {
             get => _OpenMapCommand ??= new RelayCommand(async obj => {
                 OpacityForm = 0.1;
                 IndicatorVisible = true;
-                using HttpClient client = new HttpClient(GetHttpClientHandler());
-                if(obj != null) {
-                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/GetObjectInfo?ObjectNumber=" + obj.ToString() + "");
-                    A28Object a28Object = new A28Object();
-                    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                        var resp = response.Content.ReadAsStringAsync().Result;
-                        try {
-                            a28Object = JsonConvert.DeserializeObject<A28Object>(resp);
-                        }
-                        catch {
-                            a28Object = null;
-                        }
+                //using HttpClient client = new HttpClient(GetHttpClientHandler());
+                //if(obj != null) {
+                //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/GetObjectInfo?ObjectNumber=" + obj.ToString() + "");
+                //    A28Object a28Object = new A28Object();
+                //    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                //        var resp = response.Content.ReadAsStringAsync().Result;
+                //        try {
+                //            a28Object = JsonConvert.DeserializeObject<A28Object>(resp);
+                //        }
+                //        catch {
+                //            a28Object = null;
+                //        }
+                //    }
+                //    if(a28Object != null) {
+                //        if(a28Object.Longitude != null && a28Object.Latitude != null) {
+                //            var location = new Location((double)a28Object.Latitude,(double)a28Object.Longitude);
+                //            var options = new MapLaunchOptions { NavigationMode = NavigationMode.Driving };
+                //            await Map.OpenAsync(location,options);
+                //        }
+                //    }
+                //}
+                //else {
+                //    Analytics.TrackEvent("У заявки технику не определен номер объекта, невозможно получить координаты и открыть карту");
+                //}
+
+
+                A28Object a28Object = await ClientHttp.Get<A28Object>("/api/Andromeda/GetObjectInfo?ObjectNumber=" + obj.ToString());
+                if(a28Object != null) {
+                    if(a28Object.Longitude != null && a28Object.Latitude != null) {
+                        var location = new Location((double)a28Object.Latitude,(double)a28Object.Longitude);
+                        var options = new MapLaunchOptions { NavigationMode = NavigationMode.Driving };
+                        await Map.OpenAsync(location,options);
                     }
-                    if(a28Object != null) {
-                        if(a28Object.Longitude != null && a28Object.Latitude != null) {
-                            var location = new Location((double)a28Object.Latitude,(double)a28Object.Longitude);
-                            var options = new MapLaunchOptions { NavigationMode = NavigationMode.Driving };
-                            await Map.OpenAsync(location,options);
-                        }
-                    }
-                }
-                else {
-                    Analytics.TrackEvent("У заявки технику не определен номер объекта, невозможно получить координаты и открыть карту");
                 }
                 OpacityForm = 1;
                 IndicatorVisible = false;
@@ -501,7 +511,7 @@ namespace MounterApp.ViewModel {
                         Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
 
                     //List<NewServiceorderExtensionBase_ex> _serviceorders = new List<NewServiceorderExtensionBase_ex>();
-                    List<NewServiceorderExtensionBase_ex>  _serviceorders = await ClientHttp.Get<List<NewServiceorderExtensionBase_ex>>("/api/NewServiceorderExtensionBases/ServiceOrderByUserNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
+                    List<NewServiceorderExtensionBase_ex> _serviceorders = await ClientHttp.Get<List<NewServiceorderExtensionBase_ex>>("/api/NewServiceorderExtensionBases/ServiceOrderByUserNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
 
                     //using HttpClient client = new HttpClient(GetHttpClientHandler());
                     //HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/ServiceOrderByUserNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
@@ -570,7 +580,7 @@ namespace MounterApp.ViewModel {
                         Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
 
                     //List<NewTest2ExtensionBase_ex> _serviceorders = new List<NewTest2ExtensionBase_ex>();
-                    List<NewTest2ExtensionBase_ex >  _serviceorders = await ClientHttp.Get<List<NewTest2ExtensionBase_ex>>("/api/NewServiceOrderForFireAlarmExtensionBase/ServiceOrderByUserNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
+                    List<NewTest2ExtensionBase_ex> _serviceorders = await ClientHttp.Get<List<NewTest2ExtensionBase_ex>>("/api/NewServiceOrderForFireAlarmExtensionBase/ServiceOrderByUserNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
 
                     //using HttpClient client = new HttpClient(GetHttpClientHandler());
                     //HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceOrderForFireAlarmExtensionBase/ServiceOrderByUserNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
