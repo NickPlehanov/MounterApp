@@ -86,19 +86,20 @@
             </Style>
             <Style x:Key="SwipeNavigationButton" TargetType="Button">
                 <Setter Property="Text" Value="Навигация"/>
-                <Setter Property="BackgroundColor" Value="Red"/>
+                <Setter Property="BackgroundColor" Value="#ec4646"/>
                 <Setter Property="WidthRequest" Value="200"/>
-                <Setter Property="TextColor" Value="{DynamicResource ButtonTextColor}"/>
+                <!--<Setter Property="TextColor" Value="{DynamicResource ButtonTextColor}"/>-->
+                <Setter Property="TextColor" Value="Black"/>
             </Style>
             <Style x:Key="SwipeDeleteButton" TargetType="Button">
                 <Setter Property="Text" Value="Удаление"/>
-                <Setter Property="BackgroundColor" Value="Red"/>
+                <Setter Property="BackgroundColor" Value="#ec4646"/>
                 <Setter Property="WidthRequest" Value="200"/>
                 <Setter Property="TextColor" Value="{DynamicResource ButtonTextColor}"/>
             </Style>
             <Style x:Key="SwipeOpenButton" TargetType="Button">
                 <Setter Property="Text" Value="Открыть"/>
-                <Setter Property="BackgroundColor" Value="Green"/>
+                <Setter Property="BackgroundColor" Value="Aquamarine"/>
                 <Setter Property="WidthRequest" Value="200"/>
                 <Setter Property="TextColor" Value="{DynamicResource ButtonTextColor}"/>
             </Style>

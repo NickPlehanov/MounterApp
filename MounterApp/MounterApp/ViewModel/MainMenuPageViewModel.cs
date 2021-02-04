@@ -31,7 +31,6 @@ namespace MounterApp.ViewModel {
             App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
             CheckVersionApp.Execute(null);
             GetRatingServicemanCommand.Execute(null);
-            //RatingServiceman = "Самое большое количество выполненных заявок" + Environment.NewLine + Environment.NewLine;
         }
 
         private string _RatingServiceman;
@@ -43,7 +42,7 @@ namespace MounterApp.ViewModel {
             }
         }
 
-        private ObservableCollection<RatingServiceman> _Rating=new ObservableCollection<RatingServiceman>();
+        private ObservableCollection<RatingServiceman> _Rating = new ObservableCollection<RatingServiceman>();
         public ObservableCollection<RatingServiceman> Rating {
             get => _Rating;
             set {
@@ -55,21 +54,25 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetRatingServicemanCommand;
         public RelayCommand GetRatingServicemanCommand {
             get => _GetRatingServicemanCommand ??= new RelayCommand(async obj => {
-                using (HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/toptech?date="+DateTime.Now);
-                    if(response.IsSuccessStatusCode) {
-                        if (!string.IsNullOrEmpty(await response.Content.ReadAsStringAsync())){
-                            Rating = JsonConvert.DeserializeObject<ObservableCollection<RatingServiceman>>(await response.Content.ReadAsStringAsync());
-                            if(Rating.Count > 0) {
-                                int cnt = 1;
-                                foreach(var item in Rating.Take(3)) {
-                                    RatingServiceman += cnt.ToString() + ". " + item.ServicemanName + " (" + item.CountOrders + ")"+Environment.NewLine;
-                                    cnt++;
+                if(Serviceman != null)
+                    if(Serviceman.Count > 0)
+                        if(Serviceman.Any(x => x.NewCategory != 2)) {
+                            using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                                HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/toptech?date=" + DateTime.Now);
+                                if(response.IsSuccessStatusCode) {
+                                    if(!string.IsNullOrEmpty(await response.Content.ReadAsStringAsync())) {
+                                        Rating = JsonConvert.DeserializeObject<ObservableCollection<RatingServiceman>>(await response.Content.ReadAsStringAsync());
+                                        if(Rating.Count > 0) {
+                                            int cnt = 1;
+                                            foreach(var item in Rating.Take(3)) {
+                                                RatingServiceman += cnt.ToString() + ". " + item.ServicemanName + " (" + item.CountOrders + ")" + Environment.NewLine;
+                                                cnt++;
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
-                    }
-                }
             });
         }
         /// <summary>
@@ -189,11 +192,11 @@ namespace MounterApp.ViewModel {
 
                 HttpStatusCode code = await ClientHttp.Get("/api/Common/VersionNumber?appVersion=" + Version);
                 //if(code.Equals(HttpStatusCode.OK)) { }
-                if(code.Equals(HttpStatusCode.MethodNotAllowed)) 
+                if(code.Equals(HttpStatusCode.MethodNotAllowed))
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("У Вас установлена не актуальная версия приложения, пожалуйста обновите её",Color.Red,LayoutOptions.EndAndExpand),4000));
             });
         }
-        
+
         /// <summary>
         /// Картинка - Настройки
         /// </summary>

@@ -30,7 +30,7 @@
                 <controls:CustomEntry Grid.Column="0" IsNumeric="true" MaxLength="2" Grid.Row="2" MaxValue="60" MinValue="0" Keyboard="Numeric" Text="{Binding AutoUpdateTime}" Style="{DynamicResource EntryStyle}"/>
                 <Label Grid.Column="1" Grid.Row="2" Text="Время автоматического обновления заявок" Style="{DynamicResource MountersLabelStyle}"/>
 
-                <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding ClearImage}" Grid.ColumnSpan="2" Grid.Row="3" Text="Очистить локальную базу монтажей" Command="{Binding ClearDatabaseCommand}"/>
+                <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding ClearImage}" Grid.ColumnSpan="2" Grid.Row="3" Text="Очистить базу" Command="{Binding ClearDatabaseCommand}"/>
 
                 <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding SaveImage}"  Grid.ColumnSpan="2" Grid.Row="4" Text="Сохранить" Command="{Binding SaveCommand}"/>
                 <Button ImageSource="{Binding ReportImage}" Style="{DynamicResource CommonButtonStyle}" Grid.ColumnSpan="2" Grid.Row="5" Text="Оставить отзыв" Command="{Binding OpenOrdersForItPageCommand}"/>
