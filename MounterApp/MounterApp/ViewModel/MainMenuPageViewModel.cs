@@ -1,5 +1,6 @@
 ﻿using Microsoft.AppCenter.Analytics;
 using MounterApp.Helpers;
+using MounterApp.InternalModel;
 using MounterApp.Model;
 using MounterApp.Properties;
 using MounterApp.Views;
@@ -7,6 +8,7 @@ using Newtonsoft.Json;
 using Rg.Plugins.Popup.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -28,6 +30,47 @@ namespace MounterApp.ViewModel {
             Analytics.TrackEvent("Инициализация окна главного меню приложения");
             App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
             CheckVersionApp.Execute(null);
+            GetRatingServicemanCommand.Execute(null);
+            //RatingServiceman = "Самое большое количество выполненных заявок" + Environment.NewLine + Environment.NewLine;
+        }
+
+        private string _RatingServiceman;
+        public string RatingServiceman {
+            get => _RatingServiceman;
+            set {
+                _RatingServiceman = value;
+                OnPropertyChanged(nameof(RatingServiceman));
+            }
+        }
+
+        private ObservableCollection<RatingServiceman> _Rating=new ObservableCollection<RatingServiceman>();
+        public ObservableCollection<RatingServiceman> Rating {
+            get => _Rating;
+            set {
+                _Rating = value;
+                OnPropertyChanged(nameof(Rating));
+            }
+        }
+
+        private RelayCommand _GetRatingServicemanCommand;
+        public RelayCommand GetRatingServicemanCommand {
+            get => _GetRatingServicemanCommand ??= new RelayCommand(async obj => {
+                using (HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/toptech?date="+DateTime.Now);
+                    if(response.IsSuccessStatusCode) {
+                        if (!string.IsNullOrEmpty(await response.Content.ReadAsStringAsync())){
+                            Rating = JsonConvert.DeserializeObject<ObservableCollection<RatingServiceman>>(await response.Content.ReadAsStringAsync());
+                            if(Rating.Count > 0) {
+                                int cnt = 1;
+                                foreach(var item in Rating.Take(3)) {
+                                    RatingServiceman += cnt.ToString() + ". " + item.ServicemanName + " (" + item.CountOrders + ")"+Environment.NewLine;
+                                    cnt++;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
         }
         /// <summary>
         /// Команда перехода к странице монтажей
