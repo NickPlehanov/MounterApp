@@ -11,8 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Threading;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 using static Xamarin.Essentials.Permissions;
 
@@ -57,38 +55,37 @@ namespace MounterApp.ViewModel {
         }
         List<NewMounterExtensionBase> mounters = new List<NewMounterExtensionBase>();
         List<NewServicemanExtensionBase> servicemans = new List<NewServicemanExtensionBase>();
-        private RelayCommand _GetMounters;
-        public RelayCommand GetMounters {
-            get => _GetMounters ??= new RelayCommand(async obj => {
-                using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                    client.DefaultRequestHeaders.Clear();
-                    client.DefaultRequestHeaders.ConnectionClose = true;
-                    client.DefaultRequestHeaders.ExpectContinue = false;
-                    //HttpResponseMessage httpResponse = await client.GetAsync(Resources.BaseAddress + "/api/NewMounterExtensionBases/phone?phone=" + Application.Current.Properties["Phone"].ToString().Substring(1,PhoneNumber.Length - 1));
-                    HttpResponseMessage httpResponse = await client.GetAsync(Resources.BaseAddress + "/api/NewMounterExtensionBases/phone?phone=" + obj);
-                    if(httpResponse.IsSuccessStatusCode) {
-                        mounters = JsonConvert.DeserializeObject<List<NewMounterExtensionBase>>(await httpResponse.Content.ReadAsStringAsync());
-                    }
-                }
-                //mounters = await ClientHttp.GetQuery<List<NewMounterExtensionBase>>("/api/NewMounterExtensionBases/phone?phone=" + Application.Current.Properties["Phone"].ToString().Substring(1,PhoneNumber.Length - 1)).ConfigureAwait(false);
-            });
-        }
+        //private RelayCommand _GetMounters;
+        //public RelayCommand GetMounters {
+        //    get => _GetMounters ??= new RelayCommand(async obj => {
+        //        using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+        //            client.DefaultRequestHeaders.Clear();
+        //            client.DefaultRequestHeaders.ConnectionClose = true;
+        //            client.DefaultRequestHeaders.ExpectContinue = false;
+        //            //HttpResponseMessage httpResponse = await client.GetAsync(Resources.BaseAddress + "/api/NewMounterExtensionBases/phone?phone=" + Application.Current.Properties["Phone"].ToString().Substring(1,PhoneNumber.Length - 1));
+        //            HttpResponseMessage httpResponse = await client.GetAsync(Resources.BaseAddress + "/api/NewMounterExtensionBases/phone?phone=" + obj);
+        //            if(httpResponse.IsSuccessStatusCode) {
+        //                mounters = JsonConvert.DeserializeObject<List<NewMounterExtensionBase>>(await httpResponse.Content.ReadAsStringAsync());
+        //            }
+        //        }
+        //    });
+        //}
 
-        private RelayCommand _GetServicemans;
-        public RelayCommand GetServicemans {
-            get => _GetServicemans ??= new RelayCommand(async obj => {
-                using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                    client.DefaultRequestHeaders.Clear();
-                    client.DefaultRequestHeaders.ConnectionClose = true;
-                    client.DefaultRequestHeaders.ExpectContinue = false;
-                    HttpResponseMessage httpResponse = await client.GetAsync(Resources.BaseAddress + "/api/NewServicemanExtensionBases/phone?phone=" + obj);
-                    if(httpResponse.IsSuccessStatusCode) {
-                        servicemans = JsonConvert.DeserializeObject<List<NewServicemanExtensionBase>>(await httpResponse.Content.ReadAsStringAsync());
-                    }
-                }
-                //servicemans =await  ClientHttp.GetQuery<List<NewServicemanExtensionBase>>("/api/NewServicemanExtensionBases/phone?phone=" + Application.Current.Properties["Phone"].ToString().Substring(1,PhoneNumber.Length - 1)).ConfigureAwait(false);
-            });
-        }
+        //private RelayCommand _GetServicemans;
+        //public RelayCommand GetServicemans {
+        //    get => _GetServicemans ??= new RelayCommand(async obj => {
+        //        using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+        //            client.DefaultRequestHeaders.Clear();
+        //            client.DefaultRequestHeaders.ConnectionClose = true;
+        //            client.DefaultRequestHeaders.ExpectContinue = false;
+        //            HttpResponseMessage httpResponse = await client.GetAsync(Resources.BaseAddress + "/api/NewServicemanExtensionBases/phone?phone=" + obj);
+        //            if(httpResponse.IsSuccessStatusCode) {
+        //                servicemans = JsonConvert.DeserializeObject<List<NewServicemanExtensionBase>>(await httpResponse.Content.ReadAsStringAsync());
+        //            }
+        //        }
+        //        //servicemans =await  ClientHttp.GetQuery<List<NewServicemanExtensionBase>>("/api/NewServicemanExtensionBases/phone?phone=" + Application.Current.Properties["Phone"].ToString().Substring(1,PhoneNumber.Length - 1)).ConfigureAwait(false);
+        //    });
+        //}
         private RelayCommand _AuthCommand;
         public RelayCommand AuthCommand {
             get => _AuthCommand ??= new RelayCommand(async obj => {
@@ -114,40 +111,45 @@ namespace MounterApp.ViewModel {
                     Analytics.TrackEvent("Сохранение номера телефона в локальную базу данных");
                     Analytics.TrackEvent("Запрос монтажников по номеру телефона");
 
-                    using HttpClient client = new HttpClient(GetHttpClientHandler());
-                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewMounterExtensionBases/phone?phone=" + Phone);
-                    var resp = response.Content.ReadAsStringAsync().Result;
-                    List<NewMounterExtensionBase> mounters = new List<NewMounterExtensionBase>();
-                    try {
-                        if(response.StatusCode.ToString() == "OK") {
-                            Analytics.TrackEvent("Попытка сериализации результата запроса монтажников");
-                            mounters = JsonConvert.DeserializeObject<List<NewMounterExtensionBase>>(resp).Where(x => x.NewIsWorking == true).ToList();
-                        }
-                    }
-                    catch(Exception MountersParseExecption) {
-                        Dictionary<string,string> parameters = new Dictionary<string,string> {
-                            { "Phone",PhoneNumber },
-                            { "Error","Не удалось провести сериализацию объекта монтажники" }
-                        };
-                        Crashes.TrackError(MountersParseExecption,parameters);
-                    }
-                    Analytics.TrackEvent("Запрос техников по номеру телефона");
-                    response = await client.GetAsync(Resources.BaseAddress + "/api/NewServicemanExtensionBases/phone?phone=" + Phone);
-                    resp = response.Content.ReadAsStringAsync().Result;
-                    List<NewServicemanExtensionBase> servicemans = new List<NewServicemanExtensionBase>();
-                    try {
-                        if(response.StatusCode.ToString() == "OK") {
-                            Analytics.TrackEvent("Попытка сериализации результата запроса техников");
-                            servicemans = JsonConvert.DeserializeObject<List<NewServicemanExtensionBase>>(resp).Where(x => x.NewIswork == true).ToList();
-                        }
-                    }
-                    catch(Exception ServicemansParseException) {
-                        Dictionary<string,string> parameters = new Dictionary<string,string> {
-                            { "Phone",PhoneNumber },
-                            { "Error","Не удалось провести сериализацию объекта техники" }
-                        };
-                        Crashes.TrackError(ServicemansParseException,parameters);
-                    }
+                    //using HttpClient client = new HttpClient(GetHttpClientHandler());
+                    //HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewMounterExtensionBases/phone?phone=" + Phone);
+                    //var resp = response.Content.ReadAsStringAsync().Result;
+                    //List<NewMounterExtensionBase> mounters = new List<NewMounterExtensionBase>();
+                    //try {
+                    //    if(response.StatusCode.ToString() == "OK") {
+                    //        Analytics.TrackEvent("Попытка сериализации результата запроса монтажников");
+                    //        mounters = JsonConvert.DeserializeObject<List<NewMounterExtensionBase>>(resp).Where(x => x.NewIsWorking == true).ToList();
+                    //    }
+                    //}
+                    //catch(Exception MountersParseExecption) {
+                    //    Dictionary<string,string> parameters = new Dictionary<string,string> {
+                    //        { "Phone",PhoneNumber },
+                    //        { "Error","Не удалось провести сериализацию объекта монтажники" }
+                    //    };
+                    //    Crashes.TrackError(MountersParseExecption,parameters);
+                    //}
+                    //Analytics.TrackEvent("Запрос техников по номеру телефона");
+                    //response = await client.GetAsync(Resources.BaseAddress + "/api/NewServicemanExtensionBases/phone?phone=" + Phone);
+                    //resp = response.Content.ReadAsStringAsync().Result;
+                    //List<NewServicemanExtensionBase> servicemans = new List<NewServicemanExtensionBase>();
+                    //try {
+                    //    if(response.StatusCode.ToString() == "OK") {
+                    //        Analytics.TrackEvent("Попытка сериализации результата запроса техников");
+                    //        servicemans = JsonConvert.DeserializeObject<List<NewServicemanExtensionBase>>(resp).Where(x => x.NewIswork == true).ToList();
+                    //    }
+                    //}
+                    //catch(Exception ServicemansParseException) {
+                    //    Dictionary<string,string> parameters = new Dictionary<string,string> {
+                    //        { "Phone",PhoneNumber },
+                    //        { "Error","Не удалось провести сериализацию объекта техники" }
+                    //    };
+                    //    Crashes.TrackError(ServicemansParseException,parameters);
+                    //}
+                    mounters = await ClientHttp.Get <List<NewMounterExtensionBase>>("/api/NewMounterExtensionBases/phone?phone=" + Phone);
+                    servicemans = await ClientHttp.Get <List<NewServicemanExtensionBase>>("/api/NewServicemanExtensionBases/phone?phone=" + Phone);
+
+
+
                     //response = await client.GetAsync(Resources.BaseAddress + "/api/Common/download?ObjectNumber=63020&PhotoType=Схема объекта");
                     //var t = 0;
 

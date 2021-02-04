@@ -174,20 +174,26 @@ namespace MounterApp.ViewModel {
                 //    });
                 //}
 
-                using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/VersionNumber?appVersion=" + Version);
-                    if(response != null) {
-                        if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) { }
-                        if(response.StatusCode.Equals(HttpStatusCode.MethodNotAllowed)) {
-                            //await Application.Current.MainPage.DisplayAlert("Информация"
-                            //    ,"У Вас установлена не актуальная версия приложения, пожалуйста обновите её." + Environment.NewLine + Environment.NewLine + "Если Вы не получили ссылку на новую версию, то сообщите свою почту в ИТ-отдел."
-                            //    ,"OK");
-                            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("У Вас установлена не актуальная версия приложения, пожалуйста обновите её",Color.Red,LayoutOptions.EndAndExpand),4000));
-                        }
-                    }
-                }
+                //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/VersionNumber?appVersion=" + Version);
+                //    if(response != null) {
+                //        if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) { }
+                //        if(response.StatusCode.Equals(HttpStatusCode.MethodNotAllowed)) {
+                //            //await Application.Current.MainPage.DisplayAlert("Информация"
+                //            //    ,"У Вас установлена не актуальная версия приложения, пожалуйста обновите её." + Environment.NewLine + Environment.NewLine + "Если Вы не получили ссылку на новую версию, то сообщите свою почту в ИТ-отдел."
+                //            //    ,"OK");
+                //            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("У Вас установлена не актуальная версия приложения, пожалуйста обновите её",Color.Red,LayoutOptions.EndAndExpand),4000));
+                //        }
+                //    }
+                //}
+
+                HttpStatusCode code = await ClientHttp.Get("/api/Common/VersionNumber?appVersion=" + Version);
+                //if(code.Equals(HttpStatusCode.OK)) { }
+                if(code.Equals(HttpStatusCode.MethodNotAllowed)) 
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("У Вас установлена не актуальная версия приложения, пожалуйста обновите её",Color.Red,LayoutOptions.EndAndExpand),4000));
             });
         }
+        
         /// <summary>
         /// Картинка - Настройки
         /// </summary>

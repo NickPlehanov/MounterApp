@@ -276,15 +276,16 @@ namespace MounterApp.ViewModel {
                 IndicatorVisible = true;
                 //GoogleMounts = await ClientHttp.GetQuery<ObservableCollection<GoogleMountModel>>("/api/Common?phone=7" + Mounters.FirstOrDefault().NewPhone + "&date=" + DateTime.Now.Date + "");
                 
-                using (HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                    client.DefaultRequestHeaders.Clear();
-                    client.DefaultRequestHeaders.ConnectionClose = true;
-                    client.DefaultRequestHeaders.ExpectContinue = false;
-                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common?phone=7" + Mounters.FirstOrDefault().NewPhone + "&date=" + DateTime.Now.Date + "");
-                    if(response.IsSuccessStatusCode) {
-                        GoogleMounts = JsonConvert.DeserializeObject<ObservableCollection<GoogleMountModel>>(await response.Content.ReadAsStringAsync());
-                    }
-                }
+                GoogleMounts = await ClientHttp.Get<ObservableCollection<GoogleMountModel>>("/api/Common?phone=7" + Mounters.FirstOrDefault().NewPhone + "&date=" + DateTime.Now.Date + "");
+                //using (HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                //    client.DefaultRequestHeaders.Clear();
+                //    client.DefaultRequestHeaders.ConnectionClose = true;
+                //    client.DefaultRequestHeaders.ExpectContinue = false;
+                //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common?phone=7" + Mounters.FirstOrDefault().NewPhone + "&date=" + DateTime.Now.Date + "");
+                //    if(response.IsSuccessStatusCode) {
+                //        GoogleMounts = JsonConvert.DeserializeObject<ObservableCollection<GoogleMountModel>>(await response.Content.ReadAsStringAsync());
+                //    }
+                //}
                 GoogleMountsExpander = GoogleMounts != null;
 
                 //using HttpClient client = new HttpClient(GetHttpClientHandler());

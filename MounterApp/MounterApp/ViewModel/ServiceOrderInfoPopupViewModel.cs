@@ -131,20 +131,26 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetPhotoEntraceCommand;
         public RelayCommand GetPhotoEntraceCommand {
             get => _GetPhotoEntraceCommand ??= new RelayCommand(async obj => {
-                using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/download?ObjectNumber=" + obj + "&PhotoType=Вывеска объекта");
-                    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                        var result = await response.Content.ReadAsStringAsync();
-                        EntracePhoto = ImageSource.FromStream(() => {
-                            return new MemoryStream(Convert.FromBase64String(result));
-                        });
-                    }
-                    else {
-                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Фотография не найдена",Color.Red,LayoutOptions.EndAndExpand),4000));
-                    }
-                    ShowEntracePhotoCommand.ChangeCanExecute();
-                    AddPhotoCommand.ChangeCanExecute();
-                }
+                //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/download?ObjectNumber=" + obj + "&PhotoType=Вывеска объекта");
+                //    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
+                //        var result = await response.Content.ReadAsStringAsync();
+                //        EntracePhoto = ImageSource.FromStream(() => {
+                //            return new MemoryStream(Convert.FromBase64String(result));
+                //        });
+                //    }
+                //    else
+                //        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Фотография не найдена",Color.Red,LayoutOptions.EndAndExpand),4000));
+                //    ShowEntracePhotoCommand.ChangeCanExecute();
+                //}
+                string result = await ClientHttp.GetPhoto("/api/Common/download?ObjectNumber=" + obj + "&PhotoType=Вывеска объекта");
+                if(!string.IsNullOrEmpty(result))
+                    EntracePhoto = ImageSource.FromStream(() => {
+                        return new MemoryStream(Convert.FromBase64String(result));
+                    });
+                else
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Фотография не найдена",Color.Red,LayoutOptions.EndAndExpand),4000));
+                ShowEntracePhotoCommand.ChangeCanExecute();
             });
         }
 
@@ -162,7 +168,6 @@ namespace MounterApp.ViewModel {
                     else
                         await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Фотография не найдена",Color.Red,LayoutOptions.EndAndExpand),4000));
                     ShowSchemePhotoCommand.ChangeCanExecute();
-                    AddPhotoCommand.ChangeCanExecute();
                 }
             });
         }
