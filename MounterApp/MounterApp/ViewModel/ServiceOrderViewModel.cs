@@ -388,13 +388,15 @@ namespace MounterApp.ViewModel {
                 //NewGuardObjectExtensionBase goeb;
                 ////goeb = await http.GetQuery<List<NewGuardObjectExtensionBase>>("/api/NewGuardObjectExtensionBases/GetInfoByNumberNew?number=" + ServiceOrderID.NewNumber);
                 NewGuardObjectExtensionBase goeb = await ClientHttp.Get<NewGuardObjectExtensionBase>("/api/NewGuardObjectExtensionBases/GetInfoByNumberNew?number=" + ServiceOrderID.NewNumber);
-                //NewGuardObjectExtensionBase g = goeb.First();
-                Contact = goeb.NewFirstcontact;
-                Siding = goeb.NewSiding;
-                rrOS = goeb.NewRrOs.HasValue ? (bool)goeb.NewRrOs : false;
-                rrPS = goeb.NewRrPs.HasValue ? (bool)goeb.NewRrPs : false;
-                rrVideo = goeb.NewRrVideo.HasValue ? (bool)goeb.NewRrVideo : false;
-                rrAccess = goeb.NewRrSkud.HasValue ? (bool)goeb.NewRrSkud : false;
+                //NULL - если может быть ситуация при которой не заведен охраняемый объект
+                if (goeb != null) {
+                    Contact = goeb.NewFirstcontact;
+                    Siding = goeb.NewSiding;
+                    rrOS = goeb.NewRrOs.HasValue ? (bool)goeb.NewRrOs : false;
+                    rrPS = goeb.NewRrPs.HasValue ? (bool)goeb.NewRrPs : false;
+                    rrVideo = goeb.NewRrVideo.HasValue ? (bool)goeb.NewRrVideo : false;
+                    rrAccess = goeb.NewRrSkud.HasValue ? (bool)goeb.NewRrSkud : false;
+                }
 
                 //using HttpClient client = new HttpClient(GetHttpClientHandler());
                 //if(ServiceOrderID.NewNumber.HasValue) {
