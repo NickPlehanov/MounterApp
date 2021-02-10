@@ -1,7 +1,6 @@
 ﻿<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
-             xmlns:dg="clr-namespace:Xamarin.Forms.DataGrid;assembly=Xamarin.Forms.DataGrid" 
-             xmlns:vm="clr-namespace:MounterApp.ViewModel" xmlns:sys="clr-namespace:System;assembly=netstandard"
+             xmlns:vm="clr-namespace:MounterApp.ViewModel"
              x:Class="MounterApp.Views.ServiceOrderFireAlarm">
     <ContentPage.Resources>
         <vm:ServiceOrderFireAlarmViewModel x:Key="vm"/>
@@ -39,9 +38,9 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <!--<RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>-->
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
@@ -79,8 +78,19 @@
                                     <TapGestureRecognizer Command="{Binding ShowInfoCommand}" CommandParameter="{Binding ServiceOrderFireAlarm.NewAddress}"/>
                                 </Label.GestureRecognizers>
                             </Label>
-
-                            <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="5" Grid.Column="0" Text="ТО ОС" FontAttributes="Bold" VerticalOptions="Center"/>
+                            <Grid VerticalOptions="Center" HorizontalOptions="CenterAndExpand" Grid.Row="5" Grid.ColumnSpan="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                
+                                <!--<Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="5" Grid.Column="0" Text="ТО ОС" FontAttributes="Bold" VerticalOptions="Center"/>
                             <CheckBox Grid.Row="5" Grid.Column="1" IsEnabled="False" IsChecked="{Binding rrOS}"/>
 
                             <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="6" Grid.Column="0" Text="ТО ПС" FontAttributes="Bold" VerticalOptions="Center"/>
@@ -90,7 +100,19 @@
                             <CheckBox Grid.Row="7" Grid.Column="1" IsEnabled="False" IsChecked="{Binding rrVideo}"/>
 
                             <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="8" Grid.Column="0" Text="ТО СКУД" FontAttributes="Bold" VerticalOptions="Center"/>
-                            <CheckBox Grid.Row="8" Grid.Column="1" IsEnabled="False" IsChecked="{Binding rrAccess}"/>
+                            <CheckBox Grid.Row="8" Grid.Column="1" IsEnabled="False" IsChecked="{Binding rrAccess}"/>-->
+                                <Label Style="{DynamicResource CommonLabelStyle}" Margin="0" Grid.Row="0" Grid.Column="0" Text="ТО ОС" FontAttributes="Bold" VerticalOptions="Center"/>
+                                <CheckBox Style="{DynamicResource CheckBoxStyle}" Margin="0" Grid.Row="1" Grid.Column="0" IsEnabled="False" IsChecked="{Binding rrOS}"/>
+
+                                <Label Style="{DynamicResource CommonLabelStyle}" Margin="0" Grid.Row="0" Grid.Column="1" Text="ТО ПС" FontAttributes="Bold" VerticalOptions="Center"/>
+                                <CheckBox Style="{DynamicResource CheckBoxStyle}" Margin="0" Grid.Row="1" Grid.Column="1" IsEnabled="False" IsChecked="{Binding rrPS}"/>
+
+                                <Label Style="{DynamicResource CommonLabelStyle}" Margin="0" Grid.Row="0" Grid.Column="2" Text="ТО Видео" FontAttributes="Bold" VerticalOptions="Center"/>
+                                <CheckBox Style="{DynamicResource CheckBoxStyle}" Margin="0" Grid.Row="1" Grid.Column="2" IsEnabled="False" IsChecked="{Binding rrVideo}"/>
+
+                                <Label Style="{DynamicResource CommonLabelStyle}" Margin="0" Grid.Row="0" Grid.Column="3" Text="ТО СКУД" FontAttributes="Bold" VerticalOptions="Center"/>
+                                <CheckBox Style="{DynamicResource CheckBoxStyle}" Margin="0" Grid.Row="1" Grid.Column="3" IsEnabled="False" IsChecked="{Binding rrAccess}"/>
+                            </Grid>
 
                             <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="9" Grid.Column="0" Text="Дата заявки" FontAttributes="Bold"/>
                             <Label Style="{DynamicResource CommonLabelStyle}" Grid.Row="9" Grid.Column="1" Text="{Binding ServiceOrderFireAlarm.NewDate, StringFormat='{0:dd.MM.yyyy}'}"/>
@@ -149,10 +171,10 @@
                         </Grid>
                     </Expander>
                 </StackLayout>
-                <StackLayout Opacity="{Binding Opacity}" Grid.Row="3" Grid.Column="0" Margin="5">
+                <StackLayout Opacity="{Binding Opacity}" Grid.Row="3" Grid.Column="0" Margin="0">
                     <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding TransferImage}" Text="Пришел" Command="{Binding IncomeCommand, Mode=TwoWay}"/>
                 </StackLayout>
-                <StackLayout Opacity="{Binding Opacity}" Grid.Row="3" Grid.Column="1" Margin="5">
+                <StackLayout Opacity="{Binding Opacity}" Grid.Row="3" Grid.Column="1" Margin="0">
                     <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding CloseOrderCommand}"/>
                 </StackLayout>
                 <StackLayout Grid.Row="1" Grid.ColumnSpan="2" IsVisible="{Binding IndicatorVisible}" Style="{DynamicResource ActivityIndicatorStackLayoutStyle}">

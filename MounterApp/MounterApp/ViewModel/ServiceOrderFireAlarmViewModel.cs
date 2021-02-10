@@ -86,56 +86,20 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetObjectNameCommand;
         public RelayCommand GetObjectNameCommand {
             get => _GetObjectNameCommand ??= new RelayCommand(async obj => {
-                //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/GetObjectInfo?ObjectNumber=" + ServiceOrderFireAlarm.NewNumber.ToString() + "");
-                //    A28Object a28Object = new A28Object();
-                //    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                //        var resp = response.Content.ReadAsStringAsync().Result;
-                //        try {
-                //            a28Object = JsonConvert.DeserializeObject<A28Object>(resp);
-                //        }
-                //        catch {
-                //            a28Object = null;
-                //        }
-                //        if(a28Object != null) {
-                //            ObjectName = a28Object.Name;
-                //            ControlTime = a28Object.ControlTime.ToString();
-                //        }
-                //    }
-                //}
-
-
-
                 if (ServiceOrderFireAlarm.NewNumber.HasValue)
-                    if (!string.IsNullOrEmpty(ServiceOrderFireAlarm.NewNumber.Value.ToString())) {
-                        List<Info> obj_info = await ClientHttp.Get<List<Info>>("/api/Andromeda/Objinfo?objNumber=" + ServiceOrderFireAlarm.NewNumber.ToString() + "");
-                        Info inf = obj_info.First();
-                        ObjectName = inf.Name;
-                        ControlTime = inf.ControlTime.ToString();
-                        EventTemplate = inf.EventTemplateName.ToString();
-                        DeviceName = inf.DeviceName.ToString();
-                    }
-                //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/Objinfo?objNumber=" + ServiceOrderFireAlarm.NewNumber.ToString() + "");
-                //    List<Info> obj_info = new List<Info>();
-                //    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                //        var resp = response.Content.ReadAsStringAsync().Result;
-                //        try {
-                //            obj_info = JsonConvert.DeserializeObject<List<Info>>(resp);
-                //        }
-                //        catch(Exception ex) {
-                //            obj_info = null;
-                //        }
-                //        if(obj_info != null) {
-                //            foreach(var item in obj_info) {
-                //                ObjectName = item.Name;
-                //                ControlTime = item.ControlTime.ToString();
-                //                EventTemplate = item.EventTemplateName.ToString();
-                //                DeviceName = item.DeviceName.ToString();
-                //            }
-                //        }
-                //    }
-                //}
+                    if (ServiceOrderFireAlarm.NewNumber != 0)
+                        if (!string.IsNullOrEmpty(ServiceOrderFireAlarm.NewNumber.Value.ToString())) {
+                            List<Info> obj_info = await ClientHttp.Get<List<Info>>("/api/Andromeda/Objinfo?objNumber=" + ServiceOrderFireAlarm.NewNumber.ToString() + "");
+                            if (obj_info != null) {
+                                Info inf = obj_info.First();
+                                if (inf != null) {
+                                    ObjectName = inf.Name;
+                                    ControlTime = inf.ControlTime.ToString();
+                                    EventTemplate = inf.EventTemplateName.ToString();
+                                    DeviceName = inf.DeviceName.ToString();
+                                }
+                            }
+                        }
             });
         }
         private string _DeviceName;
@@ -486,17 +450,20 @@ namespace MounterApp.ViewModel {
                     andromeda = await ClientHttp.Get<NewAndromedaExtensionBase>("/api/NewAndromedaExtensionBases/id?id=" + ServiceOrderFireAlarm.NewAndromedaServiceorder);
                     ServiceOrderFireAlarm.NewNumber = andromeda.NewNumber;
                 }
-                //List<NewGuardObjectExtensionBase> goeb = await ClientHttp.Get<List<NewGuardObjectExtensionBase>>("/api/NewGuardObjectExtensionBases/GetInfoByNumber?number=" + ServiceOrderFireAlarm.NewNumber);
-                NewGuardObjectExtensionBase goeb = await ClientHttp.Get<NewGuardObjectExtensionBase>("/api/NewGuardObjectExtensionBases/GetInfoByNumber?number=" + ServiceOrderFireAlarm.NewNumber);
-                if (goeb != null) {
-                    //NewGuardObjectExtensionBase g = goeb.First();
-
-                    Contact = goeb.NewFirstcontact;
-                    Siding = goeb.NewSiding;
-                    rrOS = goeb.NewRrOs.HasValue ? (bool)goeb.NewRrOs : false;
-                    rrPS = goeb.NewRrPs.HasValue ? (bool)goeb.NewRrPs : false;
-                    rrVideo = goeb.NewRrVideo.HasValue ? (bool)goeb.NewRrVideo : false;
-                    rrAccess = goeb.NewRrSkud.HasValue ? (bool)goeb.NewRrSkud : false;
+                if (ServiceOrderFireAlarm.NewNumber != 0) {
+                    //List<NewGuardObjectExtensionBase> goeb = await ClientHttp.Get<List<NewGuardObjectExtensionBase>>("/api/NewGuardObjectExtensionBases/GetInfoByNumber?number=" + ServiceOrderFireAlarm.NewNumber);
+                    List<NewGuardObjectExtensionBase> goeb = await ClientHttp.Get<List<NewGuardObjectExtensionBase>>("/api/NewGuardObjectExtensionBases/GetInfoByNumber?number=" + ServiceOrderFireAlarm.NewNumber);
+                    if (goeb != null) {
+                        NewGuardObjectExtensionBase g = goeb.First();
+                        if (g != null) {
+                            Contact = g.NewFirstcontact;
+                            Siding = g.NewSiding;
+                            rrOS = g.NewRrOs.HasValue ? (bool)g.NewRrOs : false;
+                            rrPS = g.NewRrPs.HasValue ? (bool)g.NewRrPs : false;
+                            rrVideo = g.NewRrVideo.HasValue ? (bool)g.NewRrVideo : false;
+                            rrAccess = g.NewRrSkud.HasValue ? (bool)g.NewRrSkud : false;
+                        }
+                    }
                 }
 
 
@@ -611,8 +578,8 @@ namespace MounterApp.ViewModel {
                 //    }
                 //}
                 Opacity = 1;
-                    IndicatorVisible = false;
-                });
+                IndicatorVisible = false;
+            });
         }
         private RelayCommand _IncomeCommand;
         public RelayCommand IncomeCommand {

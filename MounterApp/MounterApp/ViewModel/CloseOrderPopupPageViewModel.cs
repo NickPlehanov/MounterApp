@@ -1,11 +1,8 @@
-﻿using Android.OS;
-using Android.Widget;
-using Microsoft.AppCenter.Analytics;
+﻿using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using MounterApp.Helpers;
 using MounterApp.InternalModel;
 using MounterApp.Model;
-using MounterApp.Properties;
 using MounterApp.Views;
 using Newtonsoft.Json;
 using Rg.Plugins.Popup.Extensions;
@@ -16,7 +13,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -252,129 +248,6 @@ namespace MounterApp.ViewModel {
             }
         }
         /// <summary>
-        /// Команда для получения списка причин для отмены и переноса заявки технику
-        /// </summary>
-        //private AsyncCommand _GetReasons;
-        //public AsyncCommand GetReasons {
-        //    get => _GetReasons ??= new AsyncCommand(async () => {
-        //        //Reasons = await ClientHttp.GetQuery<ObservableCollection<MetadataModel>>("/api/Common/metadata?ColumnName=New_resultid&ObjectName=New_serviceorder");
-
-        //        Analytics.TrackEvent("Форма закрытия заявок. Получение причин для переноса заявки",
-        //        new Dictionary<string,string> {
-        //            {"Query","Common/metadata?ColumnName=New_resultid&ObjectName=New_serviceorder" }
-        //        });
-        //        List<MetadataModel> mm = new List<MetadataModel>();
-        //        HttpResponseMessage response = null;
-        //        using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-        //            response = await client.GetAsync(Resources.BaseAddress + "/api/Common/metadata?ColumnName=New_resultid&ObjectName=New_serviceorder");
-        //            if(response != null)
-        //                if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-        //                    var resp = response.Content.ReadAsStringAsync().Result;
-        //                    try {
-        //                        mm = JsonConvert.DeserializeObject<List<MetadataModel>>(resp);
-        //                    }
-        //                    catch(Exception ex) {
-        //                        mm = null;
-        //                        Crashes.TrackError(new Exception("Форма закрытия заявок. Ошибка десереализации причин для переноса заявки"),
-        //                        new Dictionary<string,string> {
-        //                    {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-        //                    {"ErrorMessage",ex.Message },
-        //                    {"StatusCode",response.StatusCode.ToString() },
-        //                    {"Response",response.ToString() },
-        //                    {"Query","Common/metadata?ColumnName=New_resultid&ObjectName=New_serviceorder" }
-        //                        });
-        //                    }
-        //                    if(mm != null) {
-        //                        Reasons.Clear();
-        //                        foreach(MetadataModel item in mm)
-        //                            Reasons.Add(item);
-        //                    }
-        //                    else {
-        //                        Analytics.TrackEvent("Форма закрытия заявок. Не получен список причин. Список причин пустой");
-        //                    }
-        //                }
-        //                else
-        //                    Crashes.TrackError(new Exception("Форма закрытия заявок. От сервера не получен корректный ответ"),
-        //                        new Dictionary<string,string> {
-        //                    {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-        //                    {"StatusCode",response.StatusCode.ToString() },
-        //                    {"Response",response.ToString() },
-        //                    {"Query","Common/metadata?ColumnName=New_resultid&ObjectName=New_serviceorder" }
-        //                        });
-        //        }
-        //    });
-        //}
-        /// <summary>
-        /// Команда для получения списка результатов по заявке
-        /// </summary>
-        //private AsyncCommand _GetResults;
-        //public AsyncCommand GetResults {
-        //    get => _GetResults ??= new AsyncCommand(async () => {
-        //        //Results = await ClientHttp.GetQuery<ObservableCollection<MetadataModel>>("/api/Common/metadata?ColumnName=New_result&ObjectName=New_serviceorder");
-
-        //        //Analytics.TrackEvent("Форма закрытия заявок. Получение результата работы по заявке",
-        //        //new Dictionary<string,string> {
-        //        //    {"Query","Common/metadata?ColumnName=New_result&ObjectName=New_serviceorder" }
-        //        //});
-        //        //HttpResponseMessage response = null;
-        //        //List<MetadataModel> mm = new List<MetadataModel>();
-        //        //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-        //        //    response = await client.GetAsync(Resources.BaseAddress + "/api/Common/metadata?ColumnName=New_result&ObjectName=New_serviceorder");
-        //        //    if(response != null)
-        //        //        if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-        //        //            var resp = response.Content.ReadAsStringAsync().Result;
-        //        //            try {
-        //        //                mm = JsonConvert.DeserializeObject<List<MetadataModel>>(resp);
-        //        //            }
-        //        //            catch(Exception ex) {
-        //        //                mm = null;
-        //        //                Crashes.TrackError(new Exception("Форма закрытия заявок. Ошибка десереализации результатов по заявке"),
-        //        //                new Dictionary<string,string> {
-        //        //            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-        //        //            {"ErrorMessage",ex.Message },
-        //        //            {"StatusCode",response.StatusCode.ToString() },
-        //        //            {"Response",response.ToString() },
-        //        //            {"Query","Common/metadata?ColumnName=New_result&ObjectName=New_serviceorder" }
-        //        //                });
-        //        //            }
-        //        //            if(mm != null) {
-        //        //                Results.Clear();
-        //        //                foreach(MetadataModel item in mm)
-        //        //                    Results.Add(item);
-        //        //            }
-        //        //            else {
-        //        //                Analytics.TrackEvent("Форма закрытия заявок. Не получен список результатов. Список результатов пустой");
-        //        //            }
-        //        //        }
-        //        //        else
-        //        //            Crashes.TrackError(new Exception("Форма закрытия заявок. От сервера не получен корректный ответ"),
-        //        //                new Dictionary<string,string> {
-        //        //            {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-        //        //            {"StatusCode",response.StatusCode.ToString() },
-        //        //            {"Response",response.ToString() },
-        //        //            {"Query","Common/metadata?ColumnName=New_result&ObjectName=New_serviceorder" }
-        //        //                });
-        //        //}
-        //    });
-        //}
-        //private bool _IsTransfer;
-        //public bool IsTransfer {
-        //    get => _IsTransfer;
-        //    set {
-        //        _IsTransfer = value;
-        //        OnPropertyChanged(nameof(IsTransfer));
-        //    }
-        //}
-
-        //private bool _IsCancel;
-        //public bool IsCancel {
-        //    get => _IsCancel;
-        //    set {
-        //        _IsCancel = value;
-        //        OnPropertyChanged(nameof(IsCancel));
-        //    }
-        //}
-        /// <summary>
         /// Объект для хранения даты переноса 
         /// </summary>
         private DateTime _TransferDate;
@@ -433,27 +306,12 @@ namespace MounterApp.ViewModel {
             }
         }
         /// <summary>
-        /// Команда закрытия заявки технику
+        /// Проверяем и возвращаем статус разрешений на местоположение.
         /// </summary>
         public async Task<PermissionStatus> CheckPermission() {
             PermissionStatus status = PermissionStatus.Unknown;
             try {
                 status = await CheckAndRequestPermissionAsync(new LocationWhenInUse());
-                //if(status == PermissionStatus.Granted) {
-                //    return PermissionStatus.Granted;
-                //}
-                //else {
-                //    Crashes.TrackError(new Exception("Заявка технику. Закрытие. Доступ к геопозиции непредоставлен")
-                //    ,new Dictionary<string,string> {
-                //                                {"PermissionStatus",status.ToString()},
-                //                            {"phone",Servicemans.First().NewPhone },
-                //                            {"name",Servicemans.First().NewName }
-                //    });
-                //    await Application.Current.MainPage.DisplayAlert("Ошибка","Ошибка при попытке сохранения","OK");
-                //    OpacityForm = 1;
-                //    IndicatorVisible = false;
-                //    return PermissionStatus.Denied;
-                //}
                 return status;
             }
             catch(Exception ex) {
@@ -464,14 +322,15 @@ namespace MounterApp.ViewModel {
                                             {"name",Servicemans.First().NewName },
                                             {"PermissionStatus",status.ToString()}
                 });
-                //await Application.Current.MainPage.DisplayAlert("Ошибка","Ошибка при попытке сохранения","OK");
-                //MessagePopupPageViewModel vm = new MessagePopupPageViewModel("Ошибка при попытке сохранения.",Color.Red);
                 await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(
                     new MessagePopupPageViewModel("Ошибка при попытке сохранения. Не получены необходимые разрешения",Color.Red,LayoutOptions.EndAndExpand),4000));
                 IsLoading(false);
                 return PermissionStatus.Denied;
             }
         }
+        /// <summary>
+        /// Получаем и присваиваем в свойства значения для координат
+        /// </summary>
         private async void GetLocation() {
             Location location = await Geolocation.GetLastKnownLocationAsync();
             if(location != null) {
@@ -479,6 +338,9 @@ namespace MounterApp.ViewModel {
                 Longitude = location.Longitude.ToString();
             }
         }
+        /// <summary>
+        /// Команда закрытия заявки технику
+        /// </summary>
         private RelayCommand _CloseServiceOrderCommand;
         public RelayCommand CloseServiceOrderCommand {
             get => _CloseServiceOrderCommand ??= new RelayCommand(async obj => {
@@ -489,25 +351,25 @@ namespace MounterApp.ViewModel {
                     { "ServiceOrder",so != null ? so.NewServiceorderId.ToString() : sofa.NewTest2Id.ToString() },
                     { "ServicemanPhone",Servicemans.FirstOrDefault().NewPhone }
                     });
-                if(NecesseryRead && string.IsNullOrEmpty(ConclusionByOrder)) {
+                //проверяем значение необходимых полей NecesseryRead - Обязательно для прочтения оператором ConclusionByOrder - заключение по заявке
+                if (NecesseryRead && string.IsNullOrEmpty(ConclusionByOrder)) {
                     Analytics.TrackEvent("Не указано заключение по заявке",
                     new Dictionary<string,string> {
                     { "ServiceOrder",so != null ? so.NewServiceorderId.ToString() : sofa.NewTest2Id.ToString() },
                     { "ServicemanPhone",Servicemans.FirstOrDefault().NewPhone }
                     });
-                    //await Application.Current.MainPage.DisplayAlert("Ошибка","Не указано заключение по заявке","OK");
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Не указано заключение по заявке",Color.Red,LayoutOptions.EndAndExpand),4000));
                     IsLoading(false);
                     return;
                 }
                 if(!string.IsNullOrEmpty(ConclusionByOrder)) {
+                    //Заявка технику
                     if(so != null) {
                         NewServiceorderExtensionBase soeb = await ClientHttp.Get<NewServiceorderExtensionBase>("/api/NewServiceorderExtensionBases/id?id=" + so.NewServiceorderId);
                         if(soeb != null) {
                             PermissionStatus permissionStatus = await CheckPermission();
                             if(permissionStatus.Equals(PermissionStatus.Granted)) {
                                 soeb.NewOutgone = DateTime.Now.AddHours(-5);
-                                //soeb.NewTransferReason = string.IsNullOrEmpty(ReasonComment) ? "" : ReasonComment;
                                 soeb.NewTechConclusion = ConclusionByOrder;
                                 soeb.NewMustRead = NecesseryRead;
                                 soeb.NewNewServiceman = Servicemans.First().NewServicemanId;
@@ -518,38 +380,31 @@ namespace MounterApp.ViewModel {
                                     App.Current.MainPage = new ServiceOrdersPage(new ServiceOrdersPageViewModel(Servicemans,Mounters));
                                 }
                                 else
-                                    //await Application.Current.MainPage.DisplayAlert("Ошибка","При сохранении информации о заявке технику, произошла ошибка, не был получен корректный ответ от сервера. Попробуйте позже, в случае повторной ошибки, сообщите в ИТ-отдел.","OK");
                                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка, не был получен корректный ответ от сервера. Попробуйте позже, в случае повторной ошибки, сообщите в ИТ-отдел",Color.Red,LayoutOptions.EndAndExpand),7000));
 
                                 ServiceOrderCoordinates soc = await ClientHttp.Get<ServiceOrderCoordinates>("/api/ServiceOrderCoordinates/id?so_id=" + so.NewServiceorderId);
                                 if(soc != null) {
-                                    //ServiceOrderCoordinates s = soc.First(x => x.SocOutcomeLatitide == null && x.SocOutcomeLongitude == null);
-                                    //if(s != null) {
                                     GetLocation();
                                     soc.SocOutcomeLatitide = Latitude;
                                     soc.SocOutcomeLongitude = Longitude;
                                     await ClientHttp.Put("/api/ServiceOrderCoordinates",new StringContent(JsonConvert.SerializeObject(soc),Encoding.UTF8,"application/json"));
-                                    //}
                                 }
                                 App.Current.MainPage = new ServiceOrdersPage(vm);
                                 IsLoading(false);
                             }
                             else
-                                //await Application.Current.MainPage.DisplayAlert("Ошибка","При сохранении информации о заявке технику, произошла ошибка. Не предоставлены разрешения","OK");
                                 await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка. Не предоставлены разрешения",Color.Red,LayoutOptions.EndAndExpand),7000));
-
                         }
                         else
-                            //await Application.Current.MainPage.DisplayAlert("Ошибка","При сохранении информации о заявке технику, произошла ошибка.","OK");
                             await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка",Color.Red,LayoutOptions.EndAndExpand),7000));
                     }
+                    //заявка на пс
                     if(sofa != null) {
                         NewTest2ExtensionBase soeb = await ClientHttp.Get<NewTest2ExtensionBase>("/api/NewServiceOrderForFireAlarmExtensionBase/id?id=" + sofa.NewTest2Id);
                         if(soeb != null) {
                             PermissionStatus permissionStatus = await CheckPermission();
                             if(permissionStatus.Equals(PermissionStatus.Granted)) {
                                 soeb.NewOutgone = DateTime.Now.AddHours(-5);
-                                //soeb.NewTransferReason = string.IsNullOrEmpty(ReasonComment) ? "" : ReasonComment;
                                 soeb.NewTechconclusion = ConclusionByOrder;
                                 soeb.NewTechniqueEnd = Servicemans.First().NewServicemanId;
                                 HttpStatusCode code = await ClientHttp.Put("/api/NewServiceOrderForFireAlarmExtensionBase",new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json"));
@@ -559,331 +414,24 @@ namespace MounterApp.ViewModel {
                                     App.Current.MainPage = new ServiceOrdersPage(new ServiceOrdersPageViewModel(Servicemans,Mounters));
                                 }
                                 else
-                                    //await Application.Current.MainPage.DisplayAlert("Ошибка","При сохранении информации о заявке технику, произошла ошибка, не был получен корректный ответ от сервера. Попробуйте позже, в случае повторной ошибки, сообщите в ИТ-отдел.","OK");
                                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка, не был получен корректный ответ от сервера. Попробуйте позже, в случае повторной ошибки, сообщите в ИТ-отдел",Color.Red,LayoutOptions.EndAndExpand),7000));
                                 ServiceOrderCoordinates soc = await ClientHttp.Get<ServiceOrderCoordinates>("/api/ServiceOrderCoordinates/id?so_id=" + sofa.NewTest2Id);
                                 if(soc != null) {
-                                    //ServiceOrderCoordinates s = soc.First(x => x.SocOutcomeLatitide == null && x.SocOutcomeLongitude == null);
-                                    //if(s != null) {
                                     GetLocation();
                                     soc.SocOutcomeLatitide = Latitude;
                                     soc.SocOutcomeLongitude = Longitude;
-                                    //ClientHttp.PutQuery("/api/ServiceOrderCoordinates",new StringContent(JsonConvert.SerializeObject(soc),Encoding.UTF8,"application/json")).GetAwaiter().GetResult();
                                     await ClientHttp.Put("/api/ServiceOrderCoordinates",new StringContent(JsonConvert.SerializeObject(soc),Encoding.UTF8,"application/json"));
-                                    //}
                                 }
                                 App.Current.MainPage = new ServiceOrdersPage(vm);
                                 IsLoading(false);
                             }
                             else
-                                //await Application.Current.MainPage.DisplayAlert("Ошибка","При сохранении информации о заявке технику, произошла ошибка. Не предоставлены разрешения","OK");
                                 await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка. Не предоставлены разрешения",Color.Red,LayoutOptions.EndAndExpand),7000));
                         }
                         else
-                            //await Application.Current.MainPage.DisplayAlert("Ошибка","При сохранении информации о заявке технику, произошла ошибка.","OK");
                             await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка",Color.Red,LayoutOptions.EndAndExpand),7000));
                     }
-
-
-                    //HttpResponseMessage response = null;
-                    //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                    //    if(so != null) {
-                    //        NewServiceorderExtensionBase soeb = null;
-                    //        response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/id?id=" + so.NewServiceorderId);
-                    //        var resp = response.Content.ReadAsStringAsync().Result;
-                    //        if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                    //            try {
-                    //                soeb = JsonConvert.DeserializeObject<NewServiceorderExtensionBase>(resp);
-                    //            }
-                    //            catch(Exception ex) {
-                    //                soeb = null;
-                    //                Crashes.TrackError(new Exception("Ошибка десериализации результата запроса(информация о заявке технику)"),
-                    //                new Dictionary<string,string> {
-                    //                {"Servicemans",Servicemans.First().NewPhone },
-                    //                {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                    //                {"ErrorMessage",ex.Message },
-                    //                {"StatusCode",response.StatusCode.ToString() },
-                    //                {"Response",response.ToString() },
-                    //                {"Query","/api/NewServiceorderExtensionBases/id?id=" + so.NewServiceorderId.ToString() }
-                    //                });
-                    //            }
-                    //            if(soeb != null) {
-                    //                soeb.NewOutgone = DateTime.Now.AddHours(-5);
-                    //                soeb.NewTransferReason = string.IsNullOrEmpty(ReasonComment) ? "" : ReasonComment;
-                    //                soeb.NewTechConclusion = ConclusionByOrder;
-                    //                soeb.NewMustRead = NecesseryRead;
-                    //                using(HttpClient clientPut = new HttpClient(GetHttpClientHandler())) {
-                    //                    Analytics.TrackEvent("Сохранение информации о заявке технику",
-                    //                    new Dictionary<string,string> {
-                    //                    {"ServiceOrder",so.NewServiceorderId.ToString() },
-                    //                    {"ServicemanPhone",Servicemans.FirstOrDefault().NewPhone }
-                    //                    });
-                    //                    var httpContent = new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json");
-                    //                    HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases",httpContent);
-                    //                    if(!responsePut.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
-                    //                        Crashes.TrackError(new Exception("При сохранении информации о заявке технику, произошла ошибка, не был получен корректный ответ"),
-                    //                        new Dictionary<string,string> {
-                    //                        {"ServiceOrder",so.NewServiceorderId.ToString() },
-                    //                        {"Servicemans",Servicemans.First().NewPhone },
-                    //                        {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                    //                        {"StatusCode",response.StatusCode.ToString() },
-                    //                        {"Response",response.ToString() }
-                    //                        });
-                    //                        //await Application.Current.MainPage.DisplayAlert("Ошибка","При сохранении информации о заявке технику, произошла ошибка, не был получен корректный ответ от сервера. Попробуйте позже, в случае повторной ошибки, сообщите в ИТ-отдел.","OK");
-                    //                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка, не был получен корректный ответ от сервера. Попробуйте позже, в случае повторной ошибки, сообщите в ИТ-отдел",Color.Red,LayoutOptions.EndAndExpand),7000));
-                    //                    }
-                    //                    else {
-                    //                        await App.Current.MainPage.Navigation.PopPopupAsync(false);
-                    //                        //Toast.MakeText(Android.App.Application.Context,"СОХРАНЕНО",ToastLength.Long).Show();
-                    //                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Заключение и время ухода сохранены",Color.Green,LayoutOptions.EndAndExpand),4000));
-
-                    //                        App.Current.MainPage = new ServiceOrdersPage(new ServiceOrdersPageViewModel(Servicemans,Mounters));
-                    //                    }
-                    //                }
-                    //                Analytics.TrackEvent("Попытка получения координат (Перенос/Отмена)");
-                    //                //запишем координаты
-                    //                PermissionStatus status = PermissionStatus.Unknown;
-                    //                try {
-                    //                    status = await CheckAndRequestPermissionAsync(new LocationWhenInUse());
-                    //                    if(status == PermissionStatus.Granted) {
-                    //                        Location location = await Geolocation.GetLastKnownLocationAsync();
-                    //                        if(location != null) {
-                    //                            Latitude = location.Latitude.ToString();
-                    //                            Longitude = location.Longitude.ToString();
-                    //                        }
-                    //                    }
-                    //                    else {
-                    //                        Crashes.TrackError(new Exception("Заявка технику. Закрытие. Доступ к геопозиции непредоставлен")
-                    //                        ,new Dictionary<string,string> {
-                    //                            {"PermissionStatus",status.ToString()},
-                    //                        {"phone",Servicemans.First().NewPhone },
-                    //                        {"name",Servicemans.First().NewName }
-                    //                        });
-                    //                        await Application.Current.MainPage.DisplayAlert("Ошибка","Ошибка при попытке сохранения","OK");
-                    //                        OpacityForm = 1;
-                    //                        IndicatorVisible = false;
-                    //                        return;
-                    //                    }
-                    //                }
-                    //                catch(Exception ex) {
-                    //                    Crashes.TrackError(new Exception("Заявка технику.Закрытие. Ошибка получения координат.")
-                    //                        ,new Dictionary<string,string> {
-                    //                        {"ErrorMessage",ex.Message },
-                    //                        {"phone",Servicemans.First().NewPhone },
-                    //                        {"name",Servicemans.First().NewName },
-                    //                        {"PermissionStatus",status.ToString()}
-                    //                    });
-                    //                    //await Application.Current.MainPage.DisplayAlert("Ошибка","Ошибка при попытке сохранения","OK");
-                    //                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Ошибка при попытке сохранения",Color.Red,LayoutOptions.EndAndExpand),4000));
-                    //                    OpacityForm = 1;
-                    //                    IndicatorVisible = false;
-                    //                    return;
-                    //                }
-                    //                if(status == PermissionStatus.Granted) {
-                    //                    using HttpClient clientGet = new HttpClient(GetHttpClientHandler());
-                    //                    HttpResponseMessage responseGet = await clientGet.GetAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates/id?so_id=" + so.NewServiceorderId);
-                    //                    List<ServiceOrderCoordinates> soc = null;
-                    //                    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                    //                        var respGet = responseGet.Content.ReadAsStringAsync().Result;
-                    //                        try {
-                    //                            soc = JsonConvert.DeserializeObject<List<ServiceOrderCoordinates>>(respGet).Where(x => x.SocOutcomeLatitide == null && x.SocOutcomeLongitude == null).ToList();
-                    //                        }
-                    //                        catch(Exception ex) {
-                    //                            soc = null;
-                    //                            Crashes.TrackError(new Exception("Ошибка десериализации при получении координат, для формирования запроса"),
-                    //                            new Dictionary<string,string> {
-                    //                        {"Servicemans",Servicemans.First().NewPhone },
-                    //                        {"ServerResponse",responseGet.Content.ReadAsStringAsync().Result },
-                    //                        {"ErrorMessage",ex.Message },
-                    //                        {"StatusCode",responseGet.StatusCode.ToString() },
-                    //                        {"Response",responseGet.ToString() },
-                    //                        {"Query","/api/ServiceOrderCoordinates/id?so_id=" + so.NewServiceorderId.ToString() }
-                    //                            });
-                    //                        }
-                    //                        if(soc != null) {
-                    //                            using(HttpClient clientPut = new HttpClient(GetHttpClientHandler())) {
-                    //                                ServiceOrderCoordinates s = soc.First();
-                    //                                s.SocOutcomeLatitide = Latitude;
-                    //                                s.SocOutcomeLongitude = Longitude;
-                    //                                var httpContent = new StringContent(JsonConvert.SerializeObject(s),Encoding.UTF8,"application/json");
-                    //                                HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates",httpContent);
-                    //                            }
-                    //                        }
-                    //                        else {
-                    //                            Crashes.TrackError(new Exception("Не найдены запись с координатами прихода техника на объект по данной заявке"),
-                    //                            new Dictionary<string,string> {
-                    //                        {"Servicemans",Servicemans.First().NewPhone },
-                    //                        {"ServiceOrder", so.NewServiceorderId.ToString() }
-                    //                            });
-                    //                        }
-                    //                    }
-                    //                }
-                    //                else {
-                    //                    OpacityForm = 1;
-                    //                    IndicatorVisible = false;
-                    //                    return;
-                    //                }
-                    //            }
-                    //            //await App.Current.MainPage.Navigation.PopPopupAsync(false);
-                    //            App.Current.MainPage = new ServiceOrdersPage(vm);
-                    //        }
-                    //        else
-                    //            Crashes.TrackError(new Exception("При запросе информация о заявке технику от сервера пришел ответ с ошибкой"),
-                    //            new Dictionary<string,string> {
-                    //                    {"Servicemans",Servicemans.First().NewPhone },
-                    //                    {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                    //                    {"StatusCode",response.StatusCode.ToString() },
-                    //                    {"Response",response.ToString() },
-                    //                    {"Query","/api/NewServiceorderExtensionBases/id?id=" + so.NewServiceorderId.ToString() }
-                    //            });
-                    //    }
-                    //    else if(sofa != null) {
-                    //        NewTest2ExtensionBase soeb = null;
-                    //        response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceOrderForFireAlarmExtensionBase/id?id=" + sofa.NewTest2Id);
-                    //        var resp = response.Content.ReadAsStringAsync().Result;
-                    //        if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                    //            try {
-                    //                soeb = JsonConvert.DeserializeObject<NewTest2ExtensionBase>(resp);
-                    //            }
-                    //            catch(Exception ex) {
-                    //                soeb = null;
-                    //                Crashes.TrackError(new Exception("Ошибка десериализации результата запроса(информация о заявке технику)"),
-                    //                new Dictionary<string,string> {
-                    //                {"Servicemans",Servicemans.First().NewPhone },
-                    //                {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                    //                {"ErrorMessage",ex.Message },
-                    //                {"StatusCode",response.StatusCode.ToString() },
-                    //                {"Response",response.ToString() },
-                    //                {"Query","/api/NewServiceOrderForFireAlarmExtensionBase/id?id=" + sofa.NewTest2Id.ToString() }
-                    //                });
-                    //            }
-                    //            if(soeb != null) {
-                    //                soeb.NewOutgone = DateTime.Now.AddHours(-5);
-                    //                soeb.NewTransferReason = ReasonComment;
-                    //                soeb.NewTechconclusion = ConclusionByOrder;
-                    //                using(HttpClient clientPut = new HttpClient(GetHttpClientHandler())) {
-                    //                    Analytics.TrackEvent("Сохранение информации о заявке технику(пс)",
-                    //                    new Dictionary<string,string> {
-                    //                    {"ServiceOrder",sofa.NewTest2Id.ToString() },
-                    //                    {"ServicemanPhone",Servicemans.FirstOrDefault().NewPhone }
-                    //                    });
-                    //                    var httpContent = new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json");
-                    //                    HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/NewServiceOrderForFireAlarmExtensionBase",httpContent);
-                    //                    if(!responsePut.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
-                    //                        Crashes.TrackError(new Exception("При сохранении информации о заявке технику(пс), произошла ошибка, не был получен корректный ответ"),
-                    //                        new Dictionary<string,string> {
-                    //                        {"ServiceOrder",sofa.NewTest2Id.ToString()  },
-                    //                        {"Servicemans",Servicemans.First().NewPhone },
-                    //                        {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                    //                        {"StatusCode",response.StatusCode.ToString() },
-                    //                        {"Response",response.ToString() }
-                    //                        });
-                    //                        await Application.Current.MainPage.DisplayAlert("Ошибка","При сохранении информации о заявке технику, произошла ошибка, не был получен корректный ответ от сервера. Попробуйте позже, в случае повторной ошибки, сообщите в ИТ-отдел.","OK");
-                    //                    }
-                    //                    else {
-                    //                        //Toast.MakeText(Android.App.Application.Context,"СОХРАНЕНО",ToastLength.Long).Show();
-                    //                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Заключение и время ухода сохранены",Color.Green,LayoutOptions.EndAndExpand),4000));
-                    //                        //await App.Current.MainPage.Navigation.PopPopupAsync(true);
-                    //                        App.Current.MainPage = new ServiceOrdersPage(vm);
-                    //                    }
-                    //                }
-                    //                Analytics.TrackEvent("Попытка получения координат (Перенос/Отмена)");
-                    //                //запишем координаты
-                    //                PermissionStatus status = PermissionStatus.Unknown;
-                    //                try {
-                    //                    status = await CheckAndRequestPermissionAsync(new LocationWhenInUse());
-                    //                    if(status == PermissionStatus.Granted) {
-                    //                        Location location = await Geolocation.GetLastKnownLocationAsync();
-                    //                        if(location != null) {
-                    //                            Latitude = location.Latitude.ToString();
-                    //                            Longitude = location.Longitude.ToString();
-                    //                        }
-                    //                    }
-                    //                    else {
-                    //                        Crashes.TrackError(new Exception("Заявка технику. Закрытие. Ошибка получения координат.")
-                    //                        ,new Dictionary<string,string> {
-                    //                            {"PermissionStatus",status.ToString()}
-                    //                        });
-                    //                        OpacityForm = 1;
-                    //                        IndicatorVisible = false;
-                    //                        return;
-                    //                    }
-                    //                }
-                    //                catch(Exception ex) {
-                    //                    Crashes.TrackError(new Exception("Заявка на ПС. Ошибка получения координат.")
-                    //                        ,new Dictionary<string,string> {
-                    //                        {"ErrorMessage",ex.Message },
-                    //                        {"PermissionStatus",status.ToString()}
-                    //                    });
-                    //                    OpacityForm = 1;
-                    //                    IndicatorVisible = false;
-                    //                    return;
-                    //                }
-                    //                if(status == PermissionStatus.Granted) {
-                    //                    using HttpClient clientGet = new HttpClient(GetHttpClientHandler());
-                    //                    HttpResponseMessage responseGet = await clientGet.GetAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates/id?so_id=" + sofa.NewTest2Id);
-                    //                    List<ServiceOrderCoordinates> soc = null;
-                    //                    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                    //                        var respGet = responseGet.Content.ReadAsStringAsync().Result;
-                    //                        try {
-                    //                            soc = JsonConvert.DeserializeObject<List<ServiceOrderCoordinates>>(respGet).Where(x => x.SocOutcomeLatitide == null && x.SocOutcomeLongitude == null).ToList();
-                    //                        }
-                    //                        catch(Exception ex) {
-                    //                            soc = null;
-                    //                            Crashes.TrackError(new Exception("Ошибка десериализации при получении координат, для формирования запроса"),
-                    //                            new Dictionary<string,string> {
-                    //                        {"Servicemans",Servicemans.First().NewPhone },
-                    //                        {"ServerResponse",responseGet.Content.ReadAsStringAsync().Result },
-                    //                        {"ErrorMessage",ex.Message },
-                    //                        {"StatusCode",responseGet.StatusCode.ToString() },
-                    //                        {"Response",responseGet.ToString() },
-                    //                        {"Query","/api/ServiceOrderCoordinates/id?so_id=" + sofa.NewTest2Id.ToString() }
-                    //                            });
-                    //                        }
-                    //                        if(soc != null) {
-                    //                            using(HttpClient clientPut = new HttpClient(GetHttpClientHandler())) {
-                    //                                ServiceOrderCoordinates s = soc.First();
-                    //                                s.SocOutcomeLatitide = Latitude;
-                    //                                s.SocOutcomeLongitude = Longitude;
-                    //                                var httpContent = new StringContent(JsonConvert.SerializeObject(s),Encoding.UTF8,"application/json");
-                    //                                HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates",httpContent);
-                    //                            }
-                    //                        }
-                    //                        else {
-                    //                            Crashes.TrackError(new Exception("Не найдены запись с координатами прихода техника на объект по данной заявке"),
-                    //                            new Dictionary<string,string> {
-                    //                        {"Servicemans",Servicemans.First().NewPhone },
-                    //                        {"ServiceOrder", sofa.NewTest2Id.ToString() }
-                    //                            });
-                    //                        }
-                    //                    }
-                    //                }
-                    //                else {
-                    //                    OpacityForm = 1;
-                    //                    IndicatorVisible = false;
-                    //                    return;
-                    //                }
-                    //            }
-                    //            await App.Current.MainPage.Navigation.PopPopupAsync(false);
-                    //            App.Current.MainPage = new ServiceOrdersPage(vm);
-                    //        }
-                    //        else
-                    //            Crashes.TrackError(new Exception("При запросе информация о заявке технику от сервера пришел ответ с ошибкой"),
-                    //            new Dictionary<string,string> {
-                    //                    {"Servicemans",Servicemans.First().NewPhone },
-                    //                    {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                    //                    {"StatusCode",response.StatusCode.ToString() },
-                    //                    {"Response",response.ToString() },
-                    //                    {"Query","/api/NewServiceorderExtensionBases/id?id=" + so.NewServiceorderId.ToString() }
-                    //            });
-                    //    }
-                    //}
                 }
-                else
-                    //await Application.Current.MainPage.DisplayAlert("Ошибка","Не выбрана причина отмены(переноса), не указан комментарий к причине или заключение по заявке пустое","OK");
-                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Заключение по заявке не может быть пустым",Color.Red,LayoutOptions.EndAndExpand),7000));
-                //await App.Current.MainPage.Navigation.PopPopupAsync(false);
-                //App.Current.MainPage = new ServiceOrdersPage(vm);
                 IsLoading(false);
             });
         }

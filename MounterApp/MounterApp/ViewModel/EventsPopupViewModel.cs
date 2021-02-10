@@ -33,6 +33,11 @@ namespace MounterApp.ViewModel {
             EndDateVisible = true;
             GetButtonVisible = true;
         }
+        /// <summary>
+        /// Конструктор popup-окна для отображения событий по объекту для монтажников +-4 часа от даты отправки монтажа
+        /// </summary>
+        /// <param name="objectNumber"></param>
+        /// <param name="dt"></param>
         public EventsPopupViewModel(string objectNumber, DateTime? dt) {
             CloseImage = IconName("close");
             GetImage = IconName("get");
@@ -45,38 +50,7 @@ namespace MounterApp.ViewModel {
             StartDateVisible = false;
             EndDateVisible = false;
             GetButtonVisible = false;
-        }
-
-        private string _ObjectNumber;
-        public string ObjectNumber {
-            get => _ObjectNumber;
-            set {
-                _ObjectNumber = value;
-                OnPropertyChanged(nameof(ObjectNumber));
-            }
-        }
-
-        private RelayCommand _GetEvents2;
-        public RelayCommand GetEvents2 {
-            get => _GetEvents2 ??= new RelayCommand(async obj => {
-                //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                //    client.DefaultRequestHeaders.Clear();
-                //    client.DefaultRequestHeaders.ConnectionClose = true;
-                //    client.DefaultRequestHeaders.ExpectContinue = false;
-                //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/events?objNumber=" + ObjectNumber +
-                //                        "&startDate=" + StartDate +
-                //                        "&endDate=" + EndDate +
-                //                        "&testFiltered=0&doubleFiltered=0");
-                //    if(response.IsSuccessStatusCode) {
-                //        Events = JsonConvert.DeserializeObject<ObservableCollection<GetEventsReceivedFromObject_Result>>(await response.Content.ReadAsStringAsync());
-                //    }
-                //}
-                Events = await ClientHttp.Get<ObservableCollection<GetEventsReceivedFromObject_Result>>("/api/Andromeda/events?objNumber=" + ObjectNumber +
-                                        "&startDate=" + StartDate +
-                                        "&endDate=" + EndDate +
-                                        "&testFiltered=0&doubleFiltered=0"
-                                        );
-            });
+            GetEvents2.ChangeCanExecute();
         }
         /// <summary>
         /// Конструктор popup-окна для отображения событий по оъекту за выбранный период
@@ -213,11 +187,35 @@ namespace MounterApp.ViewModel {
             }
         }
         /// <summary>
+        /// Номер объекта для запроса событий по объекту +-4 часа от отправки монтажа
+        /// </summary>
+        private string _ObjectNumber;
+        public string ObjectNumber {
+            get => _ObjectNumber;
+            set {
+                _ObjectNumber = value;
+                OnPropertyChanged(nameof(ObjectNumber));
+            }
+        }
+        /// <summary>
+        /// Запрос событий по объекту +-4 часа от даты отправки монтажа
+        /// </summary>
+        private RelayCommand _GetEvents2;
+        public RelayCommand GetEvents2 {
+            get => _GetEvents2 ??= new RelayCommand(async obj => {
+                Events = await ClientHttp.Get<ObservableCollection<GetEventsReceivedFromObject_Result>>("/api/Andromeda/events?objNumber=" + ObjectNumber +
+                                        "&startDate=" + StartDate +
+                                        "&endDate=" + EndDate +
+                                        "&testFiltered=0&doubleFiltered=0"
+                                        );
+            },obj=>!string.IsNullOrEmpty(ObjectNumber) && StartDate<=EndDate);
+        }
+        /// <summary>
         /// Командой получаем список событий за выбранный диапазон
         /// </summary>
-        private AsyncCommand _GetEventsCommands;
-        public AsyncCommand GetEventsCommands {
-            get => _GetEventsCommands ??= new AsyncCommand(async () => {
+        private RelayCommand _GetEventsCommands;
+        public RelayCommand GetEventsCommands {
+            get => _GetEventsCommands ??= new RelayCommand(async obj => {
                 IndicatorVisible = true;
                 OpacityForm = 0.1;
                 Analytics.TrackEvent("Запрос событий по объекту",
@@ -230,44 +228,25 @@ namespace MounterApp.ViewModel {
                     Events.Clear();
                     if((EndDate-StartDate).TotalDays>7) {
                         StartDate = EndDate.AddDays(-7.0);
-                        //Toast.MakeText(Android.App.Application.Context,"Просмотр событий более чем за неделю, запрещен!",ToastLength.Long).Show(); 
                         await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Просмотр событий более чем за неделю запрещен",Color.Red,LayoutOptions.EndAndExpand),4000));
                     }
                     List<GetEventsReceivedFromObject_Result> _evnts = new List<GetEventsReceivedFromObject_Result>();
                     string obj_number = ServiceOrder != null ? ServiceOrder.NewNumber.ToString() : ServiceOrderFireAlarm.NewNumber.ToString();
-                    //Events = await ClientHttp.GetQuery<ObservableCollection<GetEventsReceivedFromObject_Result>>("/api/Andromeda/events?objNumber=" + obj_number +
-                    //                        "&startDate=" + StartDate +
-                    //                        "&endDate=" + EndDate +
-                    //                        "&testFiltered=0&doubleFiltered=0");
-
-                    //using (HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                    //    client.DefaultRequestHeaders.Clear();
-                    //    client.DefaultRequestHeaders.ConnectionClose = true;
-                    //    client.DefaultRequestHeaders.ExpectContinue = false;
-                    //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/events?objNumber=" + obj_number +
-                    //                        "&startDate=" + StartDate +
-                    //                        "&endDate=" + EndDate +
-                    //                        "&testFiltered=0&doubleFiltered=0");
-                    //    if(response.IsSuccessStatusCode) {
-                    //        Events= JsonConvert.DeserializeObject<ObservableCollection<GetEventsReceivedFromObject_Result>>(await response.Content.ReadAsStringAsync());
-                    //    }
-                    //}
                     Events = await ClientHttp.Get<ObservableCollection<GetEventsReceivedFromObject_Result>>("/api/Andromeda/events?objNumber=" + obj_number +
                                         "&startDate=" + StartDate +
                                         "&endDate=" + EndDate +
                                         "&testFiltered=0&doubleFiltered=0"
                                         );
                 }
-                else {
-                    //await Application.Current.MainPage.DisplayAlert("Ошибка","Дата начала не может быть больше или равна дате окончания","OK");
-                    //Toast.MakeText(Android.App.Application.Context,"Дата начала не может быть больше или равна дате окончания",ToastLength.Long).Show();
+                else 
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Дата начала не может быть больше или равна дате окончания",Color.Red,LayoutOptions.EndAndExpand),4000));
-                }
                 IndicatorVisible = false;
                 OpacityForm = 1;
             });
         }
-
+        /// <summary>
+        /// Свойство для хранения значения для видимости поля стартовой даты
+        /// </summary>
         private bool _StartDateVisible;
         public bool StartDateVisible {
             get => _StartDateVisible;
@@ -276,7 +255,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(StartDateVisible));
             }
         }
-
+        /// <summary>
+        /// Свойство для хранения значения для видимости поля конечной даты
+        /// </summary>
         private bool _EndDateVisible;
         public bool EndDateVisible {
             get => _EndDateVisible;
@@ -285,7 +266,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(EndDateVisible));
             }
         }
-
+        /// <summary>
+        /// Видимость поля получить
+        /// </summary>
         private bool _GetButtonVisible;
         public bool GetButtonVisible {
             get => _GetButtonVisible;

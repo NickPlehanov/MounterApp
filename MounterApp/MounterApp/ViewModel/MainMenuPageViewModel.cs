@@ -2,16 +2,12 @@
 using MounterApp.Helpers;
 using MounterApp.InternalModel;
 using MounterApp.Model;
-using MounterApp.Properties;
 using MounterApp.Views;
-using Newtonsoft.Json;
 using Rg.Plugins.Popup.Extensions;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -23,16 +19,18 @@ namespace MounterApp.ViewModel {
         /// </summary>
         /// <param name="mounters">Монтажники(список)</param>
         /// <param name="servicemans">Техники(список)</param>
-        public MainMenuPageViewModel(List<NewMounterExtensionBase> mounters,List<NewServicemanExtensionBase> servicemans) {
+        public MainMenuPageViewModel(List<NewMounterExtensionBase> mounters, List<NewServicemanExtensionBase> servicemans) {
             Mounters = mounters;
             Serviceman = servicemans;
             SettingsImage = IconName("settings");
             Analytics.TrackEvent("Инициализация окна главного меню приложения");
             App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
             CheckVersionApp.Execute(null);
-            GetRatingServicemanCommand.Execute(null);
+            //GetRatingServicemanCommand.Execute(null);
         }
-
+        /// <summary>
+        /// текстовое поле, форматируется вручную для отображения топ-3 техников по количеству заявок за текущий месяц
+        /// </summary>
         private string _RatingServiceman;
         public string RatingServiceman {
             get => _RatingServiceman;
@@ -41,7 +39,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(RatingServiceman));
             }
         }
-
+        /// <summary>
+        /// Список техников отсортированный по количеству выполненных заявок
+        /// </summary>
         private ObservableCollection<RatingServiceman> _Rating = new ObservableCollection<RatingServiceman>();
         public ObservableCollection<RatingServiceman> Rating {
             get => _Rating;
@@ -50,49 +50,50 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(Rating));
             }
         }
-
-        private RelayCommand _GetRatingServicemanCommand;
-        public RelayCommand GetRatingServicemanCommand {
-            get => _GetRatingServicemanCommand ??= new RelayCommand(async obj => {
-                if(Serviceman != null)
-                    if(Serviceman.Count > 0)
-                        if(Serviceman.Any(x => x.NewCategory != 2)) {
-                            using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                                HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/toptech?date=" + DateTime.Now);
-                                if(response.IsSuccessStatusCode) {
-                                    if(!string.IsNullOrEmpty(await response.Content.ReadAsStringAsync())) {
-                                        Rating = JsonConvert.DeserializeObject<ObservableCollection<RatingServiceman>>(await response.Content.ReadAsStringAsync());
-                                        if(Rating.Count > 0) {
-                                            int cnt = 1;
-                                            foreach(var item in Rating.Take(3)) {
-                                                RatingServiceman += cnt.ToString() + ". " + item.ServicemanName + " (" + item.CountOrders + ")" + Environment.NewLine;
-                                                cnt++;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-            });
-        }
+        /// <summary>
+        /// Команда получения списка техников с количеством выполненных заявок
+        /// </summary>
+        //private RelayCommand _GetRatingServicemanCommand;
+        //public RelayCommand GetRatingServicemanCommand {
+        //    get => _GetRatingServicemanCommand ??= new RelayCommand(async obj => {
+        //        if (Serviceman.Count > 0)
+        //            if (Serviceman.Any(x => x.NewCategory != 2)) {
+        //                using (HttpClient client = new HttpClient(GetHttpClientHandler())) {
+        //                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/toptech?date=" + DateTime.Now);
+        //                    if (response.IsSuccessStatusCode) {
+        //                        if (!string.IsNullOrEmpty(await response.Content.ReadAsStringAsync())) {
+        //                            Rating = JsonConvert.DeserializeObject<ObservableCollection<RatingServiceman>>(await response.Content.ReadAsStringAsync());
+        //                            if (Rating != null)
+        //                                if (Rating.Count > 0) {
+        //                                    int cnt = 1;
+        //                                    foreach (var item in Rating.Take(3)) {
+        //                                        RatingServiceman += cnt.ToString() + ". " + item.ServicemanName + " (" + item.CountOrders + ")" + Environment.NewLine;
+        //                                        cnt++;
+        //                                    }
+        //                                }
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //    }, obj => Serviceman != null);
+        //}
         /// <summary>
         /// Команда перехода к странице монтажей
         /// </summary>
         private RelayCommand _GetMountworksCommand;
         public RelayCommand GetMountworksCommand {
             get => _GetMountworksCommand ??= new RelayCommand(async obj => {
-                if(Mounters.Any()) {
+                if (Mounters.Any()) {
                     Analytics.TrackEvent("Переход к монтажам",
-                    new Dictionary<string,string> {
+                    new Dictionary<string, string> {
                         {"MountersPhone",Mounters.First().NewPhone }
                     });
-                    MountsViewModel vm = new MountsViewModel(Mounters,Serviceman);
+                    MountsViewModel vm = new MountsViewModel(Mounters, Serviceman);
                     App.Current.MainPage = new MountsPage(vm);
                 }
                 else
-                    //await Application.Current.MainPage.DisplayAlert("Ошибка","Не определен сотрудник, переход невозможен","OK");
-                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Не определен сотрудник, переход невозможен",Color.Red,LayoutOptions.EndAndExpand),4000));
-            },obj => Mounters != null && Mounters.Count > 0);
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Не определен сотрудник, переход невозможен", Color.Red, LayoutOptions.EndAndExpand), 4000));
+            }, obj => Mounters != null && Mounters.Count > 0);
         }
         /// <summary>
         /// Команда перехода к странице с заявками технику
@@ -100,18 +101,18 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetServiceordersCommand;
         public RelayCommand GetServiceordersCommand {
             get => _GetServiceordersCommand ??= new RelayCommand(async obj => {
-                if(Serviceman.Any()) {
+                if (Serviceman.Any()) {
                     Analytics.TrackEvent("Переход к заявкам технику",
-                        new Dictionary<string,string> {
+                        new Dictionary<string, string> {
                         {"ServicemansPhone",Serviceman.First().NewPhone }
                         });
-                    ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Serviceman,Mounters);
+                    ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Serviceman, Mounters);
                     App.Current.MainPage = new ServiceOrdersPage(vm);
                 }
                 else
                     //await Application.Current.MainPage.DisplayAlert("Ошибка","Не определен сотрудник, переход невозможен","OK");
-                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Не определен сотрудник, переход невозможен",Color.Red,LayoutOptions.EndAndExpand),4000));
-            },obj => Serviceman != null && Serviceman.Count > 0);
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Не определен сотрудник, переход невозможен", Color.Red, LayoutOptions.EndAndExpand), 4000));
+            }, obj => Serviceman != null && Serviceman.Count > 0);
         }
         /// <summary>
         /// Список для хранения монтажника
@@ -132,6 +133,7 @@ namespace MounterApp.ViewModel {
             get => _Serviceman;
             set {
                 _Serviceman = value;
+                //GetRatingServicemanCommand.ChangeCanExecute();
                 OnPropertyChanged(nameof(Serviceman));
             }
         }
@@ -152,51 +154,24 @@ namespace MounterApp.ViewModel {
         public AsyncCommand OpenSettingsCommand {
             get => _OpenSettingsCommand ??= new AsyncCommand(async () => {
                 Analytics.TrackEvent("Переход к настройкам");
-                SettingsPageViewModel vm = new SettingsPageViewModel(Mounters,Serviceman);
+                SettingsPageViewModel vm = new SettingsPageViewModel(Mounters, Serviceman);
                 App.Current.MainPage = new SettingsPage(vm);
             });
         }
-
+        /// <summary>
+        /// Команда проверки версии приложения и напоминания обновления
+        /// </summary>
         private RelayCommand _CheckVersionApp;
         public RelayCommand CheckVersionApp {
             get => _CheckVersionApp ??= new RelayCommand(async obj => {
+                //Получаем имя версии приложения из свойств
                 AppVersions av = new AppVersions();
                 string Version = av.GetVersionAndBuildNumber().VersionNumber;
-                //HttpStatusCode code = await ClientHttp.GetQuery("/api/Common/VersionNumber?appVersion=" + Version);
-                //if (code.Equals(HttpStatusCode.MethodNotAllowed))
-                //    await Application.Current.MainPage.DisplayAlert("Информация"
-                //                ,"У Вас установлена не актуальная версия приложения, пожалуйста обновите её." + Environment.NewLine + Environment.NewLine + "Если Вы не получили ссылку на новую версию, то сообщите свою почту в ИТ-отдел."
-                //                ,"OK");
-                //else if (code.Equals(HttpStatusCode.OK)) { }
-                //else {
-                //    Analytics.TrackEvent("Выполнение запроса",
-                //    new Dictionary<string,string> {
-                //        {"query","/api/Common/VersionNumber?appVersion=" + Version },
-                //        {"code",code.ToString() },
-                //        {"phone", Application.Current.Properties["Phone"].ToString() }
-                //    });
-                //}
-
-                //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/VersionNumber?appVersion=" + Version);
-                //    if(response != null) {
-                //        if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) { }
-                //        if(response.StatusCode.Equals(HttpStatusCode.MethodNotAllowed)) {
-                //            //await Application.Current.MainPage.DisplayAlert("Информация"
-                //            //    ,"У Вас установлена не актуальная версия приложения, пожалуйста обновите её." + Environment.NewLine + Environment.NewLine + "Если Вы не получили ссылку на новую версию, то сообщите свою почту в ИТ-отдел."
-                //            //    ,"OK");
-                //            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("У Вас установлена не актуальная версия приложения, пожалуйста обновите её",Color.Red,LayoutOptions.EndAndExpand),4000));
-                //        }
-                //    }
-                //}
-
                 HttpStatusCode code = await ClientHttp.Get("/api/Common/VersionNumber?appVersion=" + Version);
-                //if(code.Equals(HttpStatusCode.OK)) { }
-                if(code.Equals(HttpStatusCode.MethodNotAllowed))
-                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("У Вас установлена не актуальная версия приложения, пожалуйста обновите её",Color.Red,LayoutOptions.EndAndExpand),4000));
+                if (code.Equals(HttpStatusCode.MethodNotAllowed))//версия установленого приложения и версия указанная как актуальная на сервере - не совпали
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("У Вас установлена не актуальная версия приложения, пожалуйста обновите её", Color.Red, LayoutOptions.EndAndExpand), 4000));
             });
         }
-
         /// <summary>
         /// Картинка - Настройки
         /// </summary>

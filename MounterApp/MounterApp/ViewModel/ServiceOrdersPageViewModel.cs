@@ -72,7 +72,13 @@ namespace MounterApp.ViewModel {
             FireAlarmTransferServiceOrderVisible = false;
             FireAlarmTimeServiceOrderVisible = false;
             FireAlarmOtherServiceOrderVisible = false;
-            if(Application.Current.Properties.ContainsKey("AutoUpdateTime"))
+
+            GetServiceOrders.Execute(Servicemans);
+            GetServiceOrderByTransfer.Execute(Servicemans);
+            GetServiceOrdersFireAlarm.Execute(Servicemans);
+            GetServiceOrderByTransferFireAlarm.Execute(Servicemans);
+
+            if (Application.Current.Properties.ContainsKey("AutoUpdateTime"))
                 AutoUpdateTime = double.Parse(Application.Current.Properties["AutoUpdateTime"].ToString());
             else
                 AutoUpdateTime = null;

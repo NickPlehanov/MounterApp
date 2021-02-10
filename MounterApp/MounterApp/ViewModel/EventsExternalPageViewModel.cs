@@ -1,26 +1,29 @@
 ﻿using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 using MounterApp.Helpers;
 using MounterApp.Model;
-using MounterApp.Properties;
 using MounterApp.Views;
-using Newtonsoft.Json;
 using Rg.Plugins.Popup.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Net.Http;
-using System.Text;
 using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class EventsExternalPageViewModel : BaseViewModel {
-        //readonly ClientHttp http = new ClientHttp();
+        /// <summary>
+        /// Конструктор для формы получения событий по объекту(пасхалка)
+        /// </summary>
+        /// <param name="mounters">Список монтажников</param>
+        /// <param name="servicemans">Список техников</param>
         public EventsExternalPageViewModel(List<NewMounterExtensionBase> mounters, List<NewServicemanExtensionBase> servicemans) {
             Mounters = mounters;
             Servicemans = servicemans;
+            GetImage = IconName("get");
+            CloseImage = IconName("close");
         }
-
+        /// <summary>
+        /// Свойство для видимости индикатора загрузки
+        /// </summary>
         private bool _IndicatorVisible;
         public bool IndicatorVisible {
             get => _IndicatorVisible;
@@ -29,7 +32,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(IndicatorVisible));
             }
         }
-
+        /// <summary>
+        /// Свойство сохраняющее значение для степени прозрачности формы
+        /// </summary>
         private double _OpacityForm;
         public double OpacityForm {
             get => _OpacityForm;
@@ -38,39 +43,49 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(OpacityForm));
             }
         }
+        /// <summary>
+        /// Начальная дата для отбора событий
+        /// </summary>
         private DateTime _StartDate;
         public DateTime StartDate {
             get => _StartDate;
             set {
-                if(value == DateTime.Parse("01.01.1900 00:00:00"))
+                if (value == DateTime.Parse("01.01.1900 00:00:00"))
                     _StartDate = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
                 else
                     _StartDate = value;
                 OnPropertyChanged(nameof(StartDate));
             }
         }
-        
+        /// <summary>
+        /// Конечная дата для отбора событий
+        /// </summary>
         private DateTime _EndDate;
         public DateTime EndDate {
             get => _EndDate;
             set {
-                if(value == DateTime.Parse("01.01.1900 00:00:00"))
+                if (value == DateTime.Parse("01.01.1900 00:00:00"))
                     _EndDate = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy")).AddDays(1);
                 else
                     _EndDate = value;
                 OnPropertyChanged(nameof(EndDate));
             }
         }
-
+        /// <summary>
+        /// Номер объекта, по которому будет производится запрос событий
+        /// </summary>
         private string _ObjectNumber;
         public string ObjectNumber {
             get => _ObjectNumber;
             set {
                 _ObjectNumber = value;
+                GetEventsCommands.ChangeCanExecute();
                 OnPropertyChanged(nameof(ObjectNumber));
             }
         }
-
+        /// <summary>
+        /// Икнока для кнопки "Получить/Запросить"
+        /// </summary>
         private ImageSource _GetImage;
         public ImageSource GetImage {
             get => _GetImage;
@@ -79,7 +94,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(GetImage));
             }
         }
-
+        /// <summary>
+        /// Иконка для кнопки "Закрыть"
+        /// </summary>
         private ImageSource _CloseImage;
         public ImageSource CloseImage {
             get => _CloseImage;
@@ -88,7 +105,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(CloseImage));
             }
         }
-
+        /// <summary>
+        /// Список монтажников
+        /// </summary>
         private List<NewMounterExtensionBase> _Mounters;
         public List<NewMounterExtensionBase> Mounters {
             get => _Mounters;
@@ -97,7 +116,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(Mounters));
             }
         }
-
+        /// <summary>
+        /// Список техников
+        /// </summary>
         private List<NewServicemanExtensionBase> _Servicemans;
         public List<NewServicemanExtensionBase> Servicemans {
             get => _Servicemans;
@@ -106,7 +127,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(Servicemans));
             }
         }
-
+        /// <summary>
+        /// Отслеживаемая коллекция для хранения событий
+        /// </summary>
         private ObservableCollection<GetEventsReceivedFromObject_Result> _Events = new ObservableCollection<GetEventsReceivedFromObject_Result>();
         public ObservableCollection<GetEventsReceivedFromObject_Result> Events {
             get => _Events;
@@ -115,121 +138,39 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(Events));
             }
         }
-
-        private RelayCommand _ExitCommand;
-        public RelayCommand ExitCommand {
-            get => _ExitCommand ??= new RelayCommand(async obj => {
-                BackPressedCommand.Execute(null);
-            });
-        }
-
+        /// <summary>
+        /// Команда получения списка событий за указанный период (StartDate и EndDate), но номеру объекта (ObjectNumber)
+        /// </summary>
         private RelayCommand _GetEventsCommands;
         public RelayCommand GetEventsCommands => _GetEventsCommands ??= new RelayCommand(async obj => {
             Analytics.TrackEvent("Запрос событий по объекту(расширенный)",
-            new Dictionary<string,string> {
-                    //{"ServicemanPhone",Servicemans.First().NewPhone },
+            new Dictionary<string, string> {
                     {"StartDate",StartDate.ToShortDateString() },
-                    {"EndDate",EndDate.ToShortDateString() }
+                    {"EndDate",EndDate.ToShortDateString() },
+                    {"ObjectNumber",ObjectNumber }
             });
-            if(StartDate <= EndDate) {
+            if (StartDate <= EndDate) {
                 IndicatorVisible = true;
                 OpacityForm = 0.1;
-                //Events = await ClientHttp.GetQuery<ObservableCollection<GetEventsReceivedFromObject_Result>>("/api/Andromeda/events?objNumber=" + ObjectNumber +
-                //                        "&startDate=" + StartDate +
-                //                        "&endDate=" + EndDate +
-                //                        "&testFiltered=0&doubleFiltered=0");
-
-
-
-
                 Events = await ClientHttp.Get<ObservableCollection<GetEventsReceivedFromObject_Result>>("/api/Andromeda/events?objNumber=" + ObjectNumber +
-                                        "&startDate=" + StartDate +
-                                        "&endDate=" + EndDate +
-                                        "&testFiltered=0&doubleFiltered=0"
-                                        );
-                //Events.Clear();
-                //string resp = null;
-                //List<GetEventsReceivedFromObject_Result> _evnts = new List<GetEventsReceivedFromObject_Result>();
-                //HttpResponseMessage response = null;
-                //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                //    //string obj_number = ServiceOrder != null ? ServiceOrder.NewNumber.ToString() : ServiceOrderFireAlarm.NewNumber.ToString();
-                //    Analytics.TrackEvent("Запрос событий по объекту(расширенный)",
-                //    new Dictionary<string,string> {
-                //                //{"ServicemanPhone",Servicemans.First().NewPhone },
-                //                {"StartDate",StartDate.ToShortDateString() },
-                //                {"EndDate",EndDate.ToShortDateString() },
-                //                {"ObjectNumber",ObjectNumber }
-                //    });
-                //    response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/events?objNumber=" + ObjectNumber +
-                //                        "&startDate=" + StartDate +
-                //                        "&endDate=" + EndDate +
-                //                        "&testFiltered=0&doubleFiltered=0"
-                //                        );
-                //    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                //        resp = response.Content.ReadAsStringAsync().Result;
-                //        try {
-                //            Analytics.TrackEvent("Попытка десериализации результата запроса события по объекту(расширенный)",
-                //            new Dictionary<string,string> {
-                //                //{"Servicemans",Servicemans.First().NewPhone },
-                //                //{"ServicemanPhone",Servicemans.First().NewPhone },
-                //                    {"StartDate",StartDate.ToShortDateString() },
-                //                    {"EndDate",EndDate.ToShortDateString() },
-                //                    {"ObjectNumber",ObjectNumber }
-                //            });
-                //            _evnts = JsonConvert.DeserializeObject<List<GetEventsReceivedFromObject_Result>>(resp);
-                //        }
-                //        catch(Exception ex) {
-                //            Crashes.TrackError(new Exception("Ошибка десериализации результата запроса события по объекту(расширенный)"),
-                //            new Dictionary<string,string> {
-                //                //{"Servicemans",Servicemans.First().NewPhone },
-                //                {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                //                {"ErrorMessage",ex.Message },
-                //                {"StatusCode",response.StatusCode.ToString() },
-                //                {"Response",response.ToString() }
-                //            });
-                //        }
-                //        if(_evnts.Count > 0) {
-                //            foreach(var item in _evnts)
-                //                Events.Add(item);
-                //        }
-                //        else
-                //            Crashes.TrackError(new Exception("Запрос событий по объекту. Пустой результат запроса(расширенный)"),
-                //                new Dictionary<string,string> {
-                //                    //{"ServicemanPhone",Servicemans.First().NewPhone },
-                //                    {"StartDate",StartDate.ToShortDateString() },
-                //                    {"EndDate",EndDate.ToShortDateString() },
-                //                    {"ObjectNumber",ObjectNumber },
-                //                    {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                //                    {"StatusCode",response.StatusCode.ToString() },
-                //                    {"Response",response.ToString() }
-                //                });
-                //    }
-                //    else {
-                //        resp = null;
-                //        Crashes.TrackError(new Exception("Запрос событий по объекту. Заявка технику. От сервера не получен корректный ответ(расширенный)"),
-                //        new Dictionary<string,string> {
-                //                    //{"ServicemanPhone",Servicemans.First().NewPhone },
-                //                    {"StartDate",StartDate.ToShortDateString() },
-                //                    {"EndDate",EndDate.ToShortDateString() },
-                //                    {"ObjectNumber",ObjectNumber },
-                //                    {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                //                    {"StatusCode",response.StatusCode.ToString() },
-                //                    {"Response",response.ToString() }
-                //        });
-                //    }
-                //}
+                                                        "&startDate=" + StartDate +
+                                                        "&endDate=" + EndDate +
+                                                        "&testFiltered=0&doubleFiltered=0"
+                                                        );
             }
             else {
-                //await Application.Current.MainPage.DisplayAlert("Ошибка","Дата начала не может быть больше или равна дате окончания","OK");
-                await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Дата начала не может быть больше или равна дате окончания",Color.Red,LayoutOptions.EndAndExpand),4000));
+                await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Дата начала не может быть больше или равна дате окончания", Color.Red, LayoutOptions.EndAndExpand), 4000));
             }
             IndicatorVisible = false;
             OpacityForm = 1;
-        });
+        },obj=> StartDate <= EndDate && !string.IsNullOrEmpty(ObjectNumber));
+        /// <summary>
+        /// Команда выхода с формы
+        /// </summary>
         private RelayCommand _BackPressedCommand;
         public RelayCommand BackPressedCommand {
             get => _BackPressedCommand ??= new RelayCommand(async obj => {
-                SettingsPageViewModel vm = new SettingsPageViewModel(Mounters,Servicemans);
+                SettingsPageViewModel vm = new SettingsPageViewModel(Mounters, Servicemans);
                 App.Current.MainPage = new SettingsPage(vm);
             });
         }

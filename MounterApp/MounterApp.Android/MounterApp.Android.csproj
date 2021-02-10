@@ -44,7 +44,7 @@
     <EnableLLVM>false</EnableLLVM>
     <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
     <AndroidSupportedAbis />
-    <AndroidKeyStore>false</AndroidKeyStore>
+    <AndroidKeyStore>true</AndroidKeyStore>
     <AndroidSigningKeyStore>C:\Users\pna\AppData\Local\Xamarin\Mono for Android\Keystore\NickDev\NickDev.keystore</AndroidSigningKeyStore>
     <AndroidSigningStorePass>30051992</AndroidSigningStorePass>
     <AndroidSigningKeyAlias>NickDev</AndroidSigningKeyAlias>
@@ -53,6 +53,7 @@
     </AndroidHttpClientHandlerType>
     <AndroidTlsProvider>
     </AndroidTlsProvider>
+    <AndroidLinkTool>r8</AndroidLinkTool>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

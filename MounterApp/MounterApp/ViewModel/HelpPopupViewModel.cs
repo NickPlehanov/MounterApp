@@ -3,10 +3,16 @@ using Rg.Plugins.Popup.Extensions;
 
 namespace MounterApp.ViewModel {
     public class HelpPopupViewModel : BaseViewModel {
+        /// <summary>
+        /// Конструктор для окна помощи
+        /// </summary>
+        /// <param name="msg">Текстовое форматированое сообщение </param>
         public HelpPopupViewModel(string msg) {
             Message = msg;
         }
-
+        /// <summary>
+        /// Текстовое сообщение, должно быть заранее форматировано
+        /// </summary>
         private string _Message;
         public string Message {
             get => _Message;
@@ -15,13 +21,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(Message));
             }
         }
-
-        private RelayCommand _CloseCommand;
-        public RelayCommand CloseCommand {
-            get => _CloseCommand ??= new RelayCommand(async obj => {
-                await App.Current.MainPage.Navigation.PopPopupAsync(false);
-            });
-        }
+        /// <summary>
+        /// Команда закрытия окна
+        /// </summary>
         private RelayCommand _BackPressedCommand;
         public RelayCommand BackPressedCommand {
             get => _BackPressedCommand ??= new RelayCommand(async obj => {

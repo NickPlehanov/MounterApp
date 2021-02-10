@@ -7,7 +7,7 @@
         <Frame Style="{DynamicResource PopupFrameStyle}">
             <StackLayout Style="{StaticResource PopupStackLayoutStyle}">
                 <Label Style="{StaticResource CommonLabelStyle}" Text="{Binding Message}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" />
-                <Button Style="{StaticResource CommonButtonStyle}" Text="Закрыть" Command="{Binding CloseCommand}"/>
+                <Button Style="{StaticResource CommonButtonStyle}" Text="Закрыть" Command="{Binding BackPressedCommand}"/>
             </StackLayout>
         </Frame>
     </popup:PopupPage.Content>

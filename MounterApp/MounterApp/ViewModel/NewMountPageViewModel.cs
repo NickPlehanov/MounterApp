@@ -12,17 +12,14 @@ using System.Net.Http;
 using System.Text;
 using Xamarin.Forms;
 using Rg.Plugins.Popup.Extensions;
-using Android.Widget;
 using Microsoft.AppCenter.Analytics;
 using Xamarin.Essentials;
 using System.Net;
 using Microsoft.AppCenter.Crashes;
 using Newtonsoft.Json;
-using MounterApp.Properties;
 
 namespace MounterApp.ViewModel {
     public class NewMountPageViewModel : BaseViewModel {
-        //readonly ClientHttp http = new ClientHttp();
         private List<NewMounterExtensionBase> _Mounters;
         public List<NewMounterExtensionBase> Mounters {
             get => _Mounters;
@@ -38,12 +35,6 @@ namespace MounterApp.ViewModel {
         private RelayCommand _FillPhotoNames;
         public RelayCommand FillPhotoNames {
             get => _FillPhotoNames ??= new RelayCommand(async obj => {
-                //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Карточка объекта" });
-                //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Схема объекта" });
-                //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Расшлейфовка объекта" });
-                //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Ответственные объекта" });
-                //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Вывеска объекта" });
-                //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Доп. фото" });
 
                 PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Вывеска объекта" });
                 PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Обходной лист" });
@@ -58,12 +49,6 @@ namespace MounterApp.ViewModel {
         public NewMountPageViewModel(List<NewMounterExtensionBase> mounters,List<NewServicemanExtensionBase> servicemans) {
             Servicemans = servicemans;
             Mounters = mounters;
-            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Карточка объекта" });
-            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Схема объекта" });
-            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Расшлейфовка объекта" });
-            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Ответственные объекта" });
-            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Вывеска объекта" });
-            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Доп. фото" });
             FillPhotoNames.Execute(null);
             ImgSrc = "EmptyPhoto.png";
             PhotoImage = IconName("media");
@@ -76,18 +61,10 @@ namespace MounterApp.ViewModel {
                         new Dictionary<string,string> {
                             {"MounterPhone",Mounters.FirstOrDefault().NewPhone }
                         });
-            //var mainDisplayInfo = DeviceDisplay.MainDisplayInfo.Height;
-            //var height = mainDisplayInfo.Height;
             App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
         }
         public NewMountPageViewModel(Mounts mount,List<NewMounterExtensionBase> mounters,bool _IsChanged,List<NewServicemanExtensionBase> servicemans) {
             Servicemans = servicemans;
-            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Карточка объекта" });
-            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Схема объекта" });
-            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Расшлейфовка объекта" });
-            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Ответственные объекта" });
-            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Вывеска объекта" });
-            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Доп. фото" });
             FillPhotoNames.Execute(null);
             ImgSrc = "EmptyPhoto.png";
             PhotoImage = IconName("media");
@@ -338,41 +315,6 @@ namespace MounterApp.ViewModel {
 
                                 bool error = false;
                                 int cnt = 1;
-                                //РАБОЧИЙ
-                                //foreach(PhotoCollection ph in Photos.Where(x => x.Data != null)) {
-                                //    using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                                //        client.Timeout = TimeSpan.FromMinutes(10);
-                                //        MultipartFormDataContent form = new MultipartFormDataContent();
-                                //        //client.DefaultRequestHeaders.Clear();
-                                //        //client.DefaultRequestHeaders.ConnectionClose = true;
-                                //        //client.DefaultRequestHeaders.ExpectContinue = false;
-                                //        form.Add(new StreamContent(new MemoryStream(Convert.FromBase64String(ph.Data)))
-                                //            ,String.Format("file"),String.Format(ObjectNumber + "_" + ph._Types.PhotoTypeName + "_" + ph.ID.ToString() + ".jpeg"));
-                                //        HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress + "/api/Common?NumberObject=" + ObjectNumber +
-                                //            "&NameObject=" + ObjectName +
-                                //            "&AddressObject=" + ObjectAddress +
-                                //            "&MounterName=" + Mounters.FirstOrDefault().NewName +
-                                //            "&Driveways=" + ObjectDriveways
-                                //            ,form);
-                                //        IndicatorText = "Подождите, идет загрузка..." + Environment.NewLine + "Загружено " + cnt.ToString() + " фото из " + Photos.Count.ToString();
-                                //        cnt++;
-                                //        if(response.StatusCode.ToString() == "OK") {
-                                //            PathToSaveModel path = JsonConvert.DeserializeObject<PathToSaveModel>(response.Content.ReadAsStringAsync().Result);
-                                //            Path = path.PathToSave.ToString().Replace("C:\\","\\\\SQL-SERVICE\\");
-                                //        }
-                                //        if(response.StatusCode.ToString() != "OK") {
-                                //            //await Application.Current.MainPage.DisplayAlert("Ошибка (Фото не было загружено)",response.Content.ReadAsStringAsync().Result,"OK");
-                                //            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Ошибка при загрузке фото",Color.Red,LayoutOptions.EndAndExpand),4000));
-                                //            error = true;
-                                //            Crashes.TrackError(new Exception("Ошибка отправки фото на сервер"),
-                                //                new Dictionary<string,string> {
-                                //                    {"Error",response.Content.ReadAsStringAsync().Result },
-                                //                    {"ErrorResponse",response.ToString() },
-                                //                    {"ErrorPhotoNumber",cnt.ToString() }
-                                //                });
-                                //        }
-                                //    }
-                                //}
                                 foreach(PhotoCollection ph in Photos.Where(x => x.Data != null)) {
                                     MultipartFormDataContent form = new MultipartFormDataContent();
                                     form.Add(new StreamContent(new MemoryStream(Convert.FromBase64String(ph.Data)))
@@ -396,7 +338,6 @@ namespace MounterApp.ViewModel {
                                     }                                
                                 }
                                 if(!error) {
-                                    //if(result.Equals(HttpStatusCode.OK)) { 
                                     if(Mount != null) {
                                         Mount.State = 1;
                                         Mount.DateSended = DateTime.Now;
@@ -406,7 +347,6 @@ namespace MounterApp.ViewModel {
                                             {"ObjectNumber",Mount.ObjectNumber.ToString() },
                                             {"DateSended",Mount.DateSended.ToString() }
                                         });
-                                        //Toast.MakeText(Android.App.Application.Context,"Данные сохранены",ToastLength.Long).Show();
                                         await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Сохранение в локальной базе. Успешно.",Color.Green,LayoutOptions.EndAndExpand),4000));
                                         Analytics.TrackEvent("Отправка монтажа на сервер. Успешно",
                                             new Dictionary<string,string> { { "Mount",Mount.ObjectNumber } });
@@ -421,10 +361,8 @@ namespace MounterApp.ViewModel {
                                         WriteCoordinates.Execute(null);
                                         WriteDriveways.Execute(null);
                                         if(IsSuccessSendEvents && IsSuccessWriteWebLink)
-                                            //Toast.MakeText(Android.App.Application.Context,"Монтаж отправлен, данные получены оператором",ToastLength.Long).Show();
                                             await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Монтаж отправлен, данные получены оператором",Color.Green,LayoutOptions.EndAndExpand),4000));
                                         else {
-                                            //Toast.MakeText(Android.App.Application.Context,"Монтаж отправлен, данные получены оператором",ToastLength.Long).Show();
                                             await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Монтаж отправлен, данные получены оператором",Color.Green,LayoutOptions.EndAndExpand),4000));
                                             Analytics.TrackEvent("Ошибка при отправке монтажа, не получилось записать ссылку, координаты, маршрут или отправить событие",
                                             new Dictionary<string,string> {
@@ -440,22 +378,18 @@ namespace MounterApp.ViewModel {
                                 }
                             }
                             else {
-                                //await Application.Current.MainPage.DisplayAlert("Ошибка","Не все обязательные фото были сделаны","OK");
                                 await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Не все обязательные фото были сделаны",Color.Red,LayoutOptions.EndAndExpand),4000));
                                 Analytics.TrackEvent("Ошибка. Количество фото");
                             }
                         else {
-                            //await Application.Current.MainPage.DisplayAlert("Ошибка","Адрес объекта не может быть пустым","OK");
                             await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Адрес объекта не может быть пустым",Color.Red,LayoutOptions.EndAndExpand),4000));
                             Analytics.TrackEvent("Ошибка. Адрес объекта");
                         }
                     else {
-                        //await Application.Current.MainPage.DisplayAlert("Ошибка","Название объекта не может быть пустым","OK");
                         await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Название объекта не может быть пустым",Color.Red,LayoutOptions.EndAndExpand),4000));
                         Analytics.TrackEvent("Ошибка. Название объекта");
                     }
                 else {
-                    //await Application.Current.MainPage.DisplayAlert("Ошибка","Номер объекта не может быть пустым","OK");
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Номер объекта не может быть пустым",Color.Red,LayoutOptions.EndAndExpand),4000));
                     Analytics.TrackEvent("Ошибка. Номер объекта");
                 }
@@ -467,22 +401,6 @@ namespace MounterApp.ViewModel {
         private RelayCommand _WriteCoordinates;
         public RelayCommand WriteCoordinates {
             get => _WriteCoordinates ??= new RelayCommand(async obj => {
-                //await ClientHttp.GetQuery("/api/Andromeda/coords?ObjectNumber=" + ObjectNumber + "&ObjectAddress=" + ObjectAddress + "");
-
-                //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                //    HttpResponseMessage responseCoords = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/coords?ObjectNumber=" + ObjectNumber + "&ObjectAddress=" + ObjectAddress + "");
-                //    if(responseCoords.IsSuccessStatusCode || responseCoords.StatusCode == HttpStatusCode.Accepted) { }
-                //    else {
-                //        Crashes.TrackError(new Exception("Не удачная попытка записи координат в андромеду"),
-                //            new Dictionary<string,string> {
-                //                    {"ResponseStatusCode",responseCoords.StatusCode.ToString() },
-                //                    {"ResponseError",responseCoords.Content.ReadAsStringAsync().Result },
-                //                    {"Response",responseCoords.ToString() },
-                //                    {"ObjectNumber",ObjectNumber },
-                //                    {"ObjectAddress",ObjectAddress }
-                //            });
-                //    }
-                //}
                 HttpStatusCode code = await ClientHttp.Get("/api/Andromeda/coords?ObjectNumber=" + ObjectNumber + "&ObjectAddress=" + ObjectAddress);
                 if(!code.Equals(HttpStatusCode.Accepted))
                     Crashes.TrackError(new Exception("Не удачная попытка записи координат в андромеду"),
@@ -496,21 +414,6 @@ namespace MounterApp.ViewModel {
         private RelayCommand _WriteDriveways;
         public RelayCommand WriteDriveways {
             get => _WriteDriveways ??= new RelayCommand(async obj => {
-                //await ClientHttp.GetQuery("/api/Andromeda/driveways?ObjectNumber=" + ObjectNumber + "&ObjectDriveways=" + ObjectDriveways + "");
-                //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                //    HttpResponseMessage responseCoords = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/driveways?ObjectNumber=" + ObjectNumber + "&ObjectDriveways=" + ObjectDriveways + "");
-                //    if(responseCoords.IsSuccessStatusCode || responseCoords.StatusCode == HttpStatusCode.Accepted) { }
-                //    else {
-                //        Crashes.TrackError(new Exception("Не удачная попытка записи подъездных путей в андромеду"),
-                //            new Dictionary<string,string> {
-                //                    {"ResponseStatusCode",responseCoords.StatusCode.ToString() },
-                //                    {"ResponseError",responseCoords.Content.ReadAsStringAsync().Result },
-                //                    {"Response",responseCoords.ToString() },
-                //                    {"ObjectNumber",ObjectNumber },
-                //                    {"ObjectDriveways",ObjectDriveways }
-                //            });
-                //    }
-                //}
                 HttpStatusCode code = await ClientHttp.Get("/api/Andromeda/driveways?ObjectNumber=" + ObjectNumber + "&ObjectAddress=" + ObjectAddress);
                 if(!code.Equals(HttpStatusCode.Accepted))
                     Crashes.TrackError(new Exception("Не удачная попытка записи подъездных путей в андромеду"),
@@ -524,31 +427,7 @@ namespace MounterApp.ViewModel {
         private RelayCommand _WriteWebLink;
         public RelayCommand WriteWebLink {
             get => _WriteWebLink ??= new RelayCommand(async obj => {
-                //HttpStatusCode code = await ClientHttp.GetQuery("/api/Andromeda/weblink?ObjectNumber=" + ObjectNumber + "&path=" + Path + "");
-                //IsSuccessWriteWebLink = code.Equals(HttpStatusCode.Accepted);
                 IsSuccessWriteWebLink = false;
-                //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                //    HttpResponseMessage responseweblink = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/weblink?ObjectNumber=" + ObjectNumber + "&path=" + Path + "");
-                //    if(responseweblink.StatusCode.ToString() != "Accepted") {
-                //        IsSuccessWriteWebLink = false;
-                //        Crashes.TrackError(new Exception("Не удачная попытка записи Web-ссылки в андромеду"),
-                //            new Dictionary<string,string> {
-                //                    {"ResponseStatusCode",responseweblink.StatusCode.ToString() },
-                //                    {"ResponseError",responseweblink.Content.ReadAsStringAsync().Result },
-                //                    {"Response",responseweblink.ToString() },
-                //                    {"ObjectNumber",ObjectNumber },
-                //                    {"Path",Path }
-                //            });
-                //    }
-                //    else if(responseweblink.IsSuccessStatusCode || responseweblink.StatusCode.ToString() == "Accepted") {
-                //        IsSuccessWriteWebLink = true;
-                //        Analytics.TrackEvent("Монтаж отправлен, данные получены оператором",
-                //            new Dictionary<string,string> {
-                //            {"ObjectNumber",ObjectNumber },
-                //            {"Date",DateTime.Now.ToString() }
-                //        });
-                //    }
-                //}
                 HttpStatusCode code = await ClientHttp.Get("/api/Andromeda/weblink?ObjectNumber=" + ObjectNumber + "&path=" + Path);
                 if(!code.Equals(HttpStatusCode.Accepted)) {
                     IsSuccessWriteWebLink = false;
@@ -565,32 +444,7 @@ namespace MounterApp.ViewModel {
         private RelayCommand _SendEventsToAndromeda;
         public RelayCommand SendEventsToAndromeda {
             get => _SendEventsToAndromeda ??= new RelayCommand(async obj => {
-                //HttpStatusCode code = await ClientHttp.GetQuery("/api/Andromeda/SendEvents?ObjectNumber=" + ObjectNumber + "");
-                //IsSuccessSendEvents = code.Equals(HttpStatusCode.Accepted);
-
                 IsSuccessSendEvents = false;
-                //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                //    HttpResponseMessage responseEvents = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/SendEvents?ObjectNumber=" + ObjectNumber + "");
-                //    if(responseEvents.IsSuccessStatusCode || responseEvents.StatusCode.ToString() == "Accepted") {
-                //        Analytics.TrackEvent("Получен код 6 от Андромеды",
-                //        new Dictionary<string,string> {
-                //            {"ObjectNumber",ObjectNumber },
-                //            {"Date",DateTime.Now.ToString() }
-                //        });
-                //        IsSuccessSendEvents = true;
-                //    }
-                //    else {
-                //        Crashes.TrackError(new Exception("Не получен код 6 от Андромеды"),
-                //        new Dictionary<string,string> {
-                //            { "ResponseStatusCode",responseEvents.StatusCode.ToString() }
-                //        });
-                //        IsSuccessSendEvents = false;
-                //        //await Application.Current.MainPage.DisplayAlert("Внимание"
-                //        //    ,"От сервера не был получен корректный ответ. Доставка обходного до оператора не может быть гарантирована. Рекомендуется уточнить информацию у оператора по номеру объекта"
-                //        //    ,"OK");
-                //        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("От сервера не был получен корректный ответ. Доставка обходного до оператора не может быть гарантирована.",Color.Red,LayoutOptions.EndAndExpand),4000));
-                //    }
-                //}
                 HttpStatusCode code = await ClientHttp.Get("/api/Andromeda/SendEvents?ObjectNumber=" + ObjectNumber);
                 if(!code.Equals(HttpStatusCode.Accepted)) {
                     IsSuccessSendEvents = false;
@@ -611,9 +465,6 @@ namespace MounterApp.ViewModel {
                                     new Dictionary<string,string> {
                                         {"ObjectNumber",ObjectNumber }
                                     });
-                //Opacity = 0.1;
-                //IndicatorVisible = true;
-                //if(IsChanged) {
                 if(Photos.Count >= 5) {
                     if(Mount == null) {
                         Mounts mount = new Mounts();
@@ -647,7 +498,6 @@ namespace MounterApp.ViewModel {
                         }
                         App.Database.SaveMount(mount);
                         Analytics.TrackEvent("Монтаж сохранен в локальной базе");
-                        //Toast.MakeText(Android.App.Application.Context,"Данные сохранены",ToastLength.Long).Show(); 
                         await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Сохранение в локальной базе. Успешно.",Color.Green,LayoutOptions.EndAndExpand),4000));
                     }
                     else {
@@ -680,7 +530,6 @@ namespace MounterApp.ViewModel {
                         }
                         App.Database.SaveUpdateMount(Mount);
                         Analytics.TrackEvent("Монтаж обновлен в локальной базе");
-                        //Toast.MakeText(Android.App.Application.Context,"Данные сохранены",ToastLength.Long).Show();
                         await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Сохранение в локальной базе. Успешно.",Color.Green,LayoutOptions.EndAndExpand),4000));
                     }
                 }
@@ -718,14 +567,9 @@ namespace MounterApp.ViewModel {
                         }
                         App.Database.SaveMount(mount);
                         Analytics.TrackEvent("Монтаж сохранен в локальной базе");
-                        //Toast.MakeText(Android.App.Application.Context,"Данные сохранены",ToastLength.Long).Show();
                         await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Сохранение в локальной базе. Успешно.",Color.Green,LayoutOptions.EndAndExpand),4000));
                     }
                 }
-                //}
-                //MountsViewModel vm = new MountsViewModel(Mounters,Servicemans);
-                //App.Current.MainPage = new MountsPage(vm);
-                //IndicatorVisible = false;
             });
         }
 
@@ -754,7 +598,6 @@ namespace MounterApp.ViewModel {
                     {"MounterPhone",Mounters.FirstOrDefault().NewPhone },
                     {"ObjectNumber",ObjectNumber }
                 });
-                //SaveToDB.Execute(null);
                 if(Mount == null)
                     Mount = new Mounts();
                 Mount.ObjectNumber = ObjectNumber;
@@ -802,7 +645,6 @@ namespace MounterApp.ViewModel {
 
         private string _ObjectNumber;
         public string ObjectNumber {
-            //get => _ObjectNumber;
             get {
                 if(string.IsNullOrEmpty(_ObjectNumber) || string.IsNullOrWhiteSpace(_ObjectNumber)) {
                     ObjectNumberValidationError = "Номер объекта не может быть пустым";
@@ -859,7 +701,6 @@ namespace MounterApp.ViewModel {
 
         private string _ObjectAddress;
         public string ObjectAddress {
-            //get => _ObjectAddress;
             get {
                 if(string.IsNullOrEmpty(_ObjectAddress) || string.IsNullOrWhiteSpace(_ObjectAddress)) {
                     ObjectAddressValidationError = "Адрес объекта не может быть пустым";

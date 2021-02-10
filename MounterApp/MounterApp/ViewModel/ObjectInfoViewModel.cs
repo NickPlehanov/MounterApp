@@ -12,22 +12,22 @@ using Xamarin.Forms;
 namespace MounterApp.ViewModel {
     public class ObjectInfoViewModel : BaseViewModel {
         //readonly ClientHttp http = new ClientHttp();
-        public ObjectInfoViewModel(NewServiceorderExtensionBase _so,List<NewServicemanExtensionBase> _servicemans, List<NewMounterExtensionBase> _mounters) {
+        public ObjectInfoViewModel(NewServiceorderExtensionBase_ex _so, List<NewServicemanExtensionBase> _servicemans, List<NewMounterExtensionBase> _mounters) {
             Mounters = _mounters;
             Servicemans = _servicemans;
             ServiceOrder = _so;
             GetWires.Execute(null);
             GetExtFields.Execute(null);
-            ArrowCircleWires= IconName("arrow_circle_down");
+            ArrowCircleWires = IconName("arrow_circle_down");
             ArrowCircleExtFields = IconName("arrow_circle_down");
             CloseImage = IconName("close");
             OpacityForm = 1;
             IndicatorVisible = false;
         }
-        public ObjectInfoViewModel(NewTest2ExtensionBase _so,List<NewServicemanExtensionBase> _servicemans,List<NewMounterExtensionBase> _mounters) {
+        public ObjectInfoViewModel(NewTest2ExtensionBase_ex _so, List<NewServicemanExtensionBase> _servicemans, List<NewMounterExtensionBase> _mounters) {
             Mounters = _mounters;
             Servicemans = _servicemans;
-            ServiceOrderFireAlarm = _so;            
+            ServiceOrderFireAlarm = _so;
             GetWires.Execute(null);
             GetExtFields.Execute(null);
             ArrowCircleWires = IconName("arrow_circle_down");
@@ -54,8 +54,8 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(OpacityForm));
             }
         }
-        private NewServiceorderExtensionBase _ServiceOrder;
-        public NewServiceorderExtensionBase ServiceOrder {
+        private NewServiceorderExtensionBase_ex _ServiceOrder;
+        public NewServiceorderExtensionBase_ex ServiceOrder {
             get => _ServiceOrder;
             set {
                 _ServiceOrder = value;
@@ -63,8 +63,8 @@ namespace MounterApp.ViewModel {
             }
         }
 
-        private NewTest2ExtensionBase _ServiceOrderFireAlarm;
-        public NewTest2ExtensionBase ServiceOrderFireAlarm {
+        private NewTest2ExtensionBase_ex _ServiceOrderFireAlarm;
+        public NewTest2ExtensionBase_ex ServiceOrderFireAlarm {
             get => _ServiceOrderFireAlarm;
             set {
                 _ServiceOrderFireAlarm = value;
@@ -118,10 +118,12 @@ namespace MounterApp.ViewModel {
                 OpacityForm = 0.1;
                 IndicatorVisible = true;
                 int? number = null;
-                if(ServiceOrder.NewNumber.HasValue)
-                    number = ServiceOrder.NewNumber;
-                else if (ServiceOrderFireAlarm.NewNumber.HasValue)
-                    number = ServiceOrderFireAlarm.NewNumber;
+                if (ServiceOrder != null)
+                    if (ServiceOrder.NewNumber.HasValue)
+                        number = ServiceOrder.NewNumber;
+                if (ServiceOrderFireAlarm != null)
+                    if (ServiceOrderFireAlarm.NewNumber.HasValue)
+                        number = ServiceOrderFireAlarm.NewNumber;
                 WiresCollection = await ClientHttp.Get<ObservableCollection<Wires>>("/api/Andromeda/wires?objNumber=" + number);
 
 
@@ -157,10 +159,12 @@ namespace MounterApp.ViewModel {
                 OpacityForm = 0.1;
                 IndicatorVisible = true;
                 int? number = 63020;
-                if(ServiceOrder.NewNumber.HasValue)
-                    number = ServiceOrder.NewNumber;
-                else if(ServiceOrderFireAlarm.NewNumber.HasValue)
-                    number = ServiceOrderFireAlarm.NewNumber;
+                if (ServiceOrder != null)
+                    if (ServiceOrder.NewNumber.HasValue)
+                        number = ServiceOrder.NewNumber;
+                if (ServiceOrderFireAlarm != null)
+                    if (ServiceOrderFireAlarm.NewNumber.HasValue)
+                        number = ServiceOrderFireAlarm.NewNumber;
                 ExtFields = await ClientHttp.Get<ObservableCollection<ExtFields>>("/api/Andromeda/ext?objNumber=" + number);
 
                 //ExtFields.Clear();
@@ -264,7 +268,7 @@ namespace MounterApp.ViewModel {
             get => _WiresExpandedState;
             set {
                 _WiresExpandedState = value;
-                if(_WiresExpandedState)
+                if (_WiresExpandedState)
                     ArrowCircleWires = IconName("arrow_circle_up");
                 else
                     ArrowCircleWires = IconName("arrow_circle_down");
@@ -276,7 +280,7 @@ namespace MounterApp.ViewModel {
         public bool ExtFieldsExpandedState {
             get => _ExtFieldsExpandedState;
             set {
-                if(_ExtFieldsExpandedState)
+                if (_ExtFieldsExpandedState)
                     ArrowCircleExtFields = IconName("arrow_circle_up");
                 else
                     ArrowCircleExtFields = IconName("arrow_circle_down");

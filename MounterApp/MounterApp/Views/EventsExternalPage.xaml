@@ -41,7 +41,7 @@
                         </CollectionView>
                     </StackLayout>
                 </ScrollView>
-                <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding ExitCommand}"/>
+                <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding BackPressedCommand}"/>
             </StackLayout>
         </Frame>
     </ContentPage.Content>
