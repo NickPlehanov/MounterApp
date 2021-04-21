@@ -1,4 +1,5 @@
-﻿using Android.Widget;
+﻿using Android.Content;
+using Android.Widget;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using MounterApp.Helpers;
@@ -7,6 +8,7 @@ using MounterApp.Model;
 using MounterApp.Properties;
 using MounterApp.Views;
 using Newtonsoft.Json;
+using Plugin.Geolocator;
 using Rg.Plugins.Popup.Extensions;
 using System;
 using System.Collections.Generic;
@@ -374,20 +376,27 @@ namespace MounterApp.ViewModel {
                 Opacity = 0.1;
                 IndicatorVisible = true;
 
+                //Номера объекта нет, ссылаемся на объект андромеды указанный в заявке, нам нужен номер
                 if (!ServiceOrderID.NewNumber.HasValue) {
-                    NewAndromedaExtensionBase andromeda = await ClientHttp.Get<NewAndromedaExtensionBase>("/api/NewAndromedaExtensionBases/id?id=" + ServiceOrderID.NewAndromedaServiceorder);
-                    ServiceOrderID.NewNumber = andromeda.NewNumber;
+                    if (ServiceOrderID.NewAndromedaServiceorder.HasValue) {
+                        NewAndromedaExtensionBase andromeda = await ClientHttp.Get<NewAndromedaExtensionBase>("/api/NewAndromedaExtensionBases/id?id=" + ServiceOrderID.NewAndromedaServiceorder);
+                        ServiceOrderID.NewNumber = andromeda.NewNumber;
+                    }
+                    //TODO: сообщение что заявка неправильно заполнена
                 }
-                NewGuardObjectExtensionBase goeb = await ClientHttp.Get<NewGuardObjectExtensionBase>("/api/NewGuardObjectExtensionBases/GetInfoByNumberNew?number=" + ServiceOrderID.NewNumber);
-                //NULL - если может быть ситуация при которой не заведен охраняемый объект
-                if (goeb != null) {
-                    Contact = goeb.NewFirstcontact;
-                    Siding = goeb.NewSiding;
-                    rrOS = goeb.NewRrOs.HasValue ? (bool)goeb.NewRrOs : false;
-                    rrPS = goeb.NewRrPs.HasValue ? (bool)goeb.NewRrPs : false;
-                    rrVideo = goeb.NewRrVideo.HasValue ? (bool)goeb.NewRrVideo : false;
-                    rrAccess = goeb.NewRrSkud.HasValue ? (bool)goeb.NewRrSkud : false;
-                }
+                if (ServiceOrderFireAlarm.NewNumber.HasValue)
+                    if (ServiceOrderFireAlarm.NewNumber != 0) {
+                        NewGuardObjectExtensionBase goeb = await ClientHttp.Get<NewGuardObjectExtensionBase>("/api/NewGuardObjectExtensionBases/GetInfoByNumberNew?number=" + ServiceOrderID.NewNumber);
+                        //NULL - если может быть ситуация при которой не заведен охраняемый объект
+                        if (goeb != null) {
+                            Contact = goeb.NewFirstcontact;
+                            Siding = goeb.NewSiding;
+                            rrOS = goeb.NewRrOs.HasValue ? (bool)goeb.NewRrOs : false;
+                            rrPS = goeb.NewRrPs.HasValue ? (bool)goeb.NewRrPs : false;
+                            rrVideo = goeb.NewRrVideo.HasValue ? (bool)goeb.NewRrVideo : false;
+                            rrAccess = goeb.NewRrSkud.HasValue ? (bool)goeb.NewRrSkud : false;
+                        }
+                    }
                 Opacity = 1;
                 IndicatorVisible = false;
             });
@@ -402,11 +411,34 @@ namespace MounterApp.ViewModel {
                 });
                 Opacity = 0.1;
                 IndicatorVisible = true;
+                var locator = CrossGeolocator.Current;
+                locator.DesiredAccuracy = 20;
+                Plugin.Geolocator.Abstractions.Position position;
+                if (!CrossGeolocator.Current.IsGeolocationEnabled) {
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Определение местоположения отключено. Отметка \"Пришёл\" не может быть установлена", Color.Red, LayoutOptions.EndAndExpand), 4000));
+                    Opacity = 1;
+                    IndicatorVisible = false;
+                    Intent intent = new Intent(Android.Provider.Settings.ActionLocat‌​ionSourceSettings);
+                    intent.SetFlags(ActivityFlags.ClearTop | ActivityFlags.NewTask);
+                    Android.App.Application.Context.StartActivity(intent);
+                    return;
+                }
                 PermissionStatus status = PermissionStatus.Unknown;
                 try {
                     status = await CheckAndRequestPermissionAsync(new LocationWhenInUse());
                     if (status == PermissionStatus.Granted) {
-                        Location location = await Geolocation.GetLastKnownLocationAsync();
+                        Location location = await Geolocation.GetLocationAsync(new GeolocationRequest(GeolocationAccuracy.Medium));
+                        if (location==null) {
+                            position = await locator.GetPositionAsync();
+                            if (position == null) {
+                                await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Отметка \"Пришёл\" не может быть установлена", Color.Red, LayoutOptions.EndAndExpand), 4000));
+                                Opacity = 1;
+                                IndicatorVisible = false;
+                                return;
+                            }
+                            Latitude = position.Latitude.ToString();
+                            Longitude = position.Longitude.ToString();
+                        }
                         if (location != null) {
                             Latitude = location.Latitude.ToString();
                             Longitude = location.Longitude.ToString();
@@ -447,50 +479,13 @@ namespace MounterApp.ViewModel {
                     });
                     NewServiceorderExtensionBase soeb = await ClientHttp.Get<NewServiceorderExtensionBase>("/api/NewServiceorderExtensionBases/id?id=" + ServiceOrderID.NewServiceorderId);
 
-                    //using HttpClient client = new HttpClient(GetHttpClientHandler());
-                    //HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases/id?id=" + ServiceOrderID.NewServiceorderId);
-                    //NewServiceorderExtensionBase soeb = null;
-                    //if(response.StatusCode.Equals(HttpStatusCode.OK)) {
-                    //    var resp = response.Content.ReadAsStringAsync().Result;
-                    //    try {
-                    //        soeb = JsonConvert.DeserializeObject<NewServiceorderExtensionBase>(resp);
-                    //    }
-                    //    catch(Exception ex) {
-                    //        Crashes.TrackError(new Exception("Ошибка десериализации объекта заявка технику"),
-                    //        new Dictionary<string,string> {
-                    //    {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                    //    {"ErrorMessage",ex.Message },
-                    //    {"StatusCode",response.StatusCode.ToString() }
-                    //        });
-                    //    }
-                    //}
-                    //else {
-                    //    Crashes.TrackError(new Exception("Ошибка получения данных об объекте заявка технику с сервера"),
-                    //    new Dictionary<string,string> {
-                    //{"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                    //{"StatusCode",response.StatusCode.ToString() },
-                    //{"Response",response.ToString() }
-                    //    });
-                    //    //await Application.Current.MainPage.DisplayAlert("Ошибка"
-                    //    //        ,"От сервера не получена информация о текущей заявке. Повторите попытку позже, в случае если ошибка повторяется, сообщите в IT-отдел."
-                    //    //        ,"OK");
-                    //    MessagePopupPageViewModel vm = new MessagePopupPageViewModel("От сервера не получена информация о текущей заявке. Повторите попытку позже, в случае если ошибка повторяется, сообщите в IT-отдел.",Color.Red,LayoutOptions.EndAndExpand);
-                    //    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(vm,4000));
-                    //}
                     if (soeb != null) {
                         Analytics.TrackEvent("Попытка записи данных на сервер по объекту заявка технику, заполняем поле Пришел",
                         new Dictionary<string, string> {
                             {"ServiceOrderID",ServiceOrderID.NewServiceorderId.ToString() }
                         });
                         soeb.NewIncome = DateTime.Now.AddHours(-5);
-                        //HttpStatusCode code = await ClientHttp.PutQuery("/api/NewServiceorderExtensionBases",new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json"));
-                        //if(code.Equals(HttpStatusCode.Accepted)) {
-                        //    //Toast.MakeText(Android.App.Application.Context,"Время прихода записано",ToastLength.Long).Show();
-                        //}
-                        //else
-                        //    await Application.Current.MainPage.DisplayAlert("Ошибка"
-                        //        ,"При попытке сохранения данных произошла ошибка. Повторите попытку позже, в случае если ошибка повторяется, сообщите в IT-отдел."
-                        //        ,"OK");
+                        
 
                         using HttpClient clientPut = new HttpClient(GetHttpClientHandler());
                         var httpContent = new StringContent(JsonConvert.SerializeObject(soeb), Encoding.UTF8, "application/json");
@@ -607,12 +602,14 @@ namespace MounterApp.ViewModel {
                         if (ServiceOrderID.NewNumber != 0) {
                             List<Info> obj_info = await ClientHttp.Get<List<Info>>("/api/Andromeda/Objinfo?objNumber=" + ServiceOrderID.NewNumber.ToString() + "");
                             if (obj_info != null) {
-                                Info inf = obj_info.First();
-                                if (inf != null) {
-                                    ObjectName = inf.Name;
-                                    ControlTime = inf.ControlTime.ToString();
-                                    EventTemplate = inf.EventTemplateName.ToString();
-                                    DeviceName = inf.DeviceName.ToString();
+                                if (obj_info.Count > 0) {
+                                    Info inf = obj_info.First();
+                                    if (inf != null) {
+                                        ObjectName = inf.Name;
+                                        ControlTime = inf.ControlTime.ToString();
+                                        EventTemplate = inf.EventTemplateName.ToString();
+                                        DeviceName = inf.DeviceName.ToString();
+                                    }
                                 }
                             }
                         }

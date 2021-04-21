@@ -227,8 +227,13 @@ namespace MounterApp.ViewModel {
         public RelayCommand GetGoogleMounts {
             get => _GetGoogleMounts ??= new RelayCommand(async obj => {
                 Opacity = 0.1;
-                IndicatorVisible = true;                
-                GoogleMounts = await ClientHttp.Get<ObservableCollection<GoogleMountModel>>("/api/Common?phone=7" + Mounters.FirstOrDefault().NewPhone + "&date=" + DateTime.Now.Date + "");
+                IndicatorVisible = true;
+                var mounter = Mounters.FirstOrDefault();
+                if (mounter == null)
+                    return;
+                GoogleMounts = await ClientHttp.Get<ObservableCollection<GoogleMountModel>>("/api/Common?phone=7" + mounter.NewPhone + "&date=" + DateTime.Now.Date + "");
+                if (GoogleMounts == null)
+                    return;
                 GoogleMountsExpander = GoogleMounts != null;
                 if (GoogleMounts != null)
                     HeaderGoogle = "Запланированные (" + GoogleMounts.Count + ")";

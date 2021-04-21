@@ -149,6 +149,10 @@ namespace MounterApp.ViewModel {
                     {"EndDate",EndDate.ToShortDateString() },
                     {"ObjectNumber",ObjectNumber }
             });
+            if (string.IsNullOrEmpty(ObjectNumber)) {
+                await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Номер объкта не определен, выполнение запроса событий отменено.", Color.Red, LayoutOptions.EndAndExpand), 4000));
+                return;
+            }
             if (StartDate <= EndDate) {
                 IndicatorVisible = true;
                 OpacityForm = 0.1;

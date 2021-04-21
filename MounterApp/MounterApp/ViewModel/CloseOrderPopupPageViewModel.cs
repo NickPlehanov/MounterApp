@@ -5,6 +5,7 @@ using MounterApp.InternalModel;
 using MounterApp.Model;
 using MounterApp.Views;
 using Newtonsoft.Json;
+using Plugin.Geolocator;
 using Rg.Plugins.Popup.Extensions;
 using System;
 using System.Collections.Generic;
@@ -42,6 +43,8 @@ namespace MounterApp.ViewModel {
             //GetResults.ExecuteAsync(null);
             NecesseryRead = false;
             SaveImage = IconName("save");
+            if (Application.Current.Properties.ContainsKey("ConclusionByOrder"))
+                ConclusionByOrder =Application.Current.Properties["ConclusionByOrder"] as string;
             IsLoading(false);
         }
         /// <summary>
@@ -57,6 +60,8 @@ namespace MounterApp.ViewModel {
             //GetResults.ExecuteAsync(null);
             NecesseryRead = false;
             SaveImage = IconName("save");
+            if (Application.Current.Properties.ContainsKey("ConclusionByOrder"))
+                ConclusionByOrder = Application.Current.Properties["ConclusionByOrder"] as string;
             IsLoading(false);
         }
         /// <summary>
@@ -133,6 +138,7 @@ namespace MounterApp.ViewModel {
             get => _ConclusionByOrder;
             set {
                 _ConclusionByOrder = value;
+                Application.Current.Properties["ConclusionByOrder"]=ConclusionByOrder;
                 OnPropertyChanged(nameof(ConclusionByOrder));
             }
         }
@@ -331,11 +337,26 @@ namespace MounterApp.ViewModel {
         /// <summary>
         /// Получаем и присваиваем в свойства значения для координат
         /// </summary>
-        private async void GetLocation() {
-            Location location = await Geolocation.GetLastKnownLocationAsync();
-            if(location != null) {
+        private async Task<bool> GetLocation() {
+            //Location location = await Geolocation.GetLastKnownLocationAsync();
+            var locator = CrossGeolocator.Current;
+            locator.DesiredAccuracy = 20;
+            Plugin.Geolocator.Abstractions.Position position;
+            Location location = await Geolocation.GetLocationAsync();
+            if (location == null) {
+                position = await locator.GetPositionAsync();
+                if (position == null) {
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Отметка \"Пришёл\" не может быть установлена", Color.Red, LayoutOptions.EndAndExpand), 4000));
+                    return false;
+                }
+                Latitude = position.Latitude.ToString();
+                Longitude = position.Longitude.ToString();
+                return true;
+            }
+            else {
                 Latitude = location.Latitude.ToString();
                 Longitude = location.Longitude.ToString();
+                return true;
             }
         }
         /// <summary>
@@ -363,8 +384,11 @@ namespace MounterApp.ViewModel {
                     return;
                 }
                 if(!string.IsNullOrEmpty(ConclusionByOrder)) {
+                    if (!Application.Current.Properties.ContainsKey("ConclusionByOrder")) {
+                        Application.Current.Properties["ConclusionByOrder"] = ConclusionByOrder;
+                    }
                     //Заявка технику
-                    if(so != null) {
+                    if (so != null) {
                         NewServiceorderExtensionBase soeb = await ClientHttp.Get<NewServiceorderExtensionBase>("/api/NewServiceorderExtensionBases/id?id=" + so.NewServiceorderId);
                         if(soeb != null) {
                             PermissionStatus permissionStatus = await CheckPermission();
@@ -373,22 +397,30 @@ namespace MounterApp.ViewModel {
                                 soeb.NewTechConclusion = ConclusionByOrder;
                                 soeb.NewMustRead = NecesseryRead;
                                 soeb.NewNewServiceman = Servicemans.First().NewServicemanId;
+
+                                ServiceOrderCoordinates soc = await ClientHttp.Get<ServiceOrderCoordinates>("/api/ServiceOrderCoordinates/id?so_id=" + so.NewServiceorderId);
+                                if (soc != null) {
+                                    await GetLocation();
+                                    if (string.IsNullOrEmpty(Latitude) || string.IsNullOrEmpty(Longitude)) {
+                                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Отметка \"Ушел\" не может быть установлена", Color.Red, LayoutOptions.EndAndExpand), 4000));
+                                        return;
+                                    }
+                                    soc.SocOutcomeLatitide = Latitude;
+                                    soc.SocOutcomeLongitude = Longitude;
+                                    await ClientHttp.Put("/api/ServiceOrderCoordinates", new StringContent(JsonConvert.SerializeObject(soc), Encoding.UTF8, "application/json"));
+                                }
+
                                 HttpStatusCode code = await ClientHttp.Put("/api/NewServiceorderExtensionBases",new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json"));
                                 if(code.Equals(HttpStatusCode.Accepted)) {
-                                    await App.Current.MainPage.Navigation.PopPopupAsync(false);
+                                    await App.Current.MainPage.Navigation.PopPopupAsync();
                                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Заключение и время ухода сохранены",Color.Green,LayoutOptions.EndAndExpand),4000));
                                     App.Current.MainPage = new ServiceOrdersPage(new ServiceOrdersPageViewModel(Servicemans,Mounters));
                                 }
                                 else
                                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка, не был получен корректный ответ от сервера. Попробуйте позже, в случае повторной ошибки, сообщите в ИТ-отдел",Color.Red,LayoutOptions.EndAndExpand),7000));
 
-                                ServiceOrderCoordinates soc = await ClientHttp.Get<ServiceOrderCoordinates>("/api/ServiceOrderCoordinates/id?so_id=" + so.NewServiceorderId);
-                                if(soc != null) {
-                                    GetLocation();
-                                    soc.SocOutcomeLatitide = Latitude;
-                                    soc.SocOutcomeLongitude = Longitude;
-                                    await ClientHttp.Put("/api/ServiceOrderCoordinates",new StringContent(JsonConvert.SerializeObject(soc),Encoding.UTF8,"application/json"));
-                                }
+                                
+                                Application.Current.Properties["ConclusionByOrder"] = null;
                                 App.Current.MainPage = new ServiceOrdersPage(vm);
                                 IsLoading(false);
                             }
@@ -407,21 +439,29 @@ namespace MounterApp.ViewModel {
                                 soeb.NewOutgone = DateTime.Now.AddHours(-5);
                                 soeb.NewTechconclusion = ConclusionByOrder;
                                 soeb.NewTechniqueEnd = Servicemans.First().NewServicemanId;
+
+                                ServiceOrderCoordinates soc = await ClientHttp.Get<ServiceOrderCoordinates>("/api/ServiceOrderCoordinates/id?so_id=" + sofa.NewTest2Id);
+                                if (soc != null) {
+                                    await GetLocation();
+                                    if (string.IsNullOrEmpty(Latitude) || string.IsNullOrEmpty(Longitude)) {
+                                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Отметка \"Ушел\" не может быть установлена", Color.Red, LayoutOptions.EndAndExpand), 4000));
+                                        return;
+                                    }
+                                    soc.SocOutcomeLatitide = Latitude;
+                                    soc.SocOutcomeLongitude = Longitude;
+                                    await ClientHttp.Put("/api/ServiceOrderCoordinates", new StringContent(JsonConvert.SerializeObject(soc), Encoding.UTF8, "application/json"));
+                                }
+
                                 HttpStatusCode code = await ClientHttp.Put("/api/NewServiceOrderForFireAlarmExtensionBase",new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json"));
                                 if(code.Equals(HttpStatusCode.Accepted)) {
-                                    await App.Current.MainPage.Navigation.PopPopupAsync(false);
+                                    await App.Current.MainPage.Navigation.PopPopupAsync();
                                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Заключение и время ухода сохранены",Color.Green,LayoutOptions.EndAndExpand),4000));
                                     App.Current.MainPage = new ServiceOrdersPage(new ServiceOrdersPageViewModel(Servicemans,Mounters));
                                 }
                                 else
                                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка, не был получен корректный ответ от сервера. Попробуйте позже, в случае повторной ошибки, сообщите в ИТ-отдел",Color.Red,LayoutOptions.EndAndExpand),7000));
-                                ServiceOrderCoordinates soc = await ClientHttp.Get<ServiceOrderCoordinates>("/api/ServiceOrderCoordinates/id?so_id=" + sofa.NewTest2Id);
-                                if(soc != null) {
-                                    GetLocation();
-                                    soc.SocOutcomeLatitide = Latitude;
-                                    soc.SocOutcomeLongitude = Longitude;
-                                    await ClientHttp.Put("/api/ServiceOrderCoordinates",new StringContent(JsonConvert.SerializeObject(soc),Encoding.UTF8,"application/json"));
-                                }
+                                
+                                Application.Current.Properties["ConclusionByOrder"] = null;
                                 App.Current.MainPage = new ServiceOrdersPage(vm);
                                 IsLoading(false);
                             }

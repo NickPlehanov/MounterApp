@@ -171,6 +171,8 @@ namespace MounterApp.ViewModel {
                 if (ServiceOrderFireAlarm != null)
                     if (ServiceOrderFireAlarm.NewNumber.HasValue)
                         number = ServiceOrderFireAlarm.NewNumber;
+                if (number == null)
+                    return;
                 CutomersCollection = await ClientHttp.Get<ObservableCollection<ObjCust>>("/api/Andromeda/Customer?ObjectNumber=" + number);
 
                 //HttpResponseMessage response = null;

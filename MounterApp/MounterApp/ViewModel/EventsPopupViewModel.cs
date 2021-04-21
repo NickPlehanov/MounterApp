@@ -232,6 +232,8 @@ namespace MounterApp.ViewModel {
                     }
                     List<GetEventsReceivedFromObject_Result> _evnts = new List<GetEventsReceivedFromObject_Result>();
                     string obj_number = ServiceOrder != null ? ServiceOrder.NewNumber.ToString() : ServiceOrderFireAlarm.NewNumber.ToString();
+                    if (string.IsNullOrEmpty(obj_number))
+                        return;
                     Events = await ClientHttp.Get<ObservableCollection<GetEventsReceivedFromObject_Result>>("/api/Andromeda/events?objNumber=" + obj_number +
                                         "&startDate=" + StartDate +
                                         "&endDate=" + EndDate +

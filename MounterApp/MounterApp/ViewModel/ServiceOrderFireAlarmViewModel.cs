@@ -1,4 +1,5 @@
-﻿using Android.Widget;
+﻿using Android.Content;
+using Android.Widget;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using MounterApp.Helpers;
@@ -7,6 +8,7 @@ using MounterApp.Model;
 using MounterApp.Properties;
 using MounterApp.Views;
 using Newtonsoft.Json;
+using Plugin.Geolocator;
 using Rg.Plugins.Popup.Extensions;
 using System;
 using System.Collections.Generic;
@@ -444,27 +446,26 @@ namespace MounterApp.ViewModel {
             get => _GetInfoByGuardObject ??= new RelayCommand(async obj => {
                 Opacity = 0.1;
                 IndicatorVisible = true;
-                //List<NewGuardObjectExtensionBase> goeb = new List<NewGuardObjectExtensionBase>();
-                NewAndromedaExtensionBase andromeda = new NewAndromedaExtensionBase();
+
                 if (!ServiceOrderFireAlarm.NewNumber.HasValue) {
-                    andromeda = await ClientHttp.Get<NewAndromedaExtensionBase>("/api/NewAndromedaExtensionBases/id?id=" + ServiceOrderFireAlarm.NewAndromedaServiceorder);
-                    ServiceOrderFireAlarm.NewNumber = andromeda.NewNumber;
-                }
-                if (ServiceOrderFireAlarm.NewNumber != 0) {
-                    //List<NewGuardObjectExtensionBase> goeb = await ClientHttp.Get<List<NewGuardObjectExtensionBase>>("/api/NewGuardObjectExtensionBases/GetInfoByNumber?number=" + ServiceOrderFireAlarm.NewNumber);
-                    List<NewGuardObjectExtensionBase> goeb = await ClientHttp.Get<List<NewGuardObjectExtensionBase>>("/api/NewGuardObjectExtensionBases/GetInfoByNumber?number=" + ServiceOrderFireAlarm.NewNumber);
-                    if (goeb != null) {
-                        NewGuardObjectExtensionBase g = goeb.First();
-                        if (g != null) {
-                            Contact = g.NewFirstcontact;
-                            Siding = g.NewSiding;
-                            rrOS = g.NewRrOs.HasValue ? (bool)g.NewRrOs : false;
-                            rrPS = g.NewRrPs.HasValue ? (bool)g.NewRrPs : false;
-                            rrVideo = g.NewRrVideo.HasValue ? (bool)g.NewRrVideo : false;
-                            rrAccess = g.NewRrSkud.HasValue ? (bool)g.NewRrSkud : false;
-                        }
+                    if (ServiceOrderFireAlarm.NewAndromedaServiceorder.HasValue) {
+                        NewAndromedaExtensionBase andromeda = await ClientHttp.Get<NewAndromedaExtensionBase>("/api/NewAndromedaExtensionBases/id?id=" + ServiceOrderFireAlarm.NewAndromedaServiceorder);
+                        ServiceOrderFireAlarm.NewNumber = andromeda.NewNumber;
                     }
                 }
+                if (ServiceOrderFireAlarm.NewNumber.HasValue)
+                    if (ServiceOrderFireAlarm.NewNumber != 0) {
+                        //List<NewGuardObjectExtensionBase> goeb = await ClientHttp.Get<List<NewGuardObjectExtensionBase>>("/api/NewGuardObjectExtensionBases/GetInfoByNumber?number=" + ServiceOrderFireAlarm.NewNumber);
+                        NewGuardObjectExtensionBase goeb = await ClientHttp.Get<NewGuardObjectExtensionBase>("/api/NewGuardObjectExtensionBases/GetInfoByNumberNew?number=" + ServiceOrderFireAlarm.NewNumber);
+                        if (goeb != null) {
+                            Contact = goeb.NewFirstcontact;
+                            Siding = goeb.NewSiding;
+                            rrOS = goeb.NewRrOs.HasValue ? (bool)goeb.NewRrOs : false;
+                            rrPS = goeb.NewRrPs.HasValue ? (bool)goeb.NewRrPs : false;
+                            rrVideo = goeb.NewRrVideo.HasValue ? (bool)goeb.NewRrVideo : false;
+                            rrAccess = goeb.NewRrSkud.HasValue ? (bool)goeb.NewRrSkud : false;
+                        }
+                    }
 
 
                 //using HttpClient client = new HttpClient(GetHttpClientHandler());
@@ -591,13 +592,38 @@ namespace MounterApp.ViewModel {
                 });
                 Opacity = 0.1;
                 IndicatorVisible = true;
+                var locator = CrossGeolocator.Current;
+                locator.DesiredAccuracy = 20;
+                Plugin.Geolocator.Abstractions.Position position;
+                if (!CrossGeolocator.Current.IsGeolocationEnabled) {
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Определение местоположения отключено. Отметка \"Пришёл\" не может быть установлена", Color.Red, LayoutOptions.EndAndExpand), 4000));
+                    Opacity = 1;
+                    IndicatorVisible = false;
+                    Intent intent = new Intent(Android.Provider.Settings.ActionLocat‌​ionSourceSettings);
+                    intent.SetFlags(ActivityFlags.ClearTop | ActivityFlags.NewTask);
+                    Android.App.Application.Context.StartActivity(intent);
+                    return;
+                }
                 PermissionStatus status = PermissionStatus.Unknown;
                 try {
                     status = await CheckAndRequestPermissionAsync(new LocationWhenInUse());
-                    Location location = await Geolocation.GetLastKnownLocationAsync();
-                    if (location != null) {
-                        Latitude = location.Latitude.ToString();
-                        Longitude = location.Longitude.ToString();
+                    if (status == PermissionStatus.Granted) {
+                        Location location = await Geolocation.GetLocationAsync(new GeolocationRequest(GeolocationAccuracy.Medium));
+                        if (location == null) {
+                            position = await locator.GetPositionAsync();
+                            if (position == null) {
+                                await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Отметка \"Пришёл\" не может быть установлена", Color.Red, LayoutOptions.EndAndExpand), 4000));
+                                Opacity = 1;
+                                IndicatorVisible = false;
+                                return;
+                            }
+                            Latitude = position.Latitude.ToString();
+                            Longitude = position.Longitude.ToString();
+                        }
+                        if (location != null) {
+                            Latitude = location.Latitude.ToString();
+                            Longitude = location.Longitude.ToString();
+                        }
                     }
                 }
                 catch (Exception ex) {
@@ -608,7 +634,7 @@ namespace MounterApp.ViewModel {
                     });
                 }
                 if (status == PermissionStatus.Granted) {
-                    Analytics.TrackEvent("Запрос данных на сервере (могло же что-то измениться",
+                    Analytics.TrackEvent("Запрос данных на сервере (могло же что-то измениться)",
                     new Dictionary<string, string> {
                         {"ServiceOrderID",ServiceOrderFireAlarm.NewTest2Id.ToString() }
                     });

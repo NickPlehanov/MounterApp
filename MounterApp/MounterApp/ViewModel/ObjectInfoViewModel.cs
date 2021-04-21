@@ -1,6 +1,7 @@
 ﻿using MounterApp.Helpers;
 using MounterApp.Model;
 using MounterApp.Properties;
+using MounterApp.Views;
 using Newtonsoft.Json;
 using Rg.Plugins.Popup.Extensions;
 using System.Collections.Generic;
@@ -124,31 +125,9 @@ namespace MounterApp.ViewModel {
                 if (ServiceOrderFireAlarm != null)
                     if (ServiceOrderFireAlarm.NewNumber.HasValue)
                         number = ServiceOrderFireAlarm.NewNumber;
+                if (number == null)
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Номер объекта не найден. Информация о шлейфах недоступна", Color.Red, LayoutOptions.EndAndExpand), 4000));
                 WiresCollection = await ClientHttp.Get<ObservableCollection<Wires>>("/api/Andromeda/wires?objNumber=" + number);
-
-
-                //WiresCollection.Clear();
-                //using HttpClient client = new HttpClient(GetHttpClientHandler());
-                //List<Wires> _wrs = new List<Wires>();
-                //string resp = "";
-                //if(ServiceOrder != null) {
-                //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/wires?objNumber=" + ServiceOrder.NewNumber);
-                //    resp = response.Content.ReadAsStringAsync().Result;
-                //}
-                //else if(ServiceOrderFireAlarm != null) {
-                //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/wires?objNumber=" + ServiceOrderFireAlarm.NewNumber);
-                //    resp = response.Content.ReadAsStringAsync().Result;
-                //}
-                //try {
-                //    if(!string.IsNullOrEmpty(resp))
-                //        _wrs = JsonConvert.DeserializeObject<List<Wires>>(resp);
-                //}
-                //catch { }
-                //if(_wrs.Count() > 0) {
-                //    foreach(var item in _wrs) {
-                //        WiresCollection.Add(item);
-                //    }
-                //}
                 OpacityForm = 1;
                 IndicatorVisible = false;
             });
@@ -158,38 +137,17 @@ namespace MounterApp.ViewModel {
             get => _GetExtFields ??= new RelayCommand(async obj => {
                 OpacityForm = 0.1;
                 IndicatorVisible = true;
-                int? number = 63020;
+                int? number = null;
                 if (ServiceOrder != null)
                     if (ServiceOrder.NewNumber.HasValue)
                         number = ServiceOrder.NewNumber;
                 if (ServiceOrderFireAlarm != null)
                     if (ServiceOrderFireAlarm.NewNumber.HasValue)
                         number = ServiceOrderFireAlarm.NewNumber;
+                if (number == null) 
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Номер объекта не найден. Дополнительная информация из андромеды недоступна", Color.Red, LayoutOptions.EndAndExpand), 4000));
                 ExtFields = await ClientHttp.Get<ObservableCollection<ExtFields>>("/api/Andromeda/ext?objNumber=" + number);
-
-                //ExtFields.Clear();
-                //List<ExtFields> _ext = new List<ExtFields>();
-                //string resp = "";
-
-                //using HttpClient client = new HttpClient(GetHttpClientHandler());
-                //if(ServiceOrder != null) {
-                //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/ext?objNumber=" + ServiceOrder.NewNumber);
-                //    resp = response.Content.ReadAsStringAsync().Result;
-                //}
-                //else if(ServiceOrderFireAlarm != null) {
-                //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/ext?objNumber=" + ServiceOrderFireAlarm.NewNumber);
-                //    resp = response.Content.ReadAsStringAsync().Result;
-                //}
-                //try {
-                //    if(!string.IsNullOrEmpty(resp))
-                //        _ext = JsonConvert.DeserializeObject<List<ExtFields>>(resp);
-                //}
-                //catch { }
-                //if(_ext.Count() > 0) {
-                //    foreach(var item in _ext) {
-                //        ExtFields.Add(item);
-                //    }
-                //}
+                    
                 OpacityForm = 1;
                 IndicatorVisible = false;
             });
