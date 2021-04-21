@@ -6,7 +6,7 @@
         <vm:ServiceOrderViewModel x:Key="vm"/>
     </ContentPage.Resources>
     <ScrollView>
-        <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
+        <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">            
             <Grid Style="{DynamicResource CommonGridStyle}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -153,7 +153,11 @@
                 <StackLayout Opacity="{Binding Opacity}" Grid.Row="2" Grid.ColumnSpan="2" Margin="5">
                     <Expander IsExpanded="False">
                         <Expander.Header>
-                            <Label Text="Доп.информация" Style="{DynamicResource HeaderLabelStyle}"/>
+                            <Label Text="Доп.информация" Style="{DynamicResource HeaderLabelStyle}">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer NumberOfTapsRequired="2" Command="{Binding TestCommand}"/>
+                                </Label.GestureRecognizers>
+                            </Label>
                         </Expander.Header>
                         <Grid>
                             <Grid.RowDefinitions>
@@ -172,6 +176,9 @@
                 </StackLayout>
                 <StackLayout Opacity="{Binding Opacity}" Grid.Row="3" Grid.Column="0" >
                     <Button Style="{DynamicResource CommonButtonStyle}" Margin="0" ImageSource="{Binding TransferImage}" Text="{Binding IncomeButtonText}" Command="{Binding IncomeCommand, Mode=TwoWay}" IsEnabled="False"/>
+                    <!--<StackLayout.GestureRecognizers>
+                        <SwipeGestureRecognizer Direction="Left" Command="{Binding TestCommand}"/>
+                    </StackLayout.GestureRecognizers>-->
                 </StackLayout>
                 <StackLayout Opacity="{Binding Opacity}" Grid.Row="3" Grid.Column="1" >
                     <Button Style="{DynamicResource CommonButtonStyle}" Margin="0" ImageSource="{Binding CloseImage}" Text="Закрыть" Command="{Binding CloseOrderCommand}"/>

@@ -421,6 +421,7 @@ namespace MounterApp.ViewModel {
 
                                 
                                 Application.Current.Properties["ConclusionByOrder"] = null;
+                                await Application.Current.SavePropertiesAsync();
                                 App.Current.MainPage = new ServiceOrdersPage(vm);
                                 IsLoading(false);
                             }
@@ -462,6 +463,7 @@ namespace MounterApp.ViewModel {
                                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка, не был получен корректный ответ от сервера. Попробуйте позже, в случае повторной ошибки, сообщите в ИТ-отдел",Color.Red,LayoutOptions.EndAndExpand),7000));
                                 
                                 Application.Current.Properties["ConclusionByOrder"] = null;
+                                await Application.Current.SavePropertiesAsync();
                                 App.Current.MainPage = new ServiceOrdersPage(vm);
                                 IsLoading(false);
                             }
@@ -473,6 +475,8 @@ namespace MounterApp.ViewModel {
                     }
                 }
                 IsLoading(false);
+                Application.Current.Properties["ConclusionByOrder"] = null;
+                await Application.Current.SavePropertiesAsync();
             });
         }
     }

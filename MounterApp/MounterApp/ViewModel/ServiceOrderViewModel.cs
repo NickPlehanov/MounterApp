@@ -384,19 +384,19 @@ namespace MounterApp.ViewModel {
                     }
                     //TODO: сообщение что заявка неправильно заполнена
                 }
-                if (ServiceOrderFireAlarm.NewNumber.HasValue)
-                    if (ServiceOrderFireAlarm.NewNumber != 0) {
-                        NewGuardObjectExtensionBase goeb = await ClientHttp.Get<NewGuardObjectExtensionBase>("/api/NewGuardObjectExtensionBases/GetInfoByNumberNew?number=" + ServiceOrderID.NewNumber);
-                        //NULL - если может быть ситуация при которой не заведен охраняемый объект
-                        if (goeb != null) {
-                            Contact = goeb.NewFirstcontact;
-                            Siding = goeb.NewSiding;
-                            rrOS = goeb.NewRrOs.HasValue ? (bool)goeb.NewRrOs : false;
-                            rrPS = goeb.NewRrPs.HasValue ? (bool)goeb.NewRrPs : false;
-                            rrVideo = goeb.NewRrVideo.HasValue ? (bool)goeb.NewRrVideo : false;
-                            rrAccess = goeb.NewRrSkud.HasValue ? (bool)goeb.NewRrSkud : false;
-                        }
+                //if (ServiceOrderFireAlarm.NewNumber.HasValue)
+                if (ServiceOrderID.NewNumber != 0) {
+                    NewGuardObjectExtensionBase goeb = await ClientHttp.Get<NewGuardObjectExtensionBase>("/api/NewGuardObjectExtensionBases/GetInfoByNumberNew?number=" + ServiceOrderID.NewNumber);
+                    //NULL - если может быть ситуация при которой не заведен охраняемый объект
+                    if (goeb != null) {
+                        Contact = goeb.NewFirstcontact;
+                        Siding = goeb.NewSiding;
+                        rrOS = goeb.NewRrOs.HasValue ? (bool)goeb.NewRrOs : false;
+                        rrPS = goeb.NewRrPs.HasValue ? (bool)goeb.NewRrPs : false;
+                        rrVideo = goeb.NewRrVideo.HasValue ? (bool)goeb.NewRrVideo : false;
+                        rrAccess = goeb.NewRrSkud.HasValue ? (bool)goeb.NewRrSkud : false;
                     }
+                }
                 Opacity = 1;
                 IndicatorVisible = false;
             });
@@ -428,7 +428,7 @@ namespace MounterApp.ViewModel {
                     status = await CheckAndRequestPermissionAsync(new LocationWhenInUse());
                     if (status == PermissionStatus.Granted) {
                         Location location = await Geolocation.GetLocationAsync(new GeolocationRequest(GeolocationAccuracy.Medium));
-                        if (location==null) {
+                        if (location == null) {
                             position = await locator.GetPositionAsync();
                             if (position == null) {
                                 await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Отметка \"Пришёл\" не может быть установлена", Color.Red, LayoutOptions.EndAndExpand), 4000));
@@ -485,7 +485,7 @@ namespace MounterApp.ViewModel {
                             {"ServiceOrderID",ServiceOrderID.NewServiceorderId.ToString() }
                         });
                         soeb.NewIncome = DateTime.Now.AddHours(-5);
-                        
+
 
                         using HttpClient clientPut = new HttpClient(GetHttpClientHandler());
                         var httpContent = new StringContent(JsonConvert.SerializeObject(soeb), Encoding.UTF8, "application/json");
@@ -711,6 +711,13 @@ namespace MounterApp.ViewModel {
                     });
                 PastOrdersPopupViewModel vm = new PastOrdersPopupViewModel(ServiceOrderID, Servicemans, Mounters);
                 await App.Current.MainPage.Navigation.PushPopupAsync(new PastOrdersPopupPage(vm));
+            });
+        }
+
+        private RelayCommand _TestCommand;
+        public RelayCommand TestCommand {
+            get => _TestCommand ??= new RelayCommand(async obj => {
+                bool g = false;
             });
         }
     }
