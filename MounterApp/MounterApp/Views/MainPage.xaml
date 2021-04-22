@@ -1,6 +1,7 @@
 ﻿<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodel="clr-namespace:MounterApp.ViewModel"
+             xmlns:behavior="clr-namespace:MounterApp.Helpers"
              x:Class="MounterApp.MainPage">
     <ContentPage.Resources>
         <viewmodel:MainPageViewModel x:Key="viewModel"/>
@@ -12,8 +13,16 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <StackLayout Visual="Material" Opacity="{Binding OpacityForm}" BindingContext="{DynamicResource viewModel}" Grid.Row="1" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Margin="5">
-            <Label Style="{DynamicResource CommonLabelStyle}" Text="Введите номер телефона"/>
-            <SearchBar Style="{DynamicResource SearchBarStyle}" Placeholder="Введите номер телефона (11 цифр)" x:Name="PhoneNumber" Keyboard="Telephone" Text="{Binding PhoneNumber, Mode=TwoWay}" SearchCommand="{Binding AuthCommand}" SearchCommandParameter="{Binding Source=PhoneNumber,Path=Text}"/>
+            <Label Style="{DynamicResource CommonLabelStyle}" FontSize="16" Text="Введите номер телефона"/>
+            <Entry Keyboard="Telephone" Text="{Binding PhoneNumber}" Placeholder="8 (XXX) XXX-XXXX" HorizontalTextAlignment="Center">
+                <Entry.Behaviors>
+                    <behavior:MaskedBehavior Mask="8 (XXX) XXX-XXXX" />
+                    <behavior:EventToCommandBehavior EventName="Completed" Command="{Binding AuthCommand}"/>
+                </Entry.Behaviors>
+            </Entry>
+            <Button Text="Войти" Style="{StaticResource CommonButtonStyle}" Command="{Binding AuthCommand}" CommandParameter="{Binding PhoneNumber}"/>
+            <!--<SearchBar Style="{DynamicResource SearchBarStyle}" Placeholder="Введите номер телефона (11 цифр)" x:Name="PhoneNumber" 
+            Keyboard="Telephone" Text="{Binding PhoneNumber, Mode=TwoWay}" SearchCommand="{Binding AuthCommand}" SearchCommandParameter="{Binding Source=PhoneNumber,Path=Text}"/>-->
             <Label Text="{Binding Message, Mode=TwoWay}" FontAttributes="Italic" TextColor="Red"/>
         </StackLayout>
         <StackLayout Style="{DynamicResource ActivityIndicatorStackLayoutStyle}" BindingContext="{DynamicResource viewModel}" IsVisible="{Binding IndicatorVisible}" Grid.Row="2">

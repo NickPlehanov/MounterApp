@@ -28,6 +28,17 @@ namespace MounterApp.Helpers {
             else
                 return null;
         }
+        public static async Task<string> GetString(string query){
+            client.DefaultRequestHeaders.Clear();
+            client.DefaultRequestHeaders.ConnectionClose = true;
+            client.DefaultRequestHeaders.ExpectContinue = false;
+            HttpResponseMessage httpResponse = await client.GetAsync(Resources.BaseAddress + query);
+            if (httpResponse.IsSuccessStatusCode) {
+                return await httpResponse.Content.ReadAsStringAsync();
+            }
+            else
+                return null;
+        }
         public static async Task<string> GetPhoto(string query) {
             client.DefaultRequestHeaders.Clear();
             client.DefaultRequestHeaders.ConnectionClose = true;

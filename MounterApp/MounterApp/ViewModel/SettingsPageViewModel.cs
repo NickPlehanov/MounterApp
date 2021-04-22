@@ -42,13 +42,14 @@ namespace MounterApp.ViewModel {
             SaveImage = IconName("save");
             ClearImage = IconName("clear");
             HelpImage = IconName("help");
+            ReportImage = IconName("report");
+            GetImage = IconName("get");
             Analytics.TrackEvent("Инициализация окна настроек приложения");
             AppVersions av = new AppVersions();
             Version = null;
             Version = "Версия приложения: " + av.GetVersionAndBuildNumber().VersionNumber;
             BuildNumber = "Сборка приложения: " + av.GetVersionAndBuildNumber().BuildNumber;
             App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
-            ReportImage = IconName("report");
             IsChanged = false;
         }
         private ImageSource _ReportImage;
@@ -57,6 +58,15 @@ namespace MounterApp.ViewModel {
             set {
                 _ReportImage = value;
                 OnPropertyChanged(nameof(ReportImage));
+            }
+        }
+
+        private ImageSource _GetImage;
+        public ImageSource GetImage {
+            get => _GetImage;
+            set {
+                _GetImage = value;
+                OnPropertyChanged(nameof(GetImage));
             }
         }
 
@@ -330,6 +340,30 @@ namespace MounterApp.ViewModel {
             get => _GetEventsObjectInfo ??= new RelayCommand(async obj => {
                 EventsExternalPageViewModel vm = new EventsExternalPageViewModel(Mounters,Servicemans);
                 App.Current.MainPage = new EventsExternalPage(vm);
+            });
+        }
+        ///// <summary>
+        ///// Команда проверки версии приложения и напоминания обновления
+        ///// </summary>
+        //private RelayCommand _CheckVersionApp;
+        //public RelayCommand CheckVersionApp {
+        //    get => _CheckVersionApp ??= new RelayCommand(async obj => {
+        //        //Получаем имя версии приложения из свойств
+        //        AppVersions av = new AppVersions();
+        //        string Version = av.GetVersionAndBuildNumber().VersionNumber;
+        //        HttpStatusCode code = await ClientHttp.Get("/api/Common/VersionNumber?appVersion=" + Version);
+        //        if (code.Equals(HttpStatusCode.MethodNotAllowed))//версия установленого приложения и версия указанная как актуальная на сервере - не совпали
+        //            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("У Вас установлена не актуальная версия приложения, пожалуйста обновите её", Color.Red, LayoutOptions.EndAndExpand), 4000));
+        //    });
+        //}
+
+        private RelayCommand _DownloadAppCommand;
+        public RelayCommand DownloadAppCommand {
+            get => _DownloadAppCommand ??= new RelayCommand(async obj => {
+                var link = await ClientHttp.GetString("/api/Common/GetAppDownload");
+                if (string.IsNullOrEmpty(link))
+                    return;
+                await Browser.OpenAsync(new Uri(link), BrowserLaunchMode.SystemPreferred);
             });
         }
     }

@@ -71,6 +71,19 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(Servicemans));
             }
         }
+        private string NormalizePhone(string phone) {
+            string ret = null;
+            if (string.IsNullOrEmpty(phone))
+                return null;
+            char[] _phone_chars = phone.ToCharArray();
+            foreach (char c in _phone_chars) {
+                if (char.IsDigit(c))
+                    ret += c.ToString();
+                else
+                    continue;
+            }
+            return ret;
+        }
         /// <summary>
         /// Команда авторизации в приложении
         /// </summary>
@@ -81,12 +94,14 @@ namespace MounterApp.ViewModel {
                 OpacityForm = 0.1;
                 Analytics.TrackEvent("App start");
                 string Phone = null;
-                if(PhoneNumber.Substring(0,2) == "+7")
-                    PhoneNumber = PhoneNumber.Replace("+7","8");
-                else if(PhoneNumber.Length == 11)
-                    Phone = PhoneNumber.Substring(1,PhoneNumber.Length - 1);
-                else if(PhoneNumber.Length == 10)
-                    Phone = PhoneNumber;
+                Phone = NormalizePhone(PhoneNumber);
+                //PhoneNumber = PhoneNumber.Replace("(","").Replace(")", "").Replace("-", "").Replace(" ", "").ToString();
+                if(Phone.Substring(0,2) == "+7")
+                    Phone = PhoneNumber.Replace("+7","8");
+                else if(Phone.Length == 11)
+                    Phone = Phone.Substring(1, Phone.Length - 1);
+                //else if(Phone.Length == 10)
+                //    Phone = Phone;
                 else {
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Введен не корректный номер телефона", Color.Red, LayoutOptions.EndAndExpand), 4000));
                     Analytics.TrackEvent("Ошибка ввода номера телефона");
@@ -136,7 +151,7 @@ namespace MounterApp.ViewModel {
                 }
                 IndicatorVisible = false;
                 OpacityForm = 1;
-            });
+            },obj=>!string.IsNullOrEmpty(PhoneNumber));
         }
         /// <summary>
         /// Видимость индикатора загрузки
