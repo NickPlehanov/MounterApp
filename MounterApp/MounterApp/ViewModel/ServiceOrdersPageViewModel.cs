@@ -39,7 +39,6 @@ namespace MounterApp.ViewModel {
             OpacityForm = 1;
             IndicatorVisible = false;
             RefreshOrdersCommand.Execute(null);
-            App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
             Analytics.TrackEvent("Инициализация страницы заявок технику",
             new Dictionary<string,string> {
                 {"Serviceman",Servicemans.FirstOrDefault().NewPhone }

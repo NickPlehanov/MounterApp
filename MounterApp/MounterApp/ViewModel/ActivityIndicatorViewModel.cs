@@ -1,7 +1,4 @@
 ﻿using Rg.Plugins.Popup.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MounterApp.ViewModel {
     public class ActivityIndicatorViewModel : BaseViewModel {

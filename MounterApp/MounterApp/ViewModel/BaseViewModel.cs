@@ -9,13 +9,6 @@ namespace MounterApp.ViewModel {
     public class BaseViewModel : INotifyPropertyChanged {
 
         public string IconName(string name) {
-            //AppTheme appTheme = AppInfo.RequestedTheme;
-            //if(appTheme == AppTheme.Light)
-            //    return name+"_white.png";
-            //else if(appTheme == AppTheme.Dark)
-            //    return name+ ".png";
-            //else
-            //    return name + ".png";
             return name + ".png";
         }
 
@@ -41,8 +34,20 @@ namespace MounterApp.ViewModel {
             if(status != PermissionStatus.Granted) {
                 status = await permission.RequestAsync();
             }
-
             return status;
+        }
+        public string NormalizePhone(string phone) {
+            string ret = null;
+            if (string.IsNullOrEmpty(phone))
+                return null;
+            char[] _phone_chars = phone.ToCharArray();
+            foreach (char c in _phone_chars) {
+                if (char.IsDigit(c))
+                    ret += c.ToString();
+                else
+                    continue;
+            }
+            return ret;
         }
     }
 }

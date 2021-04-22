@@ -77,6 +77,7 @@ namespace MounterApp.ViewModel {
         //            }
         //    }, obj => Serviceman != null);
         //}
+
         /// <summary>
         /// Команда перехода к странице монтажей
         /// </summary>

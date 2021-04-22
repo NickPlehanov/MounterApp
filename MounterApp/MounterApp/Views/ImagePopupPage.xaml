@@ -1,10 +1,16 @@
 ﻿<popup:PopupPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:popup="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup" 
+                 xmlns:controls="clr-namespace:MounterApp.Helpers.Controls"
              x:Class="MounterApp.Views.ImagePopupPage">
     <popup:PopupPage.Content>
         <Frame Style="{DynamicResource PopupFrameStyle}">
-            <Image Source="{Binding Image}" Aspect="AspectFit"/>
+            <!--<SwipeView>
+                <Image Source="{Binding Image}" Aspect="AspectFit"/>
+            </SwipeView>-->
+            <controls:PinchToZoomContainer>
+                <Image Source="{Binding Image}" Aspect="AspectFill"/>
+            </controls:PinchToZoomContainer>
         </Frame>
     </popup:PopupPage.Content>
 </popup:PopupPage>

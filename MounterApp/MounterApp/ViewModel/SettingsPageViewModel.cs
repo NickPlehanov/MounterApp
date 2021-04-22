@@ -342,20 +342,6 @@ namespace MounterApp.ViewModel {
                 App.Current.MainPage = new EventsExternalPage(vm);
             });
         }
-        ///// <summary>
-        ///// Команда проверки версии приложения и напоминания обновления
-        ///// </summary>
-        //private RelayCommand _CheckVersionApp;
-        //public RelayCommand CheckVersionApp {
-        //    get => _CheckVersionApp ??= new RelayCommand(async obj => {
-        //        //Получаем имя версии приложения из свойств
-        //        AppVersions av = new AppVersions();
-        //        string Version = av.GetVersionAndBuildNumber().VersionNumber;
-        //        HttpStatusCode code = await ClientHttp.Get("/api/Common/VersionNumber?appVersion=" + Version);
-        //        if (code.Equals(HttpStatusCode.MethodNotAllowed))//версия установленого приложения и версия указанная как актуальная на сервере - не совпали
-        //            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("У Вас установлена не актуальная версия приложения, пожалуйста обновите её", Color.Red, LayoutOptions.EndAndExpand), 4000));
-        //    });
-        //}
 
         private RelayCommand _DownloadAppCommand;
         public RelayCommand DownloadAppCommand {

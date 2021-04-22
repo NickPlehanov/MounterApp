@@ -36,7 +36,7 @@ namespace MounterApp.ViewModel {
         /// <param name="soeb">Объект Заявка технику</param>
         /// <param name="_servicemans">Техники(список)</param>
         /// <param name="_mounters">Монтажники(список)</param>
-        public CloseOrderPopupPageViewModel(NewServiceorderExtensionBase soeb,List<NewServicemanExtensionBase> _servicemans,List<NewMounterExtensionBase> _mounters) {
+        public CloseOrderPopupPageViewModel(NewServiceorderExtensionBase soeb, List<NewServicemanExtensionBase> _servicemans, List<NewMounterExtensionBase> _mounters) {
             so = soeb;
             Servicemans = _servicemans;
             Mounters = _mounters;
@@ -44,7 +44,7 @@ namespace MounterApp.ViewModel {
             NecesseryRead = false;
             SaveImage = IconName("save");
             if (Application.Current.Properties.ContainsKey("ConclusionByOrder"))
-                ConclusionByOrder =Application.Current.Properties["ConclusionByOrder"] as string;
+                ConclusionByOrder = Application.Current.Properties["ConclusionByOrder"] as string;
             IsLoading(false);
         }
         /// <summary>
@@ -53,7 +53,7 @@ namespace MounterApp.ViewModel {
         /// <param name="soeb">Объект заявка на ПС</param>
         /// <param name="_servicemans">Техники(список)</param>
         /// <param name="_mounters">Монтажники(список)</param>
-        public CloseOrderPopupPageViewModel(NewTest2ExtensionBase soeb,List<NewServicemanExtensionBase> _servicemans,List<NewMounterExtensionBase> _mounters) {
+        public CloseOrderPopupPageViewModel(NewTest2ExtensionBase soeb, List<NewServicemanExtensionBase> _servicemans, List<NewMounterExtensionBase> _mounters) {
             sofa = soeb;
             Servicemans = _servicemans;
             Mounters = _mounters;
@@ -138,7 +138,7 @@ namespace MounterApp.ViewModel {
             get => _ConclusionByOrder;
             set {
                 _ConclusionByOrder = value;
-                Application.Current.Properties["ConclusionByOrder"]=ConclusionByOrder;
+                Application.Current.Properties["ConclusionByOrder"] = ConclusionByOrder;
                 OnPropertyChanged(nameof(ConclusionByOrder));
             }
         }
@@ -206,16 +206,16 @@ namespace MounterApp.ViewModel {
             set {
                 _SelectedResult = value;
                 OnPropertyChanged(nameof(SelectedResult));
-                if(SelectedResult.Value != 1) {
+                if (SelectedResult.Value != 1) {
                     ReasonVisibility = true;
                     //GetReasons.ExecuteAsync(null);
                 }
                 else
                     ReasonVisibility = false;
-                if(SelectedResult.Value == 2) {
+                if (SelectedResult.Value == 2) {
                     TransferLayoutVisibility = true;
                 }
-                if(SelectedResult.Value == 3) {
+                if (SelectedResult.Value == 3) {
                     TransferLayoutVisibility = false;
                 }
             }
@@ -260,7 +260,7 @@ namespace MounterApp.ViewModel {
         public DateTime TransferDate {
             get => _TransferDate;
             set {
-                if(value == DateTime.Parse("01.01.2010 00:00:00"))
+                if (value == DateTime.Parse("01.01.2010 00:00:00"))
                     _TransferDate = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy")).AddDays(1);
                 else
                     _TransferDate = value;
@@ -320,16 +320,16 @@ namespace MounterApp.ViewModel {
                 status = await CheckAndRequestPermissionAsync(new LocationWhenInUse());
                 return status;
             }
-            catch(Exception ex) {
+            catch (Exception ex) {
                 Crashes.TrackError(new Exception("Заявка технику.Закрытие. Ошибка получения координат.")
-                    ,new Dictionary<string,string> {
+                    , new Dictionary<string, string> {
                                             {"ErrorMessage",ex.Message },
                                             {"phone",Servicemans.First().NewPhone },
                                             {"name",Servicemans.First().NewName },
                                             {"PermissionStatus",status.ToString()}
                 });
                 await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(
-                    new MessagePopupPageViewModel("Ошибка при попытке сохранения. Не получены необходимые разрешения",Color.Red,LayoutOptions.EndAndExpand),4000));
+                    new MessagePopupPageViewModel("Ошибка при попытке сохранения. Не получены необходимые разрешения", Color.Red, LayoutOptions.EndAndExpand), 4000));
                 IsLoading(false);
                 return PermissionStatus.Denied;
             }
@@ -342,22 +342,26 @@ namespace MounterApp.ViewModel {
             var locator = CrossGeolocator.Current;
             locator.DesiredAccuracy = 20;
             Plugin.Geolocator.Abstractions.Position position;
-            Location location = await Geolocation.GetLocationAsync();
-            if (location == null) {
-                position = await locator.GetPositionAsync();
-                if (position == null) {
-                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Отметка \"Пришёл\" не может быть установлена", Color.Red, LayoutOptions.EndAndExpand), 4000));
-                    return false;
+            if (CrossGeolocator.Current.IsGeolocationEnabled) {
+                Location location = await Geolocation.GetLocationAsync();
+                if (location == null) {
+                    position = await locator.GetPositionAsync();
+                    if (position == null) {
+                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Отметка \"Ушёл\" не может быть установлена", Color.Red, LayoutOptions.EndAndExpand), 4000));
+                        return false;
+                    }
+                    Latitude = position.Latitude.ToString();
+                    Longitude = position.Longitude.ToString();
+                    return true;
                 }
-                Latitude = position.Latitude.ToString();
-                Longitude = position.Longitude.ToString();
-                return true;
+                else {
+                    Latitude = location.Latitude.ToString();
+                    Longitude = location.Longitude.ToString();
+                    return true;
+                }
             }
-            else {
-                Latitude = location.Latitude.ToString();
-                Longitude = location.Longitude.ToString();
-                return true;
-            }
+            else 
+                return false;
         }
         /// <summary>
         /// Команда закрытия заявки технику
@@ -365,118 +369,137 @@ namespace MounterApp.ViewModel {
         private RelayCommand _CloseServiceOrderCommand;
         public RelayCommand CloseServiceOrderCommand {
             get => _CloseServiceOrderCommand ??= new RelayCommand(async obj => {
-                IsLoading(true);
-                ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans,Mounters);
-                Analytics.TrackEvent("Начало закрытия заявки",
-                    new Dictionary<string,string> {
+                try {
+                    IsLoading(true);
+                    ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans, Mounters);
+                    Analytics.TrackEvent("Начало закрытия заявки",
+                        new Dictionary<string, string> {
                     { "ServiceOrder",so != null ? so.NewServiceorderId.ToString() : sofa.NewTest2Id.ToString() },
                     { "ServicemanPhone",Servicemans.FirstOrDefault().NewPhone }
-                    });
-                //проверяем значение необходимых полей NecesseryRead - Обязательно для прочтения оператором ConclusionByOrder - заключение по заявке
-                if (NecesseryRead && string.IsNullOrEmpty(ConclusionByOrder)) {
-                    Analytics.TrackEvent("Не указано заключение по заявке",
-                    new Dictionary<string,string> {
+                        });
+                    //проверяем значение необходимых полей NecesseryRead - Обязательно для прочтения оператором ConclusionByOrder - заключение по заявке
+                    if (NecesseryRead && string.IsNullOrEmpty(ConclusionByOrder)) {
+                        Analytics.TrackEvent("Не указано заключение по заявке",
+                        new Dictionary<string, string> {
                     { "ServiceOrder",so != null ? so.NewServiceorderId.ToString() : sofa.NewTest2Id.ToString() },
                     { "ServicemanPhone",Servicemans.FirstOrDefault().NewPhone }
-                    });
-                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Не указано заключение по заявке",Color.Red,LayoutOptions.EndAndExpand),4000));
+                        });
+                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Не указано заключение по заявке", Color.Red, LayoutOptions.EndAndExpand), 4000));
+                        IsLoading(false);
+                        return;
+                    }
+                    if (!string.IsNullOrEmpty(ConclusionByOrder)) {
+                        if (!Application.Current.Properties.ContainsKey("ConclusionByOrder")) {
+                            Application.Current.Properties["ConclusionByOrder"] = ConclusionByOrder;
+                        }
+                        //Заявка технику
+                        if (so != null) {
+                            NewServiceorderExtensionBase soeb = await ClientHttp.Get<NewServiceorderExtensionBase>("/api/NewServiceorderExtensionBases/id?id=" + so.NewServiceorderId);
+                            if (soeb != null) {
+                                PermissionStatus permissionStatus = await CheckPermission();
+                                if (permissionStatus.Equals(PermissionStatus.Granted)) {
+                                    soeb.NewOutgone = DateTime.Now.AddHours(-5);
+                                    soeb.NewTechConclusion = ConclusionByOrder;
+                                    soeb.NewMustRead = NecesseryRead;
+                                    soeb.NewNewServiceman = Servicemans.First().NewServicemanId;
+
+                                    ServiceOrderCoordinates soc = await ClientHttp.Get<ServiceOrderCoordinates>("/api/ServiceOrderCoordinates/id?so_id=" + so.NewServiceorderId);
+                                    if (soc != null) {
+                                        await GetLocation();
+                                        if (string.IsNullOrEmpty(Latitude) || string.IsNullOrEmpty(Longitude)) {
+                                            IsLoading(false);
+                                            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Отметка \"Ушел\" не может быть установлена", Color.Red, LayoutOptions.EndAndExpand), 4000));
+                                            return;
+                                        }
+                                        soc.SocOutcomeLatitide = Latitude;
+                                        soc.SocOutcomeLongitude = Longitude;
+                                        await ClientHttp.Put("/api/ServiceOrderCoordinates", new StringContent(JsonConvert.SerializeObject(soc), Encoding.UTF8, "application/json"));
+                                    }
+
+                                    HttpStatusCode code = await ClientHttp.Put("/api/NewServiceorderExtensionBases", new StringContent(JsonConvert.SerializeObject(soeb), Encoding.UTF8, "application/json"));
+                                    if (code.Equals(HttpStatusCode.Accepted)) {
+                                        if (App.Current.MainPage.Navigation.NavigationStack.Any())
+                                            await App.Current.MainPage.Navigation.PopPopupAsync();
+                                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Заключение и время ухода сохранены", Color.Green, LayoutOptions.EndAndExpand), 4000));
+                                        App.Current.MainPage = new ServiceOrdersPage(new ServiceOrdersPageViewModel(Servicemans, Mounters));
+                                    }
+                                    else
+                                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка, не был получен корректный ответ от сервера. Попробуйте позже, в случае повторной ошибки, сообщите в ИТ-отдел", Color.Red, LayoutOptions.EndAndExpand), 7000));
+
+
+                                    Application.Current.Properties["ConclusionByOrder"] = null;
+                                    await Application.Current.SavePropertiesAsync();
+                                    App.Current.MainPage = new ServiceOrdersPage(vm);
+                                    IsLoading(false);
+                                }
+                                else
+                                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка. Не предоставлены разрешения", Color.Red, LayoutOptions.EndAndExpand), 7000));
+                            }
+                            else
+                                await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка", Color.Red, LayoutOptions.EndAndExpand), 7000));
+                        }
+                        //заявка на пс
+                        if (sofa != null) {
+                            NewTest2ExtensionBase soeb = await ClientHttp.Get<NewTest2ExtensionBase>("/api/NewServiceOrderForFireAlarmExtensionBase/id?id=" + sofa.NewTest2Id);
+                            if (soeb != null) {
+                                PermissionStatus permissionStatus = await CheckPermission();
+                                if (permissionStatus.Equals(PermissionStatus.Granted)) {
+                                    soeb.NewOutgone = DateTime.Now.AddHours(-5);
+                                    soeb.NewTechconclusion = ConclusionByOrder;
+                                    soeb.NewTechniqueEnd = Servicemans.First().NewServicemanId;
+
+                                    ServiceOrderCoordinates soc = await ClientHttp.Get<ServiceOrderCoordinates>("/api/ServiceOrderCoordinates/id?so_id=" + sofa.NewTest2Id);
+                                    if (soc != null) {
+                                        await GetLocation();
+                                        if (string.IsNullOrEmpty(Latitude) || string.IsNullOrEmpty(Longitude)) {
+                                            IsLoading(false);
+                                            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Отметка \"Ушел\" не может быть установлена", Color.Red, LayoutOptions.EndAndExpand), 4000));
+                                            return;
+                                        }
+                                        soc.SocOutcomeLatitide = Latitude;
+                                        soc.SocOutcomeLongitude = Longitude;
+                                        await ClientHttp.Put("/api/ServiceOrderCoordinates", new StringContent(JsonConvert.SerializeObject(soc), Encoding.UTF8, "application/json"));
+                                    }
+
+                                    HttpStatusCode code = await ClientHttp.Put("/api/NewServiceOrderForFireAlarmExtensionBase", new StringContent(JsonConvert.SerializeObject(soeb), Encoding.UTF8, "application/json"));
+                                    if (code.Equals(HttpStatusCode.Accepted)) {
+                                        if (App.Current.MainPage.Navigation.NavigationStack.Any())
+                                            await App.Current.MainPage.Navigation.PopPopupAsync();
+                                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Заключение и время ухода сохранены", Color.Green, LayoutOptions.EndAndExpand), 4000));
+                                        App.Current.MainPage = new ServiceOrdersPage(new ServiceOrdersPageViewModel(Servicemans, Mounters));
+                                    }
+                                    else
+                                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка, не был получен корректный ответ от сервера. Попробуйте позже, в случае повторной ошибки, сообщите в ИТ-отдел", Color.Red, LayoutOptions.EndAndExpand), 7000));
+
+                                    Application.Current.Properties["ConclusionByOrder"] = null;
+                                    await Application.Current.SavePropertiesAsync();
+                                    App.Current.MainPage = new ServiceOrdersPage(vm);
+                                    IsLoading(false);
+                                }
+                                else
+                                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка. Не предоставлены разрешения", Color.Red, LayoutOptions.EndAndExpand), 7000));
+                            }
+                            else
+                                await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка", Color.Red, LayoutOptions.EndAndExpand), 7000));
+                        }
+                    }
                     IsLoading(false);
-                    return;
+                    await App.Current.MainPage.Navigation.PopAllPopupAsync();
+                    Application.Current.Properties["ConclusionByOrder"] = null;
+                    await Application.Current.SavePropertiesAsync();
                 }
-                if(!string.IsNullOrEmpty(ConclusionByOrder)) {
-                    if (!Application.Current.Properties.ContainsKey("ConclusionByOrder")) {
-                        Application.Current.Properties["ConclusionByOrder"] = ConclusionByOrder;
-                    }
-                    //Заявка технику
-                    if (so != null) {
-                        NewServiceorderExtensionBase soeb = await ClientHttp.Get<NewServiceorderExtensionBase>("/api/NewServiceorderExtensionBases/id?id=" + so.NewServiceorderId);
-                        if(soeb != null) {
-                            PermissionStatus permissionStatus = await CheckPermission();
-                            if(permissionStatus.Equals(PermissionStatus.Granted)) {
-                                soeb.NewOutgone = DateTime.Now.AddHours(-5);
-                                soeb.NewTechConclusion = ConclusionByOrder;
-                                soeb.NewMustRead = NecesseryRead;
-                                soeb.NewNewServiceman = Servicemans.First().NewServicemanId;
-
-                                ServiceOrderCoordinates soc = await ClientHttp.Get<ServiceOrderCoordinates>("/api/ServiceOrderCoordinates/id?so_id=" + so.NewServiceorderId);
-                                if (soc != null) {
-                                    await GetLocation();
-                                    if (string.IsNullOrEmpty(Latitude) || string.IsNullOrEmpty(Longitude)) {
-                                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Отметка \"Ушел\" не может быть установлена", Color.Red, LayoutOptions.EndAndExpand), 4000));
-                                        return;
-                                    }
-                                    soc.SocOutcomeLatitide = Latitude;
-                                    soc.SocOutcomeLongitude = Longitude;
-                                    await ClientHttp.Put("/api/ServiceOrderCoordinates", new StringContent(JsonConvert.SerializeObject(soc), Encoding.UTF8, "application/json"));
-                                }
-
-                                HttpStatusCode code = await ClientHttp.Put("/api/NewServiceorderExtensionBases",new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json"));
-                                if(code.Equals(HttpStatusCode.Accepted)) {
-                                    await App.Current.MainPage.Navigation.PopPopupAsync();
-                                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Заключение и время ухода сохранены",Color.Green,LayoutOptions.EndAndExpand),4000));
-                                    App.Current.MainPage = new ServiceOrdersPage(new ServiceOrdersPageViewModel(Servicemans,Mounters));
-                                }
-                                else
-                                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка, не был получен корректный ответ от сервера. Попробуйте позже, в случае повторной ошибки, сообщите в ИТ-отдел",Color.Red,LayoutOptions.EndAndExpand),7000));
-
-                                
-                                Application.Current.Properties["ConclusionByOrder"] = null;
-                                await Application.Current.SavePropertiesAsync();
-                                App.Current.MainPage = new ServiceOrdersPage(vm);
-                                IsLoading(false);
-                            }
-                            else
-                                await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка. Не предоставлены разрешения",Color.Red,LayoutOptions.EndAndExpand),7000));
-                        }
-                        else
-                            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка",Color.Red,LayoutOptions.EndAndExpand),7000));
-                    }
-                    //заявка на пс
-                    if(sofa != null) {
-                        NewTest2ExtensionBase soeb = await ClientHttp.Get<NewTest2ExtensionBase>("/api/NewServiceOrderForFireAlarmExtensionBase/id?id=" + sofa.NewTest2Id);
-                        if(soeb != null) {
-                            PermissionStatus permissionStatus = await CheckPermission();
-                            if(permissionStatus.Equals(PermissionStatus.Granted)) {
-                                soeb.NewOutgone = DateTime.Now.AddHours(-5);
-                                soeb.NewTechconclusion = ConclusionByOrder;
-                                soeb.NewTechniqueEnd = Servicemans.First().NewServicemanId;
-
-                                ServiceOrderCoordinates soc = await ClientHttp.Get<ServiceOrderCoordinates>("/api/ServiceOrderCoordinates/id?so_id=" + sofa.NewTest2Id);
-                                if (soc != null) {
-                                    await GetLocation();
-                                    if (string.IsNullOrEmpty(Latitude) || string.IsNullOrEmpty(Longitude)) {
-                                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Отметка \"Ушел\" не может быть установлена", Color.Red, LayoutOptions.EndAndExpand), 4000));
-                                        return;
-                                    }
-                                    soc.SocOutcomeLatitide = Latitude;
-                                    soc.SocOutcomeLongitude = Longitude;
-                                    await ClientHttp.Put("/api/ServiceOrderCoordinates", new StringContent(JsonConvert.SerializeObject(soc), Encoding.UTF8, "application/json"));
-                                }
-
-                                HttpStatusCode code = await ClientHttp.Put("/api/NewServiceOrderForFireAlarmExtensionBase",new StringContent(JsonConvert.SerializeObject(soeb),Encoding.UTF8,"application/json"));
-                                if(code.Equals(HttpStatusCode.Accepted)) {
-                                    await App.Current.MainPage.Navigation.PopPopupAsync();
-                                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Заключение и время ухода сохранены",Color.Green,LayoutOptions.EndAndExpand),4000));
-                                    App.Current.MainPage = new ServiceOrdersPage(new ServiceOrdersPageViewModel(Servicemans,Mounters));
-                                }
-                                else
-                                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка, не был получен корректный ответ от сервера. Попробуйте позже, в случае повторной ошибки, сообщите в ИТ-отдел",Color.Red,LayoutOptions.EndAndExpand),7000));
-                                
-                                Application.Current.Properties["ConclusionByOrder"] = null;
-                                await Application.Current.SavePropertiesAsync();
-                                App.Current.MainPage = new ServiceOrdersPage(vm);
-                                IsLoading(false);
-                            }
-                            else
-                                await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка. Не предоставлены разрешения",Color.Red,LayoutOptions.EndAndExpand),7000));
-                        }
-                        else
-                            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка",Color.Red,LayoutOptions.EndAndExpand),7000));
-                    }
+                catch (Exception ex) {
+                    IsLoading(false);
+                    ErrorReport crashReport = await Crashes.GetLastSessionCrashReportAsync();
+                    Crashes.TrackError(new Exception("Проблема при закрытии заявки")
+                        , new Dictionary<string, string> {
+                                            {"ErrorMessage",ex.Message },
+                                            {"phone",Servicemans.First().NewPhone },
+                                            {"name",Servicemans.First().NewName },
+                                            {"StackTrace",crashReport.StackTrace },
+                                            {"AndroidDetails",crashReport.AndroidDetails.StackTrace }
+                    });
                 }
-                IsLoading(false);
-                Application.Current.Properties["ConclusionByOrder"] = null;
-                await Application.Current.SavePropertiesAsync();
             });
         }
     }
