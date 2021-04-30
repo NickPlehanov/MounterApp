@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.13" package="com.nickdev.mounterapp" android:installLocation="preferExternal">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.14" package="com.nickdev.mounterapp" android:installLocation="preferExternal">
 	<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="28" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.CAMERA" />
@@ -9,9 +9,9 @@
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 	<uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
 	<uses-permission android:name="android.permission.LOCATION_HARDWARE" />
-  <uses-permission android:name="android.hardware.location"/>
-  <uses-permission android:name="android.hardware.location.gps"/>
-  <uses-permission android:name="android.hardware.location.network"/>
+	<uses-permission android:name="android.hardware.location" />
+	<uses-permission android:name="android.hardware.location.gps" />
+	<uses-permission android:name="android.hardware.location.network" />
 	<application android:hardwareAccelerated="false" android:label="MounterApp" android:icon="@drawable/icon" android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 		<provider android:name="android.support.v4.content.FileProvider" android:authorities="${applicationId}.fileprovider" android:exported="false" android:grantUriPermissions="true">
 			<meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths"></meta-data>

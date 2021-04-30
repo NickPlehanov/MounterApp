@@ -394,6 +394,8 @@
                 <ActivityIndicator Style="{DynamicResource ActivityIndicatorStyle}"  />
                 <Label Style="{DynamicResource ActivityIndicatorLabelStyle}"/>
             </StackLayout>
+
+            <Button Margin="15" BackgroundColor="Red" ImageSource="{Binding FoodImage}" CornerRadius="80" HeightRequest="80" WidthRequest="80" VerticalOptions="EndAndExpand" HorizontalOptions="End"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

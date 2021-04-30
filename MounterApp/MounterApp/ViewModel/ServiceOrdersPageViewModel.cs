@@ -49,6 +49,7 @@ namespace MounterApp.ViewModel {
             MapImage = IconName("map");
             TransferImage = IconName("transfer");
             HelpImage = IconName("help");
+            FoodImage = IconName("food");
             FrameColor = Color.Red;
             ArrowCircleServiceOrder = IconName("arrow_circle_down");
             ArrowCircleTransferServiceOrder = IconName("arrow_circle_down");
@@ -144,6 +145,15 @@ namespace MounterApp.ViewModel {
             set {
                 _HelpImage = value;
                 OnPropertyChanged(nameof(HelpImage));
+            }
+        }
+
+        private ImageSource _FoodImage;
+        public ImageSource FoodImage {
+            get => _FoodImage;
+            set {
+                _FoodImage = value;
+                OnPropertyChanged(nameof(FoodImage));
             }
         }
         private double _Width;

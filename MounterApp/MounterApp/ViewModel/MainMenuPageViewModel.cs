@@ -1,9 +1,11 @@
 ﻿using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using MounterApp.Helpers;
 using MounterApp.InternalModel;
 using MounterApp.Model;
 using MounterApp.Views;
 using Rg.Plugins.Popup.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -169,8 +171,17 @@ namespace MounterApp.ViewModel {
                 AppVersions av = new AppVersions();
                 string Version = av.GetVersionAndBuildNumber().VersionNumber;
                 HttpStatusCode code = await ClientHttp.Get("/api/Common/VersionNumber?appVersion=" + Version);
-                if (code.Equals(HttpStatusCode.MethodNotAllowed))//версия установленого приложения и версия указанная как актуальная на сервере - не совпали
-                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("У Вас установлена не актуальная версия приложения, пожалуйста обновите её", Color.Red, LayoutOptions.EndAndExpand), 4000));
+                if (code.Equals(HttpStatusCode.MethodNotAllowed)) {//версия установленого приложения и версия указанная как актуальная на сервере - не совпали
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("У Вас установлена не актуальная версия приложения, пожалуйста обновите её. Настройки - Скачать", Color.Red, LayoutOptions.EndAndExpand), 4000));
+                    Crashes.TrackError(new Exception("Необновленнная версия приложения"),
+                        new Dictionary<string, string> {
+                                {"Version",Version },
+                                {"MountersName",Mounters.First().NewName.ToString() },
+                                {"MountersPhone",Mounters.First().NewPhone.ToString() },
+                                {"ServicemanName",Serviceman.First().NewName.ToString() },
+                                {"ServicemanPhone",Serviceman.First().NewPhone.ToString() }
+                        });
+                }
             });
         }
         /// <summary>
