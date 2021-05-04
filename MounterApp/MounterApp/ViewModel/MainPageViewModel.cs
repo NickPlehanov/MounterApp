@@ -1,5 +1,6 @@
 ﻿using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using Microsoft.AppCenter;
 using MounterApp.Helpers;
 using MounterApp.Model;
 using MounterApp.Views;
@@ -8,6 +9,11 @@ using System;
 using System.Collections.Generic;
 using Xamarin.Forms;
 using static Xamarin.Essentials.Permissions;
+using Android.OS;
+using MounterApp.Properties;
+using Android.App;
+using Android;
+using Android.Content;
 
 namespace MounterApp.ViewModel {
     public class MainPageViewModel : BaseViewModel {
@@ -16,25 +22,26 @@ namespace MounterApp.ViewModel {
 
             IndicatorVisible = false;
             OpacityForm = 1;
-            if (Application.Current.Properties.ContainsKey("Phone"))
-                PhoneNumber = Application.Current.Properties["Phone"] as string;
-            if(Application.Current.Properties.ContainsKey("AutoEnter")) {
-                if(bool.TryParse(Application.Current.Properties["AutoEnter"].ToString(),out bool tmp))
+            if (Xamarin.Forms.Application.Current.Properties.ContainsKey("Phone"))
+                PhoneNumber = Xamarin.Forms.Application.Current.Properties["Phone"] as string;
+            if(Xamarin.Forms.Application.Current.Properties.ContainsKey("AutoEnter")) {
+                if(bool.TryParse(Xamarin.Forms.Application.Current.Properties["AutoEnter"].ToString(),out bool tmp))
                     if(tmp && PhoneNumber != null)
                         AuthCommand.Execute(null);
             }
             else {
-                Application.Current.Properties["AutoEnter"] = true;
+                Xamarin.Forms.Application.Current.Properties["AutoEnter"] = true;
             }
-            if(!Application.Current.Properties.ContainsKey("Quality")) {
-                Application.Current.Properties["Quality"] = 50;
+            if(!Xamarin.Forms.Application.Current.Properties.ContainsKey("Quality")) {
+                Xamarin.Forms.Application.Current.Properties["Quality"] = 50;
             }
-            if(!Application.Current.Properties.ContainsKey("Compression")) {
-                Application.Current.Properties["Compression"] = 50;
+            if(!Xamarin.Forms.Application.Current.Properties.ContainsKey("Compression")) {
+                Xamarin.Forms.Application.Current.Properties["Compression"] = 50;
             }
             CheckAndRequestPermissions.Execute(null);
 
-            Application.Current.SavePropertiesAsync();
+            Xamarin.Forms.Application.Current.SavePropertiesAsync();
+
         }
         /// <summary>
         /// Проверяем и спрашиваем разрешения для приложения
@@ -71,13 +78,13 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(Servicemans));
             }
         }
-        
         /// <summary>
         /// Команда авторизации в приложении
         /// </summary>
         private RelayCommand _AuthCommand;
         public RelayCommand AuthCommand {
             get => _AuthCommand ??= new RelayCommand(async obj => {
+
                 IndicatorVisible = true;
                 OpacityForm = 0.1;
                 Analytics.TrackEvent("App start");
@@ -100,8 +107,8 @@ namespace MounterApp.ViewModel {
                     Analytics.TrackEvent("Ошибка ввода номера телефона");
                 }
                 try {
-                    Application.Current.Properties["Phone"] = Phone;
-                    await Application.Current.SavePropertiesAsync();
+                    Xamarin.Forms.Application.Current.Properties["Phone"] = Phone;
+                    await Xamarin.Forms.Application.Current.SavePropertiesAsync();
                     Analytics.TrackEvent("Сохранение номера телефона в локальную базу данных");
                     Analytics.TrackEvent("Запрос монтажников по номеру телефона");
                     Mounters = await ClientHttp.Get <List<NewMounterExtensionBase>>("/api/NewMounterExtensionBases/phone?phone=" + Phone);
@@ -196,7 +203,7 @@ namespace MounterApp.ViewModel {
         private RelayCommand _BackPressCommand;
         public RelayCommand BackPressCommand {
             get => _BackPressCommand ??= new RelayCommand(async obj => {
-                Environment.Exit(0);
+                System.Environment.Exit(0);
             });
         }
     }

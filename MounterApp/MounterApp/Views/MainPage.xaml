@@ -12,7 +12,7 @@
             <RowDefinition Height="5*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <StackLayout Visual="Material" Opacity="{Binding OpacityForm}" BindingContext="{DynamicResource viewModel}" Grid.Row="1" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Margin="5">
+        <StackLayout x:Name="stackLayout" Visual="Material" Opacity="{Binding OpacityForm}" BindingContext="{DynamicResource viewModel}" Grid.Row="1" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Margin="5">
             <Label Style="{DynamicResource CommonLabelStyle}" FontSize="16" Text="Введите номер телефона"/>
             <Entry Keyboard="Telephone" Text="{Binding PhoneNumber}" Placeholder="8 (XXX) XXX-XXXX" HorizontalTextAlignment="Center">
                 <Entry.Behaviors>
