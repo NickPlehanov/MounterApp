@@ -100,8 +100,9 @@ namespace MounterApp.ViewModel {
                 }
                 //if (Phone.Substring(0,2) == "+7")
                 //    Phone = Phone.Replace("+7","8");
-                //else if (Phone.Length == 11)
-                //    Phone = Phone.Substring(1, Phone.Length - 1);
+                //else
+                if (Phone.Length == 11)
+                    Phone = Phone.Substring(1, Phone.Length - 1);
                 //else {
                 //    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Введен не корректный номер телефона", Color.Red, LayoutOptions.EndAndExpand), 4000));
                 //    Analytics.TrackEvent("Ошибка ввода номера телефона");
@@ -151,7 +152,7 @@ namespace MounterApp.ViewModel {
                 IndicatorVisible = false;
                 OpacityForm = 1;
             //},obj=>!string.IsNullOrEmpty(PhoneNumber));
-            },obj=>PhoneNumber.Length==16);
+            },obj=>!string.IsNullOrEmpty(PhoneNumber));
         }
         /// <summary>
         /// Видимость индикатора загрузки
