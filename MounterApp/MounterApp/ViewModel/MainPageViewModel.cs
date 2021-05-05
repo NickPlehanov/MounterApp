@@ -90,7 +90,7 @@ namespace MounterApp.ViewModel {
                 Analytics.TrackEvent("App start");
                 string Phone = null;
                 Phone = NormalizePhone(phone: PhoneNumber);
-                if (Phone == null) {
+                if (string.IsNullOrEmpty(Phone)) {
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Введен не корректный номер телефона", Color.Red, LayoutOptions.EndAndExpand), 4000));
                     return;
                 }

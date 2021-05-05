@@ -764,11 +764,12 @@ namespace MounterApp.ViewModel {
                     if (Date == DateTime.Parse("01.01.0001 00:00:00"))
                         Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
 
-                    List<NewTest2ExtensionBase_ex> _serviceorders = await ClientHttp.Get<List<NewTest2ExtensionBase_ex>>("/api/NewServiceOrderForFireAlarmExtensionBase/ServiceOrderByUserTransferReasonNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
+                    List<NewTest2ExtensionBase_ex> _serviceorders = 
+                    await ClientHttp.Get<List<NewTest2ExtensionBase_ex>>("/api/NewServiceOrderForFireAlarmExtensionBase/ServiceOrderByUserTransferReasonNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
                     if (_serviceorders == null)
                         return;
 
-                    if (_serviceorders != null) {
+                    //if (_serviceorders != null) {
                         Application.Current.Dispatcher.BeginInvokeOnMainThread((Action)delegate {
                             if (ServiceOrderByTransferFireAlarm != null)
                                 ServiceOrderByTransferFireAlarm.Clear();
@@ -778,7 +779,7 @@ namespace MounterApp.ViewModel {
                             FireAlarmTransferServiceOrderText = "Перенесенные(пс) (" + ServiceOrderByTransferFireAlarm.Count.ToString() + ")";
                             FireAlarmTransferServiceOrderVisible = ServiceOrderByTransferFireAlarm.Count > 0;
                         });
-                    }
+                    //}
                 }
                 IndicatorVisible = false;
                 OpacityForm = 1;
