@@ -92,15 +92,16 @@ namespace MounterApp.ViewModel {
                     if (ServiceOrderFireAlarm.NewNumber != 0)
                         if (!string.IsNullOrEmpty(ServiceOrderFireAlarm.NewNumber.Value.ToString())) {
                             List<Info> obj_info = await ClientHttp.Get<List<Info>>("/api/Andromeda/Objinfo?objNumber=" + ServiceOrderFireAlarm.NewNumber.ToString() + "");
-                            if (obj_info != null) {
-                                Info inf = obj_info.First();
-                                if (inf != null) {
-                                    ObjectName = inf.Name;
-                                    ControlTime = inf.ControlTime.ToString();
-                                    EventTemplate = inf.EventTemplateName.ToString();
-                                    DeviceName = inf.DeviceName.ToString();
+                            if (obj_info != null)
+                                if (obj_info.Count() > 0) {
+                                    Info inf = obj_info.First();
+                                    if (inf != null) {
+                                        ObjectName = inf.Name;
+                                        ControlTime = inf.ControlTime.ToString();
+                                        EventTemplate = inf.EventTemplateName.ToString();
+                                        DeviceName = inf.DeviceName.ToString();
+                                    }
                                 }
-                            }
                         }
             });
         }

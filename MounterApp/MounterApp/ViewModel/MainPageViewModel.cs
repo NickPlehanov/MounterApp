@@ -41,7 +41,17 @@ namespace MounterApp.ViewModel {
             CheckAndRequestPermissions.Execute(null);
 
             Xamarin.Forms.Application.Current.SavePropertiesAsync();
+            CheckLastCrash.Execute(null);
 
+        }
+
+        private RelayCommand _CheckLastCrash;
+        public RelayCommand CheckLastCrash {
+            get => _CheckLastCrash ??= new RelayCommand(async obj => {
+                var lastcrash = await Crashes.HasCrashedInLastSessionAsync();
+                if (lastcrash == true)
+                    await Crashes.GetLastSessionCrashReportAsync();
+            });
         }
         /// <summary>
         /// Проверяем и спрашиваем разрешения для приложения

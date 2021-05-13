@@ -372,18 +372,19 @@ namespace MounterApp.ViewModel {
                 try {
                     IsLoading(true);
                     ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans, Mounters);
-                    Analytics.TrackEvent("Начало закрытия заявки",
-                        new Dictionary<string, string> {
-                    { "ServiceOrder",so != null ? so.NewServiceorderId.ToString() : sofa.NewTest2Id.ToString() },
-                    { "ServicemanPhone",Servicemans.FirstOrDefault().NewPhone }
-                        });
+                    //Analytics.TrackEvent("Начало закрытия заявки",
+                    //    new Dictionary<string, string> {
+                    //{ "ServiceOrder",so != null ? so.NewServiceorderId.ToString() : sofa.NewTest2Id.ToString() },
+                    //{ "ServicemanPhone",Servicemans.FirstOrDefault().NewPhone }
+                    //    });
                     //проверяем значение необходимых полей NecesseryRead - Обязательно для прочтения оператором ConclusionByOrder - заключение по заявке
-                    if (NecesseryRead && string.IsNullOrEmpty(ConclusionByOrder)) {
-                        Analytics.TrackEvent("Не указано заключение по заявке",
-                        new Dictionary<string, string> {
-                    { "ServiceOrder",so != null ? so.NewServiceorderId.ToString() : sofa.NewTest2Id.ToString() },
-                    { "ServicemanPhone",Servicemans.FirstOrDefault().NewPhone }
-                        });
+                    //if (NecesseryRead && string.IsNullOrEmpty(ConclusionByOrder)) {
+                    if (string.IsNullOrEmpty(ConclusionByOrder)) {
+                        //Analytics.TrackEvent("Не указано заключение по заявке",
+                        //    new Dictionary<string, string> {
+                        //        { "ServiceOrder",so != null ? so.NewServiceorderId.ToString() : sofa.NewTest2Id.ToString() },
+                        //        { "ServicemanPhone",Servicemans.FirstOrDefault().NewPhone }
+                        //    });
                         await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Не указано заключение по заявке", Color.Red, LayoutOptions.EndAndExpand), 4000));
                         IsLoading(false);
                         return;

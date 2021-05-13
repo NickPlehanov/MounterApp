@@ -22,7 +22,7 @@ namespace MounterApp.Helpers {
             client.DefaultRequestHeaders.ExpectContinue = false;
             CancellationTokenSource cts = new CancellationTokenSource(7000);
             HttpResponseMessage httpResponse = await client.GetAsync(Resources.BaseAddress + query, HttpCompletionOption.ResponseContentRead, cts.Token);
-            httpResponse.EnsureSuccessStatusCode();
+            //httpResponse.EnsureSuccessStatusCode();
             if(httpResponse.IsSuccessStatusCode) 
                 return JsonConvert.DeserializeObject<T>(await httpResponse.Content.ReadAsStringAsync());
             else
@@ -34,7 +34,7 @@ namespace MounterApp.Helpers {
             client.DefaultRequestHeaders.ExpectContinue = false;
             CancellationTokenSource cts = new CancellationTokenSource(7000);
             HttpResponseMessage httpResponse = await client.GetAsync(Resources.BaseAddress + query, HttpCompletionOption.ResponseContentRead, cts.Token);
-            httpResponse.EnsureSuccessStatusCode();
+            //httpResponse.EnsureSuccessStatusCode();
             if (httpResponse.IsSuccessStatusCode) 
                 return await httpResponse.Content.ReadAsStringAsync();
             else
@@ -46,7 +46,7 @@ namespace MounterApp.Helpers {
             client.DefaultRequestHeaders.ExpectContinue = false;
             CancellationTokenSource cts = new CancellationTokenSource(7000);
             HttpResponseMessage httpResponse = await client.GetAsync(Resources.BaseAddress + query, HttpCompletionOption.ResponseContentRead, cts.Token);
-            httpResponse.EnsureSuccessStatusCode(); 
+            //httpResponse.EnsureSuccessStatusCode(); 
             if (httpResponse.IsSuccessStatusCode) 
                 return await httpResponse.Content.ReadAsStringAsync();
             else
