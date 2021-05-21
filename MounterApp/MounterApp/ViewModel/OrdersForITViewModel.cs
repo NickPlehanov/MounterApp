@@ -136,25 +136,10 @@ namespace MounterApp.ViewModel {
                     Statecode = 0,
                     Statuscode = 1
                 });
-                //HttpStatusCode code = await ClientHttp.PostQuery("/api/NewItBases",new StringContent(data,Encoding.UTF8,"application/json"));
-                //string msg = code.Equals(HttpStatusCode.Accepted) ? "Успешно отправлено" : "Ошибка при отправке сообщения";
-                //Toast.MakeText(Android.App.Application.Context,msg,ToastLength.Long).Show();
 
                 using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                    //Guid id = Guid.NewGuid();
-                    //var data = JsonConvert.SerializeObject(new NewItBase() {
-                    //    NewItId = id,
-                    //    CreatedOn = DateTime.Now.AddHours(-5),
-                    //    //CreatedBy = UserID,
-                    //    ModifiedOn = DateTime.Now.AddHours(-5),
-                    //    //ModifiedBy = UserID,
-                    //    //OwningUser = UserID,
-                    //    DeletionStateCode = 0,
-                    //    Statecode = 0,
-                    //    Statuscode = 1
-                    //});
                     StringContent content = new StringContent(data,Encoding.UTF8,"application/json");
-                    HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress + "/api/NewItBases",content);
+                    HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress1 + "/api/NewItBases",content);
                     if(response.IsSuccessStatusCode || response.StatusCode == System.Net.HttpStatusCode.Accepted) {
                         using(HttpClient ex_client = new HttpClient(GetHttpClientHandler())) {
                             var ex_data = JsonConvert.SerializeObject(new NewItExtensionBase() {
@@ -163,12 +148,10 @@ namespace MounterApp.ViewModel {
                                 NewName = "Проблема в мобильном приложении MounterApp"
                             });
                             StringContent ex_content = new StringContent(ex_data,Encoding.UTF8,"application/json");
-                            HttpResponseMessage ex_response = await client.PostAsync(Resources.BaseAddress + "/api/NewItExtensionBases",ex_content);
+                            HttpResponseMessage ex_response = await client.PostAsync(Resources.BaseAddress1 + "/api/NewItExtensionBases",ex_content);
                             if(ex_response.IsSuccessStatusCode || ex_response.StatusCode == System.Net.HttpStatusCode.Accepted)
-                                //Toast.MakeText(Android.App.Application.Context,"Успешно отправлено",ToastLength.Long).Show();
                                 await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Успешно отправлено",Color.Green,LayoutOptions.EndAndExpand),4000));
                             else
-                                //Toast.MakeText(Android.App.Application.Context,"Ошибка при отправке сообщения",ToastLength.Long).Show();
                                 await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Ошибка при отправке",Color.Red,LayoutOptions.EndAndExpand),4000));
                         }
                     }

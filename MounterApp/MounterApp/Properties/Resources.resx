@@ -118,6 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="BaseAddress" xml:space="preserve">
+    <value>https://appservice.vtz2.ru:5001</value>
+  </data>
+  <data name="BaseAddress1" xml:space="preserve">
     <value>https://193.138.130.98:5001</value>
   </data>
 </root>

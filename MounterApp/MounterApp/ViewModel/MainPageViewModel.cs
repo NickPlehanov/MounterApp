@@ -49,8 +49,14 @@ namespace MounterApp.ViewModel {
         public RelayCommand CheckLastCrash {
             get => _CheckLastCrash ??= new RelayCommand(async obj => {
                 var lastcrash = await Crashes.HasCrashedInLastSessionAsync();
-                if (lastcrash == true)
-                    await Crashes.GetLastSessionCrashReportAsync();
+                if (lastcrash == true) {
+                    ErrorReport errorReport = await Crashes.GetLastSessionCrashReportAsync();
+                    Dictionary<string, string> parameters = new Dictionary<string, string> {
+                                    { "Phone",PhoneNumber },
+                                    { "AndroidDetails.StackTrace",errorReport.AndroidDetails.StackTrace }
+                                };
+                    Crashes.TrackError(errorReport.Exception, parameters);
+                    }
             });
         }
         /// <summary>

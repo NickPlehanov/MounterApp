@@ -21,7 +21,7 @@ namespace MounterApp.Helpers {
             client.DefaultRequestHeaders.ConnectionClose = true;
             client.DefaultRequestHeaders.ExpectContinue = false;
             CancellationTokenSource cts = new CancellationTokenSource(7000);
-            HttpResponseMessage httpResponse = await client.GetAsync(Resources.BaseAddress + query, HttpCompletionOption.ResponseContentRead, cts.Token);
+            HttpResponseMessage httpResponse = await client.GetAsync(Resources.BaseAddress1 + query, HttpCompletionOption.ResponseContentRead, cts.Token);
             //httpResponse.EnsureSuccessStatusCode();
             if(httpResponse.IsSuccessStatusCode) 
                 return JsonConvert.DeserializeObject<T>(await httpResponse.Content.ReadAsStringAsync());
@@ -33,7 +33,7 @@ namespace MounterApp.Helpers {
             client.DefaultRequestHeaders.ConnectionClose = true;
             client.DefaultRequestHeaders.ExpectContinue = false;
             CancellationTokenSource cts = new CancellationTokenSource(7000);
-            HttpResponseMessage httpResponse = await client.GetAsync(Resources.BaseAddress + query, HttpCompletionOption.ResponseContentRead, cts.Token);
+            HttpResponseMessage httpResponse = await client.GetAsync(Resources.BaseAddress1 + query, HttpCompletionOption.ResponseContentRead, cts.Token);
             //httpResponse.EnsureSuccessStatusCode();
             if (httpResponse.IsSuccessStatusCode) 
                 return await httpResponse.Content.ReadAsStringAsync();
@@ -45,7 +45,7 @@ namespace MounterApp.Helpers {
             client.DefaultRequestHeaders.ConnectionClose = true;
             client.DefaultRequestHeaders.ExpectContinue = false;
             CancellationTokenSource cts = new CancellationTokenSource(7000);
-            HttpResponseMessage httpResponse = await client.GetAsync(Resources.BaseAddress + query, HttpCompletionOption.ResponseContentRead, cts.Token);
+            HttpResponseMessage httpResponse = await client.GetAsync(Resources.BaseAddress1 + query, HttpCompletionOption.ResponseContentRead, cts.Token);
             //httpResponse.EnsureSuccessStatusCode(); 
             if (httpResponse.IsSuccessStatusCode) 
                 return await httpResponse.Content.ReadAsStringAsync();
@@ -57,14 +57,14 @@ namespace MounterApp.Helpers {
             client.DefaultRequestHeaders.ConnectionClose = true;
             client.DefaultRequestHeaders.ExpectContinue = false;
             CancellationTokenSource cts = new CancellationTokenSource(7000);
-            HttpResponseMessage httpResponse = await client.GetAsync(Resources.BaseAddress + query, HttpCompletionOption.ResponseContentRead, cts.Token);
+            HttpResponseMessage httpResponse = await client.GetAsync(Resources.BaseAddress1 + query, HttpCompletionOption.ResponseContentRead, cts.Token);
             return httpResponse.StatusCode;
         }
         public static async Task<string> Post(string query,HttpContent content) {
             client.DefaultRequestHeaders.Clear();
             client.DefaultRequestHeaders.ConnectionClose = true;
             client.DefaultRequestHeaders.ExpectContinue = false;
-            HttpResponseMessage httpResponse = await client.PostAsync(Resources.BaseAddress + query,content);
+            HttpResponseMessage httpResponse = await client.PostAsync(Resources.BaseAddress1 + query,content);
             if(httpResponse.IsSuccessStatusCode) 
                 return await httpResponse.Content.ReadAsStringAsync();            
             else
@@ -74,7 +74,7 @@ namespace MounterApp.Helpers {
             client.DefaultRequestHeaders.Clear();
             client.DefaultRequestHeaders.ConnectionClose = true;
             client.DefaultRequestHeaders.ExpectContinue = false;
-            HttpResponseMessage httpResponse = await client.PutAsync(Resources.BaseAddress + query,content);
+            HttpResponseMessage httpResponse = await client.PutAsync(Resources.BaseAddress1 + query,content);
             return httpResponse.StatusCode;
             //if(httpResponse.IsSuccessStatusCode)
             //    return await httpResponse.Content.ReadAsStringAsync();
