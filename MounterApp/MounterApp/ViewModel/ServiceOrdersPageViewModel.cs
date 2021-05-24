@@ -27,7 +27,8 @@ namespace MounterApp.ViewModel {
         //public ServiceOrdersPageViewModel() {
 
         //}
-        public ServiceOrdersPageViewModel(List<NewServicemanExtensionBase> _servicemans, List<NewMounterExtensionBase> _mounters) {
+        public ServiceOrdersPageViewModel(List<NewServicemanExtensionBase> _servicemans, List<NewMounterExtensionBase> _mounters, bool isReturnByOrder = false) {
+            IsReturnByOrder = isReturnByOrder;
             Category.Clear();
             ServiceOrders.Clear();
             ServiceOrdersByTime.Clear();
@@ -94,6 +95,14 @@ namespace MounterApp.ViewModel {
             AutoUpdateOrdersCommand.Execute(AutoUpdateTime);
         }
 
+        private bool _IsReturnByOrder;
+        public bool IsReturnByOrder {
+            get => _IsReturnByOrder;
+            set {
+                _IsReturnByOrder = value;
+                OnPropertyChanged(nameof(IsReturnByOrder));
+            }
+        }
 
         private double? _AutoUpdateTime;
         public double? AutoUpdateTime {
@@ -113,18 +122,6 @@ namespace MounterApp.ViewModel {
                         Device.StartTimer(TimeSpan.FromMinutes(Convert.ToDouble(obj)), () => {
                             Task.Run(async () => {
                                 try {
-                                    //if (ServiceOrdersByTime != null)
-                                    //    if (ServiceOrdersByTime.Any()) {
-                                    //        int count_time = ServiceOrdersByTime.Count;
-                                    //    }
-                                    //if (ServiceOrders != null)
-                                    //    if (ServiceOrders.Any()) {
-                                    //        count_ordr = ServiceOrders.Count;
-                                    //    }
-                                    //if (ServiceOrderByTransfer != null)
-                                    //    if (ServiceOrderByTransfer.Any()) {
-                                    //        int count_transfer = ServiceOrderByTransfer.Count;
-                                    //    }
                                     FireAlarmOtherServiceOrderExpanded = true;
                                     FireAlarmServiceOrderExpanded = true;
                                     FireAlarmTimeServiceOrderExpanded = true;
@@ -137,7 +134,6 @@ namespace MounterApp.ViewModel {
                                     GetServiceOrderByTransfer.Execute(Servicemans);
                                     GetServiceOrdersFireAlarm.Execute(Servicemans);
                                     GetServiceOrderByTransferFireAlarm.Execute(Servicemans);
-                                    //RefreshOrdersCommand.Execute(null);
                                     CheckEnableDinner.Execute(null);
                                 }
                                 catch { }
@@ -475,6 +471,14 @@ namespace MounterApp.ViewModel {
             }
         }
 
+        private int _TimeToPush;
+        public int TimeToPush {
+            get => _TimeToPush;
+            set {
+                _TimeToPush = value;
+                OnPropertyChanged(nameof(TimeToPush));
+            }
+        }
         private RelayCommand _RefreshOrdersCommand;
         public RelayCommand RefreshOrdersCommand {
             get => _RefreshOrdersCommand ??= new RelayCommand(async obj => {
@@ -537,7 +541,7 @@ namespace MounterApp.ViewModel {
                             if (ServiceOrdersByTime != null)
                                 ServiceOrdersByTime.Clear();
                             foreach (NewServiceorderExtensionBase_ex item in _serviceorders.Distinct()) {
-                                if (string.IsNullOrEmpty(item.NewTime))
+                                if (string.IsNullOrEmpty(item.NewTime) && string.IsNullOrEmpty(item.NewTimeTo.ToString()) && string.IsNullOrEmpty(item.NewTimeFrom.ToString()))
                                     ServiceOrders.Add(item);
                                 else
                                     ServiceOrdersByTime.Add(item);
@@ -553,6 +557,68 @@ namespace MounterApp.ViewModel {
                                 }
                             if (_serviceorders.Count == 0)
                                 CountOrders = _serviceorders.Count;
+                            //Проверяем время и делаем пуш уведомления
+                            //TODO: возможность в настройках отключать или включать показывать пуш
+                            if (Application.Current.Properties.ContainsKey("TimeToPush"))
+                                TimeToPush = int.Parse(Application.Current.Properties["TimeToPush"].ToString());
+                            else
+                                TimeToPush = 0;
+                            if (TimeToPush != 0)
+                                if (IsReturnByOrder)
+                                    foreach (var item in ServiceOrdersByTime) {
+                                        //1 вариант. ОТ-пусто ДО-есть 
+                                        if (!item.NewTimeFrom.HasValue && item.NewTimeTo.HasValue) {
+                                            DateTime now = DateTime.Now;
+                                            DateTime dt = new DateTime(now.Year, now.Month, now.Day, item.NewTimeTo.Value, 0, 0);
+                                            //время в заявке больше чем текущее
+                                            TimeSpan rez = dt - now;
+                                            //TODO: вынести в настройки количество минут
+                                            if (rez.TotalMinutes >= TimeToPush && item.NewIncome == null)
+                                                //DependencyService.Get<INotification>().CreateNotification("Приближается крайнее значение времени заявки",
+                                                DependencyService.Get<INotification>().CreateNotification(string.Format("Заявка истекает в {0} часов", item.NewTimeTo),
+                                                    string.Format("({0}), {1}" + Environment.NewLine + "{2}",
+                                                    item.NewNumber, item.NewObjName, item.NewAddress)
+                                                    );
+                                        }
+                                        //2 вариант. ОТ-есть, ДО-пусто
+                                        if (item.NewTimeFrom.HasValue && !item.NewTimeTo.HasValue) {
+                                            DateTime now = DateTime.Now;
+                                            DateTime dt = new DateTime(now.Year, now.Month, now.Day, item.NewTimeFrom.Value, 0, 0);
+                                            //время в заявке больше чем текущее
+                                            TimeSpan rez = dt - now;
+                                            //TODO: вынести в настройки количество минут
+                                            if (rez.TotalMinutes <= TimeToPush && rez.TotalMinutes > 0 && item.NewIncome == null)
+                                                DependencyService.Get<INotification>().CreateNotification(string.Format("Заявка на {0} часов",item.NewTimeFrom),
+                                                    string.Format("({0}), {1}" + Environment.NewLine + "{2}",
+                                                    item.NewNumber, item.NewObjName, item.NewAddress)
+                                                    );
+                                        }
+                                        //3 вариант. ОТ-есть, ДО-есть
+                                        if (item.NewTimeFrom.HasValue && item.NewTimeTo.HasValue) {
+                                            DateTime now = DateTime.Now;
+                                            DateTime dt_from = new DateTime(now.Year, now.Month, now.Day, item.NewTimeFrom.Value, 0, 0);
+                                            DateTime dt_to = new DateTime(now.Year, now.Month, now.Day, item.NewTimeTo.Value, 0, 0);
+                                            //время в заявке больше чем текущее
+                                            TimeSpan rez_from = dt_from - now;
+                                            TimeSpan rez_to = dt_to - now;
+                                            //TODO: вынести в настройки количество минут
+                                            if (rez_from.TotalMinutes <= TimeToPush && rez_from.TotalMinutes > 0 && item.NewIncome == null)
+                                                DependencyService.Get<INotification>().CreateNotification(string.Format("Заявка на {0} часов", item.NewTimeFrom),
+                                                    string.Format("({0}), {1}" + Environment.NewLine + "{2}",
+                                                    item.NewNumber, item.NewObjName, item.NewAddress)
+                                                    );
+                                            //TODO: вынести в настройки количество минут
+                                            if (!(rez_to.TotalMinutes > TimeToPush) && item.NewIncome == null)
+                                                //DependencyService.Get<INotification>().CreateNotification("Приближается крайнее значение времени заявки",
+                                                DependencyService.Get<INotification>().CreateNotification(string.Format("Заявка истекает в {0} часов", item.NewTimeTo),
+                                                    string.Format("({0}), {1}" + Environment.NewLine + "{2}",
+                                                    item.NewNumber, item.NewObjName, item.NewAddress)
+                                                    );
+                                        }
+                                        //4 вариант. ОТ-пусто ДО-пусто
+                                        if (!item.NewTimeFrom.HasValue && !item.NewTimeTo.HasValue)
+                                            continue;
+                                    }
                         }
                     });
                 }
@@ -764,21 +830,21 @@ namespace MounterApp.ViewModel {
                     if (Date == DateTime.Parse("01.01.0001 00:00:00"))
                         Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
 
-                    List<NewTest2ExtensionBase_ex> _serviceorders = 
+                    List<NewTest2ExtensionBase_ex> _serviceorders =
                     await ClientHttp.Get<List<NewTest2ExtensionBase_ex>>("/api/NewServiceOrderForFireAlarmExtensionBase/ServiceOrderByUserTransferReasonNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
                     if (_serviceorders == null)
                         return;
 
                     //if (_serviceorders != null) {
-                        Application.Current.Dispatcher.BeginInvokeOnMainThread((Action)delegate {
-                            if (ServiceOrderByTransferFireAlarm != null)
-                                ServiceOrderByTransferFireAlarm.Clear();
-                            foreach (NewTest2ExtensionBase_ex item in _serviceorders) {
-                                ServiceOrderByTransferFireAlarm.Add(item);
-                            }
-                            FireAlarmTransferServiceOrderText = "Перенесенные(пс) (" + ServiceOrderByTransferFireAlarm.Count.ToString() + ")";
-                            FireAlarmTransferServiceOrderVisible = ServiceOrderByTransferFireAlarm.Count > 0;
-                        });
+                    Application.Current.Dispatcher.BeginInvokeOnMainThread((Action)delegate {
+                        if (ServiceOrderByTransferFireAlarm != null)
+                            ServiceOrderByTransferFireAlarm.Clear();
+                        foreach (NewTest2ExtensionBase_ex item in _serviceorders) {
+                            ServiceOrderByTransferFireAlarm.Add(item);
+                        }
+                        FireAlarmTransferServiceOrderText = "Перенесенные(пс) (" + ServiceOrderByTransferFireAlarm.Count.ToString() + ")";
+                        FireAlarmTransferServiceOrderVisible = ServiceOrderByTransferFireAlarm.Count > 0;
+                    });
                     //}
                 }
                 IndicatorVisible = false;

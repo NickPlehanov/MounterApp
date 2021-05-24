@@ -438,7 +438,7 @@ namespace MounterApp.ViewModel {
         public RelayCommand BackPressCommand {
             get => _BackPressCommand ??= new RelayCommand(async obj => {
                 Analytics.TrackEvent("Выход с формы заявки технику");
-                ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans, Mounters);
+                ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans, Mounters,false);
                 App.Current.MainPage = new ServiceOrdersPage(vm);
             });
         }

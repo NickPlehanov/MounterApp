@@ -371,7 +371,7 @@ namespace MounterApp.ViewModel {
             get => _CloseServiceOrderCommand ??= new RelayCommand(async obj => {
                 try {
                     IsLoading(true);
-                    ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans, Mounters);
+                    ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans, Mounters,false);
                     //Analytics.TrackEvent("Начало закрытия заявки",
                     //    new Dictionary<string, string> {
                     //{ "ServiceOrder",so != null ? so.NewServiceorderId.ToString() : sofa.NewTest2Id.ToString() },
@@ -422,7 +422,7 @@ namespace MounterApp.ViewModel {
                                         if (App.Current.MainPage.Navigation.NavigationStack.Any())
                                             await App.Current.MainPage.Navigation.PopPopupAsync();
                                         await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Заключение и время ухода сохранены", Color.Green, LayoutOptions.EndAndExpand), 4000));
-                                        App.Current.MainPage = new ServiceOrdersPage(new ServiceOrdersPageViewModel(Servicemans, Mounters));
+                                        App.Current.MainPage = new ServiceOrdersPage(new ServiceOrdersPageViewModel(Servicemans, Mounters,false));
                                     }
                                     else
                                         await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка, не был получен корректный ответ от сервера. Попробуйте позже, в случае повторной ошибки, сообщите в ИТ-отдел", Color.Red, LayoutOptions.EndAndExpand), 7000));
@@ -467,7 +467,7 @@ namespace MounterApp.ViewModel {
                                         if (App.Current.MainPage.Navigation.NavigationStack.Any())
                                             await App.Current.MainPage.Navigation.PopPopupAsync();
                                         await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Заключение и время ухода сохранены", Color.Green, LayoutOptions.EndAndExpand), 4000));
-                                        App.Current.MainPage = new ServiceOrdersPage(new ServiceOrdersPageViewModel(Servicemans, Mounters));
+                                        App.Current.MainPage = new ServiceOrdersPage(new ServiceOrdersPageViewModel(Servicemans, Mounters,false));
                                     }
                                     else
                                         await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка, не был получен корректный ответ от сервера. Попробуйте позже, в случае повторной ошибки, сообщите в ИТ-отдел", Color.Red, LayoutOptions.EndAndExpand), 7000));

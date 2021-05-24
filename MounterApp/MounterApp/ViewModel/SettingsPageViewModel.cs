@@ -31,9 +31,9 @@ namespace MounterApp.ViewModel {
             }
             if(Application.Current.Properties.ContainsKey("Quality"))
                 Quality = int.Parse(Application.Current.Properties["Quality"].ToString());
-            //if(Application.Current.Properties.ContainsKey("Compression"))
-            //    Compression = int.Parse(Application.Current.Properties["Compression"].ToString());
-            if(Application.Current.Properties.ContainsKey("AutoUpdateTime"))
+            if (Application.Current.Properties.ContainsKey("TimeToPush"))
+                TimeToPush = int.Parse(Application.Current.Properties["TimeToPush"].ToString());
+            if (Application.Current.Properties.ContainsKey("AutoUpdateTime"))
                 AutoUpdateTime = double.TryParse(Application.Current.Properties["AutoUpdateTime"].ToString(),out _) ? double.Parse(Application.Current.Properties["AutoUpdateTime"].ToString()) : 0;
             else {
                 AutoUpdateTime = 0;
@@ -202,6 +202,15 @@ namespace MounterApp.ViewModel {
             }
         }
 
+        private int _TimeToPush;
+        public int TimeToPush {
+            get => _TimeToPush;
+            set {
+                _TimeToPush = value;
+                OnPropertyChanged(nameof(TimeToPush));
+            }
+        }
+
         private int _Compression;
         public int Compression {
             get => _Compression;
@@ -260,6 +269,7 @@ namespace MounterApp.ViewModel {
                 Application.Current.Properties["Quality"] = Quality;
                 //Application.Current.Properties["Compression"] = Compression;
                 Application.Current.Properties["AutoUpdateTime"] = AutoUpdateTime;
+                Application.Current.Properties["TimeToPush"] = TimeToPush;
                 await Application.Current.SavePropertiesAsync();
                 //Toast.MakeText(Android.App.Application.Context,"Настройки успешно сохранены",ToastLength.Long).Show();
                 await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Настройки успешно сохранены",Color.Green,LayoutOptions.EndAndExpand),4000));

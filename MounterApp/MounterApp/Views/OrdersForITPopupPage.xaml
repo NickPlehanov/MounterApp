@@ -8,7 +8,7 @@
             <StackLayout Style="{DynamicResource CommonStackLayoutStyle}">
                 <Label Style="{DynamicResource CommonLabelStyle}" Text="Опишите проблему(пожелание) точнее"/>
                 <Entry Text="{Binding DescriptionProblem}" Style="{DynamicResource EntryStyle}"/>
-                <Button ImageSource="{Binding CloseOrSendImage}" Style="{DynamicResource CommonButtonStyle}" Text="{Binding TextButton,Mode=TwoWay}" Command="{Binding ChooseCommand}"/>
+                <Button ImageSource="{Binding CloseOrSendImage}" Style="{DynamicResource CommonButtonStyle}" Text="{Binding TextButton,Mode=TwoWay}" Command="{Binding ChooseCommand}" IsEnabled="{Binding EnableButton}"/>
             </StackLayout>
         </Frame>
     </popup:PopupPage.Content>

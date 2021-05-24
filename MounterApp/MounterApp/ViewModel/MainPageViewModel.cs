@@ -35,8 +35,8 @@ namespace MounterApp.ViewModel {
             if(!Xamarin.Forms.Application.Current.Properties.ContainsKey("Quality")) {
                 Xamarin.Forms.Application.Current.Properties["Quality"] = 50;
             }
-            if(!Xamarin.Forms.Application.Current.Properties.ContainsKey("Compression")) {
-                Xamarin.Forms.Application.Current.Properties["Compression"] = 50;
+            if(!Xamarin.Forms.Application.Current.Properties.ContainsKey("TimeToPush")) {
+                Xamarin.Forms.Application.Current.Properties["TimeToPush"] = 30;
             }
             CheckAndRequestPermissions.Execute(null);
 

@@ -17,6 +17,7 @@ namespace MounterApp.ViewModel {
     public class OrdersForITViewModel : BaseViewModel {
         //readonly ClientHttp http = new ClientHttp();
         public OrdersForITViewModel(List<NewMounterExtensionBase> mounters,List<NewServicemanExtensionBase> servicemans) {
+            EnableButton = true;
             TextButton = "Закрыть";
             Mounters = mounters;
             Servicemans = servicemans;
@@ -98,6 +99,15 @@ namespace MounterApp.ViewModel {
             }
         }
 
+        private bool _EnableButton;
+        public bool EnableButton {
+            get => _EnableButton;
+            set {
+                _EnableButton = value;
+                OnPropertyChanged(nameof(EnableButton));
+            }
+        }
+
         private RelayCommand _GetUserInfo;
         public RelayCommand GetUserInfo {
             get => _GetUserInfo ??= new RelayCommand(async obj => {
@@ -127,6 +137,7 @@ namespace MounterApp.ViewModel {
         private RelayCommand _SendCommand;
         public RelayCommand SendCommand {
             get => _SendCommand ??= new RelayCommand(async obj => {
+                EnableButton = false;
                 Guid id = Guid.NewGuid();
                 var data = JsonConvert.SerializeObject(new NewItBase() {
                     NewItId = id,

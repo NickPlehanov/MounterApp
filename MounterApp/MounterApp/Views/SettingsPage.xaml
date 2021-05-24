@@ -20,25 +20,29 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
                 <CheckBox Style="{DynamicResource CheckBoxStyle}" Grid.Column="0" Grid.Row="0" IsChecked="{Binding AutoEnter}" />
                 <Label Grid.Column="1" Grid.Row="0" Text="Автоматический вход" Style="{DynamicResource MountersLabelStyle}"/>
 
                 <controls:CustomEntry Grid.Column="0" Grid.Row="1" MaxValue="100" MinValue="0" Keyboard="Numeric" Text="{Binding Quality}" Style="{DynamicResource EntryStyle}"/>
-                <Label Grid.Column="1" Grid.Row="1" Text="Качество фото" Style="{DynamicResource MountersLabelStyle}"/>
+                <Label Grid.Column="1" Grid.Row="1" Text="Качество фото (0-100)" Style="{DynamicResource MountersLabelStyle}"/>
 
                 <controls:CustomEntry Grid.Column="0" IsNumeric="true" MaxLength="2" Grid.Row="2" MaxValue="60" MinValue="0" Keyboard="Numeric" Text="{Binding AutoUpdateTime}" Style="{DynamicResource EntryStyle}"/>
-                <Label Grid.Column="1" Grid.Row="2" Text="Время автоматического обновления заявок" Style="{DynamicResource MountersLabelStyle}"/>
+                <Label Grid.Column="1" Grid.Row="2" Text="Время автоматического обновления заявок (мин)" Style="{DynamicResource MountersLabelStyle}"/>
 
-                <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding ClearImage}" Grid.ColumnSpan="2" Grid.Row="3" Text="Очистить базу" Command="{Binding ClearDatabaseCommand}"/>
+                <controls:CustomEntry Grid.Column="0" IsNumeric="true" MaxLength="2" Grid.Row="3" MaxValue="60" MinValue="0" Keyboard="Numeric" Text="{Binding TimeToPush}" Style="{DynamicResource EntryStyle}"/>
+                <Label Grid.Column="1" Grid.Row="3" Text="Время уведомления для повременных заявок (мин)" Style="{DynamicResource MountersLabelStyle}"/>
 
-                <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding SaveImage}"  Grid.ColumnSpan="2" Grid.Row="4" Text="Сохранить" Command="{Binding SaveCommand}"/>
-                <Button ImageSource="{Binding ReportImage}" Style="{DynamicResource CommonButtonStyle}" Grid.ColumnSpan="2" Grid.Row="5" Text="Оставить отзыв" Command="{Binding OpenOrdersForItPageCommand}"/>
-                <Button ImageSource="{Binding GetImage}" Style="{DynamicResource CommonButtonStyle}" Grid.ColumnSpan="2" Grid.Row="6" Text="Скачать" Command="{Binding DownloadAppCommand}"/>
-                <Button ImageSource="{Binding HelpImage}" Style="{DynamicResource CommonButtonStyle}" Grid.ColumnSpan="2" Grid.Row="7" Text="Помощь" Command="{Binding HelpCommand}"/>
+                <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding ClearImage}" Grid.ColumnSpan="2" Grid.Row="4" Text="Очистить базу" Command="{Binding ClearDatabaseCommand}"/>
 
-                <Label Text="{Binding Version, Mode=TwoWay}" Grid.Row="8" Grid.ColumnSpan="2" Style="{DynamicResource MountersLabelStyle}">
+                <Button Style="{DynamicResource CommonButtonStyle}" ImageSource="{Binding SaveImage}"  Grid.ColumnSpan="2" Grid.Row="5" Text="Сохранить" Command="{Binding SaveCommand}"/>
+                <Button ImageSource="{Binding ReportImage}" Style="{DynamicResource CommonButtonStyle}" Grid.ColumnSpan="2" Grid.Row="6" Text="Оставить отзыв" Command="{Binding OpenOrdersForItPageCommand}"/>
+                <Button ImageSource="{Binding GetImage}" Style="{DynamicResource CommonButtonStyle}" Grid.ColumnSpan="2" Grid.Row="7" Text="Скачать" Command="{Binding DownloadAppCommand}"/>
+                <Button ImageSource="{Binding HelpImage}" Style="{DynamicResource CommonButtonStyle}" Grid.ColumnSpan="2" Grid.Row="8" Text="Помощь" Command="{Binding HelpCommand}"/>
+
+                <Label Text="{Binding Version, Mode=TwoWay}" Grid.Row="9" Grid.ColumnSpan="2" Style="{DynamicResource MountersLabelStyle}">
                     <Label.GestureRecognizers>
                         <TapGestureRecognizer NumberOfTapsRequired="2" Command="{Binding CheckAccessToSecret}"/>
                     </Label.GestureRecognizers>

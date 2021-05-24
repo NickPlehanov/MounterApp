@@ -64,6 +64,8 @@ namespace MounterApp.Model {
         public DateTime? NewMovedKc { get; set; }
         public bool? NewAutoset { get; set; }
         public string NewHistoryButton { get; set; }
+        public int? NewTimeFrom { get; set; }
+        public int? NewTimeTo { get; set; }
         //private string _FullName;
         //[NotMapped]
         //public string FullName {

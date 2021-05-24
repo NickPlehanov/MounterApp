@@ -109,7 +109,7 @@ namespace MounterApp.ViewModel {
                         new Dictionary<string, string> {
                         {"ServicemansPhone",Serviceman.First().NewPhone }
                         });
-                    ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Serviceman, Mounters);
+                    ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Serviceman, Mounters,true);
                     App.Current.MainPage = new ServiceOrdersPage(vm);
                 }
                 else
