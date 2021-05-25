@@ -557,6 +557,20 @@ namespace MounterApp.ViewModel {
                                 }
                             if (_serviceorders.Count == 0)
                                 CountOrders = _serviceorders.Count;
+                            if (ServiceOrders.Count > 0) {
+                                if (IsReturnByOrder) { 
+                                    NewServiceorderExtensionBase_ex _Ex =  ServiceOrders.FirstOrDefault(x => x.NewNumber.Value == -1);
+                                    if (_Ex != null) {
+                                        //DateTime dt = new DateTime(_Ex.NewIncome.Value.Year, _Ex.NewIncome.Value.Month, _Ex.NewIncome.Value.Day, _Ex.NewIncome.Value.Hour, _Ex.NewIncome.Value.Minute, _Ex.NewIncome.Value.Second);
+                                        DateTime EndDinner = _Ex.NewIncome.Value.AddHours(1);
+                                        TimeSpan rez = EndDinner - DateTime.Now.AddHours(-5);
+                                        if (rez.TotalMinutes <= 15 && rez.TotalMinutes>0)
+                                            DependencyService.Get<INotification>().CreateNotification("Обед", "Время обеда заканчивается");
+                                        else if (rez.TotalMinutes <= 0)
+                                            DependencyService.Get<INotification>().CreateNotification("Обед", "Время обеда истекло");
+                                    }
+                                }
+                            }
                             //Проверяем время и делаем пуш уведомления
                             //TODO: возможность в настройках отключать или включать показывать пуш
                             if (Application.Current.Properties.ContainsKey("TimeToPush"))
@@ -725,11 +739,11 @@ namespace MounterApp.ViewModel {
                 var sm = Servicemans.FirstOrDefault().NewCategory;
                 if (sm != 6) {
                     var dinner_order = await ClientHttp.Get<List<NewServicemanExtensionBase>>("/api/NewServiceorderExtensionBases/CheckDinner?dateTime=" + Date + "&serviceman=" + Servicemans.FirstOrDefault().NewServicemanId);
-                    DinnerVisible = dinner_order.Count() <= 0;
+                    DinnerVisible = dinner_order!=null ? dinner_order.Count() <= 0:false;
                 }
                 else {
                     var dinner_order = await ClientHttp.Get<List<NewServicemanExtensionBase>>("/api/NewServiceOrderForFireAlarmExtensionBase/CheckDinner?dateTime=" + Date + "&serviceman=" + Servicemans.FirstOrDefault().NewServicemanId);
-                    DinnerVisible = dinner_order.Count() <= 0;
+                    DinnerVisible = dinner_order != null ? dinner_order.Count() <=  0 : false;
                 }
             });
         }

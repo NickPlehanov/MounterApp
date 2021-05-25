@@ -150,7 +150,7 @@ namespace MounterApp.ViewModel {
 
                 using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
                     StringContent content = new StringContent(data,Encoding.UTF8,"application/json");
-                    HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress1 + "/api/NewItBases",content);
+                    HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress + "/api/NewItBases",content);
                     if(response.IsSuccessStatusCode || response.StatusCode == System.Net.HttpStatusCode.Accepted) {
                         using(HttpClient ex_client = new HttpClient(GetHttpClientHandler())) {
                             var ex_data = JsonConvert.SerializeObject(new NewItExtensionBase() {
@@ -159,7 +159,7 @@ namespace MounterApp.ViewModel {
                                 NewName = "Проблема в мобильном приложении MounterApp"
                             });
                             StringContent ex_content = new StringContent(ex_data,Encoding.UTF8,"application/json");
-                            HttpResponseMessage ex_response = await client.PostAsync(Resources.BaseAddress1 + "/api/NewItExtensionBases",ex_content);
+                            HttpResponseMessage ex_response = await client.PostAsync(Resources.BaseAddress + "/api/NewItExtensionBases",ex_content);
                             if(ex_response.IsSuccessStatusCode || ex_response.StatusCode == System.Net.HttpStatusCode.Accepted)
                                 await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Успешно отправлено",Color.Green,LayoutOptions.EndAndExpand),4000));
                             else

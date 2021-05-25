@@ -61,7 +61,7 @@ namespace MounterApp.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на https://appservice.vtz2.ru:5001.
+        ///   Ищет локализованную строку, похожую на https://193.138.130.98:5001.
         /// </summary>
         internal static string BaseAddress {
             get {
@@ -70,7 +70,7 @@ namespace MounterApp.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на https://193.138.130.98:5001.
+        ///   Ищет локализованную строку, похожую на https://appservice.vtz2.ru:5001.
         /// </summary>
         internal static string BaseAddress1 {
             get {

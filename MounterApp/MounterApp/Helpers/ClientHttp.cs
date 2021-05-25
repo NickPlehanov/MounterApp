@@ -15,6 +15,7 @@ namespace MounterApp.Helpers {
         }
 
         static readonly HttpClient client = new HttpClient(GetClientHandeler());
+        //static readonly HttpClient client = new HttpClient();
 
         public static async Task<T> Get<T>(string query) where T:class{
             client.DefaultRequestHeaders.Clear();

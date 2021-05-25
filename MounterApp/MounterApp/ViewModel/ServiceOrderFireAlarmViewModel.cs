@@ -686,7 +686,7 @@ namespace MounterApp.ViewModel {
 
                         using HttpClient clientPut = new HttpClient(GetHttpClientHandler());
                         var httpContent = new StringContent(JsonConvert.SerializeObject(soeb), Encoding.UTF8, "application/json");
-                        HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress1 + "/api/NewServiceOrderForFireAlarmExtensionBase", httpContent);
+                        HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/NewServiceOrderForFireAlarmExtensionBase", httpContent);
                         if (!responsePut.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
                             Crashes.TrackError(new Exception("Ошибка при сохранении объекта Заявка технику"),
                             new Dictionary<string, string> {
@@ -724,7 +724,7 @@ namespace MounterApp.ViewModel {
                             //    SocIncomeLongitude = Longitude
                             //});
                             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-                            HttpResponseMessage responsePost = await clientPost.PostAsync(Resources.BaseAddress1 + "/api/ServiceOrderCoordinates", content);
+                            HttpResponseMessage responsePost = await clientPost.PostAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates", content);
                             if (!responsePost.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
                                 Crashes.TrackError(new Exception("Ошибка при сохранении объекта Заявка технику"),
                                 new Dictionary<string, string> {

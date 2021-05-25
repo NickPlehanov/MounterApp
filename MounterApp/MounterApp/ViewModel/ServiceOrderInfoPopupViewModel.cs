@@ -158,7 +158,7 @@ namespace MounterApp.ViewModel {
         public RelayCommand GetPhotoSchemeCommand {
             get => _GetPhotoSchemeCommand ??= new RelayCommand(async obj => {
                 using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress1 + "/api/Common/download?ObjectNumber=" + obj + "&PhotoType=Схема объекта");
+                    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/download?ObjectNumber=" + obj + "&PhotoType=Схема объекта");
                     if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
                         var result = await response.Content.ReadAsStringAsync();
                         SchemePhoto = ImageSource.FromStream(() => {
@@ -276,7 +276,7 @@ namespace MounterApp.ViewModel {
                                 form.Add(new StreamContent(new MemoryStream(Convert.FromBase64String(tmp)))
                             ,String.Format("file"),String.Format(NumberObject + "_" + PhotoTypeName + "_" + Guid.NewGuid().ToString() + ".jpeg"));
                                 if(form != null) {
-                                    HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress1 + "/api/Common2?ObjectNumber=" + NumberObject,form);
+                                    HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress + "/api/Common2?ObjectNumber=" + NumberObject,form);
                                     if(response.IsSuccessStatusCode) {
                                         await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Фото отправлено",Color.Green,LayoutOptions.EndAndExpand),4000));
                                         if(PhotoTypeName.ToLower().Contains("вывеска")) {
