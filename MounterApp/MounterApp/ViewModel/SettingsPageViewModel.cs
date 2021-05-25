@@ -172,8 +172,11 @@ namespace MounterApp.ViewModel {
             get => _HelpCommand ??= new RelayCommand(async obj => {
                 string msg = " - Автоматический вход, позволяет автоматически заходить на главную страницу, с последним введенным номером" + Environment.NewLine + Environment.NewLine +
                 " - Качество фото - от 0 до 100 - повышает или понижает качество отправляемых фото при монтаже" + Environment.NewLine + Environment.NewLine +
+                " - Время автоматического обновления заявок - от 0 до 60 - определяет переодичность обновления списка заявок. Внимание данный пункт меню определяет, работу PUSH-уведомлений" + Environment.NewLine + Environment.NewLine +
+                " - Время уведомления для повременных заявок - от 0 до 60 - определяет период, за который будут отправляться PUSH - уведомления о приближении времени повременной заявки или истечении крайней границы" + Environment.NewLine + Environment.NewLine +
                 " - Очистить локальную базу монтажей - удаляет из внутренней базы данных историю монтажей" + Environment.NewLine + Environment.NewLine +
-                " - Оставить отзыв - позволяет написать в ИТ-отдел пожелание или заявку";
+                " - Оставить отзыв - позволяет написать в ИТ-отдел пожелание или заявку" + Environment.NewLine + Environment.NewLine+
+                " - Скачать - позволяет скачать актуальную(или предыдущую) версию приложения" + Environment.NewLine + Environment.NewLine;
                 HelpPopupViewModel vm = new HelpPopupViewModel(msg);
                 await App.Current.MainPage.Navigation.PushPopupAsync(new HelpPopupPage(vm));
             });

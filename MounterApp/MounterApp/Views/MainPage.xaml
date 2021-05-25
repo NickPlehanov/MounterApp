@@ -25,7 +25,7 @@
             Keyboard="Telephone" Text="{Binding PhoneNumber, Mode=TwoWay}" SearchCommand="{Binding AuthCommand}" SearchCommandParameter="{Binding Source=PhoneNumber,Path=Text}"/>-->
             <Label Text="{Binding Message, Mode=TwoWay}" FontAttributes="Italic" TextColor="Red"/>
         </StackLayout>
-        <StackLayout Style="{DynamicResource ActivityIndicatorStackLayoutStyle}" BindingContext="{DynamicResource viewModel}" IsVisible="{Binding IndicatorVisible}" Grid.Row="2">
+        <StackLayout Margin="0,-350,0,0" Style="{DynamicResource ActivityIndicatorStackLayoutStyle}" BindingContext="{DynamicResource viewModel}" IsVisible="{Binding IndicatorVisible}" Grid.Row="2">
             <ActivityIndicator Style="{DynamicResource ActivityIndicatorStyle}"/>
             <Label Style="{DynamicResource ActivityIndicatorLabelStyle}"/>
         </StackLayout>
