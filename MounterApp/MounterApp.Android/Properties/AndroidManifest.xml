@@ -12,6 +12,8 @@
 	<uses-permission android:name="android.hardware.location" />
 	<uses-permission android:name="android.hardware.location.gps" />
 	<uses-permission android:name="android.hardware.location.network" />
+	<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+	<uses-permission android:name="android.permission.INSTANT_APP_FOREGROUND_SERVICE" />
 	<application android:hardwareAccelerated="false" android:label="MounterApp" android:icon="@drawable/icon" android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 		<provider android:name="android.support.v4.content.FileProvider" android:authorities="${applicationId}.fileprovider" android:exported="false" android:grantUriPermissions="true">
 			<meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths"></meta-data>

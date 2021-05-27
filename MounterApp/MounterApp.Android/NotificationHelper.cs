@@ -50,7 +50,7 @@ namespace MounterApp.Droid {
                         .SetVibrate(new long[0])
                         .SetDefaults((int)NotificationDefaults.Sound | (int)NotificationDefaults.Vibrate)
                         .SetVisibility((int)NotificationVisibility.Public)
-                        .SetSmallIcon(Resource.Drawable.icon)
+                        //.SetSmallIcon(Resource.Drawable.icon)
                         .SetContentIntent(pendingIntent);
 
 

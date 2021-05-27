@@ -123,5 +123,6 @@ namespace MounterApp.Model {
         public string ServicemanInfo { get; set; }
         public string ServiceOrderInfo { get; set; }
         public string HeaderServiceOrder { get; set; }
+        public bool IsShowed { get; set; } = false;
     }
 }

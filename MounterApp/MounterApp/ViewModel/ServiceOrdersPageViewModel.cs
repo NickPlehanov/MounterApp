@@ -562,14 +562,19 @@ namespace MounterApp.ViewModel {
                                     NewServiceorderExtensionBase_ex _Ex =  ServiceOrders.FirstOrDefault(x => x.NewNumber.Value == -1);
                                     if (_Ex != null) {
                                         //DateTime dt = new DateTime(_Ex.NewIncome.Value.Year, _Ex.NewIncome.Value.Month, _Ex.NewIncome.Value.Day, _Ex.NewIncome.Value.Hour, _Ex.NewIncome.Value.Minute, _Ex.NewIncome.Value.Second);
-                                        DateTime EndDinner = _Ex.NewIncome.Value.AddHours(1);
-                                        TimeSpan rez = EndDinner - DateTime.Now.AddHours(-5);
-                                        if (rez.TotalMinutes <= 15 && rez.TotalMinutes>0)
-                                            DependencyService.Get<INotification>().CreateNotification("Обед", "Время обеда заканчивается");
-                                        else if (rez.TotalMinutes <= 0)
-                                            DependencyService.Get<INotification>().CreateNotification("Обед", "Время обеда истекло");
+                                        if (_Ex.NewIncome.HasValue) {
+                                            DateTime EndDinner = _Ex.NewIncome.Value.AddHours(1);
+                                            TimeSpan rez = EndDinner - DateTime.Now.AddHours(-5);
+                                            if (rez.TotalMinutes <= 15 && rez.TotalMinutes > 0)
+                                                DependencyService.Get<INotification>().CreateNotification("Обед", "Время обеда заканчивается");
+                                            else if (rez.TotalMinutes <= 0)
+                                                DependencyService.Get<INotification>().CreateNotification("Обед", "Время обеда истекло");
+                                        }
                                     }
                                 }
+                            }
+                            foreach (var item in _serviceorders) {
+                                item.IsShowed = true;
                             }
                             //Проверяем время и делаем пуш уведомления
                             //TODO: возможность в настройках отключать или включать показывать пуш
@@ -579,7 +584,7 @@ namespace MounterApp.ViewModel {
                                 TimeToPush = 0;
                             if (TimeToPush != 0)
                                 if (IsReturnByOrder)
-                                    foreach (var item in ServiceOrdersByTime) {
+                                    foreach (var item in ServiceOrdersByTime.Where(x=>x.IsShowed==false).ToList()) {
                                         //1 вариант. ОТ-пусто ДО-есть 
                                         if (!item.NewTimeFrom.HasValue && item.NewTimeTo.HasValue) {
                                             DateTime now = DateTime.Now;
