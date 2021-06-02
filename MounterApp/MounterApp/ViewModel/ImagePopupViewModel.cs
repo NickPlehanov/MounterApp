@@ -1,7 +1,7 @@
 ﻿using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
-    public class ImagePopupViewModel:BaseViewModel {
+    public class ImagePopupViewModel : BaseViewModel {
         /// <summary>
         /// Конструктор принимающий на входе картинку
         /// </summary>

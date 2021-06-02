@@ -1,5 +1,4 @@
-﻿using Android.Widget;
-using MounterApp.Helpers;
+﻿using MounterApp.Helpers;
 using MounterApp.Model;
 using MounterApp.Properties;
 using MounterApp.Views;
@@ -8,7 +7,6 @@ using Rg.Plugins.Popup.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Text;
 using Xamarin.Forms;
@@ -16,7 +14,7 @@ using Xamarin.Forms;
 namespace MounterApp.ViewModel {
     public class OrdersForITViewModel : BaseViewModel {
         //readonly ClientHttp http = new ClientHttp();
-        public OrdersForITViewModel(List<NewMounterExtensionBase> mounters,List<NewServicemanExtensionBase> servicemans) {
+        public OrdersForITViewModel(List<NewMounterExtensionBase> mounters, List<NewServicemanExtensionBase> servicemans) {
             EnableButton = true;
             TextButton = "Закрыть";
             Mounters = mounters;
@@ -87,7 +85,7 @@ namespace MounterApp.ViewModel {
             get => _DescriptionProblem;
             set {
                 _DescriptionProblem = value;
-                if(string.IsNullOrEmpty(_DescriptionProblem)) {
+                if (string.IsNullOrEmpty(_DescriptionProblem)) {
                     TextButton = "Закрыть";
                     CloseOrSendImage = IconName("close");
                 }
@@ -117,8 +115,8 @@ namespace MounterApp.ViewModel {
                 //    if(Servicemans.Count > 0)
                 //        UserInfo = Servicemans.FirstOrDefault().NewName + Environment.NewLine + Servicemans.FirstOrDefault().NewPhone + Environment.NewLine + Servicemans.FirstOrDefault().NewServicemanId;
                 //}
-                UserInfo = Mounters!=null ? 
-                    Mounters.FirstOrDefault().NewName + Environment.NewLine + Mounters.FirstOrDefault().NewPhone + Environment.NewLine + Mounters.FirstOrDefault().NewMounterId:
+                UserInfo = Mounters != null ?
+                    Mounters.FirstOrDefault().NewName + Environment.NewLine + Mounters.FirstOrDefault().NewPhone + Environment.NewLine + Mounters.FirstOrDefault().NewMounterId :
                     Servicemans.FirstOrDefault().NewName + Environment.NewLine + Servicemans.FirstOrDefault().NewPhone + Environment.NewLine + Servicemans.FirstOrDefault().NewServicemanId;
             });
         }
@@ -148,22 +146,24 @@ namespace MounterApp.ViewModel {
                     Statuscode = 1
                 });
 
-                using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                    StringContent content = new StringContent(data,Encoding.UTF8,"application/json");
-                    HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress + "/api/NewItBases",content);
-                    if(response.IsSuccessStatusCode || response.StatusCode == System.Net.HttpStatusCode.Accepted) {
-                        using(HttpClient ex_client = new HttpClient(GetHttpClientHandler())) {
+                using (HttpClient client = new HttpClient(GetHttpClientHandler())) {
+                    StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+                    HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress + "/api/NewItBases", content);
+                    if (response.IsSuccessStatusCode || response.StatusCode == System.Net.HttpStatusCode.Accepted) {
+                        using (HttpClient ex_client = new HttpClient(GetHttpClientHandler())) {
                             var ex_data = JsonConvert.SerializeObject(new NewItExtensionBase() {
                                 NewItId = id,
                                 NewComment = DescriptionProblem + Environment.NewLine + UserInfo,
                                 NewName = "Проблема в мобильном приложении MounterApp"
                             });
-                            StringContent ex_content = new StringContent(ex_data,Encoding.UTF8,"application/json");
-                            HttpResponseMessage ex_response = await client.PostAsync(Resources.BaseAddress + "/api/NewItExtensionBases",ex_content);
-                            if(ex_response.IsSuccessStatusCode || ex_response.StatusCode == System.Net.HttpStatusCode.Accepted)
-                                await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Успешно отправлено",Color.Green,LayoutOptions.EndAndExpand),4000));
-                            else
-                                await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Ошибка при отправке",Color.Red,LayoutOptions.EndAndExpand),4000));
+                            StringContent ex_content = new StringContent(ex_data, Encoding.UTF8, "application/json");
+                            HttpResponseMessage ex_response = await client.PostAsync(Resources.BaseAddress + "/api/NewItExtensionBases", ex_content);
+                            if (ex_response.IsSuccessStatusCode || ex_response.StatusCode == System.Net.HttpStatusCode.Accepted) {
+                                await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Успешно отправлено", Color.Green, LayoutOptions.EndAndExpand), 4000));
+                            }
+                            else {
+                                await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Ошибка при отправке", Color.Red, LayoutOptions.EndAndExpand), 4000));
+                            }
                         }
                     }
                 }
@@ -176,10 +176,12 @@ namespace MounterApp.ViewModel {
         private RelayCommand _ChooseCommand;
         public RelayCommand ChooseCommand {
             get => _ChooseCommand ??= new RelayCommand(async obj => {
-                if(string.IsNullOrEmpty(DescriptionProblem))
+                if (string.IsNullOrEmpty(DescriptionProblem)) {
                     ExitCommand.Execute(null);
-                else
+                }
+                else {
                     SendCommand.Execute(null);
+                }
             });
         }
     }

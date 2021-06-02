@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Xamarin.Forms;
 
 namespace MounterApp.Helpers {
@@ -10,8 +8,9 @@ namespace MounterApp.Helpers {
             base.OnAttachedTo(bindable);
             AssociatedObject = bindable;
 
-            if (bindable.BindingContext != null)
+            if (bindable.BindingContext != null) {
                 BindingContext = bindable.BindingContext;
+            }
 
             bindable.BindingContextChanged += OnBindingContextChanged;
         }

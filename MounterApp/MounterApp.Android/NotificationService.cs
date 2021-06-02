@@ -106,14 +106,18 @@ namespace MounterApp.Droid {
         }
         public string NormalizePhone(string phone) {
             string ret = null;
-            if (string.IsNullOrEmpty(phone))
+            if (string.IsNullOrEmpty(phone)) {
                 return null;
+            }
+
             char[] _phone_chars = phone.ToCharArray();
             foreach (char c in _phone_chars) {
-                if (char.IsDigit(c))
+                if (char.IsDigit(c)) {
                     ret += c.ToString();
-                else
+                }
+                else {
                     continue;
+                }
             }
             return ret;
         }
@@ -127,19 +131,26 @@ namespace MounterApp.Droid {
         }
         public NewServiceorderExtensionBase_ex CompareObject(NewServiceorderExtensionBase_ex _old, NewServiceorderExtensionBase_ex _new) {
             NewServiceorderExtensionBase_ex comparator = null;
-            if (_old == null || _new == null)
+            if (_old == null || _new == null) {
                 return null;
+            }
+
             foreach (var item in _old.GetType().GetProperties().Where(x => x.Name.Equals("NewCategory") || x.Name.Equals("NewNumber") || x.Name.Equals("NewName"))) {
                 object oldValue = _old.GetType().GetProperty(item.Name).GetValue(_old);
                 object newValue = _new.GetType().GetProperty(item.Name).GetValue(_new);
-                if (oldValue != null)
-                    if (oldValue.Equals(newValue))
+                if (oldValue != null) {
+                    if (oldValue.Equals(newValue)) {
                         continue;
-                    else if (_old.GetType().GetProperty(item.Name).GetValue(_old) != null && _new.GetType().GetProperty(item.Name).GetValue(_new) != null)
-                        if (!_old.GetType().GetProperty(item.Name).GetValue(_old).Equals(_new.GetType().GetProperty(item.Name).GetValue(_new)))
+                    }
+                    else if (_old.GetType().GetProperty(item.Name).GetValue(_old) != null && _new.GetType().GetProperty(item.Name).GetValue(_new) != null) {
+                        if (!_old.GetType().GetProperty(item.Name).GetValue(_old).Equals(_new.GetType().GetProperty(item.Name).GetValue(_new))) {
                             comparator = _new;
-                        else
+                        }
+                        else {
                             continue;
+                        }
+                    }
+                }
             }
             return comparator;
         }
@@ -151,8 +162,10 @@ namespace MounterApp.Droid {
         private async void DispatchNotificationThatAlarmIsGenerated(string message) {
             string PhoneNumber = null;
             //string Phone = null;
-            if (Xamarin.Forms.Application.Current.Properties.ContainsKey("Phone"))
+            if (Xamarin.Forms.Application.Current.Properties.ContainsKey("Phone")) {
                 PhoneNumber = Xamarin.Forms.Application.Current.Properties["Phone"] as string;
+            }
+
             string Phone = NormalizePhone(PhoneNumber);
             List<NewServiceorderExtensionBase_ex> compr = new List<NewServiceorderExtensionBase_ex>();
             List<NewServicemanExtensionBase> Servicemans = await ClientHttp.Get<List<NewServicemanExtensionBase>>("/api/NewServicemanExtensionBases/phone?phone=" + Phone);
@@ -171,12 +184,15 @@ namespace MounterApp.Droid {
             //            }
             if (OldServiceOrders.Count < _serviceorders.Count) {
                 var exp = _serviceorders.Except(OldServiceOrders).ToList();
-                foreach (var item in exp) 
-                    compr.Add(item);                
-            }
-            if (OldServiceOrders.Count == _serviceorders.Count)
-                foreach (var item in OldServiceOrders.Where(x => x.IsShowed == false).ToList())
+                foreach (var item in exp) {
                     compr.Add(item);
+                }
+            }
+            if (OldServiceOrders.Count == _serviceorders.Count) {
+                foreach (var item in OldServiceOrders.Where(x => x.IsShowed == false).ToList()) {
+                    compr.Add(item);
+                }
+            }
             //if (OldServiceOrders.Count == 0 && _serviceorders.Count > 0)
             //    return;
 
@@ -203,8 +219,9 @@ namespace MounterApp.Droid {
                 notificationManager.Notify(alarm_ID, notificationBuilder.Build());
             }
             OldServiceOrders = _serviceorders;
-            foreach (var item in OldServiceOrders)
+            foreach (var item in OldServiceOrders) {
                 item.IsShowed = true;
+            }
 
             compr.Clear();
         }

@@ -23,13 +23,14 @@ namespace MounterApp.Views {
         }
         protected override bool OnBackButtonPressed() {
             //var vm = (ViewModel)BindingContext;
-            if(VM.BackPressCommand.CanExecute(null))  // You can add parameters if any
+            if (VM.BackPressCommand.CanExecute(null))  // You can add parameters if any
               {
                 VM.BackPressCommand.Execute(null); // You can add parameters if any
                 return true;
             }
-            else
+            else {
                 return false;
+            }
         }
     }
 }

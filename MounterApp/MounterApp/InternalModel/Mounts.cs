@@ -1,7 +1,5 @@
 ﻿using SQLite;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MounterApp.InternalModel {
     public class Mounts {
@@ -10,31 +8,31 @@ namespace MounterApp.InternalModel {
         /// <summary>
         /// Идентификатор монтажника
         /// </summary>
-        public Guid MounterID{ get; set; }
+        public Guid MounterID { get; set; }
         /// <summary>
         /// Номер объекта
         /// </summary>
-        public string ObjectNumber{ get; set; }
+        public string ObjectNumber { get; set; }
         /// <summary>
         /// Название объекта
         /// </summary>
-        public string ObjectName{ get; set; }
+        public string ObjectName { get; set; }
         /// <summary>
         /// Адрес объекта
         /// </summary>
-        public string AddressName{ get; set; }
+        public string AddressName { get; set; }
         /// <summary>
         /// Куратор по договору
         /// </summary>
-        public string Curator{ get; set; }
+        public string Curator { get; set; }
         /// <summary>
         /// Руководитель монтажа
         /// </summary>
-        public string HeadMounter{ get; set; }
+        public string HeadMounter { get; set; }
         /// <summary>
         /// Поъездные пути
         /// </summary>
-        public string Driveways{ get; set; }
+        public string Driveways { get; set; }
         /// <summary>
         /// Фото обходного листа
         /// </summary>
@@ -98,10 +96,12 @@ namespace MounterApp.InternalModel {
         /// </summary>
         public string CompositeName {
             get {
-                if (DateSended.HasValue)
+                if (DateSended.HasValue) {
                     return "№: " + ObjectNumber + Environment.NewLine + "Отправлено: " + DateSended.Value.ToString();
-                else
+                }
+                else {
                     return "№: " + ObjectNumber;
+                }
             }
             //get => "№: " + ObjectNumber + "(" +DateSended.Value.ToString()+ ")";
         }
@@ -109,10 +109,12 @@ namespace MounterApp.InternalModel {
 
         public string NotSendedCompositeName {
             get {
-                if (DateTimeCreated.HasValue)
-                    return "№: " + ObjectNumber+Environment.NewLine + "Создано: " + DateTimeCreated.Value.ToString();
-                else
+                if (DateTimeCreated.HasValue) {
+                    return "№: " + ObjectNumber + Environment.NewLine + "Создано: " + DateTimeCreated.Value.ToString();
+                }
+                else {
                     return "№: " + ObjectNumber;
+                }
             }
         }
 

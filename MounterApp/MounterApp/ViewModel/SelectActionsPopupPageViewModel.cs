@@ -14,7 +14,7 @@ using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class SelectActionsPopupPageViewModel : BaseViewModel {
-        public SelectActionsPopupPageViewModel(Mounts _mount,List<NewMounterExtensionBase> _mounters,List<NewServicemanExtensionBase> _servicemans) {
+        public SelectActionsPopupPageViewModel(Mounts _mount, List<NewMounterExtensionBase> _mounters, List<NewServicemanExtensionBase> _servicemans) {
             Mount = _mount;
             Mounters = _mounters;
             Servicemans = _servicemans;
@@ -25,14 +25,14 @@ namespace MounterApp.ViewModel {
             //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Ответственные объекта" });
             //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Вывеска объекта" });
             //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Доп. фото" });
-            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Вывеска объекта" });
-            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Обходной лист" });
-            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Расшлейфовка объекта" });
-            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Ответственные объекта" });
-            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Акт технич. сост-я 1" });
-            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Акт технич. сост-я 2" });
-            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Схема объекта" });
-            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Доп. фото" });
+            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(), PhotoTypeName = "Вывеска объекта" });
+            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(), PhotoTypeName = "Обходной лист" });
+            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(), PhotoTypeName = "Расшлейфовка объекта" });
+            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(), PhotoTypeName = "Ответственные объекта" });
+            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(), PhotoTypeName = "Акт технич. сост-я 1" });
+            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(), PhotoTypeName = "Акт технич. сост-я 2" });
+            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(), PhotoTypeName = "Схема объекта" });
+            PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(), PhotoTypeName = "Доп. фото" });
             //ImgSrc = "EmptyPhoto.png";
             VisibleAcceptedLayout = false;
             CameraImage = IconName("camera");
@@ -119,10 +119,10 @@ namespace MounterApp.ViewModel {
         private RelayCommand _AddNewPhotoCommand;
         public RelayCommand AddNewPhotoCommand {
             get => _AddNewPhotoCommand ??= new RelayCommand(async obj => {
-                if(PhotoName != null) {
-                    if(File != null) {
+                if (PhotoName != null) {
+                    if (File != null) {
                         string tmp = Convert.ToBase64String(System.IO.File.ReadAllBytes(File.Path));
-                        if(!Photos.Any(y => y.Data == tmp)) {
+                        if (!Photos.Any(y => y.Data == tmp)) {
                             Photos.Add(new PhotoCollection(
                                 Guid.NewGuid(),
                                 Convert.ToBase64String(System.IO.File.ReadAllBytes(File.Path)),
@@ -134,7 +134,7 @@ namespace MounterApp.ViewModel {
                                     PhotoName
                                 ));
                             PhotoSource.Add(ImgSrc);
-                            switch(PhotoName.PhotoTypeName) {
+                            switch (PhotoName.PhotoTypeName) {
                                 case "Обходной лист":
                                     Mount.ObjectCard = Convert.ToBase64String(System.IO.File.ReadAllBytes(File.Path));
                                     break;
@@ -158,36 +158,47 @@ namespace MounterApp.ViewModel {
                                     break;
                                 case "Доп. фото":
                                     Counter++;
-                                    if(Mount.ObjectExtra1 == null)
+                                    if (Mount.ObjectExtra1 == null) {
                                         Mount.ObjectExtra1 = Convert.ToBase64String(System.IO.File.ReadAllBytes(File.Path));
-                                    else if(Mount.ObjectExtra2 == null)
+                                    }
+                                    else if (Mount.ObjectExtra2 == null) {
                                         Mount.ObjectExtra2 = Convert.ToBase64String(System.IO.File.ReadAllBytes(File.Path));
-                                    else if(Mount.ObjectExtra3 == null)
+                                    }
+                                    else if (Mount.ObjectExtra3 == null) {
                                         Mount.ObjectExtra3 = Convert.ToBase64String(System.IO.File.ReadAllBytes(File.Path));
-                                    else if(Mount.ObjectExtra4 == null)
+                                    }
+                                    else if (Mount.ObjectExtra4 == null) {
                                         Mount.ObjectExtra4 = Convert.ToBase64String(System.IO.File.ReadAllBytes(File.Path));
-                                    else if(Mount.ObjectExtra5 == null)
+                                    }
+                                    else if (Mount.ObjectExtra5 == null) {
                                         Mount.ObjectExtra5 = Convert.ToBase64String(System.IO.File.ReadAllBytes(File.Path));
+                                    }
+
                                     break;
                             }
                             //ImgSrc = "EmptyPhoto.png";
                             ImgSrc = null;
                             SelectedPhoto = null;
-                            if(!PhotoName.PhotoTypeName.Equals("Доп. фото"))
+                            if (!PhotoName.PhotoTypeName.Equals("Доп. фото")) {
                                 PhotoNames.Remove(PhotoName);
-                            if(Counter == 5)
+                            }
+
+                            if (Counter == 5) {
                                 PhotoNames.Remove(PhotoName);
+                            }
                             //Toast.MakeText(Android.App.Application.Context,"Фото добавлено",ToastLength.Short).Show();
-                            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Фото добавлено",Color.Green,LayoutOptions.EndAndExpand),500));
+                            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Фото добавлено", Color.Green, LayoutOptions.EndAndExpand), 500));
                         }
-                        else
+                        else {
                             //await Application.Current.MainPage.DisplayAlert("Ошибка","Такая фотография уже была загружена","OK");
-                            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Такая фотография уже была загружена",Color.Red,LayoutOptions.EndAndExpand),4000));
+                            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Такая фотография уже была загружена", Color.Red, LayoutOptions.EndAndExpand), 4000));
+                        }
                     }
                 }
-                else
+                else {
                     //await Application.Current.MainPage.DisplayAlert("Ошибка","Выберите тип фотографии","OK"); 
-                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Выберите тип фотографии",Color.Red,LayoutOptions.EndAndExpand),4000));
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Выберите тип фотографии", Color.Red, LayoutOptions.EndAndExpand), 4000));
+                }
             });
         }
 
@@ -220,10 +231,13 @@ namespace MounterApp.ViewModel {
             get => _ImgSrc;
             set {
                 _ImgSrc = value;
-                if(_ImgSrc == null)
+                if (_ImgSrc == null) {
                     VisibleAcceptedLayout = false;
-                else
+                }
+                else {
                     VisibleAcceptedLayout = true;
+                }
+
                 OnPropertyChanged(nameof(ImgSrc));
             }
         }
@@ -283,7 +297,7 @@ namespace MounterApp.ViewModel {
         public RelayCommand BackPressedCommand {
             get => _BackPressedCommand ??= new RelayCommand(async obj => {
                 await App.Current.MainPage.Navigation.PopPopupAsync(false);
-                NewMountPageViewModel vm = new NewMountPageViewModel(Mount,Mounters,IsChanged,Servicemans);
+                NewMountPageViewModel vm = new NewMountPageViewModel(Mount, Mounters, IsChanged, Servicemans);
                 App.Current.MainPage = new NewMountpage(vm);
             });
         }
@@ -309,25 +323,25 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetPhotoCommand;
         public RelayCommand GetPhotoCommand {
             get => _GetPhotoCommand ??= new RelayCommand(async obj => {
-                if(IsPickPhoto.HasValue) {
+                if (IsPickPhoto.HasValue) {
                     await CrossMedia.Current.Initialize();
-                    if(!CrossMedia.Current.IsCameraAvailable || !CrossMedia.Current.IsTakePhotoSupported) {
+                    if (!CrossMedia.Current.IsCameraAvailable || !CrossMedia.Current.IsTakePhotoSupported) {
                         var perm = await CheckAndRequestPermissionAsync(new Permissions.Camera());
-                        if(perm == PermissionStatus.Denied) {
+                        if (perm == PermissionStatus.Denied) {
                             //Crashes.TrackError(new Exception("Камера недоступна"),
                             //new Dictionary<string,string> {
                             //{"Error","Камера недоступна" }
                             //});
                             //await Application.Current.MainPage.DisplayAlert("No Camera",":( No camera available.","OK"); 
-                            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Камера не доступна",Color.Red,LayoutOptions.EndAndExpand),4000));
+                            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Камера не доступна", Color.Red, LayoutOptions.EndAndExpand), 4000));
                             return;
                         }
                     }
                     int q = 50;
-                    if(Application.Current.Properties.ContainsKey("Quality")) {
+                    if (Application.Current.Properties.ContainsKey("Quality")) {
                         q = int.Parse(Application.Current.Properties["Quality"].ToString());
                     }
-                    if(IsPickPhoto.Value == true) {
+                    if (IsPickPhoto.Value == true) {
                         //await CheckAndRequestPermissionAsync(new StorageRead());
                         File = await CrossMedia.Current.PickPhotoAsync(new Plugin.Media.Abstractions.PickMediaOptions {
                             //Directory = "Sample",
@@ -344,8 +358,9 @@ namespace MounterApp.ViewModel {
                             CompressionQuality = q
                         });
                     }
-                    if(File == null)
+                    if (File == null) {
                         return;
+                    }
 
                     ImgSrc = ImageSource.FromStream(() => {
                         var stream = File.GetStream();

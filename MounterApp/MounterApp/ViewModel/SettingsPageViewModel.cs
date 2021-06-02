@@ -1,38 +1,38 @@
-﻿using Android.Widget;
-using MounterApp.Helpers;
+﻿using MounterApp.Helpers;
 using MounterApp.Model;
-using MounterApp.Properties;
 using MounterApp.Views;
-using Newtonsoft.Json;
 using Rg.Plugins.Popup.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class SettingsPageViewModel : BaseViewModel {
-        //readonly ClientHttp http = new ClientHttp();
-        public SettingsPageViewModel(List<NewMounterExtensionBase> mounters,List<NewServicemanExtensionBase> servicemans) {
+        public SettingsPageViewModel(List<NewMounterExtensionBase> mounters, List<NewServicemanExtensionBase> servicemans) {
             Mounters = mounters;
             Servicemans = servicemans;
-            //bool.TryParse(Application.Current.Properties["AutoEnter"].ToString(),out bool tmp
-            if(Application.Current.Properties.ContainsKey("AutoEnter")) {
-                if(bool.TryParse(Application.Current.Properties["AutoEnter"].ToString(),out bool tmp))
+            if (Application.Current.Properties.ContainsKey("AutoEnter")) {
+                if (bool.TryParse(Application.Current.Properties["AutoEnter"].ToString(), out bool tmp)) {
                     AutoEnter = tmp;
+                }
                 else
                     AutoEnter = false;
             }
-            if(Application.Current.Properties.ContainsKey("Quality"))
+            if (Application.Current.Properties.ContainsKey("Quality"))
                 Quality = int.Parse(Application.Current.Properties["Quality"].ToString());
+
+
             if (Application.Current.Properties.ContainsKey("TimeToPush"))
                 TimeToPush = int.Parse(Application.Current.Properties["TimeToPush"].ToString());
+
+
             if (Application.Current.Properties.ContainsKey("AutoUpdateTime"))
-                AutoUpdateTime = double.TryParse(Application.Current.Properties["AutoUpdateTime"].ToString(),out _) ? double.Parse(Application.Current.Properties["AutoUpdateTime"].ToString()) : 0;
+                AutoUpdateTime = double.TryParse(Application.Current.Properties["AutoUpdateTime"].ToString(), out _) ? double.Parse(Application.Current.Properties["AutoUpdateTime"].ToString()) : 0;
+
             else {
                 AutoUpdateTime = 0;
                 Application.Current.SavePropertiesAsync();
@@ -42,7 +42,6 @@ namespace MounterApp.ViewModel {
             HelpImage = IconName("help");
             ReportImage = IconName("report");
             GetImage = IconName("get");
-            //Analytics.TrackEvent("Инициализация окна настроек приложения");
             AppVersions av = new AppVersions();
             Version = null;
             Version = "Версия приложения: " + av.GetVersionAndBuildNumber().VersionNumber;
@@ -72,8 +71,10 @@ namespace MounterApp.ViewModel {
         public double? AutoUpdateTime {
             get => _AutoUpdateTime;
             set {
-                if(_AutoUpdateTime != value)
+                if (_AutoUpdateTime != value) {
                     IsChanged = true;
+                }
+
                 _AutoUpdateTime = value;
                 OnPropertyChanged(nameof(AutoUpdateTime));
             }
@@ -133,13 +134,10 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(HelpImage));
             }
         }
-        /// <summary>
-        /// Команда открытия popup-окна для записи обращения в ИТ
-        /// </summary>
         private RelayCommand _OpenOrdersForItPageCommand;
         public RelayCommand OpenOrdersForItPageCommand {
             get => _OpenOrdersForItPageCommand ??= new RelayCommand(async obj => {
-                OrdersForITViewModel vm = new OrdersForITViewModel(Mounters,Servicemans);
+                OrdersForITViewModel vm = new OrdersForITViewModel(Mounters, Servicemans);
                 await App.Current.MainPage.Navigation.PushPopupAsync(new OrdersForITPopupPage(vm));
             });
         }
@@ -148,21 +146,9 @@ namespace MounterApp.ViewModel {
         public RelayCommand CheckAccessToSecret {
             get => _CheckAccessToSecret ??= new RelayCommand(async obj => {
                 HttpStatusCode code = await ClientHttp.Get("/api/Common/AccessSecret?phone=" + Application.Current.Properties["Phone"].ToString());
-                if(code.Equals(HttpStatusCode.OK))
+                if (code.Equals(HttpStatusCode.OK)) {
                     GetEventsObjectInfo.Execute(null);
-                //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/AccessSecret?phone=" + Application.Current.Properties["Phone"].ToString());
-                //    if(response != null) {
-                //        if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                //            GetEventsObjectInfo.Execute(null);
-                //        }
-                //        //if(response.StatusCode.Equals(System.Net.HttpStatusCode.MethodNotAllowed)) {
-                //        //    await Application.Current.MainPage.DisplayAlert("Информация"
-                //        //        ,"У Вас установлена не актуальная версия приложения, пожалуйста обновите её." + Environment.NewLine + Environment.NewLine + "Если Вы не получили ссылку на новую версию, то сообщите свою почту в ИТ-отдел."
-                //        //        ,"OK");
-                //        //}
-                //    }
-                //}
+                }
             });
         }
         private RelayCommand _HelpCommand;
@@ -173,7 +159,7 @@ namespace MounterApp.ViewModel {
                 " - Время автоматического обновления заявок - от 0 до 60 - определяет переодичность обновления списка заявок. Внимание данный пункт меню определяет, работу PUSH-уведомлений" + Environment.NewLine + Environment.NewLine +
                 " - Время уведомления для повременных заявок - от 0 до 60 - определяет период, за который будут отправляться PUSH - уведомления о приближении времени повременной заявки или истечении крайней границы" + Environment.NewLine + Environment.NewLine +
                 " - Очистить локальную базу монтажей - удаляет из внутренней базы данных историю монтажей" + Environment.NewLine + Environment.NewLine +
-                " - Оставить отзыв - позволяет написать в ИТ-отдел пожелание или заявку" + Environment.NewLine + Environment.NewLine+
+                " - Оставить отзыв - позволяет написать в ИТ-отдел пожелание или заявку" + Environment.NewLine + Environment.NewLine +
                 " - Скачать - позволяет скачать актуальную(или предыдущую) версию приложения" + Environment.NewLine + Environment.NewLine;
                 HelpPopupViewModel vm = new HelpPopupViewModel(msg);
                 await App.Current.MainPage.Navigation.PushPopupAsync(new HelpPopupPage(vm));
@@ -183,21 +169,21 @@ namespace MounterApp.ViewModel {
         private RelayCommand _ClearDatabaseCommand;
         public RelayCommand ClearDatabaseCommand {
             get => _ClearDatabaseCommand ??= new RelayCommand(async obj => {
-                bool result = await Application.Current.MainPage.DisplayAlert("Удаление","Вы действительно хотите очистить базу данных?","Да","Нет");
-                if(result) {
-                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Очищено объектов: " + App.Database.ClearDatabase().ToString(),Color.Green,LayoutOptions.EndAndExpand),4000));
-                    //Toast.MakeText(Android.App.Application.Context,"Очищено объектов: " + App.Database.ClearDatabase().ToString(),ToastLength.Long).Show();
-                    //Analytics.TrackEvent("Очистка локальной базы данных объектов");
+                bool result = await Application.Current.MainPage.DisplayAlert("Удаление", "Вы действительно хотите очистить базу данных?", "Да", "Нет");
+                if (result) {
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Очищено объектов: " + App.Database.ClearDatabase().ToString(), Color.Green, LayoutOptions.EndAndExpand), 4000));
                 }
                 ClearDatabaseCommand.ChangeCanExecute();
-            },obj => App.Database.GetCount() > 0);
+            }, obj => App.Database.GetCount() > 0);
         }
         private int _Quality;
         public int Quality {
             get => _Quality;
             set {
-                if(_Quality != value)
+                if (_Quality != value) {
                     IsChanged = true;
+                }
+
                 _Quality = value;
                 OnPropertyChanged(nameof(Quality));
             }
@@ -225,8 +211,10 @@ namespace MounterApp.ViewModel {
         public bool AutoEnter {
             get => _AutoEnter;
             set {
-                if(_AutoEnter != value)
+                if (_AutoEnter != value) {
                     IsChanged = true;
+                }
+
                 _AutoEnter = value;
                 OnPropertyChanged(nameof(AutoEnter));
             }
@@ -244,22 +232,14 @@ namespace MounterApp.ViewModel {
         private RelayCommand _BackPressCommand;
         public RelayCommand BackPressCommand {
             get => _BackPressCommand ??= new RelayCommand(async obj => {
-                if(IsChanged) {
-                    bool result = await Application.Current.MainPage.DisplayAlert("Внимание","Внесены изменения в настройки, Сохранить?","Да","Нет");
-                    if(result) 
+                if (IsChanged) {
+                    bool result = await Application.Current.MainPage.DisplayAlert("Внимание", "Внесены изменения в настройки, Сохранить?", "Да", "Нет");
+                    if (result) {
                         SaveCommand.Execute(null);
-                    
-                    //else {
-                    //    MainMenuPageViewModel vm = new MainMenuPageViewModel(Mounters,Servicemans);
-                    //    App.Current.MainPage = new MainMenuPage(vm);
-                    //}
+                    }
+
                 }
-                //else {
-                //    MainMenuPageViewModel vm = new MainMenuPageViewModel(Mounters,Servicemans);
-                //    App.Current.MainPage = new MainMenuPage(vm);
-                //}
-                //MainMenuPageViewModel vm = new MainMenuPageViewModel(Mounters,Servicemans);
-                App.Current.MainPage = new MainMenuPage(new MainMenuPageViewModel(Mounters,Servicemans));
+                App.Current.MainPage = new MainMenuPage(new MainMenuPageViewModel(Mounters, Servicemans));
             });
         }
 
@@ -268,13 +248,11 @@ namespace MounterApp.ViewModel {
             get => _SaveCommand ??= new RelayCommand(async obj => {
                 Application.Current.Properties["AutoEnter"] = AutoEnter;
                 Application.Current.Properties["Quality"] = Quality;
-                //Application.Current.Properties["Compression"] = Compression;
                 Application.Current.Properties["AutoUpdateTime"] = AutoUpdateTime;
                 Application.Current.Properties["TimeToPush"] = TimeToPush;
                 await Application.Current.SavePropertiesAsync();
-                //Toast.MakeText(Android.App.Application.Context,"Настройки успешно сохранены",ToastLength.Long).Show();
-                await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Настройки успешно сохранены",Color.Green,LayoutOptions.EndAndExpand),4000));
-                Dictionary<string,string> parameters = new Dictionary<string,string> {
+                await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Настройки успешно сохранены", Color.Green, LayoutOptions.EndAndExpand), 4000));
+                Dictionary<string, string> parameters = new Dictionary<string, string> {
                      { "MounterPhone",Mounters!=null ? Mounters.Count()>0 ? Mounters.First().NewPhone:"":"" },
                      { "ServicemanPhone",Servicemans!=null ? Servicemans.Count()>0 ? Servicemans.First().NewPhone:"":"" },
                      { "AutoEnter",AutoEnter.ToString() },
@@ -282,9 +260,7 @@ namespace MounterApp.ViewModel {
                      { "Compression",Compression.ToString() },
                      { "Events","Сохранение локальных настроек приложения" }
                 };
-                //Analytics.TrackEvent("Сохранение локальных настроек приложения",parameters);
                 IsChanged = false;
-                //BackPressCommand.Execute(null);
             });
         }
 
@@ -309,47 +285,13 @@ namespace MounterApp.ViewModel {
         private RelayCommand _FixWebLinkCommand;
         public RelayCommand FixWebLinkCommand {
             get => _FixWebLinkCommand ??= new RelayCommand(async obj => {
-                //using HttpClient client1 = new HttpClient(GetHttpClientHandler());
-                ////string obj_number = ServiceOrder != null ? ServiceOrder.NewNumber.ToString() : ServiceOrderFireAlarm.NewNumber.ToString();
-                //HttpResponseMessage response = null;
-                //string resp = null;
-                //List<string> objs = new List<string>();
-                //response = await client1.GetAsync(Resources.BaseAddress + "/api/Andromeda/FixWebLink");
-                //if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                //    resp = response.Content.ReadAsStringAsync().Result;
-                //    try {
-                //        objs = JsonConvert.DeserializeObject<List<string>>(resp);
-                //    }
-                //    catch(Exception ex) {
-                //        Crashes.TrackError(new Exception("Ошибка десериализации результата запроса события по объекту(расширенный)"),
-                //        new Dictionary<string,string> {
-                //                //{"Servicemans",Servicemans.First().NewPhone },
-                //                {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                //                {"ErrorMessage",ex.Message },
-                //                {"StatusCode",response.StatusCode.ToString() },
-                //                {"Response",response.ToString() }
-                //        });
-                //    }
-                //    if(objs.Count > 0) {
-                //        string msg = null;
-                //        ObjectsNumbers.Clear();
-                //        foreach(string item in objs) {
-                //            msg += item + Environment.NewLine;
-                //            ObjectsNumbers.Add(item);
-                //        }
-                //        await Application.Current.MainPage.DisplayAlert("Информация",msg,"OK");
-                //    }
-                //}
-                //else {
-                //    resp = null;
-                //}
             });
         }
 
         private RelayCommand _GetEventsObjectInfo;
         public RelayCommand GetEventsObjectInfo {
             get => _GetEventsObjectInfo ??= new RelayCommand(async obj => {
-                EventsExternalPageViewModel vm = new EventsExternalPageViewModel(Mounters,Servicemans);
+                EventsExternalPageViewModel vm = new EventsExternalPageViewModel(Mounters, Servicemans);
                 App.Current.MainPage = new EventsExternalPage(vm);
             });
         }
@@ -358,8 +300,10 @@ namespace MounterApp.ViewModel {
         public RelayCommand DownloadAppCommand {
             get => _DownloadAppCommand ??= new RelayCommand(async obj => {
                 var link = await ClientHttp.GetString("/api/Common/GetAppDownload");
-                if (string.IsNullOrEmpty(link))
+                if (string.IsNullOrEmpty(link)) {
                     return;
+                }
+
                 await Browser.OpenAsync(new Uri(link), BrowserLaunchMode.SystemPreferred);
             });
         }

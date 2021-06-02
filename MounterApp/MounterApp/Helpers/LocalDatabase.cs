@@ -1,8 +1,6 @@
 ﻿using MounterApp.InternalModel;
 using SQLite;
-using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace MounterApp.Helpers {
     public class LocalDatabase {
@@ -32,14 +30,17 @@ namespace MounterApp.Helpers {
         }
         public int SaveUpdateMount(Mounts mount) {
             List<Mounts> mnt = _database.Table<Mounts>().Where(x => x.ID == mount.ID).ToList();
-            if(mnt != null) {
-                if(mnt.Count > 0)
+            if (mnt != null) {
+                if (mnt.Count > 0) {
                     return _database.Update(mount);
-                else
+                }
+                else {
                     return _database.Insert(mount);
+                }
             }
-            else
+            else {
                 return _database.Insert(mount);
+            }
         }
         public int DeleteMount(int pk) {
             return _database.Delete<Mounts>(pk);

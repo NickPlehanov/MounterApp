@@ -15,20 +15,24 @@ namespace MounterApp.ViewModel {
 
             IndicatorVisible = false;
             OpacityForm = 1;
-            if (Xamarin.Forms.Application.Current.Properties.ContainsKey("Phone"))
+            if (Xamarin.Forms.Application.Current.Properties.ContainsKey("Phone")) {
                 PhoneNumber = Xamarin.Forms.Application.Current.Properties["Phone"] as string;
-            if(Xamarin.Forms.Application.Current.Properties.ContainsKey("AutoEnter")) {
-                if(bool.TryParse(Xamarin.Forms.Application.Current.Properties["AutoEnter"].ToString(),out bool tmp))
-                    if(tmp && PhoneNumber != null)
+            }
+
+            if (Xamarin.Forms.Application.Current.Properties.ContainsKey("AutoEnter")) {
+                if (bool.TryParse(Xamarin.Forms.Application.Current.Properties["AutoEnter"].ToString(), out bool tmp)) {
+                    if (tmp && PhoneNumber != null) {
                         AuthCommand.Execute(null);
+                    }
+                }
             }
             else {
                 Xamarin.Forms.Application.Current.Properties["AutoEnter"] = true;
             }
-            if(!Xamarin.Forms.Application.Current.Properties.ContainsKey("Quality")) {
+            if (!Xamarin.Forms.Application.Current.Properties.ContainsKey("Quality")) {
                 Xamarin.Forms.Application.Current.Properties["Quality"] = 50;
             }
-            if(!Xamarin.Forms.Application.Current.Properties.ContainsKey("TimeToPush")) {
+            if (!Xamarin.Forms.Application.Current.Properties.ContainsKey("TimeToPush")) {
                 Xamarin.Forms.Application.Current.Properties["TimeToPush"] = 30;
             }
             CheckAndRequestPermissions.Execute(null);
@@ -110,8 +114,9 @@ namespace MounterApp.ViewModel {
                 //if (Phone.Substring(0,2) == "+7")
                 //    Phone = Phone.Replace("+7","8");
                 //else
-                if (Phone.Length == 11)
+                if (Phone.Length == 11) {
                     Phone = Phone.Substring(1, Phone.Length - 1);
+                }
                 //else {
                 //    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Введен не корректный номер телефона", Color.Red, LayoutOptions.EndAndExpand), 4000));
                 //    Analytics.TrackEvent("Ошибка ввода номера телефона");
@@ -121,12 +126,12 @@ namespace MounterApp.ViewModel {
                     await Xamarin.Forms.Application.Current.SavePropertiesAsync();
                     //Analytics.TrackEvent("Сохранение номера телефона в локальную базу данных");
                     //Analytics.TrackEvent("Запрос монтажников по номеру телефона");
-                    Mounters = await ClientHttp.Get <List<NewMounterExtensionBase>>("/api/NewMounterExtensionBases/phone?phone=" + Phone);
-                    Servicemans = await ClientHttp.Get <List<NewServicemanExtensionBase>>("/api/NewServicemanExtensionBases/phone?phone=" + Phone);
+                    Mounters = await ClientHttp.Get<List<NewMounterExtensionBase>>("/api/NewMounterExtensionBases/phone?phone=" + Phone);
+                    Servicemans = await ClientHttp.Get<List<NewServicemanExtensionBase>>("/api/NewServicemanExtensionBases/phone?phone=" + Phone);
 
-                    if(Mounters != null || Servicemans != null) {
-                        if(Mounters.Count > 0 || Servicemans.Count > 0) {
-                            if(Mounters.Count > 1 || Servicemans.Count > 1) {
+                    if (Mounters != null || Servicemans != null) {
+                        if (Mounters.Count > 0 || Servicemans.Count > 0) {
+                            if (Mounters.Count > 1 || Servicemans.Count > 1) {
                                 await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Неоднозначно определен сотрудник", Color.Red, LayoutOptions.EndAndExpand), 4000));
                                 //Dictionary<string,string> parameters = new Dictionary<string,string> {
                                 //    { "Phone",Phone },
@@ -136,7 +141,7 @@ namespace MounterApp.ViewModel {
                             }
                             else {
                                 IndicatorVisible = false;
-                                MainMenuPageViewModel vm = new MainMenuPageViewModel(Mounters,Servicemans);
+                                MainMenuPageViewModel vm = new MainMenuPageViewModel(Mounters, Servicemans);
                                 App.Current.MainPage = new MainMenuPage(vm);
                             }
                         }
@@ -150,7 +155,7 @@ namespace MounterApp.ViewModel {
                         //Crashes.TrackError(new Exception("Не найден сотрудник по номеру телефона"),parameters);
                     }
                 }
-                catch(Exception ex) {
+                catch (Exception ex) {
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Нет подключения к интернету или сетевой адрес недоступен", Color.Red, LayoutOptions.EndAndExpand), 4000));
                     //Dictionary<string,string> parameters = new Dictionary<string,string> {
                     //    { "Phone",Phone },
@@ -160,8 +165,8 @@ namespace MounterApp.ViewModel {
                 }
                 IndicatorVisible = false;
                 OpacityForm = 1;
-            //},obj=>!string.IsNullOrEmpty(PhoneNumber));
-            },obj=>!string.IsNullOrEmpty(PhoneNumber));
+                //},obj=>!string.IsNullOrEmpty(PhoneNumber));
+            }, obj => !string.IsNullOrEmpty(PhoneNumber));
         }
         /// <summary>
         /// Видимость индикатора загрузки

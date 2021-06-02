@@ -16,7 +16,7 @@ namespace MounterApp.ViewModel {
         /// <param name="_so">Заявка технику</param>
         /// <param name="_servicemans">Техники(список)</param>
         /// <param name="_mounters">Монтажники(список)</param>
-        public EventsPopupViewModel(NewServiceorderExtensionBase _so,List<NewServicemanExtensionBase> _servicemans,List<NewMounterExtensionBase> _mounters) {
+        public EventsPopupViewModel(NewServiceorderExtensionBase _so, List<NewServicemanExtensionBase> _servicemans, List<NewMounterExtensionBase> _mounters) {
             ServiceOrder = _so;
             Servicemans = _servicemans;
             Mounters = _mounters;
@@ -53,7 +53,7 @@ namespace MounterApp.ViewModel {
         /// <param name="_so">Заявка на ПС</param>
         /// <param name="_servicemans">Техники(список)</param>
         /// <param name="_mounters">Монтажники(список)</param>
-        public EventsPopupViewModel(NewTest2ExtensionBase _so,List<NewServicemanExtensionBase> _servicemans,List<NewMounterExtensionBase> _mounters) {
+        public EventsPopupViewModel(NewTest2ExtensionBase _so, List<NewServicemanExtensionBase> _servicemans, List<NewMounterExtensionBase> _mounters) {
             ServiceOrderFireAlarm = _so;
             Servicemans = _servicemans;
             Mounters = _mounters;
@@ -149,10 +149,13 @@ namespace MounterApp.ViewModel {
         public DateTime StartDate {
             get => _StartDate;
             set {
-                if(value == DateTime.Parse("01.01.1900 00:00:00"))
+                if (value == DateTime.Parse("01.01.1900 00:00:00")) {
                     _StartDate = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
-                else
+                }
+                else {
                     _StartDate = value;
+                }
+
                 OnPropertyChanged(nameof(StartDate));
             }
         }
@@ -163,10 +166,13 @@ namespace MounterApp.ViewModel {
         public DateTime EndDate {
             get => _EndDate;
             set {
-                if(value == DateTime.Parse("01.01.1900 00:00:00"))
+                if (value == DateTime.Parse("01.01.1900 00:00:00")) {
                     _EndDate = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy")).AddDays(1);
-                else
+                }
+                else {
                     _EndDate = value;
+                }
+
                 OnPropertyChanged(nameof(EndDate));
             }
         }
@@ -203,7 +209,7 @@ namespace MounterApp.ViewModel {
                                         "&endDate=" + EndDate +
                                         "&testFiltered=0&doubleFiltered=0"
                                         );
-            },obj=>!string.IsNullOrEmpty(ObjectNumber) && StartDate<=EndDate);
+            }, obj => !string.IsNullOrEmpty(ObjectNumber) && StartDate <= EndDate);
         }
         /// <summary>
         /// Командой получаем список событий за выбранный диапазон
@@ -219,24 +225,28 @@ namespace MounterApp.ViewModel {
                 //    {"StartDate",StartDate.ToShortDateString() },
                 //    {"EndDate",EndDate.ToShortDateString() }
                 //});
-                if(StartDate <= EndDate) {
+                if (StartDate <= EndDate) {
                     Events.Clear();
-                    if((EndDate-StartDate).TotalDays>7) {
+                    if ((EndDate - StartDate).TotalDays > 7) {
                         StartDate = EndDate.AddDays(-7.0);
-                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Просмотр событий более чем за неделю запрещен",Color.Red,LayoutOptions.EndAndExpand),4000));
+                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Просмотр событий более чем за неделю запрещен", Color.Red, LayoutOptions.EndAndExpand), 4000));
                     }
                     List<GetEventsReceivedFromObject_Result> _evnts = new List<GetEventsReceivedFromObject_Result>();
                     string obj_number = ServiceOrder != null ? ServiceOrder.NewNumber.ToString() : ServiceOrderFireAlarm.NewNumber.ToString();
-                    if (string.IsNullOrEmpty(obj_number))
+                    if (string.IsNullOrEmpty(obj_number)) {
                         return;
+                    }
+
                     Events = await ClientHttp.Get<ObservableCollection<GetEventsReceivedFromObject_Result>>("/api/Andromeda/events?objNumber=" + obj_number +
                                         "&startDate=" + StartDate +
                                         "&endDate=" + EndDate +
                                         "&testFiltered=0&doubleFiltered=0"
                                         );
                 }
-                else 
-                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Дата начала не может быть больше или равна дате окончания",Color.Red,LayoutOptions.EndAndExpand),4000));
+                else {
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Дата начала не может быть больше или равна дате окончания", Color.Red, LayoutOptions.EndAndExpand), 4000));
+                }
+
                 IndicatorVisible = false;
                 OpacityForm = 1;
             });

@@ -41,8 +41,10 @@ namespace MounterApp.ViewModel {
             //GetResults.ExecuteAsync(null);
             NecesseryRead = false;
             SaveImage = IconName("save");
-            if (Application.Current.Properties.ContainsKey("ConclusionByOrder"))
+            if (Application.Current.Properties.ContainsKey("ConclusionByOrder")) {
                 ConclusionByOrder = Application.Current.Properties["ConclusionByOrder"] as string;
+            }
+
             IsLoading(false);
         }
         /// <summary>
@@ -58,8 +60,10 @@ namespace MounterApp.ViewModel {
             //GetResults.ExecuteAsync(null);
             NecesseryRead = false;
             SaveImage = IconName("save");
-            if (Application.Current.Properties.ContainsKey("ConclusionByOrder"))
+            if (Application.Current.Properties.ContainsKey("ConclusionByOrder")) {
                 ConclusionByOrder = Application.Current.Properties["ConclusionByOrder"] as string;
+            }
+
             IsLoading(false);
         }
         /// <summary>
@@ -208,8 +212,10 @@ namespace MounterApp.ViewModel {
                     ReasonVisibility = true;
                     //GetReasons.ExecuteAsync(null);
                 }
-                else
+                else {
                     ReasonVisibility = false;
+                }
+
                 if (SelectedResult.Value == 2) {
                     TransferLayoutVisibility = true;
                 }
@@ -258,10 +264,13 @@ namespace MounterApp.ViewModel {
         public DateTime TransferDate {
             get => _TransferDate;
             set {
-                if (value == DateTime.Parse("01.01.2010 00:00:00"))
+                if (value == DateTime.Parse("01.01.2010 00:00:00")) {
                     _TransferDate = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy")).AddDays(1);
-                else
+                }
+                else {
                     _TransferDate = value;
+                }
+
                 OnPropertyChanged(nameof(TransferDate));
             }
         }
@@ -358,8 +367,9 @@ namespace MounterApp.ViewModel {
                     return true;
                 }
             }
-            else 
+            else {
                 return false;
+            }
         }
         /// <summary>
         /// Команда закрытия заявки технику
@@ -369,7 +379,7 @@ namespace MounterApp.ViewModel {
             get => _CloseServiceOrderCommand ??= new RelayCommand(async obj => {
                 try {
                     IsLoading(true);
-                    ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans, Mounters,false);
+                    ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans, Mounters, false);
                     //Analytics.TrackEvent("Начало закрытия заявки",
                     //    new Dictionary<string, string> {
                     //{ "ServiceOrder",so != null ? so.NewServiceorderId.ToString() : sofa.NewTest2Id.ToString() },
@@ -417,25 +427,29 @@ namespace MounterApp.ViewModel {
 
                                     HttpStatusCode code = await ClientHttp.Put("/api/NewServiceorderExtensionBases", new StringContent(JsonConvert.SerializeObject(soeb), Encoding.UTF8, "application/json"));
                                     if (code.Equals(HttpStatusCode.Accepted)) {
-                                        if (App.Current.MainPage.Navigation.NavigationStack.Any())
+                                        if (App.Current.MainPage.Navigation.NavigationStack.Any()) {
                                             await App.Current.MainPage.Navigation.PopPopupAsync();
-                                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Заключение и время ухода сохранены", Color.Green, LayoutOptions.EndAndExpand), 4000));
-                                        App.Current.MainPage = new ServiceOrdersPage(new ServiceOrdersPageViewModel(Servicemans, Mounters,false));
-                                    }
-                                    else
-                                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка, не был получен корректный ответ от сервера. Попробуйте позже, в случае повторной ошибки, сообщите в ИТ-отдел", Color.Red, LayoutOptions.EndAndExpand), 7000));
+                                        }
 
+                                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Заключение и время ухода сохранены", Color.Green, LayoutOptions.EndAndExpand), 4000));
+                                        App.Current.MainPage = new ServiceOrdersPage(new ServiceOrdersPageViewModel(Servicemans, Mounters, false));
+                                    }
+                                    else {
+                                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка, не был получен корректный ответ от сервера. Попробуйте позже, в случае повторной ошибки, сообщите в ИТ-отдел", Color.Red, LayoutOptions.EndAndExpand), 7000));
+                                    }
 
                                     Application.Current.Properties["ConclusionByOrder"] = null;
                                     await Application.Current.SavePropertiesAsync();
                                     App.Current.MainPage = new ServiceOrdersPage(vm);
                                     IsLoading(false);
                                 }
-                                else
+                                else {
                                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка. Не предоставлены разрешения", Color.Red, LayoutOptions.EndAndExpand), 7000));
+                                }
                             }
-                            else
+                            else {
                                 await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка", Color.Red, LayoutOptions.EndAndExpand), 7000));
+                            }
                         }
                         //заявка на пс
                         if (sofa != null) {
@@ -462,24 +476,29 @@ namespace MounterApp.ViewModel {
 
                                     HttpStatusCode code = await ClientHttp.Put("/api/NewServiceOrderForFireAlarmExtensionBase", new StringContent(JsonConvert.SerializeObject(soeb), Encoding.UTF8, "application/json"));
                                     if (code.Equals(HttpStatusCode.Accepted)) {
-                                        if (App.Current.MainPage.Navigation.NavigationStack.Any())
+                                        if (App.Current.MainPage.Navigation.NavigationStack.Any()) {
                                             await App.Current.MainPage.Navigation.PopPopupAsync();
+                                        }
+
                                         await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Заключение и время ухода сохранены", Color.Green, LayoutOptions.EndAndExpand), 4000));
-                                        App.Current.MainPage = new ServiceOrdersPage(new ServiceOrdersPageViewModel(Servicemans, Mounters,false));
+                                        App.Current.MainPage = new ServiceOrdersPage(new ServiceOrdersPageViewModel(Servicemans, Mounters, false));
                                     }
-                                    else
+                                    else {
                                         await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка, не был получен корректный ответ от сервера. Попробуйте позже, в случае повторной ошибки, сообщите в ИТ-отдел", Color.Red, LayoutOptions.EndAndExpand), 7000));
+                                    }
 
                                     Application.Current.Properties["ConclusionByOrder"] = null;
                                     await Application.Current.SavePropertiesAsync();
                                     App.Current.MainPage = new ServiceOrdersPage(vm);
                                     IsLoading(false);
                                 }
-                                else
+                                else {
                                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка. Не предоставлены разрешения", Color.Red, LayoutOptions.EndAndExpand), 7000));
+                                }
                             }
-                            else
+                            else {
                                 await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка", Color.Red, LayoutOptions.EndAndExpand), 7000));
+                            }
                         }
                     }
                     IsLoading(false);

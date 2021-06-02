@@ -17,41 +17,52 @@ namespace MounterApp.Helpers {
         static readonly HttpClient client = new HttpClient(GetClientHandeler());
         //static readonly HttpClient client = new HttpClient();
 
-        public static async Task<T> Get<T>(string query) where T:class{
+        public static async Task<T> Get<T>(string query) where T : class {
             client.DefaultRequestHeaders.Clear();
             client.DefaultRequestHeaders.ConnectionClose = true;
             client.DefaultRequestHeaders.ExpectContinue = false;
             CancellationTokenSource cts = new CancellationTokenSource(7000);
             HttpResponseMessage httpResponse = await client.GetAsync(Resources.BaseAddress1 + query, HttpCompletionOption.ResponseContentRead, cts.Token);
             //httpResponse.EnsureSuccessStatusCode();
-            if(httpResponse.IsSuccessStatusCode) 
+            if (httpResponse.IsSuccessStatusCode) {
                 return JsonConvert.DeserializeObject<T>(await httpResponse.Content.ReadAsStringAsync());
-            else
+            }
+            else {
                 return null;
+            }
         }
-        public static async Task<string> GetString(string query){
+        public static async Task<string> GetString(string query) {
             client.DefaultRequestHeaders.Clear();
             client.DefaultRequestHeaders.ConnectionClose = true;
             client.DefaultRequestHeaders.ExpectContinue = false;
             CancellationTokenSource cts = new CancellationTokenSource(7000);
             HttpResponseMessage httpResponse = await client.GetAsync(Resources.BaseAddress1 + query, HttpCompletionOption.ResponseContentRead, cts.Token);
             //httpResponse.EnsureSuccessStatusCode();
-            if (httpResponse.IsSuccessStatusCode) 
+            if (httpResponse.IsSuccessStatusCode) {
                 return await httpResponse.Content.ReadAsStringAsync();
-            else
+            }
+            else {
                 return null;
+            }
         }
         public static async Task<string> GetPhoto(string query) {
-            client.DefaultRequestHeaders.Clear();
-            client.DefaultRequestHeaders.ConnectionClose = true;
-            client.DefaultRequestHeaders.ExpectContinue = false;
-            CancellationTokenSource cts = new CancellationTokenSource(7000);
-            HttpResponseMessage httpResponse = await client.GetAsync(Resources.BaseAddress1 + query, HttpCompletionOption.ResponseContentRead, cts.Token);
-            //httpResponse.EnsureSuccessStatusCode(); 
-            if (httpResponse.IsSuccessStatusCode) 
-                return await httpResponse.Content.ReadAsStringAsync();
-            else
+            try {
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.ConnectionClose = true;
+                client.DefaultRequestHeaders.ExpectContinue = false;
+                CancellationTokenSource cts = new CancellationTokenSource(20000);
+                HttpResponseMessage httpResponse = await client.GetAsync(Resources.BaseAddress1 + query, HttpCompletionOption.ResponseContentRead, cts.Token);
+                //httpResponse.EnsureSuccessStatusCode(); 
+                if (httpResponse.IsSuccessStatusCode) {
+                    return await httpResponse.Content.ReadAsStringAsync();
+                }
+                else {
+                    return null;
+                }
+            }
+            catch  {
                 return null;
+            }
         }
         public static async Task<HttpStatusCode> Get(string query) {
             client.DefaultRequestHeaders.Clear();
@@ -61,21 +72,23 @@ namespace MounterApp.Helpers {
             HttpResponseMessage httpResponse = await client.GetAsync(Resources.BaseAddress1 + query, HttpCompletionOption.ResponseContentRead, cts.Token);
             return httpResponse.StatusCode;
         }
-        public static async Task<string> Post(string query,HttpContent content) {
+        public static async Task<string> Post(string query, HttpContent content) {
             client.DefaultRequestHeaders.Clear();
             client.DefaultRequestHeaders.ConnectionClose = true;
             client.DefaultRequestHeaders.ExpectContinue = false;
-            HttpResponseMessage httpResponse = await client.PostAsync(Resources.BaseAddress1 + query,content);
-            if(httpResponse.IsSuccessStatusCode) 
-                return await httpResponse.Content.ReadAsStringAsync();            
-            else
+            HttpResponseMessage httpResponse = await client.PostAsync(Resources.BaseAddress1 + query, content);
+            if (httpResponse.IsSuccessStatusCode) {
+                return await httpResponse.Content.ReadAsStringAsync();
+            }
+            else {
                 return null;
+            }
         }
-        public static async Task<HttpStatusCode> Put(string query,HttpContent content) {
+        public static async Task<HttpStatusCode> Put(string query, HttpContent content) {
             client.DefaultRequestHeaders.Clear();
             client.DefaultRequestHeaders.ConnectionClose = true;
             client.DefaultRequestHeaders.ExpectContinue = false;
-            HttpResponseMessage httpResponse = await client.PutAsync(Resources.BaseAddress1 + query,content);
+            HttpResponseMessage httpResponse = await client.PutAsync(Resources.BaseAddress1 + query, content);
             return httpResponse.StatusCode;
             //if(httpResponse.IsSuccessStatusCode)
             //    return await httpResponse.Content.ReadAsStringAsync();

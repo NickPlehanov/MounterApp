@@ -11,9 +11,9 @@ namespace MounterApp.Views {
         public MainMenuPage() {
             InitializeComponent();
         }
-        public MainMenuPage(List<NewMounterExtensionBase> _mounters,List<NewServicemanExtensionBase> _servicemans) {
+        public MainMenuPage(List<NewMounterExtensionBase> _mounters, List<NewServicemanExtensionBase> _servicemans) {
             InitializeComponent();
-            this.BindingContext = new MainMenuPage(_mounters,_servicemans);
+            this.BindingContext = new MainMenuPage(_mounters, _servicemans);
         }
         public MainMenuPage(MainMenuPageViewModel vm) {
             InitializeComponent();
@@ -22,13 +22,14 @@ namespace MounterApp.Views {
         }
         protected override bool OnBackButtonPressed() {
             //var vm = (ViewModel)BindingContext;
-            if(VM.BackPressCommand.CanExecute(null))  // You can add parameters if any
+            if (VM.BackPressCommand.CanExecute(null))  // You can add parameters if any
               {
                 VM.BackPressCommand.Execute(null); // You can add parameters if any
                 return true;
             }
-            else
+            else {
                 return false;
+            }
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
-    public class MessagePopupPageViewModel:BaseViewModel {
-        public MessagePopupPageViewModel(string _alertMessage,System.Drawing.Color bgColor, LayoutOptions layoutOptions) {
+    public class MessagePopupPageViewModel : BaseViewModel {
+        public MessagePopupPageViewModel(string _alertMessage, System.Drawing.Color bgColor, LayoutOptions layoutOptions) {
             AlertMessage = _alertMessage;
             BackgroundColor = bgColor;
             VerticalOptionsProperty = layoutOptions;

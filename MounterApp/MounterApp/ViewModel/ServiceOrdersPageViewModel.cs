@@ -2,18 +2,13 @@
 using MounterApp.Helpers;
 using MounterApp.InternalModel;
 using MounterApp.Model;
-using MounterApp.Properties;
 using MounterApp.Views;
-using Newtonsoft.Json;
 using Plugin.Geolocator;
 using Rg.Plugins.Popup.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -39,8 +34,10 @@ namespace MounterApp.ViewModel {
 
             GetCategoryTech.Execute(Category);
 
-            if (Date == DateTime.Parse("01.01.0001 00:00:00"))
+            if (Date == DateTime.Parse("01.01.0001 00:00:00")) {
                 Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
+            }
+
             Servicemans = _servicemans;
             Mounters = _mounters;
             OpacityForm = 1;
@@ -89,10 +86,13 @@ namespace MounterApp.ViewModel {
 
             RefreshOrdersCommand.Execute(null);
 
-            if (Application.Current.Properties.ContainsKey("AutoUpdateTime"))
+            if (Application.Current.Properties.ContainsKey("AutoUpdateTime")) {
                 AutoUpdateTime = double.Parse(Application.Current.Properties["AutoUpdateTime"].ToString());
-            else
+            }
+            else {
                 AutoUpdateTime = null;
+            }
+
             AutoUpdateOrdersCommand.Execute(AutoUpdateTime);
         }
 
@@ -118,7 +118,7 @@ namespace MounterApp.ViewModel {
             get => _AutoUpdateOrdersCommand ??= new RelayCommand(async obj => {
                 #region Данный код прекрасно мог бы обновлять заявки в фоне, но иногда он крашится, из-за коллекции
 
-                if (obj != null)
+                if (obj != null) {
                     if (double.Parse(obj.ToString()) > 0) {
                         Device.StartTimer(TimeSpan.FromMinutes(Convert.ToDouble(obj)), () => {
                             Task.Run(async () => {
@@ -145,6 +145,7 @@ namespace MounterApp.ViewModel {
 
                         });
                     }
+                }
                 #endregion
             });
         }
@@ -295,10 +296,13 @@ namespace MounterApp.ViewModel {
         public DateTime Date {
             get => _Date;
             set {
-                if (value == DateTime.Parse("01.01.0001 00:00:00"))
+                if (value == DateTime.Parse("01.01.0001 00:00:00")) {
                     _Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
-                else
+                }
+                else {
                     _Date = value;
+                }
+
                 GetServiceOrders.Execute(null);
                 GetServiceOrderByTransfer.Execute(null);
                 OnPropertyChanged(nameof(Date));
@@ -386,10 +390,10 @@ namespace MounterApp.ViewModel {
         private RelayCommand _BackPressCommand;
         public RelayCommand BackPressCommand {
             get => _BackPressCommand ??= new RelayCommand(async obj => {
-               // Analytics.TrackEvent("Выход со страницы заявок технику",
-               //new Dictionary<string, string> {
-               //     {"Serviceman",Servicemans.FirstOrDefault().NewPhone }
-               //});
+                // Analytics.TrackEvent("Выход со страницы заявок технику",
+                //new Dictionary<string, string> {
+                //     {"Serviceman",Servicemans.FirstOrDefault().NewPhone }
+                //});
                 MainMenuPageViewModel vm = new MainMenuPageViewModel(Mounters, Servicemans);
                 App.Current.MainPage = new MainMenuPage(vm);
             });
@@ -409,13 +413,15 @@ namespace MounterApp.ViewModel {
                         int? _obj = int.TryParse(obj.ToString(), out _) ? int.Parse(obj.ToString()) : -1;
                         if (_obj != -1) {
                             try {
-                                if (ServiceOrders.Count > 0)
+                                if (ServiceOrders.Count > 0) {
                                     so = ServiceOrders.First(x => x.NewNumber == _obj);
+                                }
                             }
                             catch { }
                             try {
-                                if (ServiceOrdersFireAlarm.Count > 0)
+                                if (ServiceOrdersFireAlarm.Count > 0) {
                                     fso = ServiceOrdersFireAlarm.First(x => x.NewNumber == _obj);
+                                }
                             }
                             catch { }
                         }
@@ -423,12 +429,17 @@ namespace MounterApp.ViewModel {
                     ServiceOrderInfoPopupViewModel vm = null;
                     if (so != null)
                         vm = new ServiceOrderInfoPopupViewModel(so);
+
+
                     if (fso != null)
                         vm = new ServiceOrderInfoPopupViewModel(fso);
-                    await App.Current.MainPage.Navigation.PushPopupAsync(new ServiceOrderInfoPopupPage(vm));
+
+                    if (vm != null)
+                        await App.Current.MainPage.Navigation.PushPopupAsync(new ServiceOrderInfoPopupPage(vm));
                 }
-                else
+                else {
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Ошибка при получении номера объекта", Color.Red, LayoutOptions.EndAndExpand), 4000));
+                }
                 //App.Current.MainPage = new ServiceOrderInfoPopupPage(vm);
             });
         }
@@ -439,10 +450,14 @@ namespace MounterApp.ViewModel {
                 OpacityForm = 0.1;
                 IndicatorVisible = true;
 
-                if (obj == null)
+                if (obj == null) {
                     return;
-                if (string.IsNullOrEmpty(obj.ToString()))
+                }
+
+                if (string.IsNullOrEmpty(obj.ToString())) {
                     return;
+                }
+
                 A28Object a28Object = await ClientHttp.Get<A28Object>("/api/Andromeda/GetObjectInfo?ObjectNumber=" + obj.ToString());
                 if (a28Object != null) {
                     if (a28Object.Longitude != null && a28Object.Latitude != null) {
@@ -512,10 +527,10 @@ namespace MounterApp.ViewModel {
                 //            });
                 //        }
                 //        if (sm != null) {
-                            GetServiceOrderByTransferFireAlarm.Execute(null);
-                            GetServiceOrdersFireAlarm.Execute(null);
-                    //    }
-                    //}
+                GetServiceOrderByTransferFireAlarm.Execute(null);
+                GetServiceOrdersFireAlarm.Execute(null);
+                //    }
+                //}
             });
         }
         private RelayCommand _GetServiceOrders;
@@ -530,47 +545,60 @@ namespace MounterApp.ViewModel {
                     //    {"Date",Date.ToString() }
                     //});
                     ///api/NewServiceorderExtensionBases/ServiceOrderByUser?usr_ID=FEF46B07-8D7A-E311-920A-00155D01051D&date=18.11.2020
-                    if (Date == DateTime.Parse("01.01.0001 00:00:00"))
+                    if (Date == DateTime.Parse("01.01.0001 00:00:00")) {
                         Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
+                    }
 
                     //List<NewServiceorderExtensionBase_ex> _serviceorders = new List<NewServiceorderExtensionBase_ex>();
                     List<NewServiceorderExtensionBase_ex> _serviceorders = await ClientHttp.Get<List<NewServiceorderExtensionBase_ex>>("/api/NewServiceorderExtensionBases/ServiceOrderByUserNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
 
-                    Application.Current.Dispatcher.BeginInvokeOnMainThread((Action)delegate {
+                    Application.Current.Dispatcher.BeginInvokeOnMainThread(delegate {
                         if (_serviceorders != null) {
-                            if (ServiceOrders != null)
+                            if (ServiceOrders != null) {
                                 ServiceOrders.Clear();
-                            if (ServiceOrdersByTime != null)
+                            }
+
+                            if (ServiceOrdersByTime != null) {
                                 ServiceOrdersByTime.Clear();
+                            }
+
                             foreach (NewServiceorderExtensionBase_ex item in _serviceorders.Distinct()) {
-                                if (string.IsNullOrEmpty(item.NewTime) && string.IsNullOrEmpty(item.NewTimeTo.ToString()) && string.IsNullOrEmpty(item.NewTimeFrom.ToString()))
+                                if (string.IsNullOrEmpty(item.NewTime) && string.IsNullOrEmpty(item.NewTimeTo.ToString()) && string.IsNullOrEmpty(item.NewTimeFrom.ToString())) {
                                     ServiceOrders.Add(item);
-                                else
+                                }
+                                else {
                                     ServiceOrdersByTime.Add(item);
+                                }
                             }
                             TimeServiceOrder = "Временные (" + ServiceOrdersByTime.Count.ToString() + ")";
                             OtherServiceOrder = "Прочие (" + ServiceOrders.Count.ToString() + ")";
                             TimeServiceOrderVisible = ServiceOrdersByTime.Count > 0;
                             OtherServiceOrderVisible = ServiceOrders.Count > 0;
-                            if (CountOrders != null)
+                            if (CountOrders != null) {
                                 if (CountOrders < _serviceorders.Count) {
                                     DependencyService.Get<INotification>().CreateNotification("Новые заявки", "Появились новые заявки");
                                     CountOrders = _serviceorders.Count;
                                 }
-                            if (_serviceorders.Count == 0)
+                            }
+
+                            if (_serviceorders.Count == 0) {
                                 CountOrders = _serviceorders.Count;
+                            }
+
                             if (ServiceOrders.Count > 0) {
-                                if (IsReturnByOrder) { 
-                                    NewServiceorderExtensionBase_ex _Ex =  ServiceOrders.FirstOrDefault(x => x.NewNumber.Value == -1);
+                                if (IsReturnByOrder) {
+                                    NewServiceorderExtensionBase_ex _Ex = ServiceOrders.FirstOrDefault(x => x.NewNumber.Value == -1);
                                     if (_Ex != null) {
                                         //DateTime dt = new DateTime(_Ex.NewIncome.Value.Year, _Ex.NewIncome.Value.Month, _Ex.NewIncome.Value.Day, _Ex.NewIncome.Value.Hour, _Ex.NewIncome.Value.Minute, _Ex.NewIncome.Value.Second);
                                         if (_Ex.NewIncome.HasValue) {
                                             DateTime EndDinner = _Ex.NewIncome.Value.AddHours(1);
                                             TimeSpan rez = EndDinner - DateTime.Now.AddHours(-5);
-                                            if (rez.TotalMinutes <= 15 && rez.TotalMinutes > 0)
+                                            if (rez.TotalMinutes <= 15 && rez.TotalMinutes > 0) {
                                                 DependencyService.Get<INotification>().CreateNotification("Обед", "Время обеда заканчивается");
-                                            else if (rez.TotalMinutes <= 0)
+                                            }
+                                            else if (rez.TotalMinutes <= 0) {
                                                 DependencyService.Get<INotification>().CreateNotification("Обед", "Время обеда истекло");
+                                            }
                                         }
                                     }
                                 }
@@ -580,13 +608,16 @@ namespace MounterApp.ViewModel {
                             }
                             //Проверяем время и делаем пуш уведомления
                             //TODO: возможность в настройках отключать или включать показывать пуш
-                            if (Application.Current.Properties.ContainsKey("TimeToPush"))
+                            if (Application.Current.Properties.ContainsKey("TimeToPush")) {
                                 TimeToPush = int.Parse(Application.Current.Properties["TimeToPush"].ToString());
-                            else
+                            }
+                            else {
                                 TimeToPush = 0;
-                            if (TimeToPush != 0)
-                                if (IsReturnByOrder)
-                                    foreach (var item in ServiceOrdersByTime.Where(x=>x.IsShowed==false).ToList()) {
+                            }
+
+                            if (TimeToPush != 0) {
+                                if (IsReturnByOrder) {
+                                    foreach (var item in ServiceOrdersByTime.Where(x => x.IsShowed == false).ToList()) {
                                         //1 вариант. ОТ-пусто ДО-есть 
                                         if (!item.NewTimeFrom.HasValue && item.NewTimeTo.HasValue) {
                                             DateTime now = DateTime.Now;
@@ -594,12 +625,13 @@ namespace MounterApp.ViewModel {
                                             //время в заявке больше чем текущее
                                             TimeSpan rez = dt - now;
                                             //TODO: вынести в настройки количество минут
-                                            if (rez.TotalMinutes >= TimeToPush && item.NewIncome == null)
+                                            if (rez.TotalMinutes >= TimeToPush && item.NewIncome == null) {
                                                 //DependencyService.Get<INotification>().CreateNotification("Приближается крайнее значение времени заявки",
                                                 DependencyService.Get<INotification>().CreateNotification(string.Format("Заявка истекает в {0} часов", item.NewTimeTo),
                                                     string.Format("({0}), {1}" + Environment.NewLine + "{2}",
                                                     item.NewNumber, item.NewObjName, item.NewAddress)
                                                     );
+                                            }
                                         }
                                         //2 вариант. ОТ-есть, ДО-пусто
                                         if (item.NewTimeFrom.HasValue && !item.NewTimeTo.HasValue) {
@@ -608,11 +640,12 @@ namespace MounterApp.ViewModel {
                                             //время в заявке больше чем текущее
                                             TimeSpan rez = dt - now;
                                             //TODO: вынести в настройки количество минут
-                                            if (rez.TotalMinutes <= TimeToPush && rez.TotalMinutes > 0 && item.NewIncome == null)
-                                                DependencyService.Get<INotification>().CreateNotification(string.Format("Заявка на {0} часов",item.NewTimeFrom),
+                                            if (rez.TotalMinutes <= TimeToPush && rez.TotalMinutes > 0 && item.NewIncome == null) {
+                                                DependencyService.Get<INotification>().CreateNotification(string.Format("Заявка на {0} часов", item.NewTimeFrom),
                                                     string.Format("({0}), {1}" + Environment.NewLine + "{2}",
                                                     item.NewNumber, item.NewObjName, item.NewAddress)
                                                     );
+                                            }
                                         }
                                         //3 вариант. ОТ-есть, ДО-есть
                                         if (item.NewTimeFrom.HasValue && item.NewTimeTo.HasValue) {
@@ -623,23 +656,28 @@ namespace MounterApp.ViewModel {
                                             TimeSpan rez_from = dt_from - now;
                                             TimeSpan rez_to = dt_to - now;
                                             //TODO: вынести в настройки количество минут
-                                            if (rez_from.TotalMinutes <= TimeToPush && rez_from.TotalMinutes > 0 && item.NewIncome == null)
+                                            if (rez_from.TotalMinutes <= TimeToPush && rez_from.TotalMinutes > 0 && item.NewIncome == null) {
                                                 DependencyService.Get<INotification>().CreateNotification(string.Format("Заявка на {0} часов", item.NewTimeFrom),
                                                     string.Format("({0}), {1}" + Environment.NewLine + "{2}",
                                                     item.NewNumber, item.NewObjName, item.NewAddress)
                                                     );
+                                            }
                                             //TODO: вынести в настройки количество минут
-                                            if (!(rez_to.TotalMinutes > TimeToPush) && item.NewIncome == null)
+                                            if (!(rez_to.TotalMinutes > TimeToPush) && item.NewIncome == null) {
                                                 //DependencyService.Get<INotification>().CreateNotification("Приближается крайнее значение времени заявки",
                                                 DependencyService.Get<INotification>().CreateNotification(string.Format("Заявка истекает в {0} часов", item.NewTimeTo),
                                                     string.Format("({0}), {1}" + Environment.NewLine + "{2}",
                                                     item.NewNumber, item.NewObjName, item.NewAddress)
                                                     );
+                                            }
                                         }
                                         //4 вариант. ОТ-пусто ДО-пусто
-                                        if (!item.NewTimeFrom.HasValue && !item.NewTimeTo.HasValue)
+                                        if (!item.NewTimeFrom.HasValue && !item.NewTimeTo.HasValue) {
                                             continue;
+                                        }
                                     }
+                                }
+                            }
                         }
                     });
                 }
@@ -672,8 +710,9 @@ namespace MounterApp.ViewModel {
         public RelayCommand DinnerCommand {
             get => _DinnerCommand ??= new RelayCommand(async obj => {
                 bool result = await Application.Current.MainPage.DisplayAlert("Внимание", "Вы хотите начать обед? Текущее время будет указано началом обеда. Для окончания обеда, закройте заявку.", "Начать", "Отмена");
-                if (!result)
+                if (!result) {
                     return;
+                }
 
                 var locator = CrossGeolocator.Current;
                 locator.DesiredAccuracy = 20;
@@ -727,8 +766,10 @@ namespace MounterApp.ViewModel {
                 GetServiceOrderByTransferFireAlarm.Execute(Servicemans);
                 CheckEnableDinner.Execute(null);
 
-                if (string.IsNullOrEmpty(y))
+                if (string.IsNullOrEmpty(y)) {
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Ошибка при попытке отметки обеда", Color.Red, LayoutOptions.EndAndExpand), 4000));
+                }
+
                 await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Отметка времени обеда поставлена", Color.Green, LayoutOptions.EndAndExpand), 4000));
                 return;
             });
@@ -746,11 +787,11 @@ namespace MounterApp.ViewModel {
                 var sm = Servicemans.FirstOrDefault().NewCategory;
                 if (sm != 6) {
                     var dinner_order = await ClientHttp.Get<List<NewServicemanExtensionBase>>("/api/NewServiceorderExtensionBases/CheckDinner?dateTime=" + Date + "&serviceman=" + Servicemans.FirstOrDefault().NewServicemanId);
-                    DinnerVisible = dinner_order!=null ? dinner_order.Count() <= 0:false;
+                    DinnerVisible = dinner_order != null ? dinner_order.Count() <= 0 : false;
                 }
                 else {
                     var dinner_order = await ClientHttp.Get<List<NewServicemanExtensionBase>>("/api/NewServiceOrderForFireAlarmExtensionBase/CheckDinner?dateTime=" + Date + "&serviceman=" + Servicemans.FirstOrDefault().NewServicemanId);
-                    DinnerVisible = dinner_order != null ? dinner_order.Count() <=  0 : false;
+                    DinnerVisible = dinner_order != null ? dinner_order.Count() <= 0 : false;
                 }
             });
         }
@@ -766,35 +807,47 @@ namespace MounterApp.ViewModel {
                     //    {"Date",Date.ToString() }
                     //});
                     ///api/NewServiceorderExtensionBases/ServiceOrderByUser?usr_ID=FEF46B07-8D7A-E311-920A-00155D01051D&date=18.11.2020
-                    if (Date == DateTime.Parse("01.01.0001 00:00:00"))
+                    if (Date == DateTime.Parse("01.01.0001 00:00:00")) {
                         Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
+                    }
 
                     List<NewTest2ExtensionBase_ex> _serviceorders = await ClientHttp.Get<List<NewTest2ExtensionBase_ex>>("/api/NewServiceOrderForFireAlarmExtensionBase/ServiceOrderByUserNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
                     if (_serviceorders == null)
                         return;
-                    Application.Current.Dispatcher.BeginInvokeOnMainThread((Action)delegate {
+
+
+                    Application.Current.Dispatcher.BeginInvokeOnMainThread(delegate {
                         if (_serviceorders != null) {
-                            if (ServiceOrdersFireAlarm != null)
+                            if (ServiceOrdersFireAlarm != null) {
                                 ServiceOrdersFireAlarm.Clear();
-                            if (ServiceOrdersByTimeFireAlarm != null)
+                            }
+
+                            if (ServiceOrdersByTimeFireAlarm != null) {
                                 ServiceOrdersByTimeFireAlarm.Clear();
+                            }
+
                             foreach (NewTest2ExtensionBase_ex item in _serviceorders) {
-                                if (string.IsNullOrEmpty(item.NewTime))
+                                if (string.IsNullOrEmpty(item.NewTime)) {
                                     ServiceOrdersFireAlarm.Add(item);
-                                else
+                                }
+                                else {
                                     ServiceOrdersByTimeFireAlarm.Add(item);
+                                }
                             }
                             FireAlarmTimeServiceOrderText = "Временные(пс) (" + ServiceOrdersByTimeFireAlarm.Count.ToString() + ")";
                             FireAlarmOtherServiceOrderText = "Прочие(пс) (" + ServiceOrdersFireAlarm.Count.ToString() + ")";
                             FireAlarmTimeServiceOrderVisible = ServiceOrdersByTimeFireAlarm.Count > 0;
                             FireAlarmOtherServiceOrderVisible = ServiceOrdersFireAlarm.Count > 0;
-                            if (CountOrdersFireAlarm != null)
+                            if (CountOrdersFireAlarm != null) {
                                 if (CountOrdersFireAlarm < _serviceorders.Count) {
                                     DependencyService.Get<INotification>().CreateNotification("Новые заявки", "Появились новые заявки");
                                     CountOrdersFireAlarm = _serviceorders.Count;
                                 }
-                            if (_serviceorders.Count == 0)
+                            }
+
+                            if (_serviceorders.Count == 0) {
                                 CountOrdersFireAlarm = _serviceorders.Count;
+                            }
                         }
                     });
                 }
@@ -815,16 +868,19 @@ namespace MounterApp.ViewModel {
                     //    {"Date",Date.ToString() }
                     //});
                     ///api/NewServiceorderExtensionBases/ServiceOrderByUser?usr_ID=FEF46B07-8D7A-E311-920A-00155D01051D&date=18.11.2020
-                    if (Date == DateTime.Parse("01.01.0001 00:00:00"))
+                    if (Date == DateTime.Parse("01.01.0001 00:00:00")) {
                         Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
+                    }
 
                     //List<NewServiceorderExtensionBase_ex> _serviceorders = new List<NewServiceorderExtensionBase_ex>();
                     List<NewServiceorderExtensionBase_ex> _serviceorders = await ClientHttp.Get<List<NewServiceorderExtensionBase_ex>>("/api/NewServiceorderExtensionBases/ServiceOrderByUserTransferReasonNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
 
                     if (_serviceorders != null) {
-                        Application.Current.Dispatcher.BeginInvokeOnMainThread((Action)delegate {
-                            if (ServiceOrderByTransfer != null)
+                        Application.Current.Dispatcher.BeginInvokeOnMainThread(delegate {
+                            if (ServiceOrderByTransfer != null) {
                                 ServiceOrderByTransfer.Clear();
+                            }
+
                             foreach (NewServiceorderExtensionBase_ex item in _serviceorders) {
                                 ServiceOrderByTransfer.Add(item);
                             }
@@ -848,18 +904,22 @@ namespace MounterApp.ViewModel {
                     //    {"Serviceman",Servicemans.FirstOrDefault().NewPhone },
                     //    {"Date",Date.ToString() }
                     //});
-                    if (Date == DateTime.Parse("01.01.0001 00:00:00"))
+                    if (Date == DateTime.Parse("01.01.0001 00:00:00")) {
                         Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
+                    }
 
                     List<NewTest2ExtensionBase_ex> _serviceorders =
                     await ClientHttp.Get<List<NewTest2ExtensionBase_ex>>("/api/NewServiceOrderForFireAlarmExtensionBase/ServiceOrderByUserTransferReasonNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
-                    if (_serviceorders == null)
+                    if (_serviceorders == null) {
                         return;
+                    }
 
                     //if (_serviceorders != null) {
-                    Application.Current.Dispatcher.BeginInvokeOnMainThread((Action)delegate {
-                        if (ServiceOrderByTransferFireAlarm != null)
+                    Application.Current.Dispatcher.BeginInvokeOnMainThread(delegate {
+                        if (ServiceOrderByTransferFireAlarm != null) {
                             ServiceOrderByTransferFireAlarm.Clear();
+                        }
+
                         foreach (NewTest2ExtensionBase_ex item in _serviceorders) {
                             ServiceOrderByTransferFireAlarm.Add(item);
                         }
@@ -915,10 +975,13 @@ namespace MounterApp.ViewModel {
         public bool ServiceOrderExpanded {
             get => _ServiceOrderExpanded;
             set {
-                if (_ServiceOrderExpanded)
+                if (_ServiceOrderExpanded) {
                     ArrowCircleServiceOrder = IconName("arrow_circle_up");
-                else
+                }
+                else {
                     ArrowCircleServiceOrder = IconName("arrow_circle_down");
+                }
+
                 _ServiceOrderExpanded = value;
                 OnPropertyChanged(nameof(ServiceOrderExpanded));
             }
@@ -944,10 +1007,13 @@ namespace MounterApp.ViewModel {
         public bool FireAlarmServiceOrderExpanded {
             get => _FireAlarmServiceOrderExpanded;
             set {
-                if (_FireAlarmServiceOrderExpanded)
+                if (_FireAlarmServiceOrderExpanded) {
                     ArrowCircleFireAlarmServiceOrder = IconName("arrow_circle_up");
-                else
+                }
+                else {
                     ArrowCircleFireAlarmServiceOrder = IconName("arrow_circle_down");
+                }
+
                 _FireAlarmServiceOrderExpanded = value;
                 OnPropertyChanged(nameof(FireAlarmServiceOrderExpanded));
             }
@@ -973,10 +1039,13 @@ namespace MounterApp.ViewModel {
         public bool FireAlarmTransferServiceOrderExpanded {
             get => _FireAlarmTransferServiceOrderExpanded;
             set {
-                if (_FireAlarmTransferServiceOrderExpanded)
+                if (_FireAlarmTransferServiceOrderExpanded) {
                     ArrowCircleFireAlarmTransferServiceOrder = IconName("arrow_circle_up");
-                else
+                }
+                else {
                     ArrowCircleFireAlarmTransferServiceOrder = IconName("arrow_circle_down");
+                }
+
                 _FireAlarmTransferServiceOrderExpanded = value;
                 OnPropertyChanged(nameof(FireAlarmTransferServiceOrderExpanded));
             }
@@ -1011,10 +1080,13 @@ namespace MounterApp.ViewModel {
         public bool FireAlarmTimeServiceOrderExpanded {
             get => _FireAlarmTimeServiceOrderExpanded;
             set {
-                if (_FireAlarmTimeServiceOrderExpanded)
+                if (_FireAlarmTimeServiceOrderExpanded) {
                     ArrowCircleFireAlarmTimeServiceOrder = IconName("arrow_circle_up");
-                else
+                }
+                else {
                     ArrowCircleFireAlarmTimeServiceOrder = IconName("arrow_circle_down");
+                }
+
                 _FireAlarmTimeServiceOrderExpanded = value;
                 OnPropertyChanged(nameof(FireAlarmTimeServiceOrderExpanded));
             }
@@ -1049,10 +1121,13 @@ namespace MounterApp.ViewModel {
         public bool FireAlarmOtherServiceOrderExpanded {
             get => _FireAlarmOtherServiceOrderExpanded;
             set {
-                if (_FireAlarmOtherServiceOrderExpanded)
+                if (_FireAlarmOtherServiceOrderExpanded) {
                     ArrowCircleFireAlarmOtherServiceOrder = IconName("arrow_circle_up");
-                else
+                }
+                else {
                     ArrowCircleFireAlarmOtherServiceOrder = IconName("arrow_circle_down");
+                }
+
                 _FireAlarmOtherServiceOrderExpanded = value;
                 OnPropertyChanged(nameof(FireAlarmOtherServiceOrderExpanded));
             }
@@ -1158,10 +1233,13 @@ namespace MounterApp.ViewModel {
             get => _TransferServiceOrderExpanded;
             set {
                 _TransferServiceOrderExpanded = value;
-                if (_TransferServiceOrderExpanded)
+                if (_TransferServiceOrderExpanded) {
                     ArrowCircleTransferServiceOrder = IconName("arrow_circle_up");
-                else
+                }
+                else {
                     ArrowCircleTransferServiceOrder = IconName("arrow_circle_down");
+                }
+
                 OnPropertyChanged(nameof(TransferServiceOrderExpanded));
             }
         }
@@ -1171,10 +1249,13 @@ namespace MounterApp.ViewModel {
             get => _TimeServiceOrderExpanded;
             set {
                 _TimeServiceOrderExpanded = value;
-                if (_TimeServiceOrderExpanded)
+                if (_TimeServiceOrderExpanded) {
                     ArrowCircleTimeServiceOrder = IconName("arrow_circle_up");
-                else
+                }
+                else {
                     ArrowCircleTimeServiceOrder = IconName("arrow_circle_down");
+                }
+
                 OnPropertyChanged(nameof(TimeServiceOrderExpanded));
             }
         }
@@ -1184,10 +1265,13 @@ namespace MounterApp.ViewModel {
             get => _OtherServiceOrderExpanded;
             set {
                 _OtherServiceOrderExpanded = value;
-                if (_OtherServiceOrderExpanded)
+                if (_OtherServiceOrderExpanded) {
                     ArrowCircleOtherServiceOrder = IconName("arrow_circle_up");
-                else
+                }
+                else {
                     ArrowCircleOtherServiceOrder = IconName("arrow_circle_down");
+                }
+
                 OnPropertyChanged(nameof(OtherServiceOrderExpanded));
             }
         }

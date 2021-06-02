@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using Xamarin.Forms;
 
 namespace MounterApp.Helpers {
-	public class RelayCommand : ICommand {
+    public class RelayCommand : ICommand {
         private Action<object> execute;
         private Func<object, bool> canExecute;
         public event EventHandler CanExecuteChanged;
@@ -16,7 +14,7 @@ namespace MounterApp.Helpers {
             return canExecute == null || canExecute(parameter);
         }
         public void ChangeCanExecute() {
-            CanExecuteChanged?.Invoke(this,EventArgs.Empty);
+            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
         public void Execute(object parameter) {
             execute(parameter);

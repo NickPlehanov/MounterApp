@@ -10,7 +10,7 @@ namespace MounterApp.Views {
     public partial class MessagePopupPage : PopupPage {
         public MessagePopupPageViewModel VM { get; private set; }
         public int Delay { get; private set; }
-        public MessagePopupPage(MessagePopupPageViewModel vm,int delay) {
+        public MessagePopupPage(MessagePopupPageViewModel vm, int delay) {
             InitializeComponent();
             VM = vm;
             Delay = delay;
@@ -28,7 +28,7 @@ namespace MounterApp.Views {
             //await Task.Delay(4000);
             await Task.Delay(Delay);
             //await PopupNavigation.RemovePageAsync(this);
-            if(PopupNavigation.Instance.PopupStack.Any()) {
+            if (PopupNavigation.Instance.PopupStack.Any()) {
                 await PopupNavigation.Instance.PopAsync(false);
                 //return await navigation.PopAllPopupAsync(false);
             }

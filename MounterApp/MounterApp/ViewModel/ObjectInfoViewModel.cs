@@ -115,14 +115,22 @@ namespace MounterApp.ViewModel {
                 OpacityForm = 0.1;
                 IndicatorVisible = true;
                 int? number = null;
-                if (ServiceOrder != null)
-                    if (ServiceOrder.NewNumber.HasValue)
+                if (ServiceOrder != null) {
+                    if (ServiceOrder.NewNumber.HasValue) {
                         number = ServiceOrder.NewNumber;
-                if (ServiceOrderFireAlarm != null)
-                    if (ServiceOrderFireAlarm.NewNumber.HasValue)
+                    }
+                }
+
+                if (ServiceOrderFireAlarm != null) {
+                    if (ServiceOrderFireAlarm.NewNumber.HasValue) {
                         number = ServiceOrderFireAlarm.NewNumber;
-                if (number == null)
+                    }
+                }
+
+                if (number == null) {
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Номер объекта не найден. Информация о шлейфах недоступна", Color.Red, LayoutOptions.EndAndExpand), 4000));
+                }
+
                 WiresCollection = await ClientHttp.Get<ObservableCollection<Wires>>("/api/Andromeda/wires?objNumber=" + number);
                 OpacityForm = 1;
                 IndicatorVisible = false;
@@ -134,16 +142,24 @@ namespace MounterApp.ViewModel {
                 OpacityForm = 0.1;
                 IndicatorVisible = true;
                 int? number = null;
-                if (ServiceOrder != null)
-                    if (ServiceOrder.NewNumber.HasValue)
+                if (ServiceOrder != null) {
+                    if (ServiceOrder.NewNumber.HasValue) {
                         number = ServiceOrder.NewNumber;
-                if (ServiceOrderFireAlarm != null)
-                    if (ServiceOrderFireAlarm.NewNumber.HasValue)
+                    }
+                }
+
+                if (ServiceOrderFireAlarm != null) {
+                    if (ServiceOrderFireAlarm.NewNumber.HasValue) {
                         number = ServiceOrderFireAlarm.NewNumber;
-                if (number == null) 
+                    }
+                }
+
+                if (number == null) {
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Номер объекта не найден. Дополнительная информация из андромеды недоступна", Color.Red, LayoutOptions.EndAndExpand), 4000));
+                }
+
                 ExtFields = await ClientHttp.Get<ObservableCollection<ExtFields>>("/api/Andromeda/ext?objNumber=" + number);
-                    
+
                 OpacityForm = 1;
                 IndicatorVisible = false;
             });
@@ -222,10 +238,13 @@ namespace MounterApp.ViewModel {
             get => _WiresExpandedState;
             set {
                 _WiresExpandedState = value;
-                if (_WiresExpandedState)
+                if (_WiresExpandedState) {
                     ArrowCircleWires = IconName("arrow_circle_up");
-                else
+                }
+                else {
                     ArrowCircleWires = IconName("arrow_circle_down");
+                }
+
                 OnPropertyChanged(nameof(WiresExpandedState));
             }
         }
@@ -234,10 +253,13 @@ namespace MounterApp.ViewModel {
         public bool ExtFieldsExpandedState {
             get => _ExtFieldsExpandedState;
             set {
-                if (_ExtFieldsExpandedState)
+                if (_ExtFieldsExpandedState) {
                     ArrowCircleExtFields = IconName("arrow_circle_up");
-                else
+                }
+                else {
                     ArrowCircleExtFields = IconName("arrow_circle_down");
+                }
+
                 _ExtFieldsExpandedState = value;
                 OnPropertyChanged(nameof(ExtFieldsExpandedState));
             }

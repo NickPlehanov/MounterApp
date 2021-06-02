@@ -72,10 +72,13 @@ namespace MounterApp.ViewModel {
         public bool CustomersExpandedState {
             get => _CustomersExpandedState;
             set {
-                if (_CustomersExpandedState)
+                if (_CustomersExpandedState) {
                     ArrowCircleCustomers = IconName("arrow_circle_up");
-                else
+                }
+                else {
                     ArrowCircleCustomers = IconName("arrow_circle_down");
+                }
+
                 _CustomersExpandedState = value;
                 OnPropertyChanged(nameof(CustomersExpandedState));
             }
@@ -133,7 +136,7 @@ namespace MounterApp.ViewModel {
         private RelayCommand _CallCustomer;
         public RelayCommand CallCustomer {
             get => _CallCustomer ??= new RelayCommand(async obj => {
-                if (obj != null)
+                if (obj != null) {
                     if (!string.IsNullOrEmpty(obj.ToString())) {
                         //Analytics.TrackEvent("Звонок клиенту",
                         //    new Dictionary<string, string> {
@@ -142,12 +145,15 @@ namespace MounterApp.ViewModel {
                         Uri uri = new Uri("tel:" + obj);
                         await Launcher.OpenAsync(uri);
                     }
-                    else
+                    else {
                         //Toast.MakeText(Android.App.Application.Context,"Номер телефона не указан",ToastLength.Long).Show(); 
                         await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Номер телефона не указан или не корректный", Color.Red, LayoutOptions.EndAndExpand), 4000));
-                else
+                    }
+                }
+                else {
                     //Toast.MakeText(Android.App.Application.Context,"Номер телефона не указан",ToastLength.Long).Show();
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Номер телефона не указан или не корректный", Color.Red, LayoutOptions.EndAndExpand), 4000));
+                }
             });
         }
 
@@ -159,14 +165,22 @@ namespace MounterApp.ViewModel {
                 //Analytics.TrackEvent("Получение списка ответственных лиц по объекту");
                 List<ObjCust> custs = new List<ObjCust>();
                 int? number = null;
-                if (ServiceOrder != null)
-                    if (ServiceOrder.NewNumber.HasValue)
+                if (ServiceOrder != null) {
+                    if (ServiceOrder.NewNumber.HasValue) {
                         number = ServiceOrder.NewNumber;
-                if (ServiceOrderFireAlarm != null)
-                    if (ServiceOrderFireAlarm.NewNumber.HasValue)
+                    }
+                }
+
+                if (ServiceOrderFireAlarm != null) {
+                    if (ServiceOrderFireAlarm.NewNumber.HasValue) {
                         number = ServiceOrderFireAlarm.NewNumber;
-                if (number == null)
+                    }
+                }
+
+                if (number == null) {
                     return;
+                }
+
                 CutomersCollection = await ClientHttp.Get<ObservableCollection<ObjCust>>("/api/Andromeda/Customer?ObjectNumber=" + number);
 
                 //HttpResponseMessage response = null;

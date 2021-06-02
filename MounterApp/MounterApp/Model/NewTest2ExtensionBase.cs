@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Drawing;
-using System.Text;
 using Xamarin.Essentials;
 
 namespace MounterApp.Model {
     public partial class NewTest2ExtensionBase {
         public Guid NewTest2Id { get; set; }
-        public string NewName { get; set; }
+        public string NewName { get; set; } = "";
         public string NewAddress { get; set; }
         public Guid? NewAndromedaServiceorder { get; set; }
         public int? NewAutocreatePs { get; set; }
@@ -63,23 +61,28 @@ namespace MounterApp.Model {
         [NotMapped]
         public Color ColorOrder {
             get {
-                if(NewIncome.HasValue) {
-                    if(NewIncome.Value != null)
+                if (NewIncome.HasValue) {
+                    if (NewIncome.Value != null) {
                         return Color.Red;
+                    }
                     else {
                         AppTheme appTheme = AppInfo.RequestedTheme;
-                        if(appTheme == AppTheme.Light)
+                        if (appTheme == AppTheme.Light) {
                             return Color.White;
-                        else
+                        }
+                        else {
                             return Color.Black;
+                        }
                     }
                 }
                 else {
                     AppTheme appTheme = AppInfo.RequestedTheme;
-                    if(appTheme == AppTheme.Light)
+                    if (appTheme == AppTheme.Light) {
                         return Color.White;
-                    else
+                    }
+                    else {
                         return Color.Black;
+                    }
                 }
             }
         }
@@ -97,7 +100,7 @@ namespace MounterApp.Model {
                 //        return Color.FromArgb(51,37,97);
                 //}
                 //else
-                    return Color.FromArgb(51,37,97);
+                return Color.FromArgb(51, 37, 97);
             }
         }
         [NotMapped]

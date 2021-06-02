@@ -3,8 +3,9 @@
 namespace MounterApp.ViewModel {
     public class ActivityIndicatorViewModel : BaseViewModel {
         public ActivityIndicatorViewModel(bool closed) {
-            if (closed)
+            if (closed) {
                 App.Current.MainPage.Navigation.PopPopupAsync(true);
+            }
         }
 
         private bool _Closed;

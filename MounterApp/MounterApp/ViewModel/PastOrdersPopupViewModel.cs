@@ -1,22 +1,17 @@
-﻿using Android.Widget;
-using MounterApp.Helpers;
+﻿using MounterApp.Helpers;
 using MounterApp.Model;
-using MounterApp.Properties;
 using MounterApp.Views;
-using Newtonsoft.Json;
 using Rg.Plugins.Popup.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Net.Http;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class PastOrdersPopupViewModel : BaseViewModel {
         //readonly ClientHttp http = new ClientHttp();
-        public PastOrdersPopupViewModel(NewServiceorderExtensionBase_ex _so,List<NewServicemanExtensionBase> _servicemans,List<NewMounterExtensionBase> _mounters) {
+        public PastOrdersPopupViewModel(NewServiceorderExtensionBase_ex _so, List<NewServicemanExtensionBase> _servicemans, List<NewMounterExtensionBase> _mounters) {
             Mounters = _mounters;
             Servicemans = _servicemans;
             ServiceOrder = _so;
@@ -27,7 +22,7 @@ namespace MounterApp.ViewModel {
             OpacityForm = 1;
             CallImage = IconName("call");
         }
-        public PastOrdersPopupViewModel(NewTest2ExtensionBase_ex _so,List<NewServicemanExtensionBase> _servicemans,List<NewMounterExtensionBase> _mounters) {
+        public PastOrdersPopupViewModel(NewTest2ExtensionBase_ex _so, List<NewServicemanExtensionBase> _servicemans, List<NewMounterExtensionBase> _mounters) {
             Mounters = _mounters;
             Servicemans = _servicemans;
             ServiceOrderFireAlarm = _so;
@@ -109,21 +104,24 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetPastServiceOrders;
         public RelayCommand GetPastServiceOrders {
             get => _GetPastServiceOrders ??= new RelayCommand(async obj => {
-                if (obj == null)
+                if (obj == null) {
                     return;
+                }
 
                 Guid? andr = ServiceOrder != null ? ServiceOrder.NewAndromedaServiceorder : ServiceOrderFireAlarm.NewAndromedaServiceorder;
 
                 bool? b = obj as bool?;
-                if (b.Value==true)
+                if (b.Value == true) {
                     PastServiceOrders = await ClientHttp.Get<ObservableCollection<NewServiceorderExtensionBase_ex>>("/api/NewServiceorderExtensionBases/ServiceOrderByObjectNew?Andromeda_ID=" + andr);
+                }
+
                 if (b.Value == false) {
                     var pastFireOrders = await ClientHttp.Get<ObservableCollection<NewTest2ExtensionBase_ex>>("/api/NewServiceOrderForFireAlarmExtensionBase/ServiceOrderByObjectNew?Andromeda_ID=" + andr);
                     foreach (var item in pastFireOrders) {
-                        PastServiceOrders.Add(new NewServiceorderExtensionBase_ex() { ServiceOrderInfo = item.ServiceOrderInfo, ServicemanInfo=item.ServicemanInfo });
+                        PastServiceOrders.Add(new NewServiceorderExtensionBase_ex() { ServiceOrderInfo = item.ServiceOrderInfo, ServicemanInfo = item.ServicemanInfo });
                     }
                 }
-                    //PastServiceOrders = ;
+                //PastServiceOrders = ;
 
                 IndicatorVisible = true;
                 OpacityForm = 0.1;
@@ -131,7 +129,7 @@ namespace MounterApp.ViewModel {
                 //List<NewServiceorderExtensionBase_ex> _pso = new List<NewServiceorderExtensionBase_ex>();
                 //List<NewTest2ExtensionBase> _pso_fa = new List<NewTest2ExtensionBase>();
                 //var t = await http.GetQuery<ObservableCollection<NewServiceorderExtensionBase>>("/api/NewServiceorderExtensionBases/ServiceOrderByObjectNew?Andromeda_ID=" + andr);
-                
+
 
                 //PastServiceOrders.Clear();
                 //List<NewServiceorderExtensionBase_ex> _pso = new List<NewServiceorderExtensionBase_ex>();
@@ -213,8 +211,8 @@ namespace MounterApp.ViewModel {
         private RelayCommand _CallCustomer;
         public RelayCommand CallCustomer {
             get => _CallCustomer ??= new RelayCommand(async obj => {
-                if(obj != null)
-                    if(!string.IsNullOrEmpty(obj.ToString())) {
+                if (obj != null) {
+                    if (!string.IsNullOrEmpty(obj.ToString())) {
                         //Analytics.TrackEvent("Звонок клиенту",
                         //    new Dictionary<string,string> {
                         ////{"ServiceOrderID",ServiceOrder.NewServiceorderId.ToString() },
@@ -223,10 +221,13 @@ namespace MounterApp.ViewModel {
                         Uri uri = new Uri("tel:" + obj);
                         await Launcher.OpenAsync(uri);
                     }
-                    else
-                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Номер телефона не указан",Color.Red,LayoutOptions.EndAndExpand),4000));
-                else
-                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Номер телефона не указан",Color.Red,LayoutOptions.EndAndExpand),4000));
+                    else {
+                        await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Номер телефона не указан", Color.Red, LayoutOptions.EndAndExpand), 4000));
+                    }
+                }
+                else {
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Номер телефона не указан", Color.Red, LayoutOptions.EndAndExpand), 4000));
+                }
             });
         }
 
@@ -243,10 +244,13 @@ namespace MounterApp.ViewModel {
         public bool PastServiceOrdersExpandedState {
             get => _PastServiceOrdersExpandedState;
             set {
-                if(_PastServiceOrdersExpandedState)
+                if (_PastServiceOrdersExpandedState) {
                     ArrowCirclePastServiceOrders = IconName("arrow_circle_up");
-                else
+                }
+                else {
                     ArrowCirclePastServiceOrders = IconName("arrow_circle_down");
+                }
+
                 _PastServiceOrdersExpandedState = value;
                 OnPropertyChanged(nameof(PastServiceOrdersExpandedState));
             }

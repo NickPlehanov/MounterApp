@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 
 namespace MounterApp.Helpers.Controls {
     public class CustomEntry : Entry {
@@ -22,34 +19,35 @@ namespace MounterApp.Helpers.Controls {
             base.TextChanged += OnTextChanged;
         }
 
-        public void OnTextChanged(object sender,TextChangedEventArgs e) {
+        public void OnTextChanged(object sender, TextChangedEventArgs e) {
             Entry entry = sender as Entry;
 
             // If empty, set it to empty string.
-            if(string.IsNullOrWhiteSpace(e.NewTextValue)) {
+            if (string.IsNullOrWhiteSpace(e.NewTextValue)) {
                 entry.Text = string.Empty;
                 return;
             }
 
             // Check if it is numeric.
-            if(IsNumeric) {
+            if (IsNumeric) {
                 int value;
-                var isValid = int.TryParse(e.NewTextValue,out value);
+                var isValid = int.TryParse(e.NewTextValue, out value);
 
-                if(!isValid) {
+                if (!isValid) {
                     entry.Text = e.OldTextValue;
                     return;
                 }
 
                 // Check the min/max values.
-                if(value > MaxValue || value < MinValue) {
+                if (value > MaxValue || value < MinValue) {
                     entry.Text = e.OldTextValue;
                 }
             }
 
             // If not numeric, check the length.
-            if(e.NewTextValue.Length > MaxLength)
+            if (e.NewTextValue.Length > MaxLength) {
                 entry.Text = e.OldTextValue;
+            }
         }
     }
 }

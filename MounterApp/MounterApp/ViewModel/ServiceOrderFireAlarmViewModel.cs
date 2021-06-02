@@ -85,11 +85,11 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetObjectNameCommand;
         public RelayCommand GetObjectNameCommand {
             get => _GetObjectNameCommand ??= new RelayCommand(async obj => {
-                if (ServiceOrderFireAlarm.NewNumber.HasValue)
-                    if (ServiceOrderFireAlarm.NewNumber != 0)
+                if (ServiceOrderFireAlarm.NewNumber.HasValue) {
+                    if (ServiceOrderFireAlarm.NewNumber != 0) {
                         if (!string.IsNullOrEmpty(ServiceOrderFireAlarm.NewNumber.Value.ToString())) {
                             List<Info> obj_info = await ClientHttp.Get<List<Info>>("/api/Andromeda/Objinfo?objNumber=" + ServiceOrderFireAlarm.NewNumber.ToString() + "");
-                            if (obj_info != null)
+                            if (obj_info != null) {
                                 if (obj_info.Count() > 0) {
                                     Info inf = obj_info.First();
                                     if (inf != null) {
@@ -99,7 +99,10 @@ namespace MounterApp.ViewModel {
                                         DeviceName = inf.DeviceName.ToString();
                                     }
                                 }
+                            }
                         }
+                    }
+                }
             });
         }
         private string _DeviceName;
@@ -354,10 +357,13 @@ namespace MounterApp.ViewModel {
         public DateTime DateStart {
             get => _DateStart;
             set {
-                if (value == DateTime.Parse("01.01.1900 00:00:00"))
+                if (value == DateTime.Parse("01.01.1900 00:00:00")) {
                     _DateStart = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy")).AddDays(-1);
-                else
+                }
+                else {
                     _DateStart = value;
+                }
+
                 OnPropertyChanged(nameof(DateStart));
             }
         }
@@ -365,10 +371,13 @@ namespace MounterApp.ViewModel {
         public DateTime DateEnd {
             get => _DateEnd;
             set {
-                if (value == DateTime.Parse("01.01.1900 00:00:00"))
+                if (value == DateTime.Parse("01.01.1900 00:00:00")) {
                     _DateEnd = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
-                else
+                }
+                else {
                     _DateEnd = value;
+                }
+
                 OnPropertyChanged(nameof(DateEnd));
             }
         }
@@ -401,8 +410,9 @@ namespace MounterApp.ViewModel {
             get => _GetCategory ??= new RelayCommand(async obj => {
                 //List<MetadataModel> mm = new List<MetadataModel>();
                 List<MetadataModel> mm = await ClientHttp.Get<List<MetadataModel>>("/api/Common/metadata?ColumnName=new_category&ObjectName=New_test2");
-                if (mm != null && ServiceOrderFireAlarm.NewCategory != null)
+                if (mm != null && ServiceOrderFireAlarm.NewCategory != null) {
                     Category = mm.First(x => x.Value == ServiceOrderFireAlarm.NewCategory).Label;
+                }
 
                 //Analytics.TrackEvent("Получение списка категорий заявок технику",
                 //    new Dictionary<string,string> {
@@ -435,7 +445,7 @@ namespace MounterApp.ViewModel {
         public RelayCommand BackPressCommand {
             get => _BackPressCommand ??= new RelayCommand(async obj => {
                 //Analytics.TrackEvent("Выход с формы заявки технику");
-                ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans, Mounters,false);
+                ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans, Mounters, false);
                 App.Current.MainPage = new ServiceOrdersPage(vm);
             });
         }
@@ -451,7 +461,7 @@ namespace MounterApp.ViewModel {
                         ServiceOrderFireAlarm.NewNumber = andromeda.NewNumber;
                     }
                 }
-                if (ServiceOrderFireAlarm.NewNumber.HasValue)
+                if (ServiceOrderFireAlarm.NewNumber.HasValue) {
                     if (ServiceOrderFireAlarm.NewNumber != 0) {
                         //List<NewGuardObjectExtensionBase> goeb = await ClientHttp.Get<List<NewGuardObjectExtensionBase>>("/api/NewGuardObjectExtensionBases/GetInfoByNumber?number=" + ServiceOrderFireAlarm.NewNumber);
                         NewGuardObjectExtensionBase goeb = await ClientHttp.Get<NewGuardObjectExtensionBase>("/api/NewGuardObjectExtensionBases/GetInfoByNumberNew?number=" + ServiceOrderFireAlarm.NewNumber);
@@ -464,6 +474,7 @@ namespace MounterApp.ViewModel {
                             rrAccess = goeb.NewRrSkud.HasValue ? (bool)goeb.NewRrSkud : false;
                         }
                     }
+                }
 
 
                 //using HttpClient client = new HttpClient(GetHttpClientHandler());
@@ -685,19 +696,20 @@ namespace MounterApp.ViewModel {
                         var httpContent = new StringContent(JsonConvert.SerializeObject(soeb), Encoding.UTF8, "application/json");
                         HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/NewServiceOrderForFireAlarmExtensionBase", httpContent);
                         if (!responsePut.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
-                        //    Crashes.TrackError(new Exception("Ошибка при сохранении объекта Заявка технику"),
-                        //    new Dictionary<string, string> {
-                        //{"ServerResponse",responsePut.Content.ReadAsStringAsync().Result },
-                        //{"StatusCode",responsePut.StatusCode.ToString() },
-                        //{"Response",responsePut.ToString() }
+                            //    Crashes.TrackError(new Exception("Ошибка при сохранении объекта Заявка технику"),
+                            //    new Dictionary<string, string> {
+                            //{"ServerResponse",responsePut.Content.ReadAsStringAsync().Result },
+                            //{"StatusCode",responsePut.StatusCode.ToString() },
+                            //{"Response",responsePut.ToString() }
                             //});
                             //await Application.Current.MainPage.DisplayAlert("Ошибка"
                             //    ,"При попытке сохранения данных произошла ошибка. Повторите попытку позже, в случае если ошибка повторяется, сообщите в IT-отдел."
                             //    ,"OK");
                             await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При попытке сохранения данных произошла ошибка. Повторите попытку позже", Color.Red, LayoutOptions.EndAndExpand), 4000));
                         }
-                        else
+                        else {
                             Toast.MakeText(Android.App.Application.Context, "ОТМЕТКА ВРЕМЕНИ ПРИХОДА СОХРАНЕНА", ToastLength.Long).Show();
+                        }
                     }
                     //запишем координаты
                     //Analytics.TrackEvent("Попытка записи координат на сервер по объекту заявка технику(ПС)",
@@ -733,17 +745,17 @@ namespace MounterApp.ViewModel {
                         }
                     }
                     //else {
-                        //Analytics.TrackEvent("Заявка на ПС. Пустые координаты",
-                        //        new Dictionary<string, string> {
-                        //        { "PermissionStatus_StorageRead",CheckAndRequestPermissionAsync(new StorageRead()).Result.ToString() },
-                        //        { "PermissionStatus_LocationWhenInUse",CheckAndRequestPermissionAsync(new LocationWhenInUse()).Result.ToString() },
-                        //        { "PermissionStatus_NetworkState",CheckAndRequestPermissionAsync(new NetworkState()).Result.ToString() },
-                        //        { "PermissionStatus_Permissions.Camera",CheckAndRequestPermissionAsync(new Permissions.Camera()).Result.ToString() },
-                        //        { "PermissionStatus_StorageWrite",CheckAndRequestPermissionAsync(new StorageWrite()).Result.ToString() },
-                        //        { "Phone",Servicemans.First().NewPhone },
-                        //        { "Name",Servicemans.First().NewName }
-                        //            //{ "ID",ServiceOrderFireAlarm.NewTest2Id.ToString() }
-                        //        });
+                    //Analytics.TrackEvent("Заявка на ПС. Пустые координаты",
+                    //        new Dictionary<string, string> {
+                    //        { "PermissionStatus_StorageRead",CheckAndRequestPermissionAsync(new StorageRead()).Result.ToString() },
+                    //        { "PermissionStatus_LocationWhenInUse",CheckAndRequestPermissionAsync(new LocationWhenInUse()).Result.ToString() },
+                    //        { "PermissionStatus_NetworkState",CheckAndRequestPermissionAsync(new NetworkState()).Result.ToString() },
+                    //        { "PermissionStatus_Permissions.Camera",CheckAndRequestPermissionAsync(new Permissions.Camera()).Result.ToString() },
+                    //        { "PermissionStatus_StorageWrite",CheckAndRequestPermissionAsync(new StorageWrite()).Result.ToString() },
+                    //        { "Phone",Servicemans.First().NewPhone },
+                    //        { "Name",Servicemans.First().NewName }
+                    //            //{ "ID",ServiceOrderFireAlarm.NewTest2Id.ToString() }
+                    //        });
                     //}
                     ServiceOrderFireAlarm.NewIncome = DateTime.Now.AddHours(-5);
                     IncomeCommand.ChangeCanExecute();
@@ -764,7 +776,7 @@ namespace MounterApp.ViewModel {
         private RelayCommand _CallClientCommand;
         public RelayCommand CallClientCommand {
             get => _CallClientCommand ??= new RelayCommand(async obj => {
-                if (obj != null)
+                if (obj != null) {
                     if (string.IsNullOrEmpty(obj.ToString())) {
                         //Analytics.TrackEvent("Звонок клиенту",
                         //    new Dictionary<string, string> {
@@ -774,10 +786,13 @@ namespace MounterApp.ViewModel {
                         Uri uri = new Uri("tel:" + obj);
                         await Launcher.OpenAsync(uri);
                     }
-                    else
+                    else {
                         await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Не указан номер телефона", Color.Red, LayoutOptions.EndAndExpand), 4000));
-                else
+                    }
+                }
+                else {
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Не указан номер телефона", Color.Red, LayoutOptions.EndAndExpand), 4000));
+                }
             });
         }
         private RelayCommand _CloseOrderCommand;

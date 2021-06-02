@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Drawing;
-using System.Text;
 
 namespace MounterApp.Model {
     public class GetEventsReceivedFromObject_Result {
@@ -17,31 +15,33 @@ namespace MounterApp.Model {
         public string EventDesc { get; set; }
         [NotMapped]
         public string ZoneUserText {
-            get => string.Format("Зона: {0}",ZoneUser);
+            get => string.Format("Зона: {0}", ZoneUser);
         }
         [NotMapped]
         public string PartNumberText {
-            get => string.Format("Раздел: {0}",PartNumber);
+            get => string.Format("Раздел: {0}", PartNumber);
         }
         [NotMapped]
         public string RChannelNameText {
-            get => string.Format("Канал: {0}",RChannelName);
+            get => string.Format("Канал: {0}", RChannelName);
         }
         [NotMapped]
         public string EventCodeText {
-            get => string.Format("Код: {0}",EventCode);
+            get => string.Format("Код: {0}", EventCode);
         }
         [NotMapped]
         public string EventClassNameText {
-            get => string.Format("Класс: {0}",EventClassName);
+            get => string.Format("Класс: {0}", EventClassName);
         }
         [NotMapped]
         public Color ColorEvents {
             get {
-                if(EventClassName.ToLower().Contains("тревога")) 
-                        return Color.Red;
-                else
+                if (EventClassName.ToLower().Contains("тревога")) {
+                    return Color.Red;
+                }
+                else {
                     return Color.White;
+                }
             }
         }
     }

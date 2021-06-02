@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MounterApp.Model {
     public partial class NewGuardObjectExtensionBase {

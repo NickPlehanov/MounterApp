@@ -7,7 +7,7 @@ using Xamarin.Forms.Xaml;
 namespace MounterApp.Views {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class OrdersForITPopupPage : PopupPage {
-        public OrdersForITViewModel VM  { get; private set; }
+        public OrdersForITViewModel VM { get; private set; }
         public OrdersForITPopupPage() {
             InitializeComponent();
             this.HasSystemPadding = false;
@@ -18,7 +18,7 @@ namespace MounterApp.Views {
             this.BindingContext = VM;
             this.HasSystemPadding = false;
         }
-        private async void PopupPage_BackgroundClicked(object sender,EventArgs e) {
+        private async void PopupPage_BackgroundClicked(object sender, EventArgs e) {
             await App.Current.MainPage.Navigation.PopPopupAsync(false);
         }
     }

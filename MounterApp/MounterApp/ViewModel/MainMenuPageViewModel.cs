@@ -92,8 +92,9 @@ namespace MounterApp.ViewModel {
                     MountsViewModel vm = new MountsViewModel(Mounters, Serviceman);
                     App.Current.MainPage = new MountsPage(vm);
                 }
-                else
+                else {
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Не определен сотрудник, переход невозможен", Color.Red, LayoutOptions.EndAndExpand), 4000));
+                }
             }, obj => Mounters != null && Mounters.Count > 0);
         }
         /// <summary>
@@ -107,12 +108,13 @@ namespace MounterApp.ViewModel {
                     //    new Dictionary<string, string> {
                     //    {"ServicemansPhone",Serviceman.First().NewPhone }
                     //    });
-                    ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Serviceman, Mounters,true);
+                    ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Serviceman, Mounters, true);
                     App.Current.MainPage = new ServiceOrdersPage(vm);
                 }
-                else
+                else {
                     //await Application.Current.MainPage.DisplayAlert("Ошибка","Не определен сотрудник, переход невозможен","OK");
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Не определен сотрудник, переход невозможен", Color.Red, LayoutOptions.EndAndExpand), 4000));
+                }
             }, obj => Serviceman != null && Serviceman.Count > 0);
         }
         /// <summary>

@@ -1,5 +1,4 @@
 ﻿using Android.Content;
-using Android.Widget;
 using MounterApp.Helpers;
 using MounterApp.InternalModel;
 using MounterApp.Model;
@@ -12,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Text;
 using Xamarin.Essentials;
@@ -284,10 +282,13 @@ namespace MounterApp.ViewModel {
         public DateTime DateStart {
             get => _DateStart;
             set {
-                if (value == DateTime.Parse("01.01.1900 00:00:00"))
+                if (value == DateTime.Parse("01.01.1900 00:00:00")) {
                     _DateStart = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy")).AddDays(-1);
-                else
+                }
+                else {
                     _DateStart = value;
+                }
+
                 OnPropertyChanged(nameof(DateStart));
             }
         }
@@ -295,10 +296,13 @@ namespace MounterApp.ViewModel {
         public DateTime DateEnd {
             get => _DateEnd;
             set {
-                if (value == DateTime.Parse("01.01.1900 00:00:00"))
+                if (value == DateTime.Parse("01.01.1900 00:00:00")) {
                     _DateEnd = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
-                else
+                }
+                else {
                     _DateEnd = value;
+                }
+
                 OnPropertyChanged(nameof(DateEnd));
             }
         }
@@ -334,8 +338,9 @@ namespace MounterApp.ViewModel {
                 //        {"Servicemans",Servicemans.First().NewPhone } });
                 //List<MetadataModel> mm = new List<MetadataModel>();
                 List<MetadataModel> mm = await ClientHttp.Get<List<MetadataModel>>("/api/Common/metadata?ColumnName=new_category&ObjectName=New_serviceorder");
-                if (mm != null && ServiceOrderID.NewCategory != null)
+                if (mm != null && ServiceOrderID.NewCategory != null) {
                     Category = mm.FirstOrDefault(x => x.Value == ServiceOrderID.NewCategory).Label;
+                }
                 //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
                 //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/metadata?ColumnName=new_category&ObjectName=New_serviceorder");
                 //    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
@@ -364,7 +369,7 @@ namespace MounterApp.ViewModel {
         public RelayCommand BackPressCommand {
             get => _BackPressCommand ??= new RelayCommand(async obj => {
                 //Analytics.TrackEvent("Выход с формы заявки технику");
-                ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans, Mounters,false);
+                ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans, Mounters, false);
                 App.Current.MainPage = new ServiceOrdersPage(vm);
             });
         }
@@ -443,12 +448,12 @@ namespace MounterApp.ViewModel {
                         }
                     }
                     else {
-                    //    Crashes.TrackError(new Exception("Заявка технику. Ошибка получения координат.Доступ к геопозиции непредоставлен")
-                    //    , new Dictionary<string, string> {
-                    //    {"PermissionStatus",status.ToString()},
-                    //    {"phone",Servicemans.First().NewPhone },
-                    //    {"name",Servicemans.First().NewName }
-                    //});
+                        //    Crashes.TrackError(new Exception("Заявка технику. Ошибка получения координат.Доступ к геопозиции непредоставлен")
+                        //    , new Dictionary<string, string> {
+                        //    {"PermissionStatus",status.ToString()},
+                        //    {"phone",Servicemans.First().NewPhone },
+                        //    {"name",Servicemans.First().NewName }
+                        //});
                         await Application.Current.MainPage.DisplayAlert("Ошибка", "Отметка о времени прихода, не была записана!", "OK");
                         Opacity = 1;
                         IndicatorVisible = false;
@@ -489,12 +494,12 @@ namespace MounterApp.ViewModel {
                         var httpContent = new StringContent(JsonConvert.SerializeObject(soeb), Encoding.UTF8, "application/json");
                         HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases", httpContent);
                         if (!responsePut.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
-                        //    Crashes.TrackError(new Exception("Ошибка при сохранении объекта Заявка технику"),
-                        //    new Dictionary<string, string> {
-                        //{"ServerResponse",responsePut.Content.ReadAsStringAsync().Result },
-                        //{"StatusCode",responsePut.StatusCode.ToString() },
-                        //{"Response",responsePut.ToString() }
-                        //    });
+                            //    Crashes.TrackError(new Exception("Ошибка при сохранении объекта Заявка технику"),
+                            //    new Dictionary<string, string> {
+                            //{"ServerResponse",responsePut.Content.ReadAsStringAsync().Result },
+                            //{"StatusCode",responsePut.StatusCode.ToString() },
+                            //{"Response",responsePut.ToString() }
+                            //    });
                             //await Application.Current.MainPage.DisplayAlert("Ошибка"
                             //    ,"При попытке сохранения данных произошла ошибка. Повторите попытку позже, в случае если ошибка повторяется, сообщите в IT-отдел."
                             //    ,"OK");
@@ -525,13 +530,13 @@ namespace MounterApp.ViewModel {
                             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
                             HttpResponseMessage responsePost = await clientPost.PostAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates", content);
                             //if (!responsePost.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
-                        //        Crashes.TrackError(new Exception("Ошибка при сохранении объекта Заявка технику"),
-                        //        new Dictionary<string, string> {
-                        //{"ServerResponse",responsePost.Content.ReadAsStringAsync().Result },
-                        //{"StatusCode",responsePost.StatusCode.ToString() },
-                        //{"Response",responsePost.ToString() }
-                        //        });
-                        //    }
+                            //        Crashes.TrackError(new Exception("Ошибка при сохранении объекта Заявка технику"),
+                            //        new Dictionary<string, string> {
+                            //{"ServerResponse",responsePost.Content.ReadAsStringAsync().Result },
+                            //{"StatusCode",responsePost.StatusCode.ToString() },
+                            //{"Response",responsePost.ToString() }
+                            //        });
+                            //    }
                         }
                     }
                     else {
@@ -583,9 +588,12 @@ namespace MounterApp.ViewModel {
                 //        {"PhoneNumber",obj.ToString() }
                 //    });
                 string phone = null;
-                foreach (char c in obj.ToString().ToCharArray())
-                    if (char.IsDigit(c))
+                foreach (char c in obj.ToString().ToCharArray()) {
+                    if (char.IsDigit(c)) {
                         phone += c;
+                    }
+                }
+
                 if (phone != null) {
                     Uri uri = new Uri("tel:" + phone);
                     await Launcher.OpenAsync(uri);
@@ -595,8 +603,8 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetObjectNameCommand;
         public RelayCommand GetObjectNameCommand {
             get => _GetObjectNameCommand ??= new RelayCommand(async obj => {
-                if (ServiceOrderID.NewNumber.HasValue)
-                    if (!string.IsNullOrEmpty(ServiceOrderID.NewNumber.Value.ToString()))
+                if (ServiceOrderID.NewNumber.HasValue) {
+                    if (!string.IsNullOrEmpty(ServiceOrderID.NewNumber.Value.ToString())) {
                         if (ServiceOrderID.NewNumber != 0) {
                             List<Info> obj_info = await ClientHttp.Get<List<Info>>("/api/Andromeda/Objinfo?objNumber=" + ServiceOrderID.NewNumber.ToString() + "");
                             if (obj_info != null) {
@@ -611,6 +619,8 @@ namespace MounterApp.ViewModel {
                                 }
                             }
                         }
+                    }
+                }
             });
         }
 

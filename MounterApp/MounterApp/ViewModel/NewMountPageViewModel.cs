@@ -2,19 +2,19 @@
 using MounterApp.InternalModel;
 using MounterApp.Model;
 using MounterApp.Views;
+using Newtonsoft.Json;
 using Plugin.Media.Abstractions;
+using Rg.Plugins.Popup.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
-using Xamarin.Forms;
-using Rg.Plugins.Popup.Extensions;
 using Xamarin.Essentials;
-using System.Net;
-using Newtonsoft.Json;
+using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class NewMountPageViewModel : BaseViewModel {
@@ -96,11 +96,15 @@ namespace MounterApp.ViewModel {
         private RelayCommand _FillMount;
         public RelayCommand FillMount {
             get => _FillMount ??= new RelayCommand(async obj => {
-                if (obj is null)
+                if (obj is null) {
                     return;
+                }
+
                 Mounts mount = obj as Mounts;
-                if (mount is null)
+                if (mount is null) {
                     return;
+                }
+
                 Mount = mount;
                 Mount.MounterID = Mounters.FirstOrDefault().NewMounterId;
                 ObjectNumber = Mount.ObjectNumber;
@@ -112,10 +116,14 @@ namespace MounterApp.ViewModel {
             });
         }
         private bool AddPhoto(string obj, string phototypename) {
-            if (string.IsNullOrEmpty(obj))
+            if (string.IsNullOrEmpty(obj)) {
                 return false;
-            if (string.IsNullOrEmpty(phototypename))
+            }
+
+            if (string.IsNullOrEmpty(phototypename)) {
                 return false;
+            }
+
             PhotoCollection photo = new PhotoCollection(
                 Guid.NewGuid(),
                 obj,
@@ -341,9 +349,9 @@ namespace MounterApp.ViewModel {
         private RelayCommand _SendToServer;
         public RelayCommand SendToServer {
             get => _SendToServer ??= new RelayCommand(async obj => {
-                if (string.IsNullOrEmpty(ObjectNumberValidationError) && string.IsNullOrWhiteSpace(ObjectNumberValidationError))
-                    if (string.IsNullOrEmpty(ObjectNameValidationError) && string.IsNullOrWhiteSpace(ObjectNameValidationError))
-                        if (string.IsNullOrEmpty(ObjectAddressValidationError) && string.IsNullOrWhiteSpace(ObjectAddressValidationError))
+                if (string.IsNullOrEmpty(ObjectNumberValidationError) && string.IsNullOrWhiteSpace(ObjectNumberValidationError)) {
+                    if (string.IsNullOrEmpty(ObjectNameValidationError) && string.IsNullOrWhiteSpace(ObjectNameValidationError)) {
+                        if (string.IsNullOrEmpty(ObjectAddressValidationError) && string.IsNullOrWhiteSpace(ObjectAddressValidationError)) {
                             if (Photos.Count >= 7) {
                                 //TODO: проверять, что это обязательные фото, а не просто количество
                                 //Analytics.TrackEvent("Отправка нового монтажа на сервер",
@@ -413,8 +421,9 @@ namespace MounterApp.ViewModel {
                                         WriteWebLink.Execute(null);
                                         WriteCoordinates.Execute(null);
                                         WriteDriveways.Execute(null);
-                                        if (IsSuccessSendEvents && IsSuccessWriteWebLink)
+                                        if (IsSuccessSendEvents && IsSuccessWriteWebLink) {
                                             await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Монтаж отправлен, данные получены оператором", Color.Green, LayoutOptions.EndAndExpand), 4000));
+                                        }
                                         else {
                                             await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Монтаж отправлен, данные получены оператором", Color.Green, LayoutOptions.EndAndExpand), 4000));
                                             //Analytics.TrackEvent("Ошибка при отправке монтажа, не получилось записать ссылку, координаты, маршрут или отправить событие",
@@ -434,14 +443,17 @@ namespace MounterApp.ViewModel {
                                 await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Не все обязательные фото были сделаны", Color.Red, LayoutOptions.EndAndExpand), 4000));
                                 //Analytics.TrackEvent("Ошибка. Количество фото");
                             }
+                        }
                         else {
                             await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Адрес объекта не может быть пустым", Color.Red, LayoutOptions.EndAndExpand), 4000));
                             //Analytics.TrackEvent("Ошибка. Адрес объекта");
                         }
+                    }
                     else {
                         await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Название объекта не может быть пустым", Color.Red, LayoutOptions.EndAndExpand), 4000));
                         //Analytics.TrackEvent("Ошибка. Название объекта");
                     }
+                }
                 else {
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Номер объекта не может быть пустым", Color.Red, LayoutOptions.EndAndExpand), 4000));
                     //Analytics.TrackEvent("Ошибка. Номер объекта");
@@ -456,11 +468,11 @@ namespace MounterApp.ViewModel {
             get => _WriteCoordinates ??= new RelayCommand(async obj => {
                 HttpStatusCode code = await ClientHttp.Get("/api/Andromeda/coords?ObjectNumber=" + ObjectNumber + "&ObjectAddress=" + ObjectAddress);
                 //if (!code.Equals(HttpStatusCode.Accepted))
-                    //Crashes.TrackError(new Exception("Не удачная попытка записи координат в андромеду"),
-                    //        new Dictionary<string, string> {
-                    //                {"ObjectNumber",ObjectNumber },
-                    //                {"ObjectAddress",ObjectAddress }
-                    //        });
+                //Crashes.TrackError(new Exception("Не удачная попытка записи координат в андромеду"),
+                //        new Dictionary<string, string> {
+                //                {"ObjectNumber",ObjectNumber },
+                //                {"ObjectAddress",ObjectAddress }
+                //        });
             });
         }
 
@@ -469,11 +481,11 @@ namespace MounterApp.ViewModel {
             get => _WriteDriveways ??= new RelayCommand(async obj => {
                 HttpStatusCode code = await ClientHttp.Get("/api/Andromeda/driveways?ObjectNumber=" + ObjectNumber + "&ObjectAddress=" + ObjectAddress);
                 //if (!code.Equals(HttpStatusCode.Accepted))
-                    //Crashes.TrackError(new Exception("Не удачная попытка записи подъездных путей в андромеду"),
-                    //        new Dictionary<string, string> {
-                    //                {"ObjectNumber",ObjectNumber },
-                    //                {"ObjectAddress",ObjectAddress }
-                    //        });
+                //Crashes.TrackError(new Exception("Не удачная попытка записи подъездных путей в андромеду"),
+                //        new Dictionary<string, string> {
+                //                {"ObjectNumber",ObjectNumber },
+                //                {"ObjectAddress",ObjectAddress }
+                //        });
             });
         }
 
@@ -490,8 +502,9 @@ namespace MounterApp.ViewModel {
                     //                {"ObjectAddress",ObjectAddress }
                     //        });
                 }
-                else
+                else {
                     IsSuccessWriteWebLink = true;
+                }
             });
         }
         private RelayCommand _SendEventsToAndromeda;
@@ -507,8 +520,9 @@ namespace MounterApp.ViewModel {
                     //        });
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("От сервера не был получен корректный ответ. Доставка обходного до оператора не может быть гарантирована.", Color.Red, LayoutOptions.EndAndExpand), 4000));
                 }
-                else
+                else {
                     IsSuccessSendEvents = true;
+                }
             });
         }
         private Mounts GetMount(int? id) {
@@ -529,16 +543,22 @@ namespace MounterApp.ViewModel {
             mount.ObjectActTech1 = Photos.Any(x => x._Types.PhotoTypeName == "Акт технич. сост-я 1") ? Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Акт технич. сост-я 1").Data : "";
             mount.ObjectActTech2 = Photos.Any(x => x._Types.PhotoTypeName == "Акт технич. сост-я 2") ? Photos.FirstOrDefault(x => x._Types.PhotoTypeName == "Акт технич. сост-я 2").Data : "";
             foreach (var item in Photos.Where(x => x._Types.PhotoTypeName == "Доп. фото" && x.IsUse == false)) {
-                if (mount.ObjectExtra1 == null)
+                if (mount.ObjectExtra1 == null) {
                     mount.ObjectExtra1 = Photos.FirstOrDefault(x => x.ID == item.ID).Data;
-                else if (mount.ObjectExtra2 == null)
+                }
+                else if (mount.ObjectExtra2 == null) {
                     mount.ObjectExtra2 = Photos.FirstOrDefault(x => x.ID == item.ID).Data;
-                else if (mount.ObjectExtra3 == null)
+                }
+                else if (mount.ObjectExtra3 == null) {
                     mount.ObjectExtra3 = Photos.FirstOrDefault(x => x.ID == item.ID).Data;
-                else if (mount.ObjectExtra4 == null)
+                }
+                else if (mount.ObjectExtra4 == null) {
                     mount.ObjectExtra4 = Photos.FirstOrDefault(x => x.ID == item.ID).Data;
-                else if (mount.ObjectExtra5 == null)
+                }
+                else if (mount.ObjectExtra5 == null) {
                     mount.ObjectExtra5 = Photos.FirstOrDefault(x => x.ID == item.ID).Data;
+                }
+
                 Photos.FirstOrDefault(x => x.ID == item.ID).IsUse = true;
             }
             Mount = mount;
@@ -701,8 +721,10 @@ namespace MounterApp.ViewModel {
         private RelayCommand _BackPressCommand;
         public RelayCommand BackPressCommand {
             get => _BackPressCommand ??= new RelayCommand(async obj => {
-                if (!SaveFlag)
+                if (!SaveFlag) {
                     SaveToDB.Execute(null);
+                }
+
                 MountsViewModel vm = new MountsViewModel(Mounters, Servicemans);
                 App.Current.MainPage = new MountsPage(vm);
             });
@@ -724,8 +746,10 @@ namespace MounterApp.ViewModel {
                 //    {"MounterPhone",Mounters.FirstOrDefault().NewPhone },
                 //    {"ObjectNumber",ObjectNumber }
                 //});
-                if (Mount == null)
+                if (Mount == null) {
                     Mount = new Mounts();
+                }
+
                 Mount.ObjectNumber = ObjectNumber;
                 Mount.ObjectName = ObjectName;
                 Mount.AddressName = ObjectAddress;
@@ -779,9 +803,12 @@ namespace MounterApp.ViewModel {
                 return _ObjectNumber;
             }
             set {
-                if (_ObjectNumber != value)
-                    if (_ObjectNumber != null)
+                if (_ObjectNumber != value) {
+                    if (_ObjectNumber != null) {
                         IsChanged = true;
+                    }
+                }
+
                 _ObjectNumber = value;
                 if (string.IsNullOrEmpty(_ObjectNumber) || string.IsNullOrWhiteSpace(_ObjectNumber)) {
                     ObjectNumberValidationError = "Номер объекта не может быть пустым";
@@ -809,9 +836,12 @@ namespace MounterApp.ViewModel {
                 return _ObjectName;
             }
             set {
-                if (_ObjectName != value)
-                    if (_ObjectName != null)
+                if (_ObjectName != value) {
+                    if (_ObjectName != null) {
                         IsChanged = true;
+                    }
+                }
+
                 _ObjectName = value;
                 if (string.IsNullOrEmpty(_ObjectName) || string.IsNullOrWhiteSpace(_ObjectName)) {
                     ObjectNameValidationError = "Название объекта не может быть пустым";
@@ -835,9 +865,12 @@ namespace MounterApp.ViewModel {
                 return _ObjectAddress;
             }
             set {
-                if (_ObjectAddress != value)
-                    if (_ObjectAddress != null)
+                if (_ObjectAddress != value) {
+                    if (_ObjectAddress != null) {
                         IsChanged = true;
+                    }
+                }
+
                 _ObjectAddress = value;
                 if (string.IsNullOrEmpty(_ObjectAddress) || string.IsNullOrWhiteSpace(_ObjectAddress)) {
                     ObjectAddressValidationError = "Адрес объекта не может быть пустым";
@@ -855,9 +888,12 @@ namespace MounterApp.ViewModel {
         public string ObjectDriveways {
             get => _ObjectDriveways;
             set {
-                if (_ObjectDriveways != value)
-                    if (_ObjectDriveways != null)
+                if (_ObjectDriveways != value) {
+                    if (_ObjectDriveways != null) {
                         IsChanged = true;
+                    }
+                }
+
                 _ObjectDriveways = value;
                 OnPropertyChanged(nameof(ObjectDriveways));
             }
@@ -949,9 +985,12 @@ namespace MounterApp.ViewModel {
         public ObservableCollection<PhotoCollection> Photos {
             get => _Photos;
             set {
-                if (_Photos != value)
-                    if (_Photos != null)
+                if (_Photos != value) {
+                    if (_Photos != null) {
                         IsChanged = true;
+                    }
+                }
+
                 _Photos = value;
                 OnPropertyChanged(nameof(Photos));
             }

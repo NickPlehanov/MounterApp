@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace MounterApp.Helpers {
     public abstract class AsyncCommandBase : IAsyncCommand {
@@ -12,8 +11,8 @@ namespace MounterApp.Helpers {
             await ExecuteAsync(parameter);
         }
         //public event EventHandler CanExecuteChanged {
-            //add { CommandManager.RequerySuggested += value; }
-            //remove { CommandManager.RequerySuggested -= value; }
+        //add { CommandManager.RequerySuggested += value; }
+        //remove { CommandManager.RequerySuggested -= value; }
         //}
         //protected void RaiseCanExecuteChanged() {
         //    CommandManager.InvalidateRequerySuggested();

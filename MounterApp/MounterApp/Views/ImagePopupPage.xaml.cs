@@ -11,7 +11,7 @@ namespace MounterApp.Views {
         public ImagePopupPage() {
             InitializeComponent();
         }
-        private void PopupPage_BackgroundClicked(object sender,EventArgs e) {
+        private void PopupPage_BackgroundClicked(object sender, EventArgs e) {
             App.Current.MainPage.Navigation.PopPopupAsync(false);
         }
         public ImagePopupPage(ImagePopupViewModel vm) {

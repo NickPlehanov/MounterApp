@@ -1,7 +1,7 @@
 ﻿using System;
 
 namespace MounterApp.Model {
-	public partial class NewMounterExtensionBase {
+    public partial class NewMounterExtensionBase {
         public Guid NewMounterId { get; set; }
         public string NewName { get; set; }
         public string NewPhone { get; set; }

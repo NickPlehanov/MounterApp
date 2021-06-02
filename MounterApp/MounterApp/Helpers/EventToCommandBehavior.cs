@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 using System.Windows.Input;
 using Xamarin.Forms;
 
@@ -32,7 +30,9 @@ namespace MounterApp.Helpers {
         static void OnEventNameChanged(BindableObject bindable, object oldValue, object newValue) {
             var behavior = (EventToCommandBehavior)bindable;
 
-            if (behavior.AssociatedObject == null) return;
+            if (behavior.AssociatedObject == null) {
+                return;
+            }
 
             string oldEventName = (string)oldValue;
             string newEventName = (string)newValue;
@@ -42,12 +42,15 @@ namespace MounterApp.Helpers {
         }
 
         void RegisterEvent(string name) {
-            if (string.IsNullOrWhiteSpace(name)) return;
+            if (string.IsNullOrWhiteSpace(name)) {
+                return;
+            }
 
             EventInfo eventInfo = AssociatedObject.GetType().GetRuntimeEvent(name);
 
-            if (eventInfo == null)
+            if (eventInfo == null) {
                 throw new ArgumentException(string.Format("EventToCommandBehavior: Can't register the '{0}' event.", EventName));
+            }
 
             MethodInfo methodInfo = typeof(EventToCommandBehavior).GetTypeInfo().GetDeclaredMethod("OnEvent");
             eventHandler = methodInfo.CreateDelegate(eventInfo.EventHandlerType, this);
@@ -55,27 +58,32 @@ namespace MounterApp.Helpers {
         }
 
         void DeregisterEvent(string name) {
-            if (string.IsNullOrWhiteSpace(name) || eventHandler == null)
+            if (string.IsNullOrWhiteSpace(name) || eventHandler == null) {
                 return;
+            }
 
             EventInfo eventInfo = AssociatedObject.GetType().GetRuntimeEvent(name);
 
-            if (eventInfo == null)
+            if (eventInfo == null) {
                 throw new ArgumentException(string.Format("EventToCommandBehavior: Can't de-register the '{0}' event.", EventName));
+            }
 
             eventInfo.RemoveEventHandler(AssociatedObject, eventHandler);
             eventHandler = null;
         }
 
         void OnEvent(object sender, object eventArgs) {
-            if (Command == null) return;
+            if (Command == null) {
+                return;
+            }
 
             object resolvedParameter;
 
             resolvedParameter = eventArgs;
 
-            if (Command.CanExecute(resolvedParameter))
+            if (Command.CanExecute(resolvedParameter)) {
                 Command.Execute(resolvedParameter);
+            }
         }
 
     }

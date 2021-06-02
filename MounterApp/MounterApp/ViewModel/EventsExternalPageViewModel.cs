@@ -49,10 +49,13 @@ namespace MounterApp.ViewModel {
         public DateTime StartDate {
             get => _StartDate;
             set {
-                if (value == DateTime.Parse("01.01.1900 00:00:00"))
+                if (value == DateTime.Parse("01.01.1900 00:00:00")) {
                     _StartDate = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
-                else
+                }
+                else {
                     _StartDate = value;
+                }
+
                 OnPropertyChanged(nameof(StartDate));
             }
         }
@@ -63,10 +66,13 @@ namespace MounterApp.ViewModel {
         public DateTime EndDate {
             get => _EndDate;
             set {
-                if (value == DateTime.Parse("01.01.1900 00:00:00"))
+                if (value == DateTime.Parse("01.01.1900 00:00:00")) {
                     _EndDate = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy")).AddDays(1);
-                else
+                }
+                else {
                     _EndDate = value;
+                }
+
                 OnPropertyChanged(nameof(EndDate));
             }
         }
@@ -166,7 +172,7 @@ namespace MounterApp.ViewModel {
             }
             IndicatorVisible = false;
             OpacityForm = 1;
-        },obj=> StartDate <= EndDate && !string.IsNullOrEmpty(ObjectNumber));
+        }, obj => StartDate <= EndDate && !string.IsNullOrEmpty(ObjectNumber));
         /// <summary>
         /// Команда выхода с формы
         /// </summary>

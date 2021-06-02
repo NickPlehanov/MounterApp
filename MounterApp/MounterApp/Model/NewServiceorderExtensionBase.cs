@@ -5,7 +5,7 @@ using System.Drawing;
 namespace MounterApp.Model {
     public partial class NewServiceorderExtensionBase {
         public Guid NewServiceorderId { get; set; }
-        public string NewName { get; set; }
+        public string NewName { get; set; } = "";
         public DateTime? NewDate { get; set; }
         public Guid? NewServicemanServiceorder { get; set; }
         public DateTime? NewIncome { get; set; }
@@ -83,31 +83,42 @@ namespace MounterApp.Model {
         [NotMapped]
         public Color ColorOrder {
             get {
-                if(NewIncome.HasValue) {
-                    if(NewIncome.Value!=null)
+                if (NewIncome.HasValue) {
+                    if (NewIncome.Value != null) {
                         return Color.Red;
-                    else
+                    }
+                    else {
                         return Color.White;
+                    }
                 }
-                else
+                else {
                     return Color.White;
+                }
             }
         }
         [NotMapped]
         public Color FrameColor {
             get {
-                if(NewOrderFrom.HasValue) {
-                    if(NewOrderFrom.Value == 1)//ВИП клиент
+                if (NewOrderFrom.HasValue) {
+                    if (NewOrderFrom.Value == 1)//ВИП клиент
+{
                         return Color.Red;
-                    else if(NewOrderFrom.Value == 2)//Клиент
+                    }
+                    else if (NewOrderFrom.Value == 2)//Клиент
+{
                         return Color.Yellow;
-                    else if(NewOrderFrom.Value == 3)//Сотрудник витязя
+                    }
+                    else if (NewOrderFrom.Value == 3)//Сотрудник витязя
+{
                         return Color.Blue;
-                    else
-                        return Color.FromArgb(51,37,97);
+                    }
+                    else {
+                        return Color.FromArgb(51, 37, 97);
+                    }
                 }
-                else
-                    return Color.FromArgb(51,37,97);
+                else {
+                    return Color.FromArgb(51, 37, 97);
+                }
             }
         }
         [NotMapped]

@@ -15,12 +15,13 @@ namespace MounterApp.Views {
             this.BindingContext = VM;
         }
         protected override bool OnBackButtonPressed() {
-            if(VM.BackPressCommand.CanExecute(null)){
-                VM.BackPressCommand.Execute(null); 
+            if (VM.BackPressCommand.CanExecute(null)) {
+                VM.BackPressCommand.Execute(null);
                 return true;
             }
-            else
+            else {
                 return false;
+            }
         }
-    }    
+    }
 }
