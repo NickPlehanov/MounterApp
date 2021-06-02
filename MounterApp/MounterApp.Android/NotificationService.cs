@@ -9,12 +9,12 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace MounterApp.Droid {
-    [Service(Enabled = true)]
+    [Service(Enabled = false)]
     public class NotificationService : Service {
         private Handler handler;
         private Action runnable;
         private bool isStarted;
-        private int DELAY_BETWEEN_LOG_MESSAGES = 10000;
+        private int DELAY_BETWEEN_LOG_MESSAGES = 100000;
         private int NOTIFICATION_SERVICE_ID = 1001;
         private int NOTIFICATION_AlARM_ID = 1002;
         private string NOTIFICATION_CHANNEL_ID = "1003";
@@ -177,6 +177,8 @@ namespace MounterApp.Droid {
             if (OldServiceOrders.Count == _serviceorders.Count)
                 foreach (var item in OldServiceOrders.Where(x => x.IsShowed == false).ToList())
                     compr.Add(item);
+            //if (OldServiceOrders.Count == 0 && _serviceorders.Count > 0)
+            //    return;
 
 
 
@@ -186,7 +188,7 @@ namespace MounterApp.Droid {
 
             var notificationManager = (NotificationManager)GetSystemService(NotificationService);
 
-            foreach (var item in compr.Where(x => x.IsShowed == false).ToList()) {
+            foreach (var item in compr.Where(x => x.IsShowed == false && !x.NewIncome.HasValue).ToList()) {
                 var rand = new Random();
                 int alarm_ID = rand.Next(1, 1000000);
 
@@ -194,7 +196,7 @@ namespace MounterApp.Droid {
                     .SetSmallIcon(Resource.Drawable.icon)
                     //.SetContentTitle(DateTime.Now.ToString())
                     .SetContentTitle("Новая заявка")
-                    .SetContentText(string.Format(@"№:{0} - {1} {2}", item.NewNumber, item.NewObjName, item.NewAddress))
+                    .SetContentText(string.Format(@"№:{0} - {1} {2}", item.NewNumber.HasValue ? item.NewNumber : 0, string.IsNullOrEmpty(item.NewObjName) ? "" : item.NewObjName, string.IsNullOrEmpty(item.NewAddress) ? "" : item.NewAddress))
                     .SetAutoCancel(true)
                     .SetContentIntent(pendingIntent);
 

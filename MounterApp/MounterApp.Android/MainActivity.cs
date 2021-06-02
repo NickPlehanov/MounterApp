@@ -32,20 +32,20 @@ namespace MounterApp.Droid {
 			Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode,permissions,grantResults);
 			base.OnRequestPermissionsResult(requestCode,permissions,grantResults);
 
-			//var serviceToStart = new Intent(this, typeof(NotificationService));
-			//StartService(serviceToStart);
-		}
+            //var serviceToStart = new Intent(this, typeof(NotificationService));
+            //StartService(serviceToStart);
+        }
 		public override void OnBackPressed() {
 			if(Rg.Plugins.Popup.Popup.SendBackPressed(base.OnBackPressed)) {
 				App.Current.MainPage.Navigation.PopPopupAsync(true);
-				StopService(new Intent(this, typeof(NotificationService)));
-			}
+                //StopService(new Intent(this, typeof(NotificationService)));
+            }
 		}
 
         protected override void OnPostResume() {
             base.OnPostResume();
-			var serviceToStart = new Intent(this, typeof(NotificationService));
-			StartService(serviceToStart);
-		}
+            //var serviceToStart = new Intent(this, typeof(NotificationService));
+            //StartService(serviceToStart);
+        }
     }
 }
