@@ -39,6 +39,8 @@ namespace MounterApp.ViewModel {
             CountOrders = null;
             CountOrdersFireAlarm = null;
 
+            GetCategoryTech.Execute(Category);
+
             if (Date == DateTime.Parse("01.01.0001 00:00:00"))
                 Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
             Servicemans = _servicemans;
@@ -78,6 +80,7 @@ namespace MounterApp.ViewModel {
             FireAlarmTransferServiceOrderVisible = false;
             FireAlarmTimeServiceOrderVisible = false;
             FireAlarmOtherServiceOrderVisible = false;
+
 
             //GetServiceOrders.Execute(Servicemans);
             //GetServiceOrderByTransfer.Execute(Servicemans);
@@ -122,6 +125,7 @@ namespace MounterApp.ViewModel {
                         Device.StartTimer(TimeSpan.FromMinutes(Convert.ToDouble(obj)), () => {
                             Task.Run(async () => {
                                 try {
+                                    GetCategoryTech.Execute(Category);
                                     FireAlarmOtherServiceOrderExpanded = true;
                                     FireAlarmServiceOrderExpanded = true;
                                     FireAlarmTimeServiceOrderExpanded = true;
@@ -497,23 +501,23 @@ namespace MounterApp.ViewModel {
 
 
                 NewServicemanExtensionBase sm = null;
-                if (Category != null)
-                    if (Category.Count > 0) {
-                        try {
-                            sm = Servicemans.FirstOrDefault(x => x.NewCategory == Category.FirstOrDefault(x => x.Value == 6).Value);
-                        }
-                        catch (Exception ex) {
-                            sm = null;
-                            Analytics.TrackEvent("Не удалось найти техника с необходимой категорией для техников по ПС",
-                            new Dictionary<string, string> {
-                                {"ErrorMessage",ex.Message }
-                            });
-                        }
-                        if (sm != null) {
+                //if (Category != null)
+                //    if (Category.Count > 0) {
+                //        try {
+                //            sm = Servicemans.FirstOrDefault(x => x.NewCategory == Category.FirstOrDefault(x => x.Value == 6).Value);
+                //        }
+                //        catch (Exception ex) {
+                //            sm = null;
+                //            Analytics.TrackEvent("Не удалось найти техника с необходимой категорией для техников по ПС",
+                //            new Dictionary<string, string> {
+                //                {"ErrorMessage",ex.Message }
+                //            });
+                //        }
+                //        if (sm != null) {
                             GetServiceOrderByTransferFireAlarm.Execute(null);
                             GetServiceOrdersFireAlarm.Execute(null);
-                        }
-                    }
+                    //    }
+                    //}
             });
         }
         private RelayCommand _GetServiceOrders;

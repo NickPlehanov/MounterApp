@@ -22,7 +22,7 @@ namespace MounterApp.ViewModel {
             Mounters = _mounters;
             Servicemans = _servicemans;
             ServiceOrder = _so;
-            GetPastServiceOrders.Execute(null);
+            GetPastServiceOrders.Execute(true);
             ArrowCirclePastServiceOrders = IconName("arrow_circle_down");
             CloseImage = IconName("close");
             IndicatorVisible = false;
@@ -33,7 +33,7 @@ namespace MounterApp.ViewModel {
             Mounters = _mounters;
             Servicemans = _servicemans;
             ServiceOrderFireAlarm = _so;
-            GetPastServiceOrders.Execute(null);
+            GetPastServiceOrders.Execute(false);
             ArrowCirclePastServiceOrders = IconName("arrow_circle_down");
             CloseImage = IconName("close");
             IndicatorVisible = false;
@@ -111,14 +111,29 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetPastServiceOrders;
         public RelayCommand GetPastServiceOrders {
             get => _GetPastServiceOrders ??= new RelayCommand(async obj => {
+                if (obj == null)
+                    return;
+
+                Guid? andr = ServiceOrder != null ? ServiceOrder.NewAndromedaServiceorder : ServiceOrderFireAlarm.NewAndromedaServiceorder;
+
+                bool? b = obj as bool?;
+                if (b.Value==true)
+                    PastServiceOrders = await ClientHttp.Get<ObservableCollection<NewServiceorderExtensionBase_ex>>("/api/NewServiceorderExtensionBases/ServiceOrderByObjectNew?Andromeda_ID=" + andr);
+                if (b.Value == false) {
+                    var pastFireOrders = await ClientHttp.Get<ObservableCollection<NewTest2ExtensionBase_ex>>("/api/NewServiceOrderForFireAlarmExtensionBase/ServiceOrderByObjectNew?Andromeda_ID=" + andr);
+                    foreach (var item in pastFireOrders) {
+                        PastServiceOrders.Add(new NewServiceorderExtensionBase_ex() { ServiceOrderInfo = item.ServiceOrderInfo, ServicemanInfo=item.ServicemanInfo });
+                    }
+                }
+                    //PastServiceOrders = ;
+
                 IndicatorVisible = true;
                 OpacityForm = 0.1;
 
                 //List<NewServiceorderExtensionBase_ex> _pso = new List<NewServiceorderExtensionBase_ex>();
                 //List<NewTest2ExtensionBase> _pso_fa = new List<NewTest2ExtensionBase>();
-                Guid? andr = ServiceOrder != null ? ServiceOrder.NewAndromedaServiceorder : ServiceOrderFireAlarm.NewAndromedaServiceorder;
                 //var t = await http.GetQuery<ObservableCollection<NewServiceorderExtensionBase>>("/api/NewServiceorderExtensionBases/ServiceOrderByObjectNew?Andromeda_ID=" + andr);
-                PastServiceOrders = await ClientHttp.Get<ObservableCollection<NewServiceorderExtensionBase_ex>>("/api/NewServiceorderExtensionBases/ServiceOrderByObjectNew?Andromeda_ID=" + andr);
+                
 
                 //PastServiceOrders.Clear();
                 //List<NewServiceorderExtensionBase_ex> _pso = new List<NewServiceorderExtensionBase_ex>();
