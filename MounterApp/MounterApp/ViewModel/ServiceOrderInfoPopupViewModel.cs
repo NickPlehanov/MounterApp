@@ -1,5 +1,4 @@
-﻿using Microsoft.AppCenter.Analytics;
-using MounterApp.Helpers;
+﻿using MounterApp.Helpers;
 using MounterApp.Model;
 using MounterApp.Properties;
 using MounterApp.Views;
@@ -7,10 +6,8 @@ using Plugin.Media;
 using Plugin.Media.Abstractions;
 using Rg.Plugins.Popup.Extensions;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
-using System.Text;
 using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {

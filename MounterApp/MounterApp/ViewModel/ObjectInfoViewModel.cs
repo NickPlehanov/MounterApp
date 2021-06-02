@@ -1,13 +1,9 @@
 ﻿using MounterApp.Helpers;
 using MounterApp.Model;
-using MounterApp.Properties;
 using MounterApp.Views;
-using Newtonsoft.Json;
 using Rg.Plugins.Popup.Extensions;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Net.Http;
 using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {

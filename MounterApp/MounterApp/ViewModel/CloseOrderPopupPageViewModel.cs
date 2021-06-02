@@ -1,6 +1,4 @@
-﻿using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
-using MounterApp.Helpers;
+﻿using MounterApp.Helpers;
 using MounterApp.InternalModel;
 using MounterApp.Model;
 using MounterApp.Views;
@@ -321,13 +319,13 @@ namespace MounterApp.ViewModel {
                 return status;
             }
             catch (Exception ex) {
-                Crashes.TrackError(new Exception("Заявка технику.Закрытие. Ошибка получения координат.")
-                    , new Dictionary<string, string> {
-                                            {"ErrorMessage",ex.Message },
-                                            {"phone",Servicemans.First().NewPhone },
-                                            {"name",Servicemans.First().NewName },
-                                            {"PermissionStatus",status.ToString()}
-                });
+                //Crashes.TrackError(new Exception("Заявка технику.Закрытие. Ошибка получения координат.")
+                //    , new Dictionary<string, string> {
+                //                            {"ErrorMessage",ex.Message },
+                //                            {"phone",Servicemans.First().NewPhone },
+                //                            {"name",Servicemans.First().NewName },
+                //                            {"PermissionStatus",status.ToString()}
+                //});
                 await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(
                     new MessagePopupPageViewModel("Ошибка при попытке сохранения. Не получены необходимые разрешения", Color.Red, LayoutOptions.EndAndExpand), 4000));
                 IsLoading(false);
@@ -491,15 +489,15 @@ namespace MounterApp.ViewModel {
                 }
                 catch (Exception ex) {
                     IsLoading(false);
-                    ErrorReport crashReport = await Crashes.GetLastSessionCrashReportAsync();
-                    Crashes.TrackError(new Exception("Проблема при закрытии заявки")
-                        , new Dictionary<string, string> {
-                                            {"ErrorMessage",ex.Message },
-                                            {"phone",Servicemans.First().NewPhone },
-                                            {"name",Servicemans.First().NewName },
-                                            {"StackTrace",crashReport.StackTrace },
-                                            {"AndroidDetails",crashReport.AndroidDetails.StackTrace }
-                    });
+                    //ErrorReport crashReport = await Crashes.GetLastSessionCrashReportAsync();
+                    //Crashes.TrackError(new Exception("Проблема при закрытии заявки")
+                    //    , new Dictionary<string, string> {
+                    //                        {"ErrorMessage",ex.Message },
+                    //                        {"phone",Servicemans.First().NewPhone },
+                    //                        {"name",Servicemans.First().NewName },
+                    //                        {"StackTrace",crashReport.StackTrace },
+                    //                        {"AndroidDetails",crashReport.AndroidDetails.StackTrace }
+                    //});
                 }
             });
         }

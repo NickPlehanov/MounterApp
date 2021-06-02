@@ -1,16 +1,10 @@
-﻿using Android.Widget;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
-using MounterApp.Helpers;
+﻿using MounterApp.Helpers;
 using MounterApp.Model;
-using MounterApp.Properties;
 using MounterApp.Views;
-using Newtonsoft.Json;
 using Rg.Plugins.Popup.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Net.Http;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -26,7 +20,7 @@ namespace MounterApp.ViewModel {
             IndicatorVisible = false;
             CloseImage = IconName("close");
             CallImage = IconName("call");
-            Analytics.TrackEvent("Инициализация окна списка ответсвенных");
+            //Analytics.TrackEvent("Инициализация окна списка ответсвенных");
         }
         public ObjCustsPopupViewModel(NewTest2ExtensionBase_ex _serviceorder) {
             ServiceOrderFireAlarm = _serviceorder;
@@ -36,7 +30,7 @@ namespace MounterApp.ViewModel {
             IndicatorVisible = false;
             CloseImage = IconName("close");
             CallImage = IconName("call");
-            Analytics.TrackEvent("Инициализация окна списка ответсвенных");
+            //Analytics.TrackEvent("Инициализация окна списка ответсвенных");
         }
 
         private NewTest2ExtensionBase_ex _ServiceOrderFireAlarm;
@@ -141,10 +135,10 @@ namespace MounterApp.ViewModel {
             get => _CallCustomer ??= new RelayCommand(async obj => {
                 if (obj != null)
                     if (!string.IsNullOrEmpty(obj.ToString())) {
-                        Analytics.TrackEvent("Звонок клиенту",
-                            new Dictionary<string, string> {
-                        {"PhoneNumber",obj.ToString() }
-                            });
+                        //Analytics.TrackEvent("Звонок клиенту",
+                        //    new Dictionary<string, string> {
+                        //{"PhoneNumber",obj.ToString() }
+                        //    });
                         Uri uri = new Uri("tel:" + obj);
                         await Launcher.OpenAsync(uri);
                     }
@@ -162,7 +156,7 @@ namespace MounterApp.ViewModel {
             get => _GetCustomers ??= new RelayCommand(async obj => {
                 OpacityForm = 0.1;
                 IndicatorVisible = true;
-                Analytics.TrackEvent("Получение списка ответственных лиц по объекту");
+                //Analytics.TrackEvent("Получение списка ответственных лиц по объекту");
                 List<ObjCust> custs = new List<ObjCust>();
                 int? number = null;
                 if (ServiceOrder != null)

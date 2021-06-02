@@ -1,6 +1,4 @@
 ﻿using Android.Widget;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 using MounterApp.Helpers;
 using MounterApp.Model;
 using MounterApp.Properties;
@@ -44,7 +42,7 @@ namespace MounterApp.ViewModel {
             HelpImage = IconName("help");
             ReportImage = IconName("report");
             GetImage = IconName("get");
-            Analytics.TrackEvent("Инициализация окна настроек приложения");
+            //Analytics.TrackEvent("Инициализация окна настроек приложения");
             AppVersions av = new AppVersions();
             Version = null;
             Version = "Версия приложения: " + av.GetVersionAndBuildNumber().VersionNumber;
@@ -189,7 +187,7 @@ namespace MounterApp.ViewModel {
                 if(result) {
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Очищено объектов: " + App.Database.ClearDatabase().ToString(),Color.Green,LayoutOptions.EndAndExpand),4000));
                     //Toast.MakeText(Android.App.Application.Context,"Очищено объектов: " + App.Database.ClearDatabase().ToString(),ToastLength.Long).Show();
-                    Analytics.TrackEvent("Очистка локальной базы данных объектов");
+                    //Analytics.TrackEvent("Очистка локальной базы данных объектов");
                 }
                 ClearDatabaseCommand.ChangeCanExecute();
             },obj => App.Database.GetCount() > 0);
@@ -284,7 +282,7 @@ namespace MounterApp.ViewModel {
                      { "Compression",Compression.ToString() },
                      { "Events","Сохранение локальных настроек приложения" }
                 };
-                Analytics.TrackEvent("Сохранение локальных настроек приложения",parameters);
+                //Analytics.TrackEvent("Сохранение локальных настроек приложения",parameters);
                 IsChanged = false;
                 //BackPressCommand.Execute(null);
             });

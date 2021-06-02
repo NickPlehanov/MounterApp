@@ -1,5 +1,4 @@
-﻿using Microsoft.AppCenter.Analytics;
-using MounterApp.Helpers;
+﻿using MounterApp.Helpers;
 using MounterApp.Model;
 using MounterApp.Views;
 using Rg.Plugins.Popup.Extensions;
@@ -143,12 +142,12 @@ namespace MounterApp.ViewModel {
         /// </summary>
         private RelayCommand _GetEventsCommands;
         public RelayCommand GetEventsCommands => _GetEventsCommands ??= new RelayCommand(async obj => {
-            Analytics.TrackEvent("Запрос событий по объекту(расширенный)",
-            new Dictionary<string, string> {
-                    {"StartDate",StartDate.ToShortDateString() },
-                    {"EndDate",EndDate.ToShortDateString() },
-                    {"ObjectNumber",ObjectNumber }
-            });
+            //Analytics.TrackEvent("Запрос событий по объекту(расширенный)",
+            //new Dictionary<string, string> {
+            //        {"StartDate",StartDate.ToShortDateString() },
+            //        {"EndDate",EndDate.ToShortDateString() },
+            //        {"ObjectNumber",ObjectNumber }
+            //});
             if (string.IsNullOrEmpty(ObjectNumber)) {
                 await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Номер объкта не определен, выполнение запроса событий отменено.", Color.Red, LayoutOptions.EndAndExpand), 4000));
                 return;

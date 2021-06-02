@@ -1,6 +1,4 @@
 ﻿using Android.Widget;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 using MounterApp.Helpers;
 using MounterApp.Model;
 using MounterApp.Properties;
@@ -217,11 +215,11 @@ namespace MounterApp.ViewModel {
             get => _CallCustomer ??= new RelayCommand(async obj => {
                 if(obj != null)
                     if(!string.IsNullOrEmpty(obj.ToString())) {
-                        Analytics.TrackEvent("Звонок клиенту",
-                            new Dictionary<string,string> {
-                        //{"ServiceOrderID",ServiceOrder.NewServiceorderId.ToString() },
-                        {"PhoneNumber",obj.ToString() }
-                            });
+                        //Analytics.TrackEvent("Звонок клиенту",
+                        //    new Dictionary<string,string> {
+                        ////{"ServiceOrderID",ServiceOrder.NewServiceorderId.ToString() },
+                        //{"PhoneNumber",obj.ToString() }
+                        //    });
                         Uri uri = new Uri("tel:" + obj);
                         await Launcher.OpenAsync(uri);
                     }

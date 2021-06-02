@@ -1,5 +1,4 @@
-﻿using Microsoft.AppCenter.Analytics;
-using MounterApp.Helpers;
+﻿using MounterApp.Helpers;
 using MounterApp.InternalModel;
 using MounterApp.Model;
 using MounterApp.Views;
@@ -59,10 +58,10 @@ namespace MounterApp.ViewModel {
             ArrowCircleHistory = IconName("arrow_circle_down");
             DeleteImage = IconName("clear");
 
-            Analytics.TrackEvent("Страница монтажей",
-            new Dictionary<string,string> {
-                {"MounterPhone",Mounters.FirstOrDefault().NewPhone }
-            });
+            //Analytics.TrackEvent("Страница монтажей",
+            //new Dictionary<string,string> {
+            //    {"MounterPhone",Mounters.FirstOrDefault().NewPhone }
+            //});
             App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
         }
 
@@ -85,9 +84,9 @@ namespace MounterApp.ViewModel {
                             NotSendedMounts.Add(item);
                         HeaderNotSended = "Неотправленные (" + _ntMounts.Count.ToString() + ")";
                         NotSendedMountsExpander = NotSendedMounts.Count > 0;
-                Analytics.TrackEvent("Получение списка монтажей из локальной базы данных (неотправленные)",new Dictionary<string,string> {
-                {"CountMounts",_ntMounts.Count.ToString() }
-                });
+                //Analytics.TrackEvent("Получение списка монтажей из локальной базы данных (неотправленные)",new Dictionary<string,string> {
+                //{"CountMounts",_ntMounts.Count.ToString() }
+                //});
             });
         }
         private RelayCommand _HelpCommand;
@@ -109,9 +108,9 @@ namespace MounterApp.ViewModel {
                             if (item.DateSended!=null)
                                 if (item.DateSended.Value.Date < _dt.Date)
                                 App.Database.DeleteMount(item.ID);
-                        Analytics.TrackEvent("Очистка списка монтажей старше недели от текущей даты",new Dictionary<string,string> {
-                        {"CountMounts",_ntMounts.Count.ToString() }
-                        });
+                        //Analytics.TrackEvent("Очистка списка монтажей старше недели от текущей даты",new Dictionary<string,string> {
+                        //{"CountMounts",_ntMounts.Count.ToString() }
+                        //});
                     }
             });
         }
@@ -125,9 +124,9 @@ namespace MounterApp.ViewModel {
                         foreach(var item in _ntMounts)
                             HistoryMounts.Add(item);
                         HeaderHistory = "Отправленные (" + _ntMounts.Count.ToString() + ")";
-                Analytics.TrackEvent("Получение списка монтажей из локальной базы данных (история)",new Dictionary<string,string> {
-                {"CountMounts",_ntMounts.Count.ToString() }
-                });
+                //Analytics.TrackEvent("Получение списка монтажей из локальной базы данных (история)",new Dictionary<string,string> {
+                //{"CountMounts",_ntMounts.Count.ToString() }
+                //});
             });
         }
 
@@ -282,10 +281,10 @@ namespace MounterApp.ViewModel {
         public RelayCommand NewMountCommand {
             get => _NewMountCommand ??= new RelayCommand(async obj => {
                 if(Mounters.Count > 0) {
-                    Analytics.TrackEvent("Создание нового монтажа",
-                        new Dictionary<string,string> {
-                            {"MounterPhone",Mounters.FirstOrDefault().NewPhone }
-                        });
+                    //Analytics.TrackEvent("Создание нового монтажа",
+                    //    new Dictionary<string,string> {
+                    //        {"MounterPhone",Mounters.FirstOrDefault().NewPhone }
+                    //    });
                     NewMountPageViewModel vm = new NewMountPageViewModel(Mounters,Servicemans);
                     App.Current.MainPage = new NewMountpage(vm);
                 }
@@ -299,11 +298,11 @@ namespace MounterApp.ViewModel {
                     if(int.TryParse(obj.ToString(),out _id)) {
                         NotSendedMount = NotSendedMounts.FirstOrDefault(x => x.ID == _id);
                         if(NotSendedMount != null) {
-                            Analytics.TrackEvent("Переход к раннее заполненному монтажу",
-                                new Dictionary<string,string> {
-                            {"MounterPhone",Mounters.FirstOrDefault().NewPhone },
-                            {"ObjectNumber",NotSendedMount.ObjectNumber }
-                                });
+                            //Analytics.TrackEvent("Переход к раннее заполненному монтажу",
+                            //    new Dictionary<string,string> {
+                            //{"MounterPhone",Mounters.FirstOrDefault().NewPhone },
+                            //{"ObjectNumber",NotSendedMount.ObjectNumber }
+                            //    });
                             NewMountPageViewModel vm = new NewMountPageViewModel(NotSendedMount,Mounters,false,Servicemans);
                             App.Current.MainPage = new NewMountpage(vm);
                         }
@@ -312,10 +311,10 @@ namespace MounterApp.ViewModel {
                     if (Guid.TryParse(obj.ToString(),out guid)) {
                         GoogleMount = GoogleMounts.First(x => x.id == guid);
                         if(GoogleMount != null) {
-                            Analytics.TrackEvent("Переход к запланированному монтажу",
-                                new Dictionary<string,string> {
-                                    {"MounterPhone",Mounters.FirstOrDefault().NewPhone }
-                                });
+                            //Analytics.TrackEvent("Переход к запланированному монтажу",
+                            //    new Dictionary<string,string> {
+                            //        {"MounterPhone",Mounters.FirstOrDefault().NewPhone }
+                            //    });
                             NotSendedMount = GoogleMount;
                             NewMountPageViewModel vm = new NewMountPageViewModel(NotSendedMount,Mounters,false,Servicemans);
                             App.Current.MainPage = new NewMountpage(vm);

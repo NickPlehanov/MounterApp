@@ -1,11 +1,8 @@
-﻿using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
-using MounterApp.Helpers;
+﻿using MounterApp.Helpers;
 using MounterApp.InternalModel;
 using MounterApp.Model;
 using MounterApp.Views;
 using Rg.Plugins.Popup.Extensions;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -25,7 +22,8 @@ namespace MounterApp.ViewModel {
             Mounters = mounters;
             Serviceman = servicemans;
             SettingsImage = IconName("settings");
-            Analytics.TrackEvent("Инициализация окна главного меню приложения");
+            //
+            //("Инициализация окна главного меню приложения");
             App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
             CheckVersionApp.Execute(null);
             //GetRatingServicemanCommand.Execute(null);
@@ -87,10 +85,10 @@ namespace MounterApp.ViewModel {
         public RelayCommand GetMountworksCommand {
             get => _GetMountworksCommand ??= new RelayCommand(async obj => {
                 if (Mounters.Any()) {
-                    Analytics.TrackEvent("Переход к монтажам",
-                    new Dictionary<string, string> {
-                        {"MountersPhone",Mounters.First().NewPhone }
-                    });
+                    //Analytics.TrackEvent("Переход к монтажам",
+                    //new Dictionary<string, string> {
+                    //    {"MountersPhone",Mounters.First().NewPhone }
+                    //});
                     MountsViewModel vm = new MountsViewModel(Mounters, Serviceman);
                     App.Current.MainPage = new MountsPage(vm);
                 }
@@ -105,10 +103,10 @@ namespace MounterApp.ViewModel {
         public RelayCommand GetServiceordersCommand {
             get => _GetServiceordersCommand ??= new RelayCommand(async obj => {
                 if (Serviceman.Any()) {
-                    Analytics.TrackEvent("Переход к заявкам технику",
-                        new Dictionary<string, string> {
-                        {"ServicemansPhone",Serviceman.First().NewPhone }
-                        });
+                    //Analytics.TrackEvent("Переход к заявкам технику",
+                    //    new Dictionary<string, string> {
+                    //    {"ServicemansPhone",Serviceman.First().NewPhone }
+                    //    });
                     ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Serviceman, Mounters,true);
                     App.Current.MainPage = new ServiceOrdersPage(vm);
                 }
@@ -156,7 +154,7 @@ namespace MounterApp.ViewModel {
         private AsyncCommand _OpenSettingsCommand;
         public AsyncCommand OpenSettingsCommand {
             get => _OpenSettingsCommand ??= new AsyncCommand(async () => {
-                Analytics.TrackEvent("Переход к настройкам");
+                //Analytics.TrackEvent("Переход к настройкам");
                 SettingsPageViewModel vm = new SettingsPageViewModel(Mounters, Serviceman);
                 App.Current.MainPage = new SettingsPage(vm);
             });
@@ -173,14 +171,14 @@ namespace MounterApp.ViewModel {
                 HttpStatusCode code = await ClientHttp.Get("/api/Common/VersionNumber?appVersion=" + Version);
                 if (code.Equals(HttpStatusCode.MethodNotAllowed)) {//версия установленого приложения и версия указанная как актуальная на сервере - не совпали
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("У Вас установлена не актуальная версия приложения, пожалуйста обновите её. Настройки - Скачать", Color.Red, LayoutOptions.EndAndExpand), 4000));
-                    Crashes.TrackError(new Exception("Необновленнная версия приложения"),
-                        new Dictionary<string, string> {
-                                {"Version",Version },
-                                {"MountersName",Mounters.First().NewName.ToString() },
-                                {"MountersPhone",Mounters.First().NewPhone.ToString() },
-                                {"ServicemanName",Serviceman.First().NewName.ToString() },
-                                {"ServicemanPhone",Serviceman.First().NewPhone.ToString() }
-                        });
+                    //Crashes.TrackError(new Exception("Необновленнная версия приложения"),
+                    //    new Dictionary<string, string> {
+                    //            {"Version",Version },
+                    //            {"MountersName",Mounters.First().NewName.ToString() },
+                    //            {"MountersPhone",Mounters.First().NewPhone.ToString() },
+                    //            {"ServicemanName",Serviceman.First().NewName.ToString() },
+                    //            {"ServicemanPhone",Serviceman.First().NewPhone.ToString() }
+                    //    });
                 }
             });
         }

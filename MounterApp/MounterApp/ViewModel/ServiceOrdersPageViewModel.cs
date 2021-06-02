@@ -1,6 +1,4 @@
 ﻿using Android.Content;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 using MounterApp.Helpers;
 using MounterApp.InternalModel;
 using MounterApp.Model;
@@ -47,10 +45,10 @@ namespace MounterApp.ViewModel {
             Mounters = _mounters;
             OpacityForm = 1;
             IndicatorVisible = false;
-            Analytics.TrackEvent("Инициализация страницы заявок технику",
-            new Dictionary<string, string> {
-                {"Serviceman",Servicemans.FirstOrDefault().NewPhone }
-            });
+            //Analytics.TrackEvent("Инициализация страницы заявок технику",
+            //new Dictionary<string, string> {
+            //    {"Serviceman",Servicemans.FirstOrDefault().NewPhone }
+            //});
             Width = DeviceDisplay.MainDisplayInfo.Width - 10;
             App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
             RefreshImage = IconName("refresh");
@@ -343,10 +341,10 @@ namespace MounterApp.ViewModel {
             get => _GetCategoryTech ??= new RelayCommand(async obj => {
                 Category = await ClientHttp.Get<ObservableCollection<MetadataModel>>("/api/Common/metadata?ColumnName=new_category&ObjectName=New_serviceman");
 
-                Analytics.TrackEvent("Получение категорий техников",
-                new Dictionary<string, string> {
-                    {"Query","Common/metadata?ColumnName=new_category&ObjectName=New_serviceman" }
-                });
+                //Analytics.TrackEvent("Получение категорий техников",
+                //new Dictionary<string, string> {
+                //    {"Query","Common/metadata?ColumnName=new_category&ObjectName=New_serviceman" }
+                //});
                 //using HttpClient httpClient = new HttpClient(GetHttpClientHandler());
                 //HttpResponseMessage httpResponse = await httpClient.GetAsync(Resources.BaseAddress + "/api/Common/metadata?ColumnName=new_category&ObjectName=New_serviceman");
                 //List<MetadataModel> mm = new List<MetadataModel>();
@@ -388,10 +386,10 @@ namespace MounterApp.ViewModel {
         private RelayCommand _BackPressCommand;
         public RelayCommand BackPressCommand {
             get => _BackPressCommand ??= new RelayCommand(async obj => {
-                Analytics.TrackEvent("Выход со страницы заявок технику",
-               new Dictionary<string, string> {
-                    {"Serviceman",Servicemans.FirstOrDefault().NewPhone }
-               });
+               // Analytics.TrackEvent("Выход со страницы заявок технику",
+               //new Dictionary<string, string> {
+               //     {"Serviceman",Servicemans.FirstOrDefault().NewPhone }
+               //});
                 MainMenuPageViewModel vm = new MainMenuPageViewModel(Mounters, Servicemans);
                 App.Current.MainPage = new MainMenuPage(vm);
             });
@@ -526,11 +524,11 @@ namespace MounterApp.ViewModel {
                 OpacityForm = 0.1;
                 IndicatorVisible = true;
                 if (Servicemans.Count > 0) {
-                    Analytics.TrackEvent("Получение заявок технику",
-                    new Dictionary<string, string> {
-                        {"Serviceman",Servicemans.FirstOrDefault().NewPhone },
-                        {"Date",Date.ToString() }
-                    });
+                    //Analytics.TrackEvent("Получение заявок технику",
+                    //new Dictionary<string, string> {
+                    //    {"Serviceman",Servicemans.FirstOrDefault().NewPhone },
+                    //    {"Date",Date.ToString() }
+                    //});
                     ///api/NewServiceorderExtensionBases/ServiceOrderByUser?usr_ID=FEF46B07-8D7A-E311-920A-00155D01051D&date=18.11.2020
                     if (Date == DateTime.Parse("01.01.0001 00:00:00"))
                         Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
@@ -762,11 +760,11 @@ namespace MounterApp.ViewModel {
                 OpacityForm = 0.1;
                 IndicatorVisible = true;
                 if (Servicemans.Count > 0) {
-                    Analytics.TrackEvent("Получение заявок технику на ПС",
-                    new Dictionary<string, string> {
-                        {"Serviceman",Servicemans.FirstOrDefault().NewPhone },
-                        {"Date",Date.ToString() }
-                    });
+                    //Analytics.TrackEvent("Получение заявок технику на ПС",
+                    //new Dictionary<string, string> {
+                    //    {"Serviceman",Servicemans.FirstOrDefault().NewPhone },
+                    //    {"Date",Date.ToString() }
+                    //});
                     ///api/NewServiceorderExtensionBases/ServiceOrderByUser?usr_ID=FEF46B07-8D7A-E311-920A-00155D01051D&date=18.11.2020
                     if (Date == DateTime.Parse("01.01.0001 00:00:00"))
                         Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
@@ -811,11 +809,11 @@ namespace MounterApp.ViewModel {
                 OpacityForm = 0.1;
                 IndicatorVisible = true;
                 if (Servicemans.Count > 0) {
-                    Analytics.TrackEvent("Получение заявок технику заявок технику - переносы",
-                    new Dictionary<string, string> {
-                        {"Serviceman",Servicemans.FirstOrDefault().NewPhone },
-                        {"Date",Date.ToString() }
-                    });
+                    //Analytics.TrackEvent("Получение заявок технику заявок технику - переносы",
+                    //new Dictionary<string, string> {
+                    //    {"Serviceman",Servicemans.FirstOrDefault().NewPhone },
+                    //    {"Date",Date.ToString() }
+                    //});
                     ///api/NewServiceorderExtensionBases/ServiceOrderByUser?usr_ID=FEF46B07-8D7A-E311-920A-00155D01051D&date=18.11.2020
                     if (Date == DateTime.Parse("01.01.0001 00:00:00"))
                         Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
@@ -845,11 +843,11 @@ namespace MounterApp.ViewModel {
                 OpacityForm = 0.1;
                 IndicatorVisible = true;
                 if (Servicemans.Count > 0) {
-                    Analytics.TrackEvent("Получение заявок технику на ПС - переносы",
-                    new Dictionary<string, string> {
-                        {"Serviceman",Servicemans.FirstOrDefault().NewPhone },
-                        {"Date",Date.ToString() }
-                    });
+                    //Analytics.TrackEvent("Получение заявок технику на ПС - переносы",
+                    //new Dictionary<string, string> {
+                    //    {"Serviceman",Servicemans.FirstOrDefault().NewPhone },
+                    //    {"Date",Date.ToString() }
+                    //});
                     if (Date == DateTime.Parse("01.01.0001 00:00:00"))
                         Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
 
@@ -878,10 +876,10 @@ namespace MounterApp.ViewModel {
         public AsyncCommand SelectServiceOrderCommand {
             get => _SelectServiceOrderCommand ??= new AsyncCommand(async () => {
                 if (ServiceOrder != null) {
-                    Analytics.TrackEvent("Переход к заявке технику",
-                    new Dictionary<string, string> {
-                        {"ServiceOrder",ServiceOrder.NewServiceorderId.ToString()}
-                    });
+                    //Analytics.TrackEvent("Переход к заявке технику",
+                    //new Dictionary<string, string> {
+                    //    {"ServiceOrder",ServiceOrder.NewServiceorderId.ToString()}
+                    //});
                     ServiceOrderViewModel vm = new ServiceOrderViewModel(ServiceOrder, Servicemans, Mounters);
                     App.Current.MainPage = new ServiceOrder(vm);
                 }
@@ -893,10 +891,10 @@ namespace MounterApp.ViewModel {
         public RelayCommand SelectServiceOrderFireAlarmCommand {
             get => _SelectServiceOrderFireAlarmCommand ??= new RelayCommand(async obj => {
                 if (ServiceOrderFireAlarm != null) {
-                    Analytics.TrackEvent("Переход к заявке технику",
-                    new Dictionary<string, string> {
-                        {"ServiceOrder",ServiceOrderFireAlarm.NewTest2Id.ToString()}
-                    });
+                    //Analytics.TrackEvent("Переход к заявке технику",
+                    //new Dictionary<string, string> {
+                    //    {"ServiceOrder",ServiceOrderFireAlarm.NewTest2Id.ToString()}
+                    //});
                     ServiceOrderFireAlarmViewModel vm = new ServiceOrderFireAlarmViewModel(ServiceOrderFireAlarm, Servicemans, Mounters);
                     App.Current.MainPage = new ServiceOrderFireAlarm(vm);
                 }

@@ -1,7 +1,4 @@
-﻿using Android.Widget;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
-using MounterApp.Helpers;
+﻿using MounterApp.Helpers;
 using MounterApp.InternalModel;
 using MounterApp.Model;
 using MounterApp.Views;
@@ -12,10 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using Xamarin.Essentials;
 using Xamarin.Forms;
-using static Xamarin.Essentials.Permissions;
 
 namespace MounterApp.ViewModel {
     public class SelectActionsPopupPageViewModel : BaseViewModel {
@@ -44,7 +39,6 @@ namespace MounterApp.ViewModel {
             CollectionImage = IconName("collections");
             CloseImage = IconName("close");
             IsChanged = false;
-            Analytics.TrackEvent("Инициализация страницы выбора способа получения фото");
             Counter = 0;
         }
 
@@ -299,7 +293,6 @@ namespace MounterApp.ViewModel {
             get => _PickPhotoCommand ??= new RelayCommand(async obj => {
                 IsPickPhoto = true;
                 GetPhotoCommand.Execute(null);
-                Analytics.TrackEvent("Выбор фото из галереи");
                 //await App.Current.MainPage.Navigation.PopPopupAsync(true);
                 //NewMountPageViewModel vm = new NewMountPageViewModel(Mount,Mounters,IsPickPhoto);
                 //App.Current.MainPage = new NewMountpage(vm);
@@ -311,7 +304,6 @@ namespace MounterApp.ViewModel {
             get => _TakePhotoCommand ??= new RelayCommand(async obj => {
                 IsPickPhoto = false;
                 GetPhotoCommand.Execute(null);
-                Analytics.TrackEvent("Фото камерой");
             });
         }
         private RelayCommand _GetPhotoCommand;
@@ -322,10 +314,10 @@ namespace MounterApp.ViewModel {
                     if(!CrossMedia.Current.IsCameraAvailable || !CrossMedia.Current.IsTakePhotoSupported) {
                         var perm = await CheckAndRequestPermissionAsync(new Permissions.Camera());
                         if(perm == PermissionStatus.Denied) {
-                            Crashes.TrackError(new Exception("Камера недоступна"),
-                            new Dictionary<string,string> {
-                            {"Error","Камера недоступна" }
-                            });
+                            //Crashes.TrackError(new Exception("Камера недоступна"),
+                            //new Dictionary<string,string> {
+                            //{"Error","Камера недоступна" }
+                            //});
                             //await Application.Current.MainPage.DisplayAlert("No Camera",":( No camera available.","OK"); 
                             await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Камера не доступна",Color.Red,LayoutOptions.EndAndExpand),4000));
                             return;

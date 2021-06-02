@@ -1,15 +1,10 @@
-﻿using Microsoft.AppCenter.Analytics;
-using MounterApp.Helpers;
+﻿using MounterApp.Helpers;
 using MounterApp.Model;
-using MounterApp.Properties;
 using MounterApp.Views;
-using Newtonsoft.Json;
 using Rg.Plugins.Popup.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Net.Http;
 using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
@@ -218,12 +213,12 @@ namespace MounterApp.ViewModel {
             get => _GetEventsCommands ??= new RelayCommand(async obj => {
                 IndicatorVisible = true;
                 OpacityForm = 0.1;
-                Analytics.TrackEvent("Запрос событий по объекту",
-                new Dictionary<string,string> {
-                    {"ServicemanPhone",Servicemans.First().NewPhone },
-                    {"StartDate",StartDate.ToShortDateString() },
-                    {"EndDate",EndDate.ToShortDateString() }
-                });
+                //Analytics.TrackEvent("Запрос событий по объекту",
+                //new Dictionary<string,string> {
+                //    {"ServicemanPhone",Servicemans.First().NewPhone },
+                //    {"StartDate",StartDate.ToShortDateString() },
+                //    {"EndDate",EndDate.ToShortDateString() }
+                //});
                 if(StartDate <= EndDate) {
                     Events.Clear();
                     if((EndDate-StartDate).TotalDays>7) {
@@ -297,10 +292,10 @@ namespace MounterApp.ViewModel {
         public RelayCommand ExitCommand {
             get => _ExitCommand ??= new RelayCommand(async obj => {
                 try {
-                    Analytics.TrackEvent("Выход со страницы для запроса событий по объекту",
-                    new Dictionary<string,string> {
-                    {"ServicemanPhone",Servicemans.First().NewPhone }
-                    });
+                    //Analytics.TrackEvent("Выход со страницы для запроса событий по объекту",
+                    //new Dictionary<string,string> {
+                    //{"ServicemanPhone",Servicemans.First().NewPhone }
+                    //});
                 }
                 catch { }
                 await App.Current.MainPage.Navigation.PopPopupAsync(false);

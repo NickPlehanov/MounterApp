@@ -12,10 +12,8 @@ using System.Net.Http;
 using System.Text;
 using Xamarin.Forms;
 using Rg.Plugins.Popup.Extensions;
-using Microsoft.AppCenter.Analytics;
 using Xamarin.Essentials;
 using System.Net;
-using Microsoft.AppCenter.Crashes;
 using Newtonsoft.Json;
 
 namespace MounterApp.ViewModel {
@@ -52,10 +50,10 @@ namespace MounterApp.ViewModel {
             Opacity = 1;
             IndicatorVisible = false;
             IsPickPhoto = null;
-            Analytics.TrackEvent("Инициализация страницы заполнения нового монтажа",
-                        new Dictionary<string, string> {
-                            {"MounterPhone",Mounters.FirstOrDefault().NewPhone }
-                        });
+            //Analytics.TrackEvent("Инициализация страницы заполнения нового монтажа",
+            //            new Dictionary<string, string> {
+            //                {"MounterPhone",Mounters.FirstOrDefault().NewPhone }
+            //            });
 
             SaveFlag = false;
             App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
@@ -75,11 +73,11 @@ namespace MounterApp.ViewModel {
 
             Opacity = 1;
             IndicatorVisible = false;
-            Analytics.TrackEvent("Инициализация страницы заполнения нового монтажа",
-                        new Dictionary<string, string> {
-                            {"MounterPhone",Mounters.FirstOrDefault().NewPhone },
-                            {"MountObjectNumber",Mount.ObjectNumber }
-                        });
+            //Analytics.TrackEvent("Инициализация страницы заполнения нового монтажа",
+            //            new Dictionary<string, string> {
+            //                {"MounterPhone",Mounters.FirstOrDefault().NewPhone },
+            //                {"MountObjectNumber",Mount.ObjectNumber }
+            //            });
             IsChanged = _IsChanged;
             SaveFlag = false;
             App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
@@ -348,18 +346,18 @@ namespace MounterApp.ViewModel {
                         if (string.IsNullOrEmpty(ObjectAddressValidationError) && string.IsNullOrWhiteSpace(ObjectAddressValidationError))
                             if (Photos.Count >= 7) {
                                 //TODO: проверять, что это обязательные фото, а не просто количество
-                                Analytics.TrackEvent("Отправка нового монтажа на сервер",
-                                    new Dictionary<string, string> {
-                                        {"ObjectNumber",ObjectNumber }
-                                    });
+                                //Analytics.TrackEvent("Отправка нового монтажа на сервер",
+                                //    new Dictionary<string, string> {
+                                //        {"ObjectNumber",ObjectNumber }
+                                //    });
                                 Opacity = 0.1;
                                 IndicatorVisible = true;
                                 IndicatorText = "Подождите, идет загрузка...";
                                 ProgressValue = 0.1;
-                                Analytics.TrackEvent("Сохранение монтажа перед отправкой на сервер в локальной базе",
-                                    new Dictionary<string, string> {
-                                        {"ObjectNumber",ObjectNumber }
-                                    });
+                                //Analytics.TrackEvent("Сохранение монтажа перед отправкой на сервер в локальной базе",
+                                //    new Dictionary<string, string> {
+                                //        {"ObjectNumber",ObjectNumber }
+                                //    });
                                 SaveToDB.Execute(null);
                                 StringBuilder sb = new StringBuilder();
                                 sb.AppendLine("Номер объекта: " + ObjectNumber);
@@ -385,7 +383,7 @@ namespace MounterApp.ViewModel {
                                     if (string.IsNullOrEmpty(result)) {
                                         await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Ошибка при загрузке фото", Color.Red, LayoutOptions.EndAndExpand), 4000));
                                         error = true;
-                                        Crashes.TrackError(new Exception("Ошибка отправки фото на сервер"));
+                                        //Crashes.TrackError(new Exception("Ошибка отправки фото на сервер"));
                                     }
                                     else {
                                         PathToSaveModel path = JsonConvert.DeserializeObject<PathToSaveModel>(result);
@@ -397,20 +395,20 @@ namespace MounterApp.ViewModel {
                                         Mount.State = 1;
                                         Mount.DateSended = DateTime.Now;
                                         App.Database.UpdateMount(Mount);
-                                        Analytics.TrackEvent("Установка статуса монтажа в локальной базе данных: ОТПРАВЛЕНО",
-                                        new Dictionary<string, string> {
-                                            {"ObjectNumber",Mount.ObjectNumber.ToString() },
-                                            {"DateSended",Mount.DateSended.ToString() }
-                                        });
+                                        //Analytics.TrackEvent("Установка статуса монтажа в локальной базе данных: ОТПРАВЛЕНО",
+                                        //new Dictionary<string, string> {
+                                        //    {"ObjectNumber",Mount.ObjectNumber.ToString() },
+                                        //    {"DateSended",Mount.DateSended.ToString() }
+                                        //});
                                         await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Сохранение в локальной базе. Успешно.", Color.Green, LayoutOptions.EndAndExpand), 4000));
-                                        Analytics.TrackEvent("Отправка монтажа на сервер. Успешно",
-                                            new Dictionary<string, string> { { "Mount", Mount.ObjectNumber } });
+                                        //Analytics.TrackEvent("Отправка монтажа на сервер. Успешно",
+                                        //    new Dictionary<string, string> { { "Mount", Mount.ObjectNumber } });
                                         IndicatorText = "Подождите, идет загрузка..." + Environment.NewLine + "Отправка уведомления для операторов";
-                                        Analytics.TrackEvent("Отправка события в андромеду",
-                                            new Dictionary<string, string> { { "Mount", Mount.ObjectNumber } });
+                                        //Analytics.TrackEvent("Отправка события в андромеду",
+                                        //    new Dictionary<string, string> { { "Mount", Mount.ObjectNumber } });
                                         SendEventsToAndromeda.Execute(null);
-                                        Analytics.TrackEvent("Запись web-ссылки в Андромеду",
-                                            new Dictionary<string, string> { { "Mount", Mount.ObjectNumber } });
+                                        //Analytics.TrackEvent("Запись web-ссылки в Андромеду",
+                                        //    new Dictionary<string, string> { { "Mount", Mount.ObjectNumber } });
                                         IndicatorText = "Подождите, идет загрузка..." + Environment.NewLine + "Запись ссылки на электронный обходной";
                                         WriteWebLink.Execute(null);
                                         WriteCoordinates.Execute(null);
@@ -419,13 +417,13 @@ namespace MounterApp.ViewModel {
                                             await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Монтаж отправлен, данные получены оператором", Color.Green, LayoutOptions.EndAndExpand), 4000));
                                         else {
                                             await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Монтаж отправлен, данные получены оператором", Color.Green, LayoutOptions.EndAndExpand), 4000));
-                                            Analytics.TrackEvent("Ошибка при отправке монтажа, не получилось записать ссылку, координаты, маршрут или отправить событие",
-                                            new Dictionary<string, string> {
-                                                {"IsSuccessSendEvents",IsSuccessSendEvents.ToString() },
-                                                {"IsSuccessWriteWebLink",IsSuccessWriteWebLink.ToString() },
-                                                {"ObjectNumber",ObjectNumber.ToString() },
-                                                {"MounterPhone",Mounters.FirstOrDefault().NewPhone }
-                                            });
+                                            //Analytics.TrackEvent("Ошибка при отправке монтажа, не получилось записать ссылку, координаты, маршрут или отправить событие",
+                                            //new Dictionary<string, string> {
+                                            //    {"IsSuccessSendEvents",IsSuccessSendEvents.ToString() },
+                                            //    {"IsSuccessWriteWebLink",IsSuccessWriteWebLink.ToString() },
+                                            //    {"ObjectNumber",ObjectNumber.ToString() },
+                                            //    {"MounterPhone",Mounters.FirstOrDefault().NewPhone }
+                                            //});
                                         }
                                         MountsViewModel vm = new MountsViewModel(Mounters, Servicemans);
                                         App.Current.MainPage = new MountsPage(vm);
@@ -434,19 +432,19 @@ namespace MounterApp.ViewModel {
                             }
                             else {
                                 await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Не все обязательные фото были сделаны", Color.Red, LayoutOptions.EndAndExpand), 4000));
-                                Analytics.TrackEvent("Ошибка. Количество фото");
+                                //Analytics.TrackEvent("Ошибка. Количество фото");
                             }
                         else {
                             await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Адрес объекта не может быть пустым", Color.Red, LayoutOptions.EndAndExpand), 4000));
-                            Analytics.TrackEvent("Ошибка. Адрес объекта");
+                            //Analytics.TrackEvent("Ошибка. Адрес объекта");
                         }
                     else {
                         await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Название объекта не может быть пустым", Color.Red, LayoutOptions.EndAndExpand), 4000));
-                        Analytics.TrackEvent("Ошибка. Название объекта");
+                        //Analytics.TrackEvent("Ошибка. Название объекта");
                     }
                 else {
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Номер объекта не может быть пустым", Color.Red, LayoutOptions.EndAndExpand), 4000));
-                    Analytics.TrackEvent("Ошибка. Номер объекта");
+                    //Analytics.TrackEvent("Ошибка. Номер объекта");
                 }
                 Opacity = 1;
                 IndicatorVisible = false;
@@ -457,12 +455,12 @@ namespace MounterApp.ViewModel {
         public RelayCommand WriteCoordinates {
             get => _WriteCoordinates ??= new RelayCommand(async obj => {
                 HttpStatusCode code = await ClientHttp.Get("/api/Andromeda/coords?ObjectNumber=" + ObjectNumber + "&ObjectAddress=" + ObjectAddress);
-                if (!code.Equals(HttpStatusCode.Accepted))
-                    Crashes.TrackError(new Exception("Не удачная попытка записи координат в андромеду"),
-                            new Dictionary<string, string> {
-                                    {"ObjectNumber",ObjectNumber },
-                                    {"ObjectAddress",ObjectAddress }
-                            });
+                //if (!code.Equals(HttpStatusCode.Accepted))
+                    //Crashes.TrackError(new Exception("Не удачная попытка записи координат в андромеду"),
+                    //        new Dictionary<string, string> {
+                    //                {"ObjectNumber",ObjectNumber },
+                    //                {"ObjectAddress",ObjectAddress }
+                    //        });
             });
         }
 
@@ -470,12 +468,12 @@ namespace MounterApp.ViewModel {
         public RelayCommand WriteDriveways {
             get => _WriteDriveways ??= new RelayCommand(async obj => {
                 HttpStatusCode code = await ClientHttp.Get("/api/Andromeda/driveways?ObjectNumber=" + ObjectNumber + "&ObjectAddress=" + ObjectAddress);
-                if (!code.Equals(HttpStatusCode.Accepted))
-                    Crashes.TrackError(new Exception("Не удачная попытка записи подъездных путей в андромеду"),
-                            new Dictionary<string, string> {
-                                    {"ObjectNumber",ObjectNumber },
-                                    {"ObjectAddress",ObjectAddress }
-                            });
+                //if (!code.Equals(HttpStatusCode.Accepted))
+                    //Crashes.TrackError(new Exception("Не удачная попытка записи подъездных путей в андромеду"),
+                    //        new Dictionary<string, string> {
+                    //                {"ObjectNumber",ObjectNumber },
+                    //                {"ObjectAddress",ObjectAddress }
+                    //        });
             });
         }
 
@@ -486,11 +484,11 @@ namespace MounterApp.ViewModel {
                 HttpStatusCode code = await ClientHttp.Get("/api/Andromeda/weblink?ObjectNumber=" + ObjectNumber + "&path=" + Path);
                 if (!code.Equals(HttpStatusCode.Accepted)) {
                     IsSuccessWriteWebLink = false;
-                    Crashes.TrackError(new Exception("Не удачная попытка записи подъездных путей в андромеду"),
-                            new Dictionary<string, string> {
-                                    {"ObjectNumber",ObjectNumber },
-                                    {"ObjectAddress",ObjectAddress }
-                            });
+                    //Crashes.TrackError(new Exception("Не удачная попытка записи подъездных путей в андромеду"),
+                    //        new Dictionary<string, string> {
+                    //                {"ObjectNumber",ObjectNumber },
+                    //                {"ObjectAddress",ObjectAddress }
+                    //        });
                 }
                 else
                     IsSuccessWriteWebLink = true;
@@ -503,10 +501,10 @@ namespace MounterApp.ViewModel {
                 HttpStatusCode code = await ClientHttp.Get("/api/Andromeda/SendEvents?ObjectNumber=" + ObjectNumber);
                 if (!code.Equals(HttpStatusCode.Accepted)) {
                     IsSuccessSendEvents = false;
-                    Crashes.TrackError(new Exception("Не получен код 6 от Андромеды"),
-                            new Dictionary<string, string> {
-                                    {"ObjectNumber",ObjectNumber }
-                            });
+                    //Crashes.TrackError(new Exception("Не получен код 6 от Андромеды"),
+                    //        new Dictionary<string, string> {
+                    //                {"ObjectNumber",ObjectNumber }
+                    //        });
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("От сервера не был получен корректный ответ. Доставка обходного до оператора не может быть гарантирована.", Color.Red, LayoutOptions.EndAndExpand), 4000));
                 }
                 else
@@ -673,10 +671,10 @@ namespace MounterApp.ViewModel {
         private RelayCommand _SaveToDB;
         public RelayCommand SaveToDB {
             get => _SaveToDB ??= new RelayCommand(async obj => {
-                Analytics.TrackEvent("Сохранение монтажа перед отправкой на сервер в локальной базе",
-                                    new Dictionary<string, string> {
-                                        {"ObjectNumber",ObjectNumber }
-                                    });
+                //Analytics.TrackEvent("Сохранение монтажа перед отправкой на сервер в локальной базе",
+                //                    new Dictionary<string, string> {
+                //                        {"ObjectNumber",ObjectNumber }
+                //                    });
                 if (Photos.Count >= 5) {
                     if (Mount == null) {
                         App.Database.SaveUpdateMount(GetMount(null));
@@ -721,11 +719,11 @@ namespace MounterApp.ViewModel {
         private RelayCommand _TakePhotoCommand;
         public RelayCommand TakePhotoCommand {
             get => _TakePhotoCommand ??= new RelayCommand(async obj => {
-                Analytics.TrackEvent("Сохраняем данные по монтажу в памяти приложения, и переходим к добавлению фото, чтобы после не вбивать данные заного",
-                new Dictionary<string, string> {
-                    {"MounterPhone",Mounters.FirstOrDefault().NewPhone },
-                    {"ObjectNumber",ObjectNumber }
-                });
+                //Analytics.TrackEvent("Сохраняем данные по монтажу в памяти приложения, и переходим к добавлению фото, чтобы после не вбивать данные заного",
+                //new Dictionary<string, string> {
+                //    {"MounterPhone",Mounters.FirstOrDefault().NewPhone },
+                //    {"ObjectNumber",ObjectNumber }
+                //});
                 if (Mount == null)
                     Mount = new Mounts();
                 Mount.ObjectNumber = ObjectNumber;
@@ -746,7 +744,7 @@ namespace MounterApp.ViewModel {
                     if (result) {
                         Photos.Remove(SelectedPhoto);
                         PhotoNames.Add(SelectedPhoto._Types);
-                        Analytics.TrackEvent("Удаление фото");
+                        //Analytics.TrackEvent("Удаление фото");
                     }
                 }
                 SelectedPhoto = null;

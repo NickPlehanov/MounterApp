@@ -1,6 +1,4 @@
-﻿using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
-using Microsoft.AppCenter;
+﻿using Microsoft.AppCenter.Crashes;
 using MounterApp.Helpers;
 using MounterApp.Model;
 using MounterApp.Views;
@@ -9,11 +7,6 @@ using System;
 using System.Collections.Generic;
 using Xamarin.Forms;
 using static Xamarin.Essentials.Permissions;
-using Android.OS;
-using MounterApp.Properties;
-using Android.App;
-using Android;
-using Android.Content;
 
 namespace MounterApp.ViewModel {
     public class MainPageViewModel : BaseViewModel {
@@ -56,7 +49,7 @@ namespace MounterApp.ViewModel {
                                     { "AndroidDetails.StackTrace",errorReport.AndroidDetails.StackTrace }
                                 };
                     Crashes.TrackError(errorReport.Exception, parameters);
-                    }
+                }
             });
         }
         /// <summary>
@@ -103,7 +96,7 @@ namespace MounterApp.ViewModel {
 
                 IndicatorVisible = true;
                 OpacityForm = 0.1;
-                Analytics.TrackEvent("App start");
+                //Analytics.TrackEvent("App start");
                 string Phone = null;
                 Phone = NormalizePhone(phone: PhoneNumber);
                 if (string.IsNullOrEmpty(Phone)) {
@@ -126,8 +119,8 @@ namespace MounterApp.ViewModel {
                 try {
                     Xamarin.Forms.Application.Current.Properties["Phone"] = Phone;
                     await Xamarin.Forms.Application.Current.SavePropertiesAsync();
-                    Analytics.TrackEvent("Сохранение номера телефона в локальную базу данных");
-                    Analytics.TrackEvent("Запрос монтажников по номеру телефона");
+                    //Analytics.TrackEvent("Сохранение номера телефона в локальную базу данных");
+                    //Analytics.TrackEvent("Запрос монтажников по номеру телефона");
                     Mounters = await ClientHttp.Get <List<NewMounterExtensionBase>>("/api/NewMounterExtensionBases/phone?phone=" + Phone);
                     Servicemans = await ClientHttp.Get <List<NewServicemanExtensionBase>>("/api/NewServicemanExtensionBases/phone?phone=" + Phone);
 
@@ -135,11 +128,11 @@ namespace MounterApp.ViewModel {
                         if(Mounters.Count > 0 || Servicemans.Count > 0) {
                             if(Mounters.Count > 1 || Servicemans.Count > 1) {
                                 await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Неоднозначно определен сотрудник", Color.Red, LayoutOptions.EndAndExpand), 4000));
-                                Dictionary<string,string> parameters = new Dictionary<string,string> {
-                                    { "Phone",Phone },
-                                    { "Error","Неоднозначно определен сотрудник" }
-                                };
-                                Crashes.TrackError(new Exception("Неоднозначно определен сотрудник"),parameters);
+                                //Dictionary<string,string> parameters = new Dictionary<string,string> {
+                                //    { "Phone",Phone },
+                                //    { "Error","Неоднозначно определен сотрудник" }
+                                //};
+                                //Crashes.TrackError(new Exception("Неоднозначно определен сотрудник"),parameters);
                             }
                             else {
                                 IndicatorVisible = false;
@@ -150,20 +143,20 @@ namespace MounterApp.ViewModel {
                     }
                     else {
                         await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Сотрудника с таким номером телефона не найдено", Color.Red, LayoutOptions.EndAndExpand), 4000));
-                        Dictionary<string,string> parameters = new Dictionary<string,string> {
-                            { "Phone",Phone },
-                            { "Error","Не найден сотрудник по номеру телефона" }
-                        };
-                        Crashes.TrackError(new Exception("Не найден сотрудник по номеру телефона"),parameters);
+                        //Dictionary<string,string> parameters = new Dictionary<string,string> {
+                        //    { "Phone",Phone },
+                        //    { "Error","Не найден сотрудник по номеру телефона" }
+                        //};
+                        //Crashes.TrackError(new Exception("Не найден сотрудник по номеру телефона"),parameters);
                     }
                 }
                 catch(Exception ex) {
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Нет подключения к интернету или сетевой адрес недоступен", Color.Red, LayoutOptions.EndAndExpand), 4000));
-                    Dictionary<string,string> parameters = new Dictionary<string,string> {
-                        { "Phone",Phone },
-                        { "Error","Не удалось соединится с сервером или десерелизовать результаты запроса" }
-                    };
-                    Crashes.TrackError(ex,parameters);
+                    //Dictionary<string,string> parameters = new Dictionary<string,string> {
+                    //    { "Phone",Phone },
+                    //    { "Error","Не удалось соединится с сервером или десерелизовать результаты запроса" }
+                    //};
+                    //Crashes.TrackError(ex,parameters);
                 }
                 IndicatorVisible = false;
                 OpacityForm = 1;
