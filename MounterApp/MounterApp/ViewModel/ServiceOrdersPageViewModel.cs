@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -747,7 +748,7 @@ namespace MounterApp.ViewModel {
                     }
                 }
 
-                var y = await ClientHttp.Post("/api/NewServiceorderExtensionBases/dinner?dateTime=" + Date +
+                var y = await ClientHttp.Post<NewServiceorderExtensionBase>("/api/NewServiceorderExtensionBases/dinner?dateTime=" + Date +
                                             "&serviceman=" + Servicemans.FirstOrDefault().NewServicemanId +
                                             "&lat=" + Latitude +
                                             "&lon=" + Longitude
@@ -766,9 +767,9 @@ namespace MounterApp.ViewModel {
                 GetServiceOrderByTransferFireAlarm.Execute(Servicemans);
                 CheckEnableDinner.Execute(null);
 
-                if (string.IsNullOrEmpty(y)) {
+                if (y==null) 
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Ошибка при попытке отметки обеда", Color.Red, LayoutOptions.EndAndExpand), 4000));
-                }
+                
 
                 await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Отметка времени обеда поставлена", Color.Green, LayoutOptions.EndAndExpand), 4000));
                 return;
@@ -784,15 +785,8 @@ namespace MounterApp.ViewModel {
                     DinnerVisible = false;
                     return;
                 }
-                var sm = Servicemans.FirstOrDefault().NewCategory;
-                if (sm != 6) {
                     var dinner_order = await ClientHttp.Get<List<NewServicemanExtensionBase>>("/api/NewServiceorderExtensionBases/CheckDinner?dateTime=" + Date + "&serviceman=" + Servicemans.FirstOrDefault().NewServicemanId);
-                    DinnerVisible = dinner_order != null ? dinner_order.Count() <= 0 : false;
-                }
-                else {
-                    var dinner_order = await ClientHttp.Get<List<NewServicemanExtensionBase>>("/api/NewServiceOrderForFireAlarmExtensionBase/CheckDinner?dateTime=" + Date + "&serviceman=" + Servicemans.FirstOrDefault().NewServicemanId);
-                    DinnerVisible = dinner_order != null ? dinner_order.Count() <= 0 : false;
-                }
+                    DinnerVisible = dinner_order != null && dinner_order.Count() <= 0;
             });
         }
         private RelayCommand _GetServiceOrdersFireAlarm;
@@ -801,15 +795,9 @@ namespace MounterApp.ViewModel {
                 OpacityForm = 0.1;
                 IndicatorVisible = true;
                 if (Servicemans.Count > 0) {
-                    //Analytics.TrackEvent("Получение заявок технику на ПС",
-                    //new Dictionary<string, string> {
-                    //    {"Serviceman",Servicemans.FirstOrDefault().NewPhone },
-                    //    {"Date",Date.ToString() }
-                    //});
-                    ///api/NewServiceorderExtensionBases/ServiceOrderByUser?usr_ID=FEF46B07-8D7A-E311-920A-00155D01051D&date=18.11.2020
-                    if (Date == DateTime.Parse("01.01.0001 00:00:00")) {
+                    if (Date == DateTime.Parse("01.01.0001 00:00:00")) 
                         Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
-                    }
+                    
 
                     List<NewTest2ExtensionBase_ex> _serviceorders = await ClientHttp.Get<List<NewTest2ExtensionBase_ex>>("/api/NewServiceOrderForFireAlarmExtensionBase/ServiceOrderByUserNew?usr_ID=" + Servicemans.FirstOrDefault().NewServicemanId + "&date=" + Date);
                     if (_serviceorders == null)

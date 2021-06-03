@@ -20,20 +20,21 @@ using static Xamarin.Essentials.Permissions;
 namespace MounterApp.ViewModel {
     public class ServiceOrderViewModel : BaseViewModel {
         public ServiceOrderViewModel() { }
+        /// <summary>
+        /// Конструктор окна заявка технику
+        /// </summary>
+        /// <param name="_so"></param>
+        /// <param name="_servicemans"></param>
+        /// <param name="_mounters"></param>
         public ServiceOrderViewModel(NewServiceorderExtensionBase_ex _so, List<NewServicemanExtensionBase> _servicemans, List<NewMounterExtensionBase> _mounters) {
-            //Analytics.TrackEvent("Инициализация окна заявки технику",
-            //new Dictionary<string, string> {
-            //    {"ServicemanPhone",_servicemans.FirstOrDefault().NewPhone },
-            //    {"ServiceOrderID",_so.NewServiceorderId.ToString() }
-            //});
             ServiceOrderID = _so;
             ServiceOrderID.NewDate = ServiceOrderID.NewDate.Value.AddHours(5);
             Servicemans = _servicemans;
             Mounters = _mounters;
             OpacityForm = 1;
-            WiresVisible = false;
-            ExtFieldsVisible = false;
-            EventsVisible = false;
+            //WiresVisible = false;
+            //ExtFieldsVisible = false;
+            //EventsVisible = false;
             GetInfoByGuardObject.Execute(null);
             GetCategory.Execute(null);
             GetObjectNameCommand.Execute(null);
@@ -47,35 +48,31 @@ namespace MounterApp.ViewModel {
             IncomeButtonText = ServiceOrderID.NewIncome.HasValue ? ServiceOrderID.NewIncome.Value.AddHours(5).ToShortTimeString() : "Пришел";
         }
 
-        public ServiceOrderViewModel(NewTest2ExtensionBase _so, List<NewServicemanExtensionBase> _servicemans, List<NewMounterExtensionBase> _mounters) {
-            //Analytics.TrackEvent("Инициализация окна заявки технику",
-            //new Dictionary<string, string> {
-            //    {"ServicemanPhone",_servicemans.FirstOrDefault().NewPhone },
-            //    {"ServiceOrderID",_so.NewTest2Id.ToString() }
-            //});
-            ServiceOrderFireAlarm = _so;
-            ServiceOrderFireAlarm.NewDate = ServiceOrderFireAlarm.NewDate.Value.AddHours(5);
-            Servicemans = _servicemans;
-            Mounters = _mounters;
-            OpacityForm = 1;
-            WiresVisible = false;
-            ExtFieldsVisible = false;
-            EventsVisible = false;
-            App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
-            InfoImage = IconName("info");
-            ReorderImage = IconName("reorder");
-            EventImage = IconName("event");
-            CloseImage = IconName("close");
-            TransferImage = IconName("transfer");
-            PeopleImage = IconName("people");
-        }
+        //public ServiceOrderViewModel(NewTest2ExtensionBase _so, List<NewServicemanExtensionBase> _servicemans, List<NewMounterExtensionBase> _mounters) {
+        //    ServiceOrderFireAlarm = _so;
+        //    ServiceOrderFireAlarm.NewDate = ServiceOrderFireAlarm.NewDate.Value.AddHours(5);
+        //    Servicemans = _servicemans;
+        //    Mounters = _mounters;
+        //    OpacityForm = 1;
+        //    WiresVisible = false;
+        //    ExtFieldsVisible = false;
+        //    EventsVisible = false;
+        //    App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
+        //    InfoImage = IconName("info");
+        //    ReorderImage = IconName("reorder");
+        //    EventImage = IconName("event");
+        //    CloseImage = IconName("close");
+        //    TransferImage = IconName("transfer");
+        //    PeopleImage = IconName("people");
+        //}
 
 
-        private RelayCommand _NotifyCommand;
-        public RelayCommand NotifyCommand {
-            get => _NotifyCommand ??= new RelayCommand(async obj => {
-            });
-        }
+        //private RelayCommand _NotifyCommand;
+        //public RelayCommand NotifyCommand {
+        //    get => _NotifyCommand ??= new RelayCommand(async obj => {
+        //    });
+        //}
+
         private ImageSource _InfoImage;
         public ImageSource InfoImage {
             get => _InfoImage;
@@ -133,30 +130,37 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(ObjectInfoVisible));
             }
         }
-        private ObservableCollection<Wires> _WiresCollection = new ObservableCollection<Wires>();
-        public ObservableCollection<Wires> WiresCollection {
-            get => _WiresCollection;
-            set {
-                _WiresCollection = value;
-                OnPropertyChanged(nameof(WiresCollection));
-            }
-        }
-        private ObservableCollection<ExtFields> _ExtFields = new ObservableCollection<ExtFields>();
-        public ObservableCollection<ExtFields> ExtFields {
-            get => _ExtFields;
-            set {
-                _ExtFields = value;
-                OnPropertyChanged(nameof(ExtFields));
-            }
-        }
-        private ObservableCollection<GetEventsReceivedFromObject_Result> _Events = new ObservableCollection<GetEventsReceivedFromObject_Result>();
-        public ObservableCollection<GetEventsReceivedFromObject_Result> Events {
-            get => _Events;
-            set {
-                _Events = value;
-                OnPropertyChanged(nameof(Events));
-            }
-        }
+        ///// <summary>
+        ///// Коллекция шлейфов
+        ///// </summary>
+        //private ObservableCollection<Wires> _WiresCollection = new ObservableCollection<Wires>();
+        //public ObservableCollection<Wires> WiresCollection {
+        //    get => _WiresCollection;
+        //    set {
+        //        _WiresCollection = value;
+        //        OnPropertyChanged(nameof(WiresCollection));
+        //    }
+        //}
+        ///// <summary>
+        ///// Коллекция дополнительных полей в объекте Андромеды
+        ///// </summary>
+        //private ObservableCollection<ExtFields> _ExtFields = new ObservableCollection<ExtFields>();
+        //public ObservableCollection<ExtFields> ExtFields {
+        //    get => _ExtFields;
+        //    set {
+        //        _ExtFields = value;
+        //        OnPropertyChanged(nameof(ExtFields));
+        //    }
+        //}
+
+        //private ObservableCollection<GetEventsReceivedFromObject_Result> _Events = new ObservableCollection<GetEventsReceivedFromObject_Result>();
+        //public ObservableCollection<GetEventsReceivedFromObject_Result> Events {
+        //    get => _Events;
+        //    set {
+        //        _Events = value;
+        //        OnPropertyChanged(nameof(Events));
+        //    }
+        //}
         private double _OpacityForm;
         public double OpacityForm {
             get => _OpacityForm;
@@ -182,14 +186,14 @@ namespace MounterApp.ViewModel {
             }
         }
 
-        private NewTest2ExtensionBase _ServiceOrderFireAlarm;
-        public NewTest2ExtensionBase ServiceOrderFireAlarm {
-            get => _ServiceOrderFireAlarm;
-            set {
-                _ServiceOrderFireAlarm = value;
-                OnPropertyChanged(nameof(ServiceOrderFireAlarm));
-            }
-        }
+        //private NewTest2ExtensionBase _ServiceOrderFireAlarm;
+        //public NewTest2ExtensionBase ServiceOrderFireAlarm {
+        //    get => _ServiceOrderFireAlarm;
+        //    set {
+        //        _ServiceOrderFireAlarm = value;
+        //        OnPropertyChanged(nameof(ServiceOrderFireAlarm));
+        //    }
+        //}
         private string _Siding;
         public string Siding {
             get => _Siding;
@@ -278,42 +282,42 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(ExtFieldsVisible));
             }
         }
-        private DateTime _DateStart;
-        public DateTime DateStart {
-            get => _DateStart;
-            set {
-                if (value == DateTime.Parse("01.01.1900 00:00:00")) {
-                    _DateStart = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy")).AddDays(-1);
-                }
-                else {
-                    _DateStart = value;
-                }
+        //private DateTime _DateStart;
+        //public DateTime DateStart {
+        //    get => _DateStart;
+        //    set {
+        //        if (value == DateTime.Parse("01.01.1900 00:00:00")) {
+        //            _DateStart = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy")).AddDays(-1);
+        //        }
+        //        else {
+        //            _DateStart = value;
+        //        }
 
-                OnPropertyChanged(nameof(DateStart));
-            }
-        }
-        private DateTime _DateEnd;
-        public DateTime DateEnd {
-            get => _DateEnd;
-            set {
-                if (value == DateTime.Parse("01.01.1900 00:00:00")) {
-                    _DateEnd = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
-                }
-                else {
-                    _DateEnd = value;
-                }
+        //        OnPropertyChanged(nameof(DateStart));
+        //    }
+        //}
+        //private DateTime _DateEnd;
+        //public DateTime DateEnd {
+        //    get => _DateEnd;
+        //    set {
+        //        if (value == DateTime.Parse("01.01.1900 00:00:00")) {
+        //            _DateEnd = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
+        //        }
+        //        else {
+        //            _DateEnd = value;
+        //        }
 
-                OnPropertyChanged(nameof(DateEnd));
-            }
-        }
-        private bool _EventsVisible;
-        public bool EventsVisible {
-            get => _EventsVisible;
-            set {
-                _EventsVisible = value;
-                OnPropertyChanged(nameof(EventsVisible));
-            }
-        }
+        //        OnPropertyChanged(nameof(DateEnd));
+        //    }
+        //}
+        //private bool _EventsVisible;
+        //public bool EventsVisible {
+        //    get => _EventsVisible;
+        //    set {
+        //        _EventsVisible = value;
+        //        OnPropertyChanged(nameof(EventsVisible));
+        //    }
+        //}
         private string _Latitude;
         public string Latitude {
             get => _Latitude;
@@ -333,36 +337,9 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetCategory;
         public RelayCommand GetCategory {
             get => _GetCategory ??= new RelayCommand(async obj => {
-                //Analytics.TrackEvent("Получение списка категорий заявок технику",
-                //    new Dictionary<string, string> {
-                //        {"Servicemans",Servicemans.First().NewPhone } });
-                //List<MetadataModel> mm = new List<MetadataModel>();
                 List<MetadataModel> mm = await ClientHttp.Get<List<MetadataModel>>("/api/Common/metadata?ColumnName=new_category&ObjectName=New_serviceorder");
-                if (mm != null && ServiceOrderID.NewCategory != null) {
-                    Category = mm.FirstOrDefault(x => x.Value == ServiceOrderID.NewCategory).Label;
-                }
-                //using(HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                //    HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Common/metadata?ColumnName=new_category&ObjectName=New_serviceorder");
-                //    if(response.StatusCode.Equals(System.Net.HttpStatusCode.OK)) {
-                //        var resp = response.Content.ReadAsStringAsync().Result;
-                //        try {
-                //            Analytics.TrackEvent("Попытка десериализации ответа от сервера с категориями техников");
-                //            mm = JsonConvert.DeserializeObject<List<MetadataModel>>(resp);
-                //        }
-                //        catch(Exception ex) {
-                //            Crashes.TrackError(new Exception("Ошибка получения списка категорий заявок технику"),
-                //            new Dictionary<string,string> {
-                //        {"Servicemans",Servicemans.First().NewPhone },
-                //        {"ServerResponse",response.Content.ReadAsStringAsync().Result },
-                //        {"ErrorMessage",ex.Message },
-                //        {"StatusCode",response.StatusCode.ToString() },
-                //        {"Response",response.ToString() }
-                //            });
-                //        }
-                //        if(mm != null && ServiceOrderID.NewCategory != null)
-                //            Category = mm.FirstOrDefault(x => x.Value == ServiceOrderID.NewCategory).Label;
-                //    }
-                //}
+                if (mm != null && ServiceOrderID.NewCategory != null) 
+                    Category = mm.FirstOrDefault(x => x.Value == ServiceOrderID.NewCategory).Label;                
             });
         }
         private RelayCommand _BackPressCommand;
@@ -385,19 +362,16 @@ namespace MounterApp.ViewModel {
                         NewAndromedaExtensionBase andromeda = await ClientHttp.Get<NewAndromedaExtensionBase>("/api/NewAndromedaExtensionBases/id?id=" + ServiceOrderID.NewAndromedaServiceorder);
                         ServiceOrderID.NewNumber = andromeda.NewNumber;
                     }
-                    //TODO: сообщение что заявка неправильно заполнена
                 }
-                //if (ServiceOrderFireAlarm.NewNumber.HasValue)
                 if (ServiceOrderID.NewNumber != 0) {
                     NewGuardObjectExtensionBase goeb = await ClientHttp.Get<NewGuardObjectExtensionBase>("/api/NewGuardObjectExtensionBases/GetInfoByNumberNew?number=" + ServiceOrderID.NewNumber);
-                    //NULL - если может быть ситуация при которой не заведен охраняемый объект
                     if (goeb != null) {
                         Contact = goeb.NewFirstcontact;
                         Siding = goeb.NewSiding;
-                        rrOS = goeb.NewRrOs.HasValue ? (bool)goeb.NewRrOs : false;
-                        rrPS = goeb.NewRrPs.HasValue ? (bool)goeb.NewRrPs : false;
-                        rrVideo = goeb.NewRrVideo.HasValue ? (bool)goeb.NewRrVideo : false;
-                        rrAccess = goeb.NewRrSkud.HasValue ? (bool)goeb.NewRrSkud : false;
+                        rrOS = goeb.NewRrOs.HasValue && (bool)goeb.NewRrOs;
+                        rrPS = goeb.NewRrPs.HasValue && (bool)goeb.NewRrPs;
+                        rrVideo = goeb.NewRrVideo.HasValue && (bool)goeb.NewRrVideo;
+                        rrAccess = goeb.NewRrSkud.HasValue && (bool)goeb.NewRrSkud;
                     }
                 }
                 Opacity = 1;
@@ -407,11 +381,6 @@ namespace MounterApp.ViewModel {
         private RelayCommand _IncomeCommand;
         public RelayCommand IncomeCommand {
             get => _IncomeCommand ??= new RelayCommand(async obj => {
-                //Analytics.TrackEvent("Заявка технику: вызов команды Пришел. Попытка получения координат",
-                //new Dictionary<string, string> {
-                //    {"ServiceOrderID",ServiceOrderID.NewServiceorderId.ToString() },
-                //    {"Serviceman",Servicemans.FirstOrDefault().NewPhone}
-                //});
                 Opacity = 0.1;
                 IndicatorVisible = true;
                 var locator = CrossGeolocator.Current;
@@ -448,74 +417,31 @@ namespace MounterApp.ViewModel {
                         }
                     }
                     else {
-                        //    Crashes.TrackError(new Exception("Заявка технику. Ошибка получения координат.Доступ к геопозиции непредоставлен")
-                        //    , new Dictionary<string, string> {
-                        //    {"PermissionStatus",status.ToString()},
-                        //    {"phone",Servicemans.First().NewPhone },
-                        //    {"name",Servicemans.First().NewName }
-                        //});
                         await Application.Current.MainPage.DisplayAlert("Ошибка", "Отметка о времени прихода, не была записана!", "OK");
                         Opacity = 1;
                         IndicatorVisible = false;
                         return;
                     }
                 }
-                catch (Exception ex) {
-                    //Crashes.TrackError(new Exception("Заявка на ПС. Ошибка получения координат.")
-                    //    , new Dictionary<string, string> {
-                    //    {"ErrorMessage",ex.Message },
-                    //    {"PermissionStatus",status.ToString()},
-                    //    {"phone",Servicemans.First().NewPhone },
-                    //    {"name",Servicemans.First().NewName }
-                    //});
+                catch (Exception) {
                     Opacity = 1;
                     IndicatorVisible = false;
-                    //await Application.Current.MainPage.DisplayAlert("Ошибка","Отметка о времени прихода, не была записана!","OK");
                     MessagePopupPageViewModel vm = new MessagePopupPageViewModel("Ошибка при попытке записи времени прихода", Color.Red, LayoutOptions.EndAndExpand);
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(vm, 4000));
                     return;
                 }
                 if (status == PermissionStatus.Granted) {
-                    //Analytics.TrackEvent("Запрос данных на сервере (могло же что-то измениться",
-                    //new Dictionary<string, string> {
-                    //    {"ServiceOrderID",ServiceOrderID.NewServiceorderId.ToString() }
-                    //});
                     NewServiceorderExtensionBase soeb = await ClientHttp.Get<NewServiceorderExtensionBase>("/api/NewServiceorderExtensionBases/id?id=" + ServiceOrderID.NewServiceorderId);
 
                     if (soeb != null) {
-                        //Analytics.TrackEvent("Попытка записи данных на сервер по объекту заявка технику, заполняем поле Пришел",
-                        //new Dictionary<string, string> {
-                        //    {"ServiceOrderID",ServiceOrderID.NewServiceorderId.ToString() }
-                        //});
                         soeb.NewIncome = DateTime.Now.AddHours(-5);
-
-
-                        using HttpClient clientPut = new HttpClient(GetHttpClientHandler());
                         var httpContent = new StringContent(JsonConvert.SerializeObject(soeb), Encoding.UTF8, "application/json");
-                        HttpResponseMessage responsePut = await clientPut.PutAsync(Resources.BaseAddress + "/api/NewServiceorderExtensionBases", httpContent);
-                        if (!responsePut.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
-                            //    Crashes.TrackError(new Exception("Ошибка при сохранении объекта Заявка технику"),
-                            //    new Dictionary<string, string> {
-                            //{"ServerResponse",responsePut.Content.ReadAsStringAsync().Result },
-                            //{"StatusCode",responsePut.StatusCode.ToString() },
-                            //{"Response",responsePut.ToString() }
-                            //    });
-                            //await Application.Current.MainPage.DisplayAlert("Ошибка"
-                            //    ,"При попытке сохранения данных произошла ошибка. Повторите попытку позже, в случае если ошибка повторяется, сообщите в IT-отдел."
-                            //    ,"OK");
+                        var result = await ClientHttp.Put("/api/NewServiceorderExtensionBases", httpContent);
+                        if (!result.Equals(System.Net.HttpStatusCode.Accepted)) 
                             await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("От сервера не получена информация о текущей заявке. Повторите попытку позже, в случае если ошибка повторяется, сообщите в IT-отдел.", Color.Red, LayoutOptions.EndAndExpand), 4000));
-                        }
-                        else {
-                            //toast.maketext(android.app.application.context,"время прихода записано",toastlength.long).show();
+                        else 
                             await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Время прихода записано.", Color.Green, LayoutOptions.EndAndExpand), 4000));
-                            //await App.Current.MainPage.Navigation.PopAsync(false);
-                        }
                     }
-                    //запишем координаты
-                    //Analytics.TrackEvent("Попытка записи координат на сервер по объекту заявка технику",
-                    //    new Dictionary<string, string> {
-                    //            {"ServiceOrderID",ServiceOrderID.NewServiceorderId.ToString() }
-                    //    });
                     if (!string.IsNullOrEmpty(Latitude) && !string.IsNullOrEmpty(Longitude)) {
                         var data = JsonConvert.SerializeObject(new ServiceOrderCoordinates() {
                             SocId = Guid.NewGuid(),
@@ -523,34 +449,9 @@ namespace MounterApp.ViewModel {
                             SocIncomeLatitude = Latitude,
                             SocIncomeLongitude = Longitude
                         });
-                        //await ClientHttp.PostQuery("/api/ServiceOrderCoordinates",new StringContent(data,Encoding.UTF8,"application/json"));
-
-                        using (HttpClient clientPost = new HttpClient(GetHttpClientHandler())) {
-
-                            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-                            HttpResponseMessage responsePost = await clientPost.PostAsync(Resources.BaseAddress + "/api/ServiceOrderCoordinates", content);
-                            //if (!responsePost.StatusCode.Equals(System.Net.HttpStatusCode.Accepted)) {
-                            //        Crashes.TrackError(new Exception("Ошибка при сохранении объекта Заявка технику"),
-                            //        new Dictionary<string, string> {
-                            //{"ServerResponse",responsePost.Content.ReadAsStringAsync().Result },
-                            //{"StatusCode",responsePost.StatusCode.ToString() },
-                            //{"Response",responsePost.ToString() }
-                            //        });
-                            //    }
-                        }
+                        await ClientHttp.PostStateCode("/api/ServiceOrderCoordinates", new StringContent(data, Encoding.UTF8, "application/json"));
                     }
                     else {
-                        //Crashes.TrackError(new Exception("Заявка технику. Пустые координаты"),
-                        //        new Dictionary<string, string> {
-                        //        { "PermissionStatus_StorageRead",CheckAndRequestPermissionAsync(new StorageRead()).Result.ToString() },
-                        //        { "PermissionStatus_LocationWhenInUse",CheckAndRequestPermissionAsync(new LocationWhenInUse()).Result.ToString() },
-                        //        { "PermissionStatus_NetworkState",CheckAndRequestPermissionAsync(new NetworkState()).Result.ToString() },
-                        //        { "PermissionStatus_Permissions.Camera",CheckAndRequestPermissionAsync(new Permissions.Camera()).Result.ToString() },
-                        //        { "PermissionStatus_StorageWrite",CheckAndRequestPermissionAsync(new StorageWrite()).Result.ToString() },
-                        //        { "Phone",Servicemans.First().NewPhone },
-                        //        { "Name",Servicemans.First().NewName }
-                        //            //{ "ID",ServiceOrderFireAlarm.NewTest2Id.ToString() }
-                        //        });
                     }
                     ServiceOrderID.NewIncome = DateTime.Now.AddHours(-5);
                     IncomeButtonText = ServiceOrderID.NewIncome.Value.AddHours(5).ToShortTimeString();
@@ -582,17 +483,10 @@ namespace MounterApp.ViewModel {
         private RelayCommand _CallClientCommand;
         public RelayCommand CallClientCommand {
             get => _CallClientCommand ??= new RelayCommand(async obj => {
-                //Analytics.TrackEvent("Звонок клиенту",
-                //    new Dictionary<string, string> {
-                //        {"ServiceOrderID",ServiceOrderID.NewServiceorderId.ToString() },
-                //        {"PhoneNumber",obj.ToString() }
-                //    });
                 string phone = null;
-                foreach (char c in obj.ToString().ToCharArray()) {
-                    if (char.IsDigit(c)) {
+                foreach (char c in obj.ToString().ToCharArray()) 
+                    if (char.IsDigit(c)) 
                         phone += c;
-                    }
-                }
 
                 if (phone != null) {
                     Uri uri = new Uri("tel:" + phone);
@@ -668,10 +562,6 @@ namespace MounterApp.ViewModel {
         private RelayCommand _CloseOrderCommand;
         public RelayCommand CloseOrderCommand {
             get => _CloseOrderCommand ??= new RelayCommand(async obj => {
-                //Analytics.TrackEvent("Переход на страницу закрытия заявки",
-                //    new Dictionary<string, string> {
-                //        {"ServiceOrderID",ServiceOrderID.NewServiceorderId.ToString() }
-                //    });
                 CloseOrderPopupPageViewModel vm = new CloseOrderPopupPageViewModel(ServiceOrderID, Servicemans, Mounters);
                 await App.Current.MainPage.Navigation.PushPopupAsync(new CloseOrderPopupPage(vm));
             }, obj => ServiceOrderID.NewIncome != null);
@@ -679,10 +569,6 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetObjectInfoCommand;
         public RelayCommand GetObjectInfoCommand {
             get => _GetObjectInfoCommand ??= new RelayCommand(async obj => {
-                //Analytics.TrackEvent("Переход на страницу получения информации об объекте",
-                //    new Dictionary<string, string> {
-                //        {"ServiceOrderID",ServiceOrderID.NewServiceorderId.ToString() }
-                //    });
                 ObjectInfoViewModel vm = new ObjectInfoViewModel(ServiceOrderID, Servicemans, Mounters);
                 await App.Current.MainPage.Navigation.PushPopupAsync(new ObjectInfoPopup(vm));
             });
@@ -691,10 +577,6 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetCustomersCommand;
         public RelayCommand GetCustomersCommand {
             get => _GetCustomersCommand ??= new RelayCommand(async obj => {
-                //Analytics.TrackEvent("Переход на страницу получения информации об ответсвенных лицах объекта",
-                //    new Dictionary<string, string> {
-                //        {"ServiceOrderID",ServiceOrderID.NewServiceorderId.ToString() }
-                //    });
                 ObjCustsPopupViewModel vm = new ObjCustsPopupViewModel(ServiceOrderID);
                 await App.Current.MainPage.Navigation.PushPopupAsync(new ObjCustsPopupPage(vm));
             });
@@ -702,10 +584,6 @@ namespace MounterApp.ViewModel {
         private RelayCommand _GetEventsCommand;
         public RelayCommand GetEventsCommand {
             get => _GetEventsCommand ??= new RelayCommand(async obj => {
-                //Analytics.TrackEvent("Переход на страницу получения событий по объекту",
-                //    new Dictionary<string, string> {
-                //        {"ServiceOrderID",ServiceOrderID.NewServiceorderId.ToString() }
-                //    });
                 EventsPopupViewModel vm = new EventsPopupViewModel(ServiceOrderID, Servicemans, Mounters);
                 await App.Current.MainPage.Navigation.PushPopupAsync(new EventsPopupPage(vm));
             });
@@ -713,19 +591,8 @@ namespace MounterApp.ViewModel {
         private RelayCommand _ServiceOrderByObjectCommand;
         public RelayCommand ServiceOrderByObjectCommand {
             get => _ServiceOrderByObjectCommand ??= new RelayCommand(async obj => {
-                //Analytics.TrackEvent("Переход на страницу получения прошлых заявок технику",
-                //    new Dictionary<string, string> {
-                //        {"ServiceOrderID",ServiceOrderID.NewServiceorderId.ToString() }
-                //    });
                 PastOrdersPopupViewModel vm = new PastOrdersPopupViewModel(ServiceOrderID, Servicemans, Mounters);
                 await App.Current.MainPage.Navigation.PushPopupAsync(new PastOrdersPopupPage(vm));
-            });
-        }
-
-        private RelayCommand _TestCommand;
-        public RelayCommand TestCommand {
-            get => _TestCommand ??= new RelayCommand(async obj => {
-                bool g = false;
             });
         }
     }

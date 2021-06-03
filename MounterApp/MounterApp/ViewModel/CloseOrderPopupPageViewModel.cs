@@ -27,7 +27,6 @@ namespace MounterApp.ViewModel {
             IndicatorVisible = state;
             OpacityForm = state ? 0.1 : 1;
         }
-        //readonly ClientHttp http = new ClientHttp();
         /// <summary>
         /// Конструктор для закрытия заявки технику
         /// </summary>
@@ -41,10 +40,8 @@ namespace MounterApp.ViewModel {
             //GetResults.ExecuteAsync(null);
             NecesseryRead = false;
             SaveImage = IconName("save");
-            if (Application.Current.Properties.ContainsKey("ConclusionByOrder")) {
+            if (Application.Current.Properties.ContainsKey("ConclusionByOrder")) 
                 ConclusionByOrder = Application.Current.Properties["ConclusionByOrder"] as string;
-            }
-
             IsLoading(false);
         }
         /// <summary>
@@ -60,9 +57,8 @@ namespace MounterApp.ViewModel {
             //GetResults.ExecuteAsync(null);
             NecesseryRead = false;
             SaveImage = IconName("save");
-            if (Application.Current.Properties.ContainsKey("ConclusionByOrder")) {
+            if (Application.Current.Properties.ContainsKey("ConclusionByOrder")) 
                 ConclusionByOrder = Application.Current.Properties["ConclusionByOrder"] as string;
-            }
 
             IsLoading(false);
         }
@@ -202,28 +198,24 @@ namespace MounterApp.ViewModel {
         /// <summary>
         /// Объект хранит выбранный пользователем результат по заявке: Выполнено, Отмена, Перенос 
         /// </summary>
-        private MetadataModel _SelectedResult;
-        public MetadataModel SelectedResult {
-            get => _SelectedResult;
-            set {
-                _SelectedResult = value;
-                OnPropertyChanged(nameof(SelectedResult));
-                if (SelectedResult.Value != 1) {
-                    ReasonVisibility = true;
-                    //GetReasons.ExecuteAsync(null);
-                }
-                else {
-                    ReasonVisibility = false;
-                }
-
-                if (SelectedResult.Value == 2) {
-                    TransferLayoutVisibility = true;
-                }
-                if (SelectedResult.Value == 3) {
-                    TransferLayoutVisibility = false;
-                }
-            }
-        }
+        //private MetadataModel _SelectedResult;
+        //public MetadataModel SelectedResult {
+        //    get => _SelectedResult;
+        //    set {
+        //        _SelectedResult = value;
+        //        OnPropertyChanged(nameof(SelectedResult));
+        //        ReasonVisibility = SelectedResult.Value != 1;
+        //        //if (SelectedResult.Value != 1) 
+        //        //    ReasonVisibility = true;
+        //        //else 
+        //        //    ReasonVisibility = false;
+        //        TransferLayoutVisibility = SelectedResult.Value == 2;
+        //        //if (SelectedResult.Value == 2) 
+        //        //    TransferLayoutVisibility = true;
+        //        //if (SelectedResult.Value == 3) 
+        //        //    TransferLayoutVisibility = false;
+        //    }
+        //}
         /// <summary>
         /// Отслеживаемая коллекция для хранения всех вариантов результатов для закрытя заявки
         /// </summary>
@@ -322,19 +314,11 @@ namespace MounterApp.ViewModel {
         /// Проверяем и возвращаем статус разрешений на местоположение.
         /// </summary>
         public async Task<PermissionStatus> CheckPermission() {
-            PermissionStatus status = PermissionStatus.Unknown;
             try {
-                status = await CheckAndRequestPermissionAsync(new LocationWhenInUse());
+                PermissionStatus status = await CheckAndRequestPermissionAsync(new LocationWhenInUse());
                 return status;
             }
-            catch (Exception ex) {
-                //Crashes.TrackError(new Exception("Заявка технику.Закрытие. Ошибка получения координат.")
-                //    , new Dictionary<string, string> {
-                //                            {"ErrorMessage",ex.Message },
-                //                            {"phone",Servicemans.First().NewPhone },
-                //                            {"name",Servicemans.First().NewName },
-                //                            {"PermissionStatus",status.ToString()}
-                //});
+            catch (Exception) {
                 await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(
                     new MessagePopupPageViewModel("Ошибка при попытке сохранения. Не получены необходимые разрешения", Color.Red, LayoutOptions.EndAndExpand), 4000));
                 IsLoading(false);
@@ -345,7 +329,6 @@ namespace MounterApp.ViewModel {
         /// Получаем и присваиваем в свойства значения для координат
         /// </summary>
         private async Task<bool> GetLocation() {
-            //Location location = await Geolocation.GetLastKnownLocationAsync();
             var locator = CrossGeolocator.Current;
             locator.DesiredAccuracy = 20;
             Plugin.Geolocator.Abstractions.Position position;
@@ -380,27 +363,15 @@ namespace MounterApp.ViewModel {
                 try {
                     IsLoading(true);
                     ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Servicemans, Mounters, false);
-                    //Analytics.TrackEvent("Начало закрытия заявки",
-                    //    new Dictionary<string, string> {
-                    //{ "ServiceOrder",so != null ? so.NewServiceorderId.ToString() : sofa.NewTest2Id.ToString() },
-                    //{ "ServicemanPhone",Servicemans.FirstOrDefault().NewPhone }
-                    //    });
-                    //проверяем значение необходимых полей NecesseryRead - Обязательно для прочтения оператором ConclusionByOrder - заключение по заявке
-                    //if (NecesseryRead && string.IsNullOrEmpty(ConclusionByOrder)) {
                     if (string.IsNullOrEmpty(ConclusionByOrder)) {
-                        //Analytics.TrackEvent("Не указано заключение по заявке",
-                        //    new Dictionary<string, string> {
-                        //        { "ServiceOrder",so != null ? so.NewServiceorderId.ToString() : sofa.NewTest2Id.ToString() },
-                        //        { "ServicemanPhone",Servicemans.FirstOrDefault().NewPhone }
-                        //    });
                         await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Не указано заключение по заявке", Color.Red, LayoutOptions.EndAndExpand), 4000));
                         IsLoading(false);
                         return;
                     }
                     if (!string.IsNullOrEmpty(ConclusionByOrder)) {
-                        if (!Application.Current.Properties.ContainsKey("ConclusionByOrder")) {
+                        if (!Application.Current.Properties.ContainsKey("ConclusionByOrder")) 
                             Application.Current.Properties["ConclusionByOrder"] = ConclusionByOrder;
-                        }
+                        
                         //Заявка технику
                         if (so != null) {
                             NewServiceorderExtensionBase soeb = await ClientHttp.Get<NewServiceorderExtensionBase>("/api/NewServiceorderExtensionBases/id?id=" + so.NewServiceorderId);
@@ -427,29 +398,29 @@ namespace MounterApp.ViewModel {
 
                                     HttpStatusCode code = await ClientHttp.Put("/api/NewServiceorderExtensionBases", new StringContent(JsonConvert.SerializeObject(soeb), Encoding.UTF8, "application/json"));
                                     if (code.Equals(HttpStatusCode.Accepted)) {
-                                        if (App.Current.MainPage.Navigation.NavigationStack.Any()) {
+                                        if (App.Current.MainPage.Navigation.NavigationStack.Any()) 
                                             await App.Current.MainPage.Navigation.PopPopupAsync();
-                                        }
+                                        
 
                                         await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Заключение и время ухода сохранены", Color.Green, LayoutOptions.EndAndExpand), 4000));
                                         App.Current.MainPage = new ServiceOrdersPage(new ServiceOrdersPageViewModel(Servicemans, Mounters, false));
                                     }
-                                    else {
+                                    else 
                                         await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка, не был получен корректный ответ от сервера. Попробуйте позже, в случае повторной ошибки, сообщите в ИТ-отдел", Color.Red, LayoutOptions.EndAndExpand), 7000));
-                                    }
+                                    
 
                                     Application.Current.Properties["ConclusionByOrder"] = null;
                                     await Application.Current.SavePropertiesAsync();
                                     App.Current.MainPage = new ServiceOrdersPage(vm);
                                     IsLoading(false);
                                 }
-                                else {
+                                else 
                                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка. Не предоставлены разрешения", Color.Red, LayoutOptions.EndAndExpand), 7000));
-                                }
+                                
                             }
-                            else {
+                            else 
                                 await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка", Color.Red, LayoutOptions.EndAndExpand), 7000));
-                            }
+                            
                         }
                         //заявка на пс
                         if (sofa != null) {
@@ -476,29 +447,29 @@ namespace MounterApp.ViewModel {
 
                                     HttpStatusCode code = await ClientHttp.Put("/api/NewServiceOrderForFireAlarmExtensionBase", new StringContent(JsonConvert.SerializeObject(soeb), Encoding.UTF8, "application/json"));
                                     if (code.Equals(HttpStatusCode.Accepted)) {
-                                        if (App.Current.MainPage.Navigation.NavigationStack.Any()) {
+                                        if (App.Current.MainPage.Navigation.NavigationStack.Any()) 
                                             await App.Current.MainPage.Navigation.PopPopupAsync();
-                                        }
+                                        
 
                                         await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Заключение и время ухода сохранены", Color.Green, LayoutOptions.EndAndExpand), 4000));
                                         App.Current.MainPage = new ServiceOrdersPage(new ServiceOrdersPageViewModel(Servicemans, Mounters, false));
                                     }
-                                    else {
+                                    else 
                                         await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка, не был получен корректный ответ от сервера. Попробуйте позже, в случае повторной ошибки, сообщите в ИТ-отдел", Color.Red, LayoutOptions.EndAndExpand), 7000));
-                                    }
+                                    
 
                                     Application.Current.Properties["ConclusionByOrder"] = null;
                                     await Application.Current.SavePropertiesAsync();
                                     App.Current.MainPage = new ServiceOrdersPage(vm);
                                     IsLoading(false);
                                 }
-                                else {
+                                else 
                                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка. Не предоставлены разрешения", Color.Red, LayoutOptions.EndAndExpand), 7000));
-                                }
+                                
                             }
-                            else {
+                            else 
                                 await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("При сохранении информации о заявке технику, произошла ошибка", Color.Red, LayoutOptions.EndAndExpand), 7000));
-                            }
+                            
                         }
                     }
                     IsLoading(false);
@@ -506,17 +477,8 @@ namespace MounterApp.ViewModel {
                     Application.Current.Properties["ConclusionByOrder"] = null;
                     await Application.Current.SavePropertiesAsync();
                 }
-                catch (Exception ex) {
+                catch (Exception ) {
                     IsLoading(false);
-                    //ErrorReport crashReport = await Crashes.GetLastSessionCrashReportAsync();
-                    //Crashes.TrackError(new Exception("Проблема при закрытии заявки")
-                    //    , new Dictionary<string, string> {
-                    //                        {"ErrorMessage",ex.Message },
-                    //                        {"phone",Servicemans.First().NewPhone },
-                    //                        {"name",Servicemans.First().NewName },
-                    //                        {"StackTrace",crashReport.StackTrace },
-                    //                        {"AndroidDetails",crashReport.AndroidDetails.StackTrace }
-                    //});
                 }
             });
         }

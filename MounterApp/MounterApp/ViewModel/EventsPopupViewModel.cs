@@ -31,8 +31,8 @@ namespace MounterApp.ViewModel {
         /// <summary>
         /// Конструктор popup-окна для отображения событий по объекту для монтажников +-4 часа от даты отправки монтажа
         /// </summary>
-        /// <param name="objectNumber"></param>
-        /// <param name="dt"></param>
+        /// <param name="objectNumber">Номер объекта</param>
+        /// <param name="dt">Дата</param>
         public EventsPopupViewModel(string objectNumber, DateTime? dt) {
             CloseImage = IconName("close");
             GetImage = IconName("get");
@@ -149,12 +149,10 @@ namespace MounterApp.ViewModel {
         public DateTime StartDate {
             get => _StartDate;
             set {
-                if (value == DateTime.Parse("01.01.1900 00:00:00")) {
-                    _StartDate = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
-                }
-                else {
-                    _StartDate = value;
-                }
+                if (value == DateTime.Parse("01.01.1900 00:00:00")) 
+                    _StartDate = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));                
+                else 
+                    _StartDate = value;                
 
                 OnPropertyChanged(nameof(StartDate));
             }
@@ -166,13 +164,11 @@ namespace MounterApp.ViewModel {
         public DateTime EndDate {
             get => _EndDate;
             set {
-                if (value == DateTime.Parse("01.01.1900 00:00:00")) {
-                    _EndDate = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy")).AddDays(1);
-                }
-                else {
+                if (value == DateTime.Parse("01.01.1900 00:00:00")) 
+                    _EndDate = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy")).AddDays(1);                
+                else 
                     _EndDate = value;
-                }
-
+                
                 OnPropertyChanged(nameof(EndDate));
             }
         }
@@ -219,12 +215,6 @@ namespace MounterApp.ViewModel {
             get => _GetEventsCommands ??= new RelayCommand(async obj => {
                 IndicatorVisible = true;
                 OpacityForm = 0.1;
-                //Analytics.TrackEvent("Запрос событий по объекту",
-                //new Dictionary<string,string> {
-                //    {"ServicemanPhone",Servicemans.First().NewPhone },
-                //    {"StartDate",StartDate.ToShortDateString() },
-                //    {"EndDate",EndDate.ToShortDateString() }
-                //});
                 if (StartDate <= EndDate) {
                     Events.Clear();
                     if ((EndDate - StartDate).TotalDays > 7) {
@@ -233,9 +223,8 @@ namespace MounterApp.ViewModel {
                     }
                     List<GetEventsReceivedFromObject_Result> _evnts = new List<GetEventsReceivedFromObject_Result>();
                     string obj_number = ServiceOrder != null ? ServiceOrder.NewNumber.ToString() : ServiceOrderFireAlarm.NewNumber.ToString();
-                    if (string.IsNullOrEmpty(obj_number)) {
+                    if (string.IsNullOrEmpty(obj_number)) 
                         return;
-                    }
 
                     Events = await ClientHttp.Get<ObservableCollection<GetEventsReceivedFromObject_Result>>("/api/Andromeda/events?objNumber=" + obj_number +
                                         "&startDate=" + StartDate +
@@ -243,9 +232,8 @@ namespace MounterApp.ViewModel {
                                         "&testFiltered=0&doubleFiltered=0"
                                         );
                 }
-                else {
+                else 
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Дата начала не может быть больше или равна дате окончания", Color.Red, LayoutOptions.EndAndExpand), 4000));
-                }
 
                 IndicatorVisible = false;
                 OpacityForm = 1;
@@ -301,13 +289,6 @@ namespace MounterApp.ViewModel {
         private RelayCommand _ExitCommand;
         public RelayCommand ExitCommand {
             get => _ExitCommand ??= new RelayCommand(async obj => {
-                try {
-                    //Analytics.TrackEvent("Выход со страницы для запроса событий по объекту",
-                    //new Dictionary<string,string> {
-                    //{"ServicemanPhone",Servicemans.First().NewPhone }
-                    //});
-                }
-                catch { }
                 await App.Current.MainPage.Navigation.PopPopupAsync(false);
             });
         }

@@ -1,11 +1,10 @@
 ﻿<popup:PopupPage xmlns:popup="http://rotorgames.com" xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:vm="clr-namespace:MounterApp.ViewModel"
-             x:Class="MounterApp.Views.ServiceOrderInfoPopupPage">
+             xmlns:vm="clr-namespace:MounterApp.ViewModel" x:DataType="vm:ServiceOrderInfoPopupViewModel"
+                 x:Class="MounterApp.Views.ServiceOrderInfoPopupPage">
     <popup:PopupPage.Content>
         <Frame Style="{DynamicResource PopupFrameStyle}">
             <StackLayout >
-                <!--<Label Style="{StaticResource HeaderLabelStyle}" Text="Информация по заявке" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>-->
                 <Label Style="{StaticResource HeaderLabelStyle}" Text="{Binding Info}" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
                 <SwipeView Style="{DynamicResource SwipeViewStyle}" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
                     <SwipeView.LeftItems>
@@ -35,9 +34,6 @@
                     <Image Source="{Binding ImgSrc}" HeightRequest="200" WidthRequest="200"/>
                     <Button Style="{StaticResource CommonButtonStyle}" Text="Подтвердить и отправить" Command="{Binding AcceptAndSendPhotoCommand}"/>
                 </StackLayout>
-                <!--<Button Style="{StaticResource CommonButtonStyle}" Text="Входная группа"  Command="{Binding ShowEntracePhotoCommand}"/>-->
-                <!--<Button Style="{StaticResource CommonButtonStyle}" Text="Cхема объекта" Command="{Binding ShowSchemePhotoCommand}"/>-->
-                <!--<Button Style="{StaticResource CommonButtonStyle}" Text="Добавить фото" Command="{Binding AddPhotoCommand}"/>-->
                 <Button Style="{StaticResource CommonButtonStyle}" Text="Закрыть" Command="{Binding ExitCommand}"/>
             </StackLayout>
         </Frame>

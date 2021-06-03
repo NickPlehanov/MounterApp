@@ -14,17 +14,17 @@ using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class SelectActionsPopupPageViewModel : BaseViewModel {
+        /// <summary>
+        /// Конструктор для выбора действия для фотографий монтажа
+        /// </summary>
+        /// <param name="_mount">Монтаж</param>
+        /// <param name="_mounters">Список монтажников</param>
+        /// <param name="_servicemans">Список техников</param>
         public SelectActionsPopupPageViewModel(Mounts _mount, List<NewMounterExtensionBase> _mounters, List<NewServicemanExtensionBase> _servicemans) {
             Mount = _mount;
             Mounters = _mounters;
             Servicemans = _servicemans;
             IsPickPhoto = null;
-            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Карточка объекта" });
-            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Схема объекта" });
-            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Расшлейфовка объекта" });
-            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Ответственные объекта" });
-            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Вывеска объекта" });
-            //PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(),PhotoTypeName = "Доп. фото" });
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(), PhotoTypeName = "Вывеска объекта" });
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(), PhotoTypeName = "Обходной лист" });
             PhotoNames.Add(new PhotoTypes() { PhotoTypeId = Guid.NewGuid(), PhotoTypeName = "Расшлейфовка объекта" });
@@ -41,7 +41,9 @@ namespace MounterApp.ViewModel {
             IsChanged = false;
             Counter = 0;
         }
-
+        /// <summary>
+        /// Список техников
+        /// </summary>
         private List<NewServicemanExtensionBase> _Servicemans;
         public List<NewServicemanExtensionBase> Servicemans {
             get => _Servicemans;
@@ -50,6 +52,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(Servicemans));
             }
         }
+        /// <summary>
+        /// Иконка камеры
+        /// </summary>
         private ImageSource _CameraImage;
         public ImageSource CameraImage {
             get => _CameraImage;
@@ -58,7 +63,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(CameraImage));
             }
         }
-
+        /// <summary>
+        /// Иконка коллекции
+        /// </summary>
         private ImageSource _CollectionImage;
         public ImageSource CollectionImage {
             get => _CollectionImage;
@@ -67,7 +74,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(CollectionImage));
             }
         }
-
+        /// <summary>
+        /// Иконка закрытия
+        /// </summary>
         private ImageSource _CloseImage;
         public ImageSource CloseImage {
             get => _CloseImage;
@@ -76,6 +85,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(CloseImage));
             }
         }
+        /// <summary>
+        /// Коллекция наименований фотографий для монтажа
+        /// </summary>
         private ObservableCollection<PhotoTypes> _PhotoNames = new ObservableCollection<PhotoTypes>();
         public ObservableCollection<PhotoTypes> PhotoNames {
             get => _PhotoNames;
@@ -84,6 +96,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(PhotoNames));
             }
         }
+        /// <summary>
+        /// Выбранное наименование фотографии
+        /// </summary>
         private PhotoTypes _PhotoName;
         public PhotoTypes PhotoName {
             get => _PhotoName;
@@ -92,6 +107,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(PhotoName));
             }
         }
+        /// <summary>
+        /// Комментарий к фотографии
+        /// </summary>
         private string _PhotoComment;
         public string PhotoComment {
             get => _PhotoComment;
@@ -100,6 +118,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(PhotoComment));
             }
         }
+        /// <summary>
+        /// Выбранный из галереи файл
+        /// </summary>
         private MediaFile _File;
         public MediaFile File {
             get => _File;
@@ -108,6 +129,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(File));
             }
         }
+        /// <summary>
+        /// Коллекция фотографий монтажа
+        /// </summary>
         private ObservableCollection<PhotoCollection> _Photos = new ObservableCollection<PhotoCollection>();
         public ObservableCollection<PhotoCollection> Photos {
             get => _Photos;
@@ -116,12 +140,17 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(Photos));
             }
         }
+        /// <summary>
+        /// Команда добавления нового фото
+        /// </summary>
         private RelayCommand _AddNewPhotoCommand;
         public RelayCommand AddNewPhotoCommand {
             get => _AddNewPhotoCommand ??= new RelayCommand(async obj => {
                 if (PhotoName != null) {
                     if (File != null) {
+                        //конвертируем фото в Base64
                         string tmp = Convert.ToBase64String(System.IO.File.ReadAllBytes(File.Path));
+                        //если такого фото нет, то добавляем в коллекцию
                         if (!Photos.Any(y => y.Data == tmp)) {
                             Photos.Add(new PhotoCollection(
                                 Guid.NewGuid(),
@@ -134,6 +163,7 @@ namespace MounterApp.ViewModel {
                                     PhotoName
                                 ));
                             PhotoSource.Add(ImgSrc);
+                            //определяем тип фотографии и записываем в объект монтажа
                             switch (PhotoName.PhotoTypeName) {
                                 case "Обходной лист":
                                     Mount.ObjectCard = Convert.ToBase64String(System.IO.File.ReadAllBytes(File.Path));
@@ -176,32 +206,26 @@ namespace MounterApp.ViewModel {
 
                                     break;
                             }
-                            //ImgSrc = "EmptyPhoto.png";
                             ImgSrc = null;
                             SelectedPhoto = null;
-                            if (!PhotoName.PhotoTypeName.Equals("Доп. фото")) {
-                                PhotoNames.Remove(PhotoName);
-                            }
+                            if (!PhotoName.PhotoTypeName.Equals("Доп. фото")) 
+                                PhotoNames.Remove(PhotoName);                            
 
-                            if (Counter == 5) {
-                                PhotoNames.Remove(PhotoName);
-                            }
-                            //Toast.MakeText(Android.App.Application.Context,"Фото добавлено",ToastLength.Short).Show();
+                            if (Counter == 5) 
+                                PhotoNames.Remove(PhotoName);                            
                             await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Фото добавлено", Color.Green, LayoutOptions.EndAndExpand), 500));
                         }
-                        else {
-                            //await Application.Current.MainPage.DisplayAlert("Ошибка","Такая фотография уже была загружена","OK");
-                            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Такая фотография уже была загружена", Color.Red, LayoutOptions.EndAndExpand), 4000));
-                        }
+                        else 
+                            await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Такая фотография уже была загружена", Color.Red, LayoutOptions.EndAndExpand), 4000));                        
                     }
                 }
-                else {
-                    //await Application.Current.MainPage.DisplayAlert("Ошибка","Выберите тип фотографии","OK"); 
+                else 
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Выберите тип фотографии", Color.Red, LayoutOptions.EndAndExpand), 4000));
-                }
             });
         }
-
+        /// <summary>
+        /// Счетчик для доп.фото
+        /// </summary>
         private int _Counter;
         public int Counter {
             get => _Counter;
@@ -210,6 +234,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(Counter));
             }
         }
+        /// <summary>
+        /// выбранное фото
+        /// </summary>
         private PhotoCollection _SelectedPhoto;
         public PhotoCollection SelectedPhoto {
             get => _SelectedPhoto;
@@ -218,6 +245,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(SelectedPhoto));
             }
         }
+        /// <summary>
+        /// Коллекция фотографий
+        /// </summary>
         private ObservableCollection<ImageSource> _PhotoSource = new ObservableCollection<ImageSource>();
         public ObservableCollection<ImageSource> PhotoSource {
             get => _PhotoSource;
@@ -226,22 +256,24 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(PhotoSource));
             }
         }
+        /// <summary>
+        /// Фотография
+        /// </summary>
         private ImageSource _ImgSrc;
         public ImageSource ImgSrc {
             get => _ImgSrc;
             set {
                 _ImgSrc = value;
-                if (_ImgSrc == null) {
+                if (_ImgSrc == null) 
                     VisibleAcceptedLayout = false;
-                }
-                else {
+                else 
                     VisibleAcceptedLayout = true;
-                }
-
                 OnPropertyChanged(nameof(ImgSrc));
             }
         }
-
+        /// <summary>
+        /// видимость поля подтверждения фотографии
+        /// </summary>
         private bool _VisibleAcceptedLayout;
         public bool VisibleAcceptedLayout {
             get => _VisibleAcceptedLayout;
@@ -250,13 +282,11 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(VisibleAcceptedLayout));
             }
         }
-
-        private RelayCommand _AcceptCommand;
-        public RelayCommand AcceptCommand {
-            get => _AcceptCommand ??= new RelayCommand(async obj => {
-
-            });
-        }
+        /// <summary>
+        /// Флаг определяющий способ получения фото
+        /// true - камера
+        /// false - галерея
+        /// </summary>
         private bool? _IsPickPhoto;
         public bool? IsPickPhoto {
             get => _IsPickPhoto;
@@ -265,7 +295,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(IsPickPhoto));
             }
         }
-
+        /// <summary>
+        /// Флаг того что было проведено изменение
+        /// </summary>
         private bool _IsChanged;
         public bool IsChanged {
             get => _IsChanged;
@@ -274,7 +306,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(IsChanged));
             }
         }
-
+        /// <summary>
+        /// монтаж
+        /// </summary>
         private Mounts _Mount;
         public Mounts Mount {
             get => _Mount;
@@ -283,7 +317,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(Mount));
             }
         }
-
+        /// <summary>
+        /// Список монтажников
+        /// </summary>
         private List<NewMounterExtensionBase> _Mounters;
         public List<NewMounterExtensionBase> Mounters {
             get => _Mounters;
@@ -292,7 +328,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(Mounters));
             }
         }
-
+        /// <summary>
+        /// Закрытие окна
+        /// </summary>
         private RelayCommand _BackPressedCommand;
         public RelayCommand BackPressedCommand {
             get => _BackPressedCommand ??= new RelayCommand(async obj => {
@@ -301,18 +339,19 @@ namespace MounterApp.ViewModel {
                 App.Current.MainPage = new NewMountpage(vm);
             });
         }
-
+        /// <summary>
+        /// делаем фотографию камерой
+        /// </summary>
         private RelayCommand _PickPhotoCommand;
         public RelayCommand PickPhotoCommand {
             get => _PickPhotoCommand ??= new RelayCommand(async obj => {
                 IsPickPhoto = true;
                 GetPhotoCommand.Execute(null);
-                //await App.Current.MainPage.Navigation.PopPopupAsync(true);
-                //NewMountPageViewModel vm = new NewMountPageViewModel(Mount,Mounters,IsPickPhoto);
-                //App.Current.MainPage = new NewMountpage(vm);
             });
         }
-
+        /// <summary>
+        /// Получаем фото из галереии
+        /// </summary>
         private RelayCommand _TakePhotoCommand;
         public RelayCommand TakePhotoCommand {
             get => _TakePhotoCommand ??= new RelayCommand(async obj => {
@@ -328,30 +367,23 @@ namespace MounterApp.ViewModel {
                     if (!CrossMedia.Current.IsCameraAvailable || !CrossMedia.Current.IsTakePhotoSupported) {
                         var perm = await CheckAndRequestPermissionAsync(new Permissions.Camera());
                         if (perm == PermissionStatus.Denied) {
-                            //Crashes.TrackError(new Exception("Камера недоступна"),
-                            //new Dictionary<string,string> {
-                            //{"Error","Камера недоступна" }
-                            //});
-                            //await Application.Current.MainPage.DisplayAlert("No Camera",":( No camera available.","OK"); 
                             await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Камера не доступна", Color.Red, LayoutOptions.EndAndExpand), 4000));
                             return;
                         }
                     }
+                    //если у нас возникает проблема с получением параметра качества фото, то просто используем по дефолту = 50
                     int q = 50;
-                    if (Application.Current.Properties.ContainsKey("Quality")) {
+                    if (Application.Current.Properties.ContainsKey("Quality")) 
                         q = int.Parse(Application.Current.Properties["Quality"].ToString());
-                    }
+                    
                     if (IsPickPhoto.Value == true) {
-                        //await CheckAndRequestPermissionAsync(new StorageRead());
-                        File = await CrossMedia.Current.PickPhotoAsync(new Plugin.Media.Abstractions.PickMediaOptions {
-                            //Directory = "Sample",
-                            //Name = "test.jpg",
+                        File = await CrossMedia.Current.PickPhotoAsync(new PickMediaOptions {
                             PhotoSize = PhotoSize.Full,
                             CompressionQuality = q
                         });
                     }
                     else {
-                        File = await CrossMedia.Current.TakePhotoAsync(new Plugin.Media.Abstractions.StoreCameraMediaOptions {
+                        File = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions {
                             Directory = "Sample",
                             Name = "test.jpg",
                             PhotoSize = PhotoSize.Full,
@@ -367,11 +399,6 @@ namespace MounterApp.ViewModel {
                         return stream;
                     });
                     IsChanged = true;
-                    //AddNewPhotoCommand.Execute(null);
-                }
-                else {
-                    //SelectActionsPopupPageViewModel vm = new SelectActionsPopupPageViewModel(Mount,Mounters);
-                    //await App.Current.MainPage.Navigation.PushPopupAsync(new SelectActionsPopupPage(vm));
                 }
             });
         }

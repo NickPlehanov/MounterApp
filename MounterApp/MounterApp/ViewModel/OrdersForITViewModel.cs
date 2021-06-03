@@ -7,13 +7,18 @@ using Rg.Plugins.Popup.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class OrdersForITViewModel : BaseViewModel {
-        //readonly ClientHttp http = new ClientHttp();
+        /// <summary>
+        /// Окно отправки заявки ИТ-отделу
+        /// </summary>
+        /// <param name="mounters">Список монтажников</param>
+        /// <param name="servicemans">Список техников</param>
         public OrdersForITViewModel(List<NewMounterExtensionBase> mounters, List<NewServicemanExtensionBase> servicemans) {
             EnableButton = true;
             TextButton = "Закрыть";
@@ -22,7 +27,9 @@ namespace MounterApp.ViewModel {
             GetUserInfo.Execute(null);
             CloseOrSendImage = IconName("close");
         }
-
+        /// <summary>
+        /// Иконка для кнопки закрытия/отправки
+        /// </summary>
         private ImageSource _CloseOrSendImage;
         public ImageSource CloseOrSendImage {
             get => _CloseOrSendImage;
@@ -56,7 +63,6 @@ namespace MounterApp.ViewModel {
         /// <summary>
         /// Переменная для хранения информации о  пользователе
         /// </summary>
-
         private string _UserInfo;
         public string UserInfo {
             get => _UserInfo;
@@ -96,7 +102,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(DescriptionProblem));
             }
         }
-
+        /// <summary>
+        /// Доступность кнопки отправить
+        /// </summary>
         private bool _EnableButton;
         public bool EnableButton {
             get => _EnableButton;
@@ -105,16 +113,12 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(EnableButton));
             }
         }
-
+        /// <summary>
+        /// Команда получения информации о пользователе, который хочет отправить заявку ИТ-отделу
+        /// </summary>
         private RelayCommand _GetUserInfo;
         public RelayCommand GetUserInfo {
             get => _GetUserInfo ??= new RelayCommand(async obj => {
-                //if(Mounters.Count > 0 || Servicemans.Count > 0) {
-                //    if(Mounters.Count > 0)
-                //        UserInfo = Mounters.FirstOrDefault().NewName+Environment.NewLine+Mounters.FirstOrDefault().NewPhone + Environment.NewLine + Mounters.FirstOrDefault().NewMounterId;
-                //    if(Servicemans.Count > 0)
-                //        UserInfo = Servicemans.FirstOrDefault().NewName + Environment.NewLine + Servicemans.FirstOrDefault().NewPhone + Environment.NewLine + Servicemans.FirstOrDefault().NewServicemanId;
-                //}
                 UserInfo = Mounters != null ?
                     Mounters.FirstOrDefault().NewName + Environment.NewLine + Mounters.FirstOrDefault().NewPhone + Environment.NewLine + Mounters.FirstOrDefault().NewMounterId :
                     Servicemans.FirstOrDefault().NewName + Environment.NewLine + Servicemans.FirstOrDefault().NewPhone + Environment.NewLine + Servicemans.FirstOrDefault().NewServicemanId;
@@ -146,28 +150,20 @@ namespace MounterApp.ViewModel {
                     Statuscode = 1
                 });
 
-                using (HttpClient client = new HttpClient(GetHttpClientHandler())) {
-                    StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-                    HttpResponseMessage response = await client.PostAsync(Resources.BaseAddress + "/api/NewItBases", content);
-                    if (response.IsSuccessStatusCode || response.StatusCode == System.Net.HttpStatusCode.Accepted) {
-                        using (HttpClient ex_client = new HttpClient(GetHttpClientHandler())) {
-                            var ex_data = JsonConvert.SerializeObject(new NewItExtensionBase() {
-                                NewItId = id,
-                                NewComment = DescriptionProblem + Environment.NewLine + UserInfo,
-                                NewName = "Проблема в мобильном приложении MounterApp"
-                            });
-                            StringContent ex_content = new StringContent(ex_data, Encoding.UTF8, "application/json");
-                            HttpResponseMessage ex_response = await client.PostAsync(Resources.BaseAddress + "/api/NewItExtensionBases", ex_content);
-                            if (ex_response.IsSuccessStatusCode || ex_response.StatusCode == System.Net.HttpStatusCode.Accepted) {
-                                await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Успешно отправлено", Color.Green, LayoutOptions.EndAndExpand), 4000));
-                            }
-                            else {
-                                await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Ошибка при отправке", Color.Red, LayoutOptions.EndAndExpand), 4000));
-                            }
-                        }
-                    }
-                }
                 ExitCommand.Execute(null);
+                StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+                await ClientHttp.PostStateCode("/api/NewItBases", content);
+                var ex_data = JsonConvert.SerializeObject(new NewItExtensionBase() {
+                    NewItId = id,
+                    NewComment = DescriptionProblem + Environment.NewLine + UserInfo,
+                    NewName = "Проблема в мобильном приложении MounterApp"
+                });
+                StringContent ex_content = new StringContent(ex_data, Encoding.UTF8, "application/json");
+                var result = await ClientHttp.PostStateCode("/api/NewItExtensionBases", ex_content);
+                if (result.Equals(HttpStatusCode.Accepted))
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Успешно отправлено", Color.Green, LayoutOptions.EndAndExpand), 4000));
+                else
+                    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Ошибка при отправке", Color.Red, LayoutOptions.EndAndExpand), 4000));
             });
         }
         /// <summary>
@@ -176,12 +172,11 @@ namespace MounterApp.ViewModel {
         private RelayCommand _ChooseCommand;
         public RelayCommand ChooseCommand {
             get => _ChooseCommand ??= new RelayCommand(async obj => {
-                if (string.IsNullOrEmpty(DescriptionProblem)) {
-                    ExitCommand.Execute(null);
-                }
-                else {
+                if (string.IsNullOrEmpty(DescriptionProblem)) 
+                    ExitCommand.Execute(null);                
+                else 
                     SendCommand.Execute(null);
-                }
+                
             });
         }
     }

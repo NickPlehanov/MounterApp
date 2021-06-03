@@ -22,11 +22,8 @@ namespace MounterApp.ViewModel {
             Mounters = mounters;
             Serviceman = servicemans;
             SettingsImage = IconName("settings");
-            //
-            //("Инициализация окна главного меню приложения");
             App.Current.MainPage.HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
             CheckVersionApp.Execute(null);
-            //GetRatingServicemanCommand.Execute(null);
         }
         /// <summary>
         /// текстовое поле, форматируется вручную для отображения топ-3 техников по количеству заявок за текущий месяц
@@ -42,14 +39,14 @@ namespace MounterApp.ViewModel {
         /// <summary>
         /// Список техников отсортированный по количеству выполненных заявок
         /// </summary>
-        private ObservableCollection<RatingServiceman> _Rating = new ObservableCollection<RatingServiceman>();
-        public ObservableCollection<RatingServiceman> Rating {
-            get => _Rating;
-            set {
-                _Rating = value;
-                OnPropertyChanged(nameof(Rating));
-            }
-        }
+        //private ObservableCollection<RatingServiceman> _Rating = new ObservableCollection<RatingServiceman>();
+        //public ObservableCollection<RatingServiceman> Rating {
+        //    get => _Rating;
+        //    set {
+        //        _Rating = value;
+        //        OnPropertyChanged(nameof(Rating));
+        //    }
+        //}
         /// <summary>
         /// Команда получения списка техников с количеством выполненных заявок
         /// </summary>
@@ -85,16 +82,11 @@ namespace MounterApp.ViewModel {
         public RelayCommand GetMountworksCommand {
             get => _GetMountworksCommand ??= new RelayCommand(async obj => {
                 if (Mounters.Any()) {
-                    //Analytics.TrackEvent("Переход к монтажам",
-                    //new Dictionary<string, string> {
-                    //    {"MountersPhone",Mounters.First().NewPhone }
-                    //});
                     MountsViewModel vm = new MountsViewModel(Mounters, Serviceman);
                     App.Current.MainPage = new MountsPage(vm);
                 }
-                else {
+                else 
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Не определен сотрудник, переход невозможен", Color.Red, LayoutOptions.EndAndExpand), 4000));
-                }
             }, obj => Mounters != null && Mounters.Count > 0);
         }
         /// <summary>
@@ -104,17 +96,12 @@ namespace MounterApp.ViewModel {
         public RelayCommand GetServiceordersCommand {
             get => _GetServiceordersCommand ??= new RelayCommand(async obj => {
                 if (Serviceman.Any()) {
-                    //Analytics.TrackEvent("Переход к заявкам технику",
-                    //    new Dictionary<string, string> {
-                    //    {"ServicemansPhone",Serviceman.First().NewPhone }
-                    //    });
                     ServiceOrdersPageViewModel vm = new ServiceOrdersPageViewModel(Serviceman, Mounters, true);
                     App.Current.MainPage = new ServiceOrdersPage(vm);
                 }
-                else {
-                    //await Application.Current.MainPage.DisplayAlert("Ошибка","Не определен сотрудник, переход невозможен","OK");
+                else 
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Не определен сотрудник, переход невозможен", Color.Red, LayoutOptions.EndAndExpand), 4000));
-                }
+                
             }, obj => Serviceman != null && Serviceman.Count > 0);
         }
         /// <summary>
@@ -136,7 +123,6 @@ namespace MounterApp.ViewModel {
             get => _Serviceman;
             set {
                 _Serviceman = value;
-                //GetRatingServicemanCommand.ChangeCanExecute();
                 OnPropertyChanged(nameof(Serviceman));
             }
         }
@@ -156,7 +142,6 @@ namespace MounterApp.ViewModel {
         private AsyncCommand _OpenSettingsCommand;
         public AsyncCommand OpenSettingsCommand {
             get => _OpenSettingsCommand ??= new AsyncCommand(async () => {
-                //Analytics.TrackEvent("Переход к настройкам");
                 SettingsPageViewModel vm = new SettingsPageViewModel(Mounters, Serviceman);
                 App.Current.MainPage = new SettingsPage(vm);
             });
@@ -173,14 +158,6 @@ namespace MounterApp.ViewModel {
                 HttpStatusCode code = await ClientHttp.Get("/api/Common/VersionNumber?appVersion=" + Version);
                 if (code.Equals(HttpStatusCode.MethodNotAllowed)) {//версия установленого приложения и версия указанная как актуальная на сервере - не совпали
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("У Вас установлена не актуальная версия приложения, пожалуйста обновите её. Настройки - Скачать", Color.Red, LayoutOptions.EndAndExpand), 4000));
-                    //Crashes.TrackError(new Exception("Необновленнная версия приложения"),
-                    //    new Dictionary<string, string> {
-                    //            {"Version",Version },
-                    //            {"MountersName",Mounters.First().NewName.ToString() },
-                    //            {"MountersPhone",Mounters.First().NewPhone.ToString() },
-                    //            {"ServicemanName",Serviceman.First().NewName.ToString() },
-                    //            {"ServicemanPhone",Serviceman.First().NewPhone.ToString() }
-                    //    });
                 }
             });
         }

@@ -390,8 +390,8 @@
                     </CollectionView>
                 </StackLayout>
             </Expander>
-            <StackLayout Style="{DynamicResource ActivityIndicatorStackLayoutStyle}" Grid.Row="3" IsVisible="{Binding IndicatorVisible}" >
-                <ActivityIndicator Style="{DynamicResource ActivityIndicatorStyle}"  />
+            <StackLayout Style="{DynamicResource ActivityIndicatorStackLayoutStyle}" IsVisible="{Binding IndicatorVisible}" Margin="0,300,0,0" >
+                <ActivityIndicator Style="{DynamicResource ActivityIndicatorStyle}" />
                 <Label Style="{DynamicResource ActivityIndicatorLabelStyle}"/>
             </StackLayout>
             <StackLayout IsVisible="{Binding DinnerVisible}" VerticalOptions="EndAndExpand" HorizontalOptions="End" Margin="0,-150,0,0">

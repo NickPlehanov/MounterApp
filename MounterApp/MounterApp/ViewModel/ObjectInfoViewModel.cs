@@ -8,7 +8,12 @@ using Xamarin.Forms;
 
 namespace MounterApp.ViewModel {
     public class ObjectInfoViewModel : BaseViewModel {
-        //readonly ClientHttp http = new ClientHttp();
+        /// <summary>
+        /// Конструктор для окна с информацией об объекте
+        /// </summary>
+        /// <param name="_so">Заявка технику</param>
+        /// <param name="_servicemans">Список техников</param>
+        /// <param name="_mounters">Список монтажников</param>
         public ObjectInfoViewModel(NewServiceorderExtensionBase_ex _so, List<NewServicemanExtensionBase> _servicemans, List<NewMounterExtensionBase> _mounters) {
             Mounters = _mounters;
             Servicemans = _servicemans;
@@ -21,6 +26,12 @@ namespace MounterApp.ViewModel {
             OpacityForm = 1;
             IndicatorVisible = false;
         }
+        /// <summary>
+        /// Конструктор для окна с информацией об объекте
+        /// </summary>
+        /// <param name="_so">Заявка на ПС</param>
+        /// <param name="_servicemans">Список техников</param>
+        /// <param name="_mounters">Список монтажников</param>
         public ObjectInfoViewModel(NewTest2ExtensionBase_ex _so, List<NewServicemanExtensionBase> _servicemans, List<NewMounterExtensionBase> _mounters) {
             Mounters = _mounters;
             Servicemans = _servicemans;
@@ -33,7 +44,9 @@ namespace MounterApp.ViewModel {
             OpacityForm = 1;
             IndicatorVisible = false;
         }
-
+        /// <summary>
+        /// Индикатор видимости загрузки
+        /// </summary>
         private bool _IndicatorVisible;
         public bool IndicatorVisible {
             get => _IndicatorVisible;
@@ -42,7 +55,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(IndicatorVisible));
             }
         }
-
+        /// <summary>
+        /// Прозрачность формы
+        /// </summary>
         private double _OpacityForm;
         public double OpacityForm {
             get => _OpacityForm;
@@ -51,6 +66,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(OpacityForm));
             }
         }
+        /// <summary>
+        /// Заявка технику
+        /// </summary>
         private NewServiceorderExtensionBase_ex _ServiceOrder;
         public NewServiceorderExtensionBase_ex ServiceOrder {
             get => _ServiceOrder;
@@ -59,7 +77,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(ServiceOrder));
             }
         }
-
+        /// <summary>
+        /// Заявка на пс
+        /// </summary>
         private NewTest2ExtensionBase_ex _ServiceOrderFireAlarm;
         public NewTest2ExtensionBase_ex ServiceOrderFireAlarm {
             get => _ServiceOrderFireAlarm;
@@ -68,6 +88,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(ServiceOrderFireAlarm));
             }
         }
+        /// <summary>
+        /// Список техников
+        /// </summary>
         private List<NewServicemanExtensionBase> _Servicemans;
         public List<NewServicemanExtensionBase> Servicemans {
             get => _Servicemans;
@@ -76,6 +99,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(Servicemans));
             }
         }
+        /// <summary>
+        /// Коллекция шлейфов объекта
+        /// </summary>
         private ObservableCollection<Wires> _WiresCollection = new ObservableCollection<Wires>();
         public ObservableCollection<Wires> WiresCollection {
             get => _WiresCollection;
@@ -84,6 +110,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(WiresCollection));
             }
         }
+        /// <summary>
+        /// Коллекция дополнительных полей, которые подвязаны в менеджере объектов
+        /// </summary>
         private ObservableCollection<ExtFields> _ExtFields = new ObservableCollection<ExtFields>();
         public ObservableCollection<ExtFields> ExtFields {
             get => _ExtFields;
@@ -92,15 +121,18 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(ExtFields));
             }
         }
+        /// <summary>
+        /// Команда закрытия окна
+        /// </summary>
         private RelayCommand _CloseCommand;
         public RelayCommand CloseCommand {
             get => _CloseCommand ??= new RelayCommand(async obj => {
                 await App.Current.MainPage.Navigation.PopPopupAsync(true);
-                //ServiceOrderViewModel vm = new ServiceOrderViewModel(ServiceOrder,Servicemans,Mounters);
-                //App.Current.MainPage = new ServiceOrder(vm);
             });
         }
-
+        /// <summary>
+        /// Список монтажников
+        /// </summary>
         private List<NewMounterExtensionBase> _Mounters;
         public List<NewMounterExtensionBase> Mounters {
             get => _Mounters;
@@ -109,54 +141,36 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(Mounters));
             }
         }
+        /// <summary>
+        /// Команда получения списка шлейфов на объекте
+        /// </summary>
         private RelayCommand _GetWires;
         public RelayCommand GetWires {
             get => _GetWires ??= new RelayCommand(async obj => {
                 OpacityForm = 0.1;
                 IndicatorVisible = true;
-                int? number = null;
-                if (ServiceOrder != null) {
-                    if (ServiceOrder.NewNumber.HasValue) {
-                        number = ServiceOrder.NewNumber;
-                    }
-                }
-
-                if (ServiceOrderFireAlarm != null) {
-                    if (ServiceOrderFireAlarm.NewNumber.HasValue) {
-                        number = ServiceOrderFireAlarm.NewNumber;
-                    }
-                }
-
-                if (number == null) {
+                int? number = ServiceOrder != null ? ServiceOrder.NewNumber.HasValue ? ServiceOrder.NewNumber : (int?)null : ServiceOrderFireAlarm != null ? ServiceOrderFireAlarm.NewNumber.HasValue ? ServiceOrderFireAlarm.NewNumber : (int?)null : (int?)null;
+                if (number == null) 
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Номер объекта не найден. Информация о шлейфах недоступна", Color.Red, LayoutOptions.EndAndExpand), 4000));
-                }
-
+                
                 WiresCollection = await ClientHttp.Get<ObservableCollection<Wires>>("/api/Andromeda/wires?objNumber=" + number);
                 OpacityForm = 1;
                 IndicatorVisible = false;
             });
         }
+        /// <summary>
+        /// Команда получения списка доп. полей
+        /// </summary>
         private RelayCommand _GetExtFields;
         public RelayCommand GetExtFields {
             get => _GetExtFields ??= new RelayCommand(async obj => {
                 OpacityForm = 0.1;
                 IndicatorVisible = true;
-                int? number = null;
-                if (ServiceOrder != null) {
-                    if (ServiceOrder.NewNumber.HasValue) {
-                        number = ServiceOrder.NewNumber;
-                    }
-                }
+                int? number = ServiceOrder != null ? ServiceOrder.NewNumber.HasValue ? ServiceOrder.NewNumber : (int?)null : ServiceOrderFireAlarm != null ? ServiceOrderFireAlarm.NewNumber.HasValue ? ServiceOrderFireAlarm.NewNumber : (int?)null : (int?)null;
 
-                if (ServiceOrderFireAlarm != null) {
-                    if (ServiceOrderFireAlarm.NewNumber.HasValue) {
-                        number = ServiceOrderFireAlarm.NewNumber;
-                    }
-                }
-
-                if (number == null) {
+                if (number == null) 
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Номер объекта не найден. Дополнительная информация из андромеды недоступна", Color.Red, LayoutOptions.EndAndExpand), 4000));
-                }
+                
 
                 ExtFields = await ClientHttp.Get<ObservableCollection<ExtFields>>("/api/Andromeda/ext?objNumber=" + number);
 
@@ -164,120 +178,52 @@ namespace MounterApp.ViewModel {
                 IndicatorVisible = false;
             });
         }
-        //private RelayCommand _GetWires;
-        //public RelayCommand GetWires {
-        //    get => _GetWires ??= new RelayCommand(async obj => {
-        //        OpacityForm = 0.1;
-        //        IndicatorVisible = true;
-        //        WiresCollection.Clear();
-        //        using HttpClient client = new HttpClient(GetHttpClientHandler());
-        //        List<Wires> _wrs = new List<Wires>();
-        //        string resp = "";
-        //        if(ServiceOrder != null) {
-        //            HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/wires?objNumber=" + ServiceOrder.NewNumber);
-        //            resp = response.Content.ReadAsStringAsync().Result;
-        //        }
-        //        else if(ServiceOrderFireAlarm != null) {
-        //            HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/wires?objNumber=" + ServiceOrderFireAlarm.NewNumber);
-        //            resp = response.Content.ReadAsStringAsync().Result;
-        //        }
-        //        try {
-        //            if (!string.IsNullOrEmpty(resp))
-        //                _wrs = JsonConvert.DeserializeObject<List<Wires>>(resp);
-        //        }
-        //        catch { }
-        //        if(_wrs.Count() > 0) {
-        //            foreach(var item in _wrs) {
-        //                WiresCollection.Add(item);
-        //            }
-        //        }
-        //        OpacityForm = 1;
-        //        IndicatorVisible = false;
-        //    });
-        //}
-        //private RelayCommand _GetExtFields;
-        //public RelayCommand GetExtFields {
-        //    get => _GetExtFields ??= new RelayCommand(async obj => {
-        //        OpacityForm = 0.1;
-        //        IndicatorVisible = true;
-        //        ExtFields.Clear();
-        //        using HttpClient client = new HttpClient(GetHttpClientHandler());
-        //        List<ExtFields> _ext = new List<ExtFields>();
-        //        string resp = "";
-        //        if(ServiceOrder != null) {
-        //            HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/ext?objNumber=" + ServiceOrder.NewNumber);
-        //             resp = response.Content.ReadAsStringAsync().Result;
-        //        }
-        //        else if(ServiceOrderFireAlarm != null) {
-        //            HttpResponseMessage response = await client.GetAsync(Resources.BaseAddress + "/api/Andromeda/ext?objNumber=" + ServiceOrder.NewNumber);
-        //            resp = response.Content.ReadAsStringAsync().Result;
-        //        }
-        //        try {
-        //            if(!string.IsNullOrEmpty(resp))
-        //                _ext = JsonConvert.DeserializeObject<List<ExtFields>>(resp);
-        //        }
-        //        catch { }
-        //        if(_ext.Count() > 0) {
-        //            foreach(var item in _ext) {
-        //                ExtFields.Add(item);
-        //            }
-        //        }
-        //        OpacityForm = 1;
-        //        IndicatorVisible = false;
-        //    });
-        //}
-
-
-        private RelayCommand _RefreshCommand;
-        public RelayCommand RefreshCommand {
-            get => _RefreshCommand ??= new RelayCommand(async obj => {
-            });
-        }
+        /// <summary>
+        /// Состояние Expander-а шлейфов
+        /// </summary>
         private bool _WiresExpandedState;
         public bool WiresExpandedState {
             get => _WiresExpandedState;
             set {
                 _WiresExpandedState = value;
-                if (_WiresExpandedState) {
-                    ArrowCircleWires = IconName("arrow_circle_up");
-                }
-                else {
-                    ArrowCircleWires = IconName("arrow_circle_down");
-                }
+                ArrowCircleWires = _WiresExpandedState ? IconName("arrow_circle_up") : (ImageSource)IconName("arrow_circle_down");
 
                 OnPropertyChanged(nameof(WiresExpandedState));
             }
         }
-
+        /// <summary>
+        /// Состояние Expander-а доп. полей
+        /// </summary>
         private bool _ExtFieldsExpandedState;
         public bool ExtFieldsExpandedState {
             get => _ExtFieldsExpandedState;
             set {
-                if (_ExtFieldsExpandedState) {
-                    ArrowCircleExtFields = IconName("arrow_circle_up");
-                }
-                else {
-                    ArrowCircleExtFields = IconName("arrow_circle_down");
-                }
-
                 _ExtFieldsExpandedState = value;
+                ArrowCircleExtFields = _ExtFieldsExpandedState ? IconName("arrow_circle_up") : (ImageSource)IconName("arrow_circle_down");
                 OnPropertyChanged(nameof(ExtFieldsExpandedState));
             }
         }
-
+        /// <summary>
+        /// команда управления состояние Expander-а для доп. полей
+        /// </summary>
         private RelayCommand _ExtFieldsExpanderCommand;
         public RelayCommand ExtFieldsExpanderCommand {
             get => _ExtFieldsExpanderCommand ??= new RelayCommand(async obj => {
                 ExtFieldsExpandedState = !ExtFieldsExpandedState;
             });
         }
+        /// <summary>
+        /// команда управления состояние Expander-а для шлейфов
+        /// </summary>
         private RelayCommand _WiresExpanderCommand;
         public RelayCommand WiresExpanderCommand {
             get => _WiresExpanderCommand ??= new RelayCommand(async obj => {
                 WiresExpandedState = !WiresExpandedState;
             });
         }
-
+        /// <summary>
+        /// Иконка стрелочки на шлейфах
+        /// </summary>
         private ImageSource _ArrowCircleWires;
         public ImageSource ArrowCircleWires {
             get => _ArrowCircleWires;
@@ -286,7 +232,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(ArrowCircleWires));
             }
         }
-
+        /// <summary>
+        /// Иконка стрелочки на доп полях
+        /// </summary>
         private ImageSource _ArrowCircleExtFields;
         public ImageSource ArrowCircleExtFields {
             get => _ArrowCircleExtFields;
@@ -295,7 +243,9 @@ namespace MounterApp.ViewModel {
                 OnPropertyChanged(nameof(ArrowCircleExtFields));
             }
         }
-
+        /// <summary>
+        /// Иконка закрытия
+        /// </summary>
         private ImageSource _CloseImage;
         public ImageSource CloseImage {
             get => _CloseImage;

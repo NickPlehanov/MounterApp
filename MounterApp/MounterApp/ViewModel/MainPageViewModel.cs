@@ -97,12 +97,9 @@ namespace MounterApp.ViewModel {
         private RelayCommand _AuthCommand;
         public RelayCommand AuthCommand {
             get => _AuthCommand ??= new RelayCommand(async obj => {
-
                 IndicatorVisible = true;
                 OpacityForm = 0.1;
-                //Analytics.TrackEvent("App start");
-                string Phone = null;
-                Phone = NormalizePhone(phone: PhoneNumber);
+                string Phone = NormalizePhone(phone: PhoneNumber);
                 if (string.IsNullOrEmpty(Phone)) {
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Введен не корректный номер телефона", Color.Red, LayoutOptions.EndAndExpand), 4000));
                     return;
@@ -111,34 +108,19 @@ namespace MounterApp.ViewModel {
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Введен не корректный номер телефона", Color.Red, LayoutOptions.EndAndExpand), 4000));
                     return;
                 }
-                //if (Phone.Substring(0,2) == "+7")
-                //    Phone = Phone.Replace("+7","8");
-                //else
-                if (Phone.Length == 11) {
-                    Phone = Phone.Substring(1, Phone.Length - 1);
-                }
-                //else {
-                //    await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Введен не корректный номер телефона", Color.Red, LayoutOptions.EndAndExpand), 4000));
-                //    Analytics.TrackEvent("Ошибка ввода номера телефона");
-                //}
+                if (Phone.Length == 11) 
+                    Phone = Phone[1..];
+                
                 try {
-                    Xamarin.Forms.Application.Current.Properties["Phone"] = Phone;
-                    await Xamarin.Forms.Application.Current.SavePropertiesAsync();
-                    //Analytics.TrackEvent("Сохранение номера телефона в локальную базу данных");
-                    //Analytics.TrackEvent("Запрос монтажников по номеру телефона");
+                    Application.Current.Properties["Phone"] = Phone;
+                    await Application.Current.SavePropertiesAsync();
                     Mounters = await ClientHttp.Get<List<NewMounterExtensionBase>>("/api/NewMounterExtensionBases/phone?phone=" + Phone);
                     Servicemans = await ClientHttp.Get<List<NewServicemanExtensionBase>>("/api/NewServicemanExtensionBases/phone?phone=" + Phone);
 
                     if (Mounters != null || Servicemans != null) {
                         if (Mounters.Count > 0 || Servicemans.Count > 0) {
-                            if (Mounters.Count > 1 || Servicemans.Count > 1) {
-                                await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Неоднозначно определен сотрудник", Color.Red, LayoutOptions.EndAndExpand), 4000));
-                                //Dictionary<string,string> parameters = new Dictionary<string,string> {
-                                //    { "Phone",Phone },
-                                //    { "Error","Неоднозначно определен сотрудник" }
-                                //};
-                                //Crashes.TrackError(new Exception("Неоднозначно определен сотрудник"),parameters);
-                            }
+                            if (Mounters.Count > 1 || Servicemans.Count > 1) 
+                                await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Неоднозначно определен сотрудник", Color.Red, LayoutOptions.EndAndExpand), 4000));                            
                             else {
                                 IndicatorVisible = false;
                                 MainMenuPageViewModel vm = new MainMenuPageViewModel(Mounters, Servicemans);
@@ -146,26 +128,15 @@ namespace MounterApp.ViewModel {
                             }
                         }
                     }
-                    else {
+                    else 
                         await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Сотрудника с таким номером телефона не найдено", Color.Red, LayoutOptions.EndAndExpand), 4000));
-                        //Dictionary<string,string> parameters = new Dictionary<string,string> {
-                        //    { "Phone",Phone },
-                        //    { "Error","Не найден сотрудник по номеру телефона" }
-                        //};
-                        //Crashes.TrackError(new Exception("Не найден сотрудник по номеру телефона"),parameters);
-                    }
+                    
                 }
                 catch (Exception ex) {
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Нет подключения к интернету или сетевой адрес недоступен", Color.Red, LayoutOptions.EndAndExpand), 4000));
-                    //Dictionary<string,string> parameters = new Dictionary<string,string> {
-                    //    { "Phone",Phone },
-                    //    { "Error","Не удалось соединится с сервером или десерелизовать результаты запроса" }
-                    //};
-                    //Crashes.TrackError(ex,parameters);
                 }
                 IndicatorVisible = false;
                 OpacityForm = 1;
-                //},obj=>!string.IsNullOrEmpty(PhoneNumber));
             }, obj => !string.IsNullOrEmpty(PhoneNumber));
         }
         /// <summary>
