@@ -1,5 +1,6 @@
 ﻿using MounterApp.Properties;
 using Newtonsoft.Json;
+using System.ComponentModel;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -28,6 +29,7 @@ namespace MounterApp.Helpers {
                 return JsonConvert.DeserializeObject<T>(await httpResponse.Content.ReadAsStringAsync());
             else
                 return null;
+
         }
         public static async Task<string> GetString(string query) {
             client.DefaultRequestHeaders.Clear();

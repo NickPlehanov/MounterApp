@@ -39,6 +39,7 @@ namespace MounterApp.ViewModel {
             Mounters = _mounters;
             //GetResults.ExecuteAsync(null);
             NecesseryRead = false;
+            VisibleJournal = false;
             SaveImage = IconName("save");
             if (Application.Current.Properties.ContainsKey("ConclusionByOrder")) 
                 ConclusionByOrder = Application.Current.Properties["ConclusionByOrder"] as string;
@@ -56,6 +57,7 @@ namespace MounterApp.ViewModel {
             Mounters = _mounters;
             //GetResults.ExecuteAsync(null);
             NecesseryRead = false;
+            VisibleJournal = true;
             SaveImage = IconName("save");
             if (Application.Current.Properties.ContainsKey("ConclusionByOrder")) 
                 ConclusionByOrder = Application.Current.Properties["ConclusionByOrder"] as string;
@@ -107,6 +109,17 @@ namespace MounterApp.ViewModel {
             }
         }
         /// <summary>
+        /// Виидмость строки с необходимостью журнала
+        /// </summary>
+        private bool _VisibleJournal;
+        public bool VisibleJournal {
+            get => _VisibleJournal;
+            set {
+                _VisibleJournal = value;
+                OnPropertyChanged(nameof(VisibleJournal));
+            }
+        }
+        /// <summary>
         /// По нажатию на флажок "Обязательно для прочтения оператором" меняет его значение на противоположное от исходного
         /// </summary>
         private AsyncCommand _SetValueNecesseryReadCommand;
@@ -115,7 +128,15 @@ namespace MounterApp.ViewModel {
                 NecesseryRead = !NecesseryRead;
             });
         }
-
+        /// <summary>
+        /// По нажатию на флажок "необходим журнал" меняет его значение на противоположное от исходного
+        /// </summary>
+        private AsyncCommand _SetValueNecesseryJournalCommand;
+        public AsyncCommand SetValueNecesseryJournalCommand {
+            get => _SetValueNecesseryJournalCommand ??= new AsyncCommand(async () => {
+                NecesseryJournal = !NecesseryJournal;
+            });
+        }
         /// <summary>
         /// Список монтажников заполняется в конструкторе
         /// TODO: стоило бы передавать объект, а не список, но исторически так сложилось
@@ -149,6 +170,17 @@ namespace MounterApp.ViewModel {
             set {
                 _NecesseryRead = value;
                 OnPropertyChanged(nameof(NecesseryRead));
+            }
+        }
+        /// <summary>
+        /// Поле: На объект требуется журнал, реализовано для техников ПС
+        /// </summary>
+        private bool _NecesseryJournal;
+        public bool NecesseryJournal {
+            get => _NecesseryJournal;
+            set {
+                _NecesseryJournal = value;
+                OnPropertyChanged(nameof(NecesseryJournal));
             }
         }
         /// <summary>
@@ -219,75 +251,75 @@ namespace MounterApp.ViewModel {
         /// <summary>
         /// Отслеживаемая коллекция для хранения всех вариантов результатов для закрытя заявки
         /// </summary>
-        private ObservableCollection<MetadataModel> _Results = new ObservableCollection<MetadataModel>();
-        public ObservableCollection<MetadataModel> Results {
-            get => _Results;
-            set {
-                _Results = value;
-                OnPropertyChanged(nameof(Results));
-            }
-        }
-        /// <summary>
-        /// Отслеживаемая коллекция для хранения всех вариантов причин для отмены и переноса заявки технику
-        /// </summary>
-        private ObservableCollection<MetadataModel> _Reasons = new ObservableCollection<MetadataModel>();
-        public ObservableCollection<MetadataModel> Reasons {
-            get => _Reasons;
-            set {
-                _Reasons = value;
-                OnPropertyChanged(nameof(_Reasons));
-            }
-        }
+        //private ObservableCollection<MetadataModel> _Results = new ObservableCollection<MetadataModel>();
+        //public ObservableCollection<MetadataModel> Results {
+        //    get => _Results;
+        //    set {
+        //        _Results = value;
+        //        OnPropertyChanged(nameof(Results));
+        //    }
+        //}
+        ///// <summary>
+        ///// Отслеживаемая коллекция для хранения всех вариантов причин для отмены и переноса заявки технику
+        ///// </summary>
+        //private ObservableCollection<MetadataModel> _Reasons = new ObservableCollection<MetadataModel>();
+        //public ObservableCollection<MetadataModel> Reasons {
+        //    get => _Reasons;
+        //    set {
+        //        _Reasons = value;
+        //        OnPropertyChanged(nameof(_Reasons));
+        //    }
+        //}
         /// <summary>
         /// Комментарий к причине Отмены или Переноса
         /// </summary>
-        private string _ReasonComment;
-        public string ReasonComment {
-            get => _ReasonComment;
-            set {
-                _ReasonComment = value;
-                OnPropertyChanged(nameof(ReasonComment));
-            }
-        }
+        //private string _ReasonComment;
+        //public string ReasonComment {
+        //    get => _ReasonComment;
+        //    set {
+        //        _ReasonComment = value;
+        //        OnPropertyChanged(nameof(ReasonComment));
+        //    }
+        //}
         /// <summary>
         /// Объект для хранения даты переноса 
         /// </summary>
-        private DateTime _TransferDate;
-        public DateTime TransferDate {
-            get => _TransferDate;
-            set {
-                if (value == DateTime.Parse("01.01.2010 00:00:00")) {
-                    _TransferDate = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy")).AddDays(1);
-                }
-                else {
-                    _TransferDate = value;
-                }
+        //private DateTime _TransferDate;
+        //public DateTime TransferDate {
+        //    get => _TransferDate;
+        //    set {
+        //        if (value == DateTime.Parse("01.01.2010 00:00:00")) {
+        //            _TransferDate = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy")).AddDays(1);
+        //        }
+        //        else {
+        //            _TransferDate = value;
+        //        }
 
-                OnPropertyChanged(nameof(TransferDate));
-            }
-        }
-        /// <summary>
-        /// Объект для хранения времени переноса
-        /// </summary>
-        private TimeSpan _TransferTime;
-        public TimeSpan TransferTime {
-            get => _TransferTime;
-            set {
-                _TransferTime = value;
-                OnPropertyChanged(nameof(TransferTime));
-            }
-        }
+        //        OnPropertyChanged(nameof(TransferDate));
+        //    }
+        //}
+        ///// <summary>
+        ///// Объект для хранения времени переноса
+        ///// </summary>
+        //private TimeSpan _TransferTime;
+        //public TimeSpan TransferTime {
+        //    get => _TransferTime;
+        //    set {
+        //        _TransferTime = value;
+        //        OnPropertyChanged(nameof(TransferTime));
+        //    }
+        //}
         /// <summary>
         /// Свойство отвечающее за видимость блока с контролами для переноса заявки 
         /// </summary>
-        private bool _TransferLayoutVisibility;
-        public bool TransferLayoutVisibility {
-            get => _TransferLayoutVisibility;
-            set {
-                _TransferLayoutVisibility = value;
-                OnPropertyChanged(nameof(TransferLayoutVisibility));
-            }
-        }
+        //private bool _TransferLayoutVisibility;
+        //public bool TransferLayoutVisibility {
+        //    get => _TransferLayoutVisibility;
+        //    set {
+        //        _TransferLayoutVisibility = value;
+        //        OnPropertyChanged(nameof(TransferLayoutVisibility));
+        //    }
+        //}
         /// <summary>
         /// Широта
         /// </summary>
@@ -431,6 +463,12 @@ namespace MounterApp.ViewModel {
                                     soeb.NewOutgone = DateTime.Now.AddHours(-5);
                                     soeb.NewTechconclusion = ConclusionByOrder;
                                     soeb.NewTechniqueEnd = Servicemans.First().NewServicemanId;
+
+                                    ////Формируем задачу на руководителя пожарного отдела, если NecesseryJournal=true
+                                    //if (NecesseryJournal) {
+                                    //    ClientHttp.
+                                    //}
+
 
                                     ServiceOrderCoordinates soc = await ClientHttp.Get<ServiceOrderCoordinates>("/api/ServiceOrderCoordinates/id?so_id=" + sofa.NewTest2Id);
                                     if (soc != null) {
