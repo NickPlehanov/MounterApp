@@ -33,7 +33,7 @@ namespace MounterApp.ViewModel {
             CountOrders = null;
             CountOrdersFireAlarm = null;
 
-            GetCategoryTech.Execute(Category);
+            //await GetCategoryTech.ExecuteAsync(Category);
 
             if (Date == DateTime.Parse("01.01.0001 00:00:00")) {
                 Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy"));
@@ -124,7 +124,7 @@ namespace MounterApp.ViewModel {
                         Device.StartTimer(TimeSpan.FromMinutes(Convert.ToDouble(obj)), () => {
                             Task.Run(async () => {
                                 try {
-                                    GetCategoryTech.Execute(Category);
+                                    await GetCategoryTech.ExecuteAsync(Category);
                                     FireAlarmOtherServiceOrderExpanded = true;
                                     FireAlarmServiceOrderExpanded = true;
                                     FireAlarmTimeServiceOrderExpanded = true;
@@ -137,7 +137,7 @@ namespace MounterApp.ViewModel {
                                     GetServiceOrderByTransfer.Execute(Servicemans);
                                     GetServiceOrdersFireAlarm.Execute(Servicemans);
                                     GetServiceOrderByTransferFireAlarm.Execute(Servicemans);
-                                    CheckEnableDinner.Execute(null);
+                                    //await CheckEnableDinner.ExecuteAsync(null);
                                 }
                                 catch { }
                             });
@@ -341,9 +341,9 @@ namespace MounterApp.ViewModel {
                 await App.Current.MainPage.Navigation.PushPopupAsync(new HelpPopupPage(vm));
             });
         }
-        private RelayCommand _GetCategoryTech;
-        public RelayCommand GetCategoryTech {
-            get => _GetCategoryTech ??= new RelayCommand(async obj => {
+        private AsyncCommand _GetCategoryTech;
+        public AsyncCommand GetCategoryTech {
+            get => _GetCategoryTech ??= new AsyncCommand(async () => {
                 Category = await ClientHttp.Get<ObservableCollection<MetadataModel>>("/api/Common/metadata?ColumnName=new_category&ObjectName=New_serviceman");
 
                 //Analytics.TrackEvent("Получение категорий техников",
@@ -508,7 +508,7 @@ namespace MounterApp.ViewModel {
                 //int ServiceOrdersFireAlarmByTransfer = 0;
 
 
-                GetCategoryTech.Execute(Category);
+                await GetCategoryTech.ExecuteAsync(Category);
                 GetServiceOrders.Execute(Servicemans);
                 GetServiceOrderByTransfer.Execute(Servicemans);
                 CheckEnableDinner.Execute(null);
@@ -765,7 +765,7 @@ namespace MounterApp.ViewModel {
                 GetServiceOrderByTransfer.Execute(Servicemans);
                 GetServiceOrdersFireAlarm.Execute(Servicemans);
                 GetServiceOrderByTransferFireAlarm.Execute(Servicemans);
-                CheckEnableDinner.Execute(null);
+                //CheckEnableDinner.Execute(null);
 
                 if (y==null) 
                     await App.Current.MainPage.Navigation.PushPopupAsync(new MessagePopupPage(new MessagePopupPageViewModel("Ошибка при попытке отметки обеда", Color.Red, LayoutOptions.EndAndExpand), 4000));
@@ -786,7 +786,7 @@ namespace MounterApp.ViewModel {
                     return;
                 }
                     var dinner_order = await ClientHttp.Get<List<NewServicemanExtensionBase>>("/api/NewServiceorderExtensionBases/CheckDinner?dateTime=" + Date + "&serviceman=" + Servicemans.FirstOrDefault().NewServicemanId);
-                    DinnerVisible = dinner_order != null && dinner_order.Count() <= 0;
+                DinnerVisible = dinner_order != null && dinner_order.Any();
             });
         }
         private RelayCommand _GetServiceOrdersFireAlarm;
